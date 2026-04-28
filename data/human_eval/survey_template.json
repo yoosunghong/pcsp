@@ -1,0 +1,313 @@
+{
+  "study_title": "NPC Persona Distinctiveness Evaluation",
+  "language": "en",
+  "n_participants_target": 30,
+  "n_pairs": 30,
+  "scale": {
+    "1": "Not distinct at all",
+    "3": "Somewhat distinct",
+    "5": "Very distinct"
+  },
+  "pairs": [
+    {
+      "pair_id": "pair_000",
+      "indices": [
+        152,
+        203
+      ],
+      "persona_a_id": 153,
+      "persona_b_id": 204,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_001",
+      "indices": [
+        64,
+        73
+      ],
+      "persona_a_id": 65,
+      "persona_b_id": 74,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_002",
+      "indices": [
+        3,
+        17
+      ],
+      "persona_a_id": 4,
+      "persona_b_id": 18,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_003",
+      "indices": [
+        155,
+        194
+      ],
+      "persona_a_id": 156,
+      "persona_b_id": 195,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_004",
+      "indices": [
+        120,
+        145
+      ],
+      "persona_a_id": 121,
+      "persona_b_id": 146,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_005",
+      "indices": [
+        151,
+        174
+      ],
+      "persona_a_id": 152,
+      "persona_b_id": 175,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_006",
+      "indices": [
+        133,
+        224
+      ],
+      "persona_a_id": 134,
+      "persona_b_id": 225,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_007",
+      "indices": [
+        161,
+        194
+      ],
+      "persona_a_id": 162,
+      "persona_b_id": 195,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_008",
+      "indices": [
+        94,
+        205
+      ],
+      "persona_a_id": 95,
+      "persona_b_id": 206,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_009",
+      "indices": [
+        8,
+        183
+      ],
+      "persona_a_id": 9,
+      "persona_b_id": 184,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_010",
+      "indices": [
+        42,
+        202
+      ],
+      "persona_a_id": 43,
+      "persona_b_id": 203,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_011",
+      "indices": [
+        5,
+        206
+      ],
+      "persona_a_id": 6,
+      "persona_b_id": 207,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_012",
+      "indices": [
+        19,
+        71
+      ],
+      "persona_a_id": 20,
+      "persona_b_id": 72,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_013",
+      "indices": [
+        96,
+        101
+      ],
+      "persona_a_id": 97,
+      "persona_b_id": 102,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_014",
+      "indices": [
+        1,
+        29
+      ],
+      "persona_a_id": 2,
+      "persona_b_id": 30,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_015",
+      "indices": [
+        126,
+        160
+      ],
+      "persona_a_id": 127,
+      "persona_b_id": 161,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_016",
+      "indices": [
+        61,
+        147
+      ],
+      "persona_a_id": 62,
+      "persona_b_id": 148,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_017",
+      "indices": [
+        91,
+        110
+      ],
+      "persona_a_id": 92,
+      "persona_b_id": 111,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_018",
+      "indices": [
+        192,
+        235
+      ],
+      "persona_a_id": 193,
+      "persona_b_id": 236,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_019",
+      "indices": [
+        163,
+        228
+      ],
+      "persona_a_id": 164,
+      "persona_b_id": 229,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_020",
+      "indices": [
+        165,
+        200
+      ],
+      "persona_a_id": 166,
+      "persona_b_id": 201,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_021",
+      "indices": [
+        92,
+        210
+      ],
+      "persona_a_id": 93,
+      "persona_b_id": 211,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_022",
+      "indices": [
+        138,
+        173
+      ],
+      "persona_a_id": 139,
+      "persona_b_id": 174,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_023",
+      "indices": [
+        90,
+        125
+      ],
+      "persona_a_id": 91,
+      "persona_b_id": 126,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_024",
+      "indices": [
+        101,
+        116
+      ],
+      "persona_a_id": 102,
+      "persona_b_id": 117,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_025",
+      "indices": [
+        17,
+        212
+      ],
+      "persona_a_id": 18,
+      "persona_b_id": 213,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_026",
+      "indices": [
+        85,
+        126
+      ],
+      "persona_a_id": 86,
+      "persona_b_id": 127,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_027",
+      "indices": [
+        61,
+        136
+      ],
+      "persona_a_id": 62,
+      "persona_b_id": 137,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_028",
+      "indices": [
+        142,
+        171
+      ],
+      "persona_a_id": 143,
+      "persona_b_id": 172,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    },
+    {
+      "pair_id": "pair_029",
+      "indices": [
+        80,
+        182
+      ],
+      "persona_a_id": 81,
+      "persona_b_id": 183,
+      "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)"
+    }
+  ]
+}

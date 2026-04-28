@@ -202,14 +202,15 @@ def process_human_eval(
 
 def _placeholder_result() -> dict:
     """Return placeholder when survey data is not yet collected."""
-    return {
+    result = {
         "status":    "pending",
         "note":      "Prolific survey not yet conducted (planned: 2026-07-04 ~ 2026-08-01)",
         "target_n":  30,
         "pairs":     "PCSP vs baseline NPC behavior trajectories",
-        "scale":     "Likert 1-5: 전혀 다르지 않음 ~ 매우 다름",
-        "survey_q":  "두 NPC가 서로 다른 사람처럼 보이는가?",
+        "scale":     "Likert 1-5: 1=Not distinct at all, 5=Very distinct",
+        "survey_q":  "Do the two NPCs behave like distinct people?",
     }
+    return result
 
 
 def generate_prolific_survey_template(
@@ -217,11 +218,27 @@ def generate_prolific_survey_template(
     n_pairs:       int = 30,
     seed:          int = 0,
     output_path:   str | Path = "data/human_eval/survey_template.json",
+    lang:          str = "en",
 ) -> dict:
     """
     Generate a survey template: randomly sample n_pairs of persona pairs.
     Outputs a JSON that can be imported into Prolific / Qualtrics.
     """
+    copy = {
+        "en": {
+            "study_title": "NPC Persona Distinctiveness Evaluation",
+            "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)",
+            "scale": {"1": "Not distinct at all", "3": "Somewhat distinct", "5": "Very distinct"},
+        },
+        "ko": {
+            "study_title": "NPC 페르소나 구분 가능성 평가",
+            "question": "두 NPC가 서로 다른 사람처럼 행동한다고 느껴지나요? (1: 전혀 그렇지 않다, 5: 매우 그렇다)",
+            "scale": {"1": "전혀 구분되지 않음", "3": "어느 정도 구분됨", "5": "매우 잘 구분됨"},
+        },
+    }
+    if lang not in copy:
+        raise ValueError(f"Unsupported survey language: {lang}")
+
     rng   = np.random.default_rng(seed)
     N     = len(personas_data)
     pairs = []
@@ -235,14 +252,15 @@ def generate_prolific_survey_template(
                 "indices":     list(pair),
                 "persona_a_id": personas_data[pair[0]]["id"],
                 "persona_b_id": personas_data[pair[1]]["id"],
-                "question":    "두 NPC가 서로 다른 사람처럼 행동하나요? (1: 전혀 아니다 ~ 5: 매우 그렇다)",
+                "question":    copy[lang]["question"],
             })
 
     template = {
-        "study_title": "NPC Persona Distinctiveness Evaluation",
+        "study_title": copy[lang]["study_title"],
+        "language": lang,
         "n_participants_target": 30,
         "n_pairs": n_pairs,
-        "scale": {"1": "전혀 다르지 않음", "3": "보통", "5": "매우 다름"},
+        "scale": copy[lang]["scale"],
         "pairs": pairs,
     }
 
@@ -266,6 +284,9 @@ def _parse_args():
                    help="Generate survey template JSON from personas")
     p.add_argument("--personas",       default="data/personas/train_240.json")
     p.add_argument("--n_pairs",        type=int, default=30)
+    p.add_argument("--lang",           choices=["en", "ko"], default="en")
+    p.add_argument("--template_output", default=None,
+                   help="Output path for generated survey template")
     return p.parse_args()
 
 
@@ -275,9 +296,11 @@ if __name__ == "__main__":
     if args.gen_template:
         with open(ROOT / args.personas) as f:
             personas_data = json.load(f)
+        default_name = f"survey_template_{args.lang}.json" if args.lang != "en" else "survey_template.json"
         result = generate_prolific_survey_template(
             personas_data, n_pairs=args.n_pairs,
-            output_path=ROOT / "data/human_eval/survey_template.json",
+            output_path=ROOT / (args.template_output or f"data/human_eval/{default_name}"),
+            lang=args.lang,
         )
         print(json.dumps(result, indent=2, ensure_ascii=False))
     elif args.csv:
