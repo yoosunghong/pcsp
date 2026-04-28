@@ -1,0 +1,37 @@
+{
+  "results": {
+    "b1": {
+      "iteration": 299,
+      "mean_ep_reward": 79.1857915074564,
+      "n_transitions": 6400,
+      "policy_loss": 0.0007745229639112949,
+      "value_loss": 20.59655881881714,
+      "entropy": 1.7817756891250611
+    },
+    "b2": {
+      "iteration": 299,
+      "mean_ep_reward": 65.35316526195032,
+      "n_transitions": 6400,
+      "policy_loss": -0.009947007726877928,
+      "value_loss": 7.287609362602234,
+      "entropy": 1.7050479853153229
+    },
+    "b3": {
+      "iteration": 299,
+      "mean_ep_reward": 105.37270661689334,
+      "n_transitions": 6400,
+      "policy_loss": -0.01872585359029472,
+      "value_loss": 19.125204930305483,
+      "entropy": 1.574351086616516
+    },
+    "b4": {
+      "iteration": 299,
+      "mean_ep_reward": 84.69240206787359,
+      "n_transitions": 6400,
+      "policy_loss": -0.021817731456831097,
+      "value_loss": 22.458701038360594,
+      "entropy": 1.7432843601703645
+    }
+  },
+  "total_elapsed_sec": 4085.2641701698303
+}

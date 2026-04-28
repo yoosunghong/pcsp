@@ -1,0 +1,15 @@
+\begin{tabular}{lrrrrrrr}
+\toprule
+Model & Task Reward & Consist Acc & Zero-Shot Acc & Mean KL & Spearman $\rho$ & Latency (ms) \\
+\midrule
+  PCSP (full) & 83.438 & 0.283 & 0.193 & 5.869 & 0.728 & 1.968 \\
+  PCSP (no_consist) & 84.287 & 0.008 & 0.017 & 3.778 & 0.638 & 2.030 \\
+  PCSP (no_diverse) & 76.791 & 0.225 & 0.147 & 0.395 & 0.928 & 1.785 \\
+  PCSP (concat) & 77.365 & 0.392 & 0.320 & 2.874 & 0.738 & 1.722 \\
+  PCSP (frozen_proj) & 83.598 & 0.188 & 0.207 & 5.603 & 0.384 & 1.790 \\
+  B1 No-Persona & 73.174 & {} & {} & {} & {} & 1.832 \\
+  B3 SBERT & 86.240 & {} & {} & {} & {} & 1.877 \\
+  B4 DIAYN & 81.862 & {} & {} & {} & {} & 1.942 \\
+  B5 LLM-as-policy & {} & {} & {} & {} & {} & 43.676 \\
+\bottomrule
+\end{tabular}

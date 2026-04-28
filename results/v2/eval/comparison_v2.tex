@@ -1,0 +1,15 @@
+\begin{table}[t]
+\centering
+\caption{PCSP v2 results (12$\times$12, 16 agents, 500 personas)}
+\label{tab:pcsp_v2}
+\begin{tabular}{lrrrrr}
+\toprule
+Model & Reward & Consist & ZeroShot & KL & $\rho$ \\
+\midrule
+\textbf{full} & 64.2 & 0.111 & 0.023 & 5.40 & 0.725 \\
+no_consist & 50.1 & 0.044 & 0.000 & 16.47 & 0.253 \\
+no_diverse & 71.6 & 0.056 & 0.013 & 0.48 & 0.941 \\
+concat & 74.8 & 0.044 & 0.027 & 1.34 & 0.959 \\
+\bottomrule
+\end{tabular}
+\end{table}

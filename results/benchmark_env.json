@@ -1,0 +1,23 @@
+{
+  "random": {
+    "policy": "random",
+    "n_episodes": 50,
+    "total_steps": 40200,
+    "elapsed_sec": 0.9108818389941007,
+    "steps_per_sec": 44133.0568676102,
+    "mean_episode_reward": 93.35436082847114,
+    "std_episode_reward": 13.786142847699029,
+    "mean_episode_length": 804.0
+  },
+  "film": {
+    "policy": "film",
+    "device": "cuda",
+    "n_episodes": 20,
+    "total_steps": 16080,
+    "elapsed_sec": 7.51045045000501,
+    "steps_per_sec": 2141.016721572176,
+    "mean_episode_reward": 80.16954307955532,
+    "std_episode_reward": 16.067425061970862,
+    "mean_episode_length": 804.0
+  }
+}

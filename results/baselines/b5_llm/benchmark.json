@@ -1,0 +1,260 @@
+{
+  "n_steps": 50,
+  "mean_latency_ms": 43.67560947313905,
+  "p50_latency_ms": 39.53131043817848,
+  "p95_latency_ms": 41.264020721428096,
+  "total_reward": 7.332718839645384,
+  "actions": [
+    {
+      "agent": "agent_0",
+      "action": 10,
+      "latency_ms": 183.29876195639372
+    },
+    {
+      "agent": "agent_1",
+      "action": 7,
+      "latency_ms": 41.23970912769437
+    },
+    {
+      "agent": "agent_2",
+      "action": 4,
+      "latency_ms": 39.99091894365847
+    },
+    {
+      "agent": "agent_3",
+      "action": 3,
+      "latency_ms": 41.117202024906874
+    },
+    {
+      "agent": "agent_0",
+      "action": 7,
+      "latency_ms": 39.14804896339774
+    },
+    {
+      "agent": "agent_1",
+      "action": 7,
+      "latency_ms": 40.99885490722954
+    },
+    {
+      "agent": "agent_2",
+      "action": 2,
+      "latency_ms": 39.58941996097565
+    },
+    {
+      "agent": "agent_3",
+      "action": 5,
+      "latency_ms": 40.2190878521651
+    },
+    {
+      "agent": "agent_0",
+      "action": 4,
+      "latency_ms": 40.431216824799776
+    },
+    {
+      "agent": "agent_1",
+      "action": 1,
+      "latency_ms": 40.187336038798094
+    },
+    {
+      "agent": "agent_2",
+      "action": 7,
+      "latency_ms": 41.283912025392056
+    },
+    {
+      "agent": "agent_3",
+      "action": 11,
+      "latency_ms": 40.177463786676526
+    },
+    {
+      "agent": "agent_0",
+      "action": 5,
+      "latency_ms": 38.9190090354532
+    },
+    {
+      "agent": "agent_1",
+      "action": 1,
+      "latency_ms": 40.818156907334924
+    },
+    {
+      "agent": "agent_2",
+      "action": 11,
+      "latency_ms": 98.87965396046638
+    },
+    {
+      "agent": "agent_3",
+      "action": 4,
+      "latency_ms": 39.58351397886872
+    },
+    {
+      "agent": "agent_0",
+      "action": 0,
+      "latency_ms": 39.52874802052975
+    },
+    {
+      "agent": "agent_1",
+      "action": 11,
+      "latency_ms": 39.04622886329889
+    },
+    {
+      "agent": "agent_2",
+      "action": 9,
+      "latency_ms": 39.233230985701084
+    },
+    {
+      "agent": "agent_3",
+      "action": 5,
+      "latency_ms": 40.79983592964709
+    },
+    {
+      "agent": "agent_0",
+      "action": 11,
+      "latency_ms": 38.691438967362046
+    },
+    {
+      "agent": "agent_1",
+      "action": 8,
+      "latency_ms": 39.756793063133955
+    },
+    {
+      "agent": "agent_2",
+      "action": 0,
+      "latency_ms": 39.35393411666155
+    },
+    {
+      "agent": "agent_3",
+      "action": 10,
+      "latency_ms": 39.1260520555079
+    },
+    {
+      "agent": "agent_0",
+      "action": 10,
+      "latency_ms": 39.29383307695389
+    },
+    {
+      "agent": "agent_1",
+      "action": 9,
+      "latency_ms": 39.299103897064924
+    },
+    {
+      "agent": "agent_2",
+      "action": 11,
+      "latency_ms": 39.729088079184294
+    },
+    {
+      "agent": "agent_3",
+      "action": 11,
+      "latency_ms": 39.24901690334082
+    },
+    {
+      "agent": "agent_0",
+      "action": 2,
+      "latency_ms": 38.39845908805728
+    },
+    {
+      "agent": "agent_1",
+      "action": 11,
+      "latency_ms": 40.29314615763724
+    },
+    {
+      "agent": "agent_2",
+      "action": 6,
+      "latency_ms": 38.967296946793795
+    },
+    {
+      "agent": "agent_3",
+      "action": 3,
+      "latency_ms": 39.12911005318165
+    },
+    {
+      "agent": "agent_0",
+      "action": 8,
+      "latency_ms": 39.30408600717783
+    },
+    {
+      "agent": "agent_1",
+      "action": 2,
+      "latency_ms": 38.88249699957669
+    },
+    {
+      "agent": "agent_2",
+      "action": 4,
+      "latency_ms": 40.14098783954978
+    },
+    {
+      "agent": "agent_3",
+      "action": 2,
+      "latency_ms": 39.22565304674208
+    },
+    {
+      "agent": "agent_0",
+      "action": 6,
+      "latency_ms": 38.23576797731221
+    },
+    {
+      "agent": "agent_1",
+      "action": 4,
+      "latency_ms": 40.35117197781801
+    },
+    {
+      "agent": "agent_2",
+      "action": 8,
+      "latency_ms": 39.10354315303266
+    },
+    {
+      "agent": "agent_3",
+      "action": 6,
+      "latency_ms": 39.92693196050823
+    },
+    {
+      "agent": "agent_0",
+      "action": 1,
+      "latency_ms": 38.332317024469376
+    },
+    {
+      "agent": "agent_1",
+      "action": 3,
+      "latency_ms": 39.53387285582721
+    },
+    {
+      "agent": "agent_2",
+      "action": 8,
+      "latency_ms": 40.339857107028365
+    },
+    {
+      "agent": "agent_3",
+      "action": 11,
+      "latency_ms": 38.86772901751101
+    },
+    {
+      "agent": "agent_0",
+      "action": 1,
+      "latency_ms": 38.83612900972366
+    },
+    {
+      "agent": "agent_1",
+      "action": 9,
+      "latency_ms": 39.38700910657644
+    },
+    {
+      "agent": "agent_2",
+      "action": 8,
+      "latency_ms": 39.13179994560778
+    },
+    {
+      "agent": "agent_3",
+      "action": 9,
+      "latency_ms": 40.38903396576643
+    },
+    {
+      "agent": "agent_0",
+      "action": 4,
+      "latency_ms": 38.43761212192476
+    },
+    {
+      "agent": "agent_1",
+      "action": 1,
+      "latency_ms": 39.57689204253256
+    }
+  ],
+  "model": "Qwen/Qwen3-1.7B"
+}

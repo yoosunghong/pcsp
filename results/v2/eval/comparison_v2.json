@@ -1,0 +1,50 @@
+{
+  "full": {
+    "reward_mean": 64.24404840111728,
+    "reward_std": 5.110515077847622,
+    "consist_acc": 0.1111111111111111,
+    "coherence": 1.452262666457719,
+    "zeroshot_acc": 0.023333333333333334,
+    "zeroshot_coherence": 1.3439448621841643,
+    "mean_kl": 5.3983487274012685,
+    "spearman_rho": 0.7250903028619062,
+    "latency_ms_median": 0.7267004111781716,
+    "eval_time_sec": 583.8703560829163
+  },
+  "no_consist": {
+    "reward_mean": 50.08576002174982,
+    "reward_std": 7.023181060808273,
+    "consist_acc": 0.044444444444444446,
+    "coherence": 1.0241483669622646,
+    "zeroshot_acc": 0.0,
+    "zeroshot_coherence": 1.0276879759463524,
+    "mean_kl": 16.47369419822353,
+    "spearman_rho": 0.2528480133370381,
+    "latency_ms_median": 0.7343081524595618,
+    "eval_time_sec": 584.9640753269196
+  },
+  "no_diverse": {
+    "reward_mean": 71.58242375009874,
+    "reward_std": 7.319628835314188,
+    "consist_acc": 0.05555555555555555,
+    "coherence": 1.2086749018885958,
+    "zeroshot_acc": 0.013333333333333334,
+    "zeroshot_coherence": 1.1634802673182023,
+    "mean_kl": 0.48379722936248676,
+    "spearman_rho": 0.9410391775493194,
+    "latency_ms_median": 0.7325690239667892,
+    "eval_time_sec": 584.2882752418518
+  },
+  "concat": {
+    "reward_mean": 74.79304891004031,
+    "reward_std": 5.600137437282861,
+    "consist_acc": 0.044444444444444446,
+    "coherence": 1.0932038275097957,
+    "zeroshot_acc": 0.02666666666666667,
+    "zeroshot_coherence": 1.0687995415991414,
+    "mean_kl": 1.340931329940031,
+    "spearman_rho": 0.9591553209224788,
+    "latency_ms_median": 0.5435313796624541,
+    "eval_time_sec": 482.28474736213684
+  }
+}

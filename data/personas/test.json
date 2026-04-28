@@ -1,0 +1,170 @@
+[
+  {
+    "id": 25,
+    "text": "밝고 유머러스한 31세 유튜버. 콘텐츠 제작과 팬들과의 소통으로 즐거움을 찾는다.",
+    "big_five": {
+      "E": "high",
+      "N": "mid",
+      "A": "high",
+      "C": "low",
+      "O": "high"
+    },
+    "occupation": "유튜버",
+    "age": 31,
+    "decay_modifiers": [
+      1.0,
+      1.0,
+      1.5,
+      0.8,
+      1.0,
+      0.9,
+      0.7,
+      1.1
+    ],
+    "preferred_actions": [
+      3,
+      7
+    ],
+    "split": "test"
+  },
+  {
+    "id": 26,
+    "text": "균형 잡힌 삶을 추구하는 43세 중간관리자. 일과 가정 모두 소중히 여기고 루틴을 중시한다.",
+    "big_five": {
+      "E": "mid",
+      "N": "low",
+      "A": "mid",
+      "C": "high",
+      "O": "mid"
+    },
+    "occupation": "중간관리자",
+    "age": 43,
+    "decay_modifiers": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "preferred_actions": [
+      0,
+      3
+    ],
+    "split": "test"
+  },
+  {
+    "id": 27,
+    "text": "다재다능한 30세 프리랜서 개발자. 자유로운 일정을 즐기지만 마감을 철저히 지킨다.",
+    "big_five": {
+      "E": "mid",
+      "N": "mid",
+      "A": "mid",
+      "C": "mid",
+      "O": "high"
+    },
+    "occupation": "프리랜서개발자",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      1.0,
+      0.9,
+      1.0,
+      1.0,
+      0.9,
+      0.8,
+      1.2
+    ],
+    "preferred_actions": [
+      0,
+      5
+    ],
+    "split": "test"
+  },
+  {
+    "id": 28,
+    "text": "여유롭고 지혜로운 62세 은퇴자. 정원 가꾸기와 손자들과의 시간을 즐긴다.",
+    "big_five": {
+      "E": "mid",
+      "N": "low",
+      "A": "high",
+      "C": "mid",
+      "O": "mid"
+    },
+    "occupation": "은퇴자",
+    "age": 62,
+    "decay_modifiers": [
+      1.0,
+      1.0,
+      1.1,
+      0.8,
+      1.0,
+      1.3,
+      1.0,
+      1.2
+    ],
+    "preferred_actions": [
+      7,
+      3
+    ],
+    "split": "test"
+  },
+  {
+    "id": 29,
+    "text": "경험 많고 멘토링을 즐기는 55세 시니어 엔지니어. 후배 양성과 기술 전수에 보람을 느낀다.",
+    "big_five": {
+      "E": "mid",
+      "N": "low",
+      "A": "high",
+      "C": "high",
+      "O": "mid"
+    },
+    "occupation": "시니어엔지니어",
+    "age": 55,
+    "decay_modifiers": [
+      1.0,
+      1.0,
+      0.8,
+      1.0,
+      1.0,
+      0.9,
+      1.0,
+      1.1
+    ],
+    "preferred_actions": [
+      0,
+      3
+    ],
+    "split": "test"
+  },
+  {
+    "id": 30,
+    "text": "위생에 철저하고 규칙적인 33세 요리사. 청결을 생명으로 여기고 매일 새로운 레시피를 연구한다.",
+    "big_five": {
+      "E": "mid",
+      "N": "mid",
+      "A": "mid",
+      "C": "high",
+      "O": "high"
+    },
+    "occupation": "요리사",
+    "age": 33,
+    "decay_modifiers": [
+      1.0,
+      1.0,
+      0.9,
+      1.3,
+      1.0,
+      0.9,
+      0.9,
+      1.0
+    ],
+    "preferred_actions": [
+      6,
+      1
+    ],
+    "split": "test"
+  }
+]

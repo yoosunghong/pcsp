@@ -1,0 +1,15 @@
+{
+  "modes": {
+    "concat": {
+      "iteration": 199,
+      "mean_ep_reward": 80.7311552052758,
+      "n_transitions": 6400,
+      "policy_loss": 0.0002514350228011608,
+      "value_loss": 1.4997580409049989,
+      "entropy": 0.8684562104940414,
+      "consistency_loss": 1.1539476215839386,
+      "diversity_loss": -0.11098902300000191
+    }
+  },
+  "elapsed_sec": 1144.815392255783
+}

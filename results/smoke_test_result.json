@@ -1,0 +1,10 @@
+{
+  "model": "Qwen/Qwen3-Embedding-0.6B",
+  "device": "cuda",
+  "batch_100_avg_ms": 43.86,
+  "batch_100_min_ms": 38.79,
+  "batch_100_max_ms": 49.65,
+  "single_ms": 14.6,
+  "embedding_dim": 1024,
+  "pass": true
+}

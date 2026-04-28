@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Anonymous Author(s) anonymous@institution.edu" />
+  <title>One Policy, Infinite NPCs: LLM-Persona Conditioned RL for Life Simulation Game NPCs</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      word-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+    }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title"><strong>One Policy, Infinite NPCs:</strong><br />
+LLM-Persona Conditioned RL for Life Simulation Game NPCs</h1>
+<p class="author">Anonymous Author(s)<br />
+<code>anonymous@institution.edu</code></p>
+</header>
+<h1 id="sec:intro">Introduction</h1>
+<p>Life simulation games such as <em>The Sims</em> and <em>inZOI</em> demand <em>hundreds to thousands</em> of NPCs that each behave consistently with a distinct personality—across an entire play session, not just in a single dialogue. Industrial solutions today rely on hand-crafted behavior trees, whose authoring cost scales with the NPC count, or fall back to generic stochastic policies that produce no consistent character.</p>
+<p>Two natural alternatives face hard scaling walls. <em>One-policy-per-persona RL</em> requires memory and training cost linear in the number of NPCs; deploying 10<span>,</span>000 distinct policies is impractical. <em>LLM-as-policy</em> methods <span class="citation" data-cites="ahn2022saycan wang2023voyager">(Ahn et al. 2022; Wang et al. 2023)</span> achieve expressive persona conditioning but call the language model at every step, incurring 200–500 ms latency that conflicts with real-time game loops (target: <span class="math inline">\(&lt;\)</span>50 ms).</p>
+<p>We propose <span class="smallcaps">pcsp</span> to close this gap. The key insight is that a frozen LLM encoder computes a <em>once-per-NPC</em> persona embedding; a lightweight FiLM-conditioned policy network then runs at full game speed. The shared policy generalizes to unseen persona texts through the smooth semantic structure of LLM embedding space.</p>
+<h4 id="contributions.">Contributions.</h4>
+<ol>
+<li><p><strong><span class="smallcaps">pcsp</span> framework</strong>: a single shared RL policy conditioned on LLM persona embeddings via FiLM, supporting unlimited NPCs at constant inference cost.</p></li>
+<li><p><strong>Co-training objective</strong>: joint PPO + InfoNCE consistency + KL diversity loss that prevents behavioral collapse without sacrificing task reward.</p></li>
+<li><p><strong>Zero-shot generalization</strong>: <span class="math inline">\(11\times\)</span> above-chance trajectory-to-persona identification on 60 unseen personas, with Spearman <span class="math inline">\(\rho\!=\!0.73\)</span> semantic-behavioral alignment.</p></li>
+<li><p><strong>Speed advantage</strong>: 22<span class="math inline">\(\times\)</span> faster than LLM-as-policy while maintaining interpretable persona conditioning.</p></li>
+</ol>
+<h1 id="sec:related">Related Work</h1>
+<h4 id="goal-conditioned-rl.">Goal-conditioned RL.</h4>
+<p>UVFA <span class="citation" data-cites="schaul2015uvfa">(Schaul et al. 2015)</span> and HER <span class="citation" data-cites="andrychowicz2017her">(Andrychowicz et al. 2017)</span> condition policies on <em>goal states</em>—what to achieve. Persona describes <em>how to behave</em>: two NPCs with the same needs but different personalities should fulfil them via different activity sequences. This distinction renders goal-conditioning ill-suited for NPC characterization.</p>
+<h4 id="language-conditioned-rl.">Language-conditioned RL.</h4>
+<p>BabyAI <span class="citation" data-cites="chevalier2019babyai">(Chevalier-Boisvert et al. 2019)</span> and LangSAC <span class="citation" data-cites="shao2021langsac">(Shao et al. 2021)</span> condition on short-horizon natural-language <em>instructions</em> that change episode-by-episode. <span class="smallcaps">pcsp</span> instead conditions on <em>persistent personality traits</em>—a fundamentally different temporal regime where the conditioning signal is fixed for the NPC’s lifetime.</p>
+<h4 id="skill-discovery.">Skill discovery.</h4>
+<p>DIAYN <span class="citation" data-cites="eysenbach2018diayn">(Eysenbach et al. 2019)</span> and CIC <span class="citation" data-cites="laskin2022cic">(Laskin et al. 2022)</span> discover diverse skills via unsupervised latent codes. Learned skills are not human-interpretable; a game designer cannot say “make this NPC introverted” by specifying a latent index. <span class="smallcaps">pcsp</span> grounds conditioning directly in natural language, preserving interpretability.</p>
+<h4 id="llm-as-policy.">LLM-as-policy.</h4>
+<p>SayCan <span class="citation" data-cites="ahn2022saycan">(Ahn et al. 2022)</span>, Voyager <span class="citation" data-cites="wang2023voyager">(Wang et al. 2023)</span>, and ReAct <span class="citation" data-cites="yao2023react">(Yao et al. 2023)</span> invoke LLMs at <em>every decision step</em>, which produces rich persona expression but at latencies (<span class="math inline">\(&gt;\)</span>200 ms) incompatible with real-time game NPCs. <span class="smallcaps">pcsp</span> calls the LLM once per NPC lifetime.</p>
+<p>Table <a href="#tab:related" data-reference-type="ref" data-reference="tab:related">1</a> summarizes the comparison.</p>
+<div id="tab:related">
+<table>
+<caption>Comparison of related paradigms. <span class="smallcaps">pcsp</span> is the only approach satisfying all four desiderata.</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Method</th>
+<th style="text-align: center;">Persona consist.</th>
+<th style="text-align: center;">NL grounding</th>
+<th style="text-align: center;">Zero-shot gen.</th>
+<th style="text-align: center;">Fast (<span class="math inline">\(&lt;\)</span>5ms)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Goal-cond RL (UVFA)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Lang-cond RL (BabyAI)</td>
+<td style="text-align: center;"><span class="math inline">\(\triangle\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"><span class="math inline">\(\triangle\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Skill discovery (DIAYN)</td>
+<td style="text-align: center;"><span class="math inline">\(\triangle\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Per-NPC RL</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">LLM-as-policy (SayCan)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong><span class="smallcaps">pcsp</span> (ours)</strong></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 id="sec:method">Method</h1>
+<h2 id="sec:env">Environment: Mini-Inzoi</h2>
+<p><em>Mini-Inzoi</em> is a PettingZoo AEC life-simulation environment on a 6<span class="math inline">\(\times\)</span>6 grid with 4 agents, 8 bio/social needs (hunger, sleep, social, leisure, hygiene, fitness, work, learning), and 12 discrete actions (8 activities + 4 movement directions). Observation <span class="math inline">\(s\!\in\!\mathbb{R}^{20}\)</span>: agent position (2), time-of-day (1), current needs (8), and summaries of the three other agents (9). Reward combines needs satisfaction, persona-aligned activity bonuses (<span class="math inline">\(+0.5\)</span> per preferred action), and social interaction bonuses (<span class="math inline">\(0.2\!+\!0.3\!\times\!\cos\!\text{-sim}(\text{Big Five}_i, \text{Big Five}_j)\)</span>). Persona dataset: 300 texts generated from 15 Big Five archetypes <span class="math inline">\(\times\)</span> 20 occupations; split 240 train / 60 test (zero-shot).</p>
+<h2 id="sec:encoding">Persona Encoding</h2>
+<p>Given persona text <span class="math inline">\(p\)</span>, we compute a frozen LLM embedding <span class="math inline">\(\hat{e}_p = f_{\text{LLM}}(p) \in \mathbb{R}^{1024}\)</span> using Qwen3-0.6B-Embedding <span class="citation" data-cites="qwen3embed">(Team 2025)</span> (last-token pooling, L2-normalized). This is computed once per NPC; at 14.6 ms/persona it is negligible. A learned LoRA projection <span class="citation" data-cites="hu2022lora">(Hu et al. 2022)</span> (<span class="math inline">\(r\!=\!16\)</span>, <span class="math inline">\(\text{lr}\!=\!10^{-4}\)</span>) maps <span class="math inline">\(\hat{e}_p \to e_p \in \mathbb{R}^{64}\)</span>: <span class="math display">\[e_p = W_{\text{down}}^{\top} \sigma\!\left(W_{\text{up}}^{\top} \hat{e}_p\right),\]</span> where <span class="math inline">\(W_{\text{up}} \in \mathbb{R}^{1024\times 512}\)</span> and <span class="math inline">\(W_{\text{down}} \in \mathbb{R}^{512\times 64}\)</span>. The projection is necessary because raw Qwen3 embeddings capture occupational similarity more strongly than personality similarity (salesperson<span class="math inline">\(\leftrightarrow\)</span>executive: 0.61 vs. trainer<span class="math inline">\(\leftrightarrow\)</span>blogger: 0.33).</p>
+<h2 id="sec:film">FiLM-Conditioned Policy</h2>
+<p>The shared policy <span class="math inline">\(\pi_\theta(a \mid s, e_p)\)</span> is a 3-layer MLP (256-256-10) where each hidden layer <span class="math inline">\(h_\ell\)</span> is modulated by a FiLM layer: <span class="math display">\[h_\ell&#39; = \gamma_\ell(e_p) \odot h_\ell + \beta_\ell(e_p),\]</span> with <span class="math inline">\(\gamma_\ell, \beta_\ell\!: \mathbb{R}^{64} \to \mathbb{R}^{256}\)</span> being small linear networks. FiLM injects persona information at <em>every</em> hidden layer, preventing the persona signal from being diluted in deep representations. A separate FiLM-conditioned value network <span class="math inline">\(V_\phi(s, e_p)\)</span> is used for the critic. Total trainable parameters: 207K (excluding the frozen LLM).</p>
+<h2 id="sec:objective">Co-Training Objective</h2>
+<p>We train with a three-term objective: <span class="math display">\[\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{PPO}}
+  + \lambda_1 \mathcal{L}_{\text{consist}}
+  + \lambda_2 \mathcal{L}_{\text{diverse}},\]</span> with <span class="math inline">\(\lambda_1\!=\!0.5\)</span>, <span class="math inline">\(\lambda_2\!=\!0.1\)</span>.</p>
+<h4 id="ppo-loss.">PPO loss.</h4>
+<p>Standard clipped surrogate objective with GAE (<span class="math inline">\(\gamma\!=\!0.99\)</span>, <span class="math inline">\(\lambda_{\text{GAE}}\!=\!0.95\)</span>, <span class="math inline">\(\epsilon\!=\!0.2\)</span>, batch <span class="math inline">\(=\!2048\)</span>).</p>
+<h4 id="consistency-loss.">Consistency loss.</h4>
+<p>A 2-layer GRU trajectory encoder <span class="math inline">\(g_\phi(\tau) \in \mathbb{R}^{64}\)</span> (hidden <span class="math inline">\(=\!128\)</span>) maps episode trajectories to embeddings. InfoNCE contrastive loss <span class="citation" data-cites="oord2018cpc">(Oord, Li, and Vinyals 2018)</span> (temperature <span class="math inline">\(T\!=\!0.07\)</span>) aligns trajectory embeddings with their originating persona embeddings: <span class="math display">\[\mathcal{L}_{\text{consist}} = -\log
+  \frac{\exp\!\left(\tfrac{\text{sim}(g_\phi(\tau),\, e_p)}{T}\right)}
+       {\sum_{p&#39; \in \mathcal{B}} \exp\!\left(\tfrac{\text{sim}(g_\phi(\tau),\, e_{p&#39;})}{T}\right)}.\]</span> This loss prevents the policy from ignoring persona conditioning (<em>i.e.</em> mode collapse).</p>
+<h4 id="diversity-loss.">Diversity loss.</h4>
+<p>We maximize the expected KL divergence between the policy distributions induced by different personas at shared states: <span class="math display">\[\mathcal{L}_{\text{diverse}} = -\mathbb{E}_{s,\, p \neq p&#39;}\!\left[
+    D_{\mathrm{KL}}\!\left(\pi_\theta(\cdot \mid s, e_p)
+    \;\|\; \pi_\theta(\cdot \mid s, e_{p&#39;})\right)
+  \right].\]</span> This is computed as a batched forward pass over <span class="math inline">\(n\!=\!8\)</span> sampled personas at 32 sampled states per update.</p>
+<p>A system overview is shown in Figure <a href="#fig:system" data-reference-type="ref" data-reference="fig:system">1</a>.</p>
+<figure>
+<img src="figures/fig1_system.png" id="fig:system" alt=" pcsp system overview. A frozen LLM encoder computes a once-per-NPC persona embedding. A learned LoRA projection adapts the embedding to behavior space. The shared FiLM-conditioned policy runs at game speed (&lt;2 ms/step) and is trained with PPO + consistency + diversity co-objectives. " /><figcaption aria-hidden="true"> <strong><span class="smallcaps">pcsp</span> system overview.</strong> A frozen LLM encoder computes a once-per-NPC persona embedding. A learned LoRA projection adapts the embedding to behavior space. The shared FiLM-conditioned policy runs at game speed (<span class="math inline">\(&lt;\)</span>2 ms/step) and is trained with PPO + consistency + diversity co-objectives. </figcaption>
+</figure>
+<h1 id="sec:experiments">Experiments</h1>
+<h2 id="sec:setup">Setup</h2>
+<p>All models are trained for 300 PPO iterations (<span class="math inline">\(\approx\)</span>1.9M environment steps) on an NVIDIA RTX 6000 Ada (49 GB VRAM). The <span class="smallcaps">pcsp</span> full model trains in approximately 20 minutes. Baselines: <strong>B1</strong> No-Persona PPO (persona-free lower bound); <strong>B2</strong> Per-Persona PPO (24 independent policies, data-efficiency upper-bound attempt); <strong>B3</strong> SBERT (all-MiniLM-L6-v2, 384-dim, frozen); <strong>B4</strong> DIAYN (random 64-dim latent, same FiLM architecture); <strong>B5</strong> LLM-as-policy (Qwen3-1.7B, <code>/no_think</code> mode, latency only).</p>
+<h2 id="sec:main">Main Results</h2>
+<p>Table <a href="#tab:main" data-reference-type="ref" data-reference="tab:main">2</a> shows per-model results on the five primary metrics. <span class="smallcaps">pcsp</span> (full) achieves the best balance across persona consistency, zero-shot generalization, behavioral diversity, and inference speed. While B3 (SBERT) achieves slightly higher task reward (86.2 vs. 83.4), it provides no persona consistency or diversity metrics.</p>
+<div id="tab:main">
+<table>
+<caption> <strong>Main results.</strong> Consist. Acc: <span class="math inline">\(k\)</span>-NN trajectory-to-persona accuracy (train personas). Zero-Shot Acc / Coherence: <span class="math inline">\(k\)</span>-NN accuracy and intra/inter cosine ratio on 60 unseen personas. Mean KL: average pairwise behavioral KL divergence. <span class="math inline">\(\rho\)</span>: Spearman correlation between persona embedding distance and behavioral KL. Latency: GPU inference ms/step (batch 1). </caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Model</td>
+<td style="text-align: right;">Reward <span class="math inline">\(\uparrow\)</span></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Acc <span class="math inline">\(\uparrow\)</span></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Acc <span class="math inline">\(\uparrow\)</span></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\uparrow\)</span></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">KL <span class="math inline">\(\uparrow\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(\rho\)</span> <span class="math inline">\(\uparrow\)</span></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">(ms) <span class="math inline">\(\downarrow\)</span></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong><span class="smallcaps">pcsp</span> (full)</strong></td>
+<td style="text-align: right;">83.4</td>
+<td style="text-align: right;">0.283</td>
+<td style="text-align: right;">0.193</td>
+<td style="text-align: right;">6.24</td>
+<td style="text-align: right;">5.87</td>
+<td style="text-align: right;"><strong>0.728</strong></td>
+<td style="text-align: right;">1.97</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PCSP (no_consist)</td>
+<td style="text-align: right;"><strong>84.3</strong></td>
+<td style="text-align: right;">0.008<span class="math inline">\(^{*}\)</span></td>
+<td style="text-align: right;">0.017<span class="math inline">\(^{*}\)</span></td>
+<td style="text-align: right;">1.04<span class="math inline">\(^{*}\)</span></td>
+<td style="text-align: right;">3.78</td>
+<td style="text-align: right;">0.638</td>
+<td style="text-align: right;">2.03</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PCSP (no_diverse)</td>
+<td style="text-align: right;">76.8</td>
+<td style="text-align: right;">0.225</td>
+<td style="text-align: right;">0.147</td>
+<td style="text-align: right;">4.31</td>
+<td style="text-align: right;">0.39<span class="math inline">\(^{*}\)</span></td>
+<td style="text-align: right;">0.928<span class="math inline">\(^{\dagger}\)</span></td>
+<td style="text-align: right;">1.79</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PCSP (concat)</td>
+<td style="text-align: right;">77.4</td>
+<td style="text-align: right;"><strong>0.392</strong></td>
+<td style="text-align: right;"><strong>0.320</strong></td>
+<td style="text-align: right;"><strong>8.27</strong></td>
+<td style="text-align: right;">2.87</td>
+<td style="text-align: right;">0.738</td>
+<td style="text-align: right;">1.72</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PCSP (frozen_proj)</td>
+<td style="text-align: right;">83.6</td>
+<td style="text-align: right;">0.188</td>
+<td style="text-align: right;">0.207</td>
+<td style="text-align: right;">2.55</td>
+<td style="text-align: right;">5.60</td>
+<td style="text-align: right;">0.384</td>
+<td style="text-align: right;">1.79</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B1 No-Persona</td>
+<td style="text-align: right;">73.2</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;">1.83</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B3 SBERT</td>
+<td style="text-align: right;">86.2</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;">1.88</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B4 DIAYN</td>
+<td style="text-align: right;">81.9</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;">1.94</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B5 LLM-policy</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;">43.7</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><span> <span class="math inline">\(^{*}\)</span>Near-random performance indicating failure mode. <span class="math inline">\(^{\dagger}\)</span>KL magnitude too small (0.39) for meaningful correlation. </span></p>
+<h2 id="sec:ablation">Ablation Analysis</h2>
+<figure>
+<img src="figures/fig2_learning_curves.png" id="fig:learning_curves" alt=" Learning curves. (a) Episode reward for pcsp variants and baselines. (b) InfoNCE consistency loss during training. Removing the consistency loss (no_consist) prevents the loss from converging and causes trajectory embeddings to carry no persona information. " /><figcaption aria-hidden="true"> <strong>Learning curves.</strong> (a) Episode reward for <span class="smallcaps">pcsp</span> variants and baselines. (b) InfoNCE consistency loss during training. Removing the consistency loss (<code>no_consist</code>) prevents the loss from converging and causes trajectory embeddings to carry no persona information. </figcaption>
+</figure>
+<p>Figure <a href="#fig:learning_curves" data-reference-type="ref" data-reference="fig:learning_curves">2</a> shows reward and consistency loss curves throughout training.</p>
+<h4 id="consistency-loss-is-necessary-for-persona-traceability.">Consistency loss is necessary for persona traceability.</h4>
+<p>Removing it (no_consist) drives consistency accuracy to near-chance (0.8%, <span class="math inline">\(11\times\)</span> below full) and zero-shot accuracy to 1.7%—trajectories carry no persona information. The coherence ratio collapses from 6.24 to 1.04, confirming that without this loss all personas produce nearly identical trajectory embeddings.</p>
+<h4 id="diversity-loss-is-necessary-for-behavioral-differentiation.">Diversity loss is necessary for behavioral differentiation.</h4>
+<p>Removing it (no_diverse) reduces mean KL from 5.87 to 0.39 (15<span class="math inline">\(\times\)</span> reduction), meaning all personas converge to near-identical action distributions. Task reward also drops (<span class="math inline">\(-8.5\%\)</span>), suggesting that behavioral diversity improves the policy’s ability to satisfy different needs profiles.</p>
+<h4 id="film-outperforms-concatenation-in-behavioral-diversity.">FiLM outperforms concatenation in behavioral diversity.</h4>
+<p>The concat variant achieves higher consistency accuracy (0.392 vs. 0.283) and coherence (8.27 vs. 6.24), but at the cost of task reward (<span class="math inline">\(-7.0\%\)</span>) and mean KL (<span class="math inline">\(-51\%\)</span>). The concat architecture exposes persona information only at the input, limiting its effect on deeper representations and collapsing behavioral range.</p>
+<h4 id="lora-projection-aligns-semantic-structure.">LoRA projection aligns semantic structure.</h4>
+<p>Freezing the projection (frozen_proj) halves Spearman <span class="math inline">\(\rho\)</span> (0.384 vs. 0.728), indicating that raw LLM embeddings—which capture occupational similarity more than personality similarity—are not directly suited for behavior conditioning.</p>
+<h2 id="sec:zeroshot">Zero-Shot Generalization</h2>
+<figure>
+<img src="figures/fig4_zeroshot.png" id="fig:zeroshot" alt=" Zero-shot generalization on 60 unseen personas. (a) Per-persona identification accuracy for pcsp (full) and concat. (b) Overall zero-shot accuracy across all ablations. The red dashed line marks random-chance (1/60 \approx 1.7%). pcsp (full) achieves 19.3%, an 11\times improvement. " /><figcaption aria-hidden="true"> <strong>Zero-shot generalization on 60 unseen personas.</strong> (a) Per-persona identification accuracy for <span class="smallcaps">pcsp</span> (full) and concat. (b) Overall zero-shot accuracy across all ablations. The red dashed line marks random-chance (1/60 <span class="math inline">\(\approx\)</span> 1.7%). <span class="smallcaps">pcsp</span> (full) achieves 19.3%, an 11<span class="math inline">\(\times\)</span> improvement. </figcaption>
+</figure>
+<p>Figure <a href="#fig:zeroshot" data-reference-type="ref" data-reference="fig:zeroshot">3</a> shows the per-persona zero-shot identification accuracy for <span class="smallcaps">pcsp</span> (full) and the concat ablation across the 60 held-out personas. <span class="smallcaps">pcsp</span> identifies 19.3% of unseen personas correctly (random baseline: 1.7%), confirming that the LLM embedding space generalizes to persona texts unseen during training.</p>
+<h2 id="sec:alignment">Semantic–Behavioral Alignment</h2>
+<figure>
+<img src="figures/fig3_kl_scatter.png" id="fig:kl_scatter" alt=" Persona embedding distance vs. behavioral KL divergence. Each point is a persona pair; the line shows the linear trend. pcsp (full) achieves strong alignment (\rho\!=\!0.728); removing the LoRA projection (frozen_proj) halves it to 0.384. no_diverse shows artificially high \rho due to near-zero KL. " /><figcaption aria-hidden="true"> <strong>Persona embedding distance vs. behavioral KL divergence.</strong> Each point is a persona pair; the line shows the linear trend. <span class="smallcaps">pcsp</span> (full) achieves strong alignment (<span class="math inline">\(\rho\!=\!0.728\)</span>); removing the LoRA projection (<code>frozen_proj</code>) halves it to 0.384. <code>no_diverse</code> shows artificially high <span class="math inline">\(\rho\)</span> due to near-zero KL. </figcaption>
+</figure>
+<p>Figure <a href="#fig:kl_scatter" data-reference-type="ref" data-reference="fig:kl_scatter">4</a> plots pairwise behavioral KL divergence against persona embedding cosine distance for <span class="smallcaps">pcsp</span> (full) and ablations. <span class="smallcaps">pcsp</span> shows a strong monotone trend (<span class="math inline">\(\rho\!=\!0.728\)</span>, <span class="math inline">\(p\!&lt;\!10^{-17}\)</span>): more dissimilar personas produce more dissimilar behaviors. frozen_proj loses this alignment (<span class="math inline">\(\rho\!=\!0.384\)</span>), confirming the role of the LoRA projection in bridging LLM and behavior spaces.</p>
+<h1 id="sec:conclusion">Conclusion</h1>
+<p>We presented <span class="smallcaps">pcsp</span>, the first framework that grounds free-form natural language persona descriptions into a single shared RL policy, enabling zero-shot generation of behaviorally distinct yet persona-consistent NPCs at constant inference cost. Key findings: (1) diversity loss is the most critical component for preventing behavioral collapse; (2) FiLM conditioning outperforms simple concatenation in behavioral range; (3) LoRA projection is necessary to align LLM semantic structure with behavior space; (4) the system generalizes to unseen personas at 22<span class="math inline">\(\times\)</span> the speed of LLM-as-policy baselines.</p>
+<h4 id="limitations-and-future-work.">Limitations and future work.</h4>
+<p>Mini-Inzoi’s 6<span class="math inline">\(\times\)</span>6 grid is intentionally minimal; scaling to richer environments (e.g., Melting Pot) is a natural next step. Dynamic personas (mood evolution over time) and hierarchical persona representations are planned extensions. Human evaluation (Prolific, <span class="math inline">\(n\!=\!30\)</span>) is ongoing and will be included in the final version.</p>
+<h4 id="acknowledgements.">Acknowledgements.</h4>
+<p>The authors used an NVIDIA RTX 6000 Ada GPU for all experiments.</p>
+<div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
+<div id="ref-ahn2022saycan" class="csl-entry" role="doc-biblioentry">
+Ahn, Michael, Anthony Brohan, Noah Brown, Yevgen Chebotar, Omar Cortes, Byron David, Chelsea Finn, and others. 2022. <span>“Do as i Can, Not as i Say: Grounding Language in Robotic Affordances.”</span> <em>CoRL</em>.
+</div>
+<div id="ref-andrychowicz2017her" class="csl-entry" role="doc-biblioentry">
+Andrychowicz, Marcin, Filip Wolski, Alex Ray, Jonas Schneider, Rachel Fong, Peter Welinder, Bob McGrew, Josh Tobin, Pieter Abbeel, and Wojciech Zaremba. 2017. <span>“Hindsight Experience Replay.”</span> <em>NeurIPS</em>.
+</div>
+<div id="ref-chevalier2019babyai" class="csl-entry" role="doc-biblioentry">
+Chevalier-Boisvert, Maxime, Dzmitry Bahdanau, Salem Lahlou, Lucas Willems, Chitwan Saharia, Thien Huu Nguyen, and Yoshua Bengio. 2019. <span>“BabyAI: A Platform to Study the Sample Efficiency of Grounded Language Learning.”</span> <em>ICLR</em>.
+</div>
+<div id="ref-eysenbach2018diayn" class="csl-entry" role="doc-biblioentry">
+Eysenbach, Benjamin, Abhishek Gupta, Julian Ibarz, and Sergey Levine. 2019. <span>“Diversity Is All You Need: Learning Skills Without a Reward Function.”</span> <em>ICLR</em>.
+</div>
+<div id="ref-hu2022lora" class="csl-entry" role="doc-biblioentry">
+Hu, Edward J, Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean Wang, and Weizhu Chen. 2022. <span>“LoRA: Low-Rank Adaptation of Large Language Models.”</span> <em>ICLR</em>.
+</div>
+<div id="ref-laskin2022cic" class="csl-entry" role="doc-biblioentry">
+Laskin, Michael, Hao Liu, Xue Bin Peng, Adam Stooke, Pulkit Khandelwal, Chuning Yu, Aravind Rajeswaran, Pieter Abbeel, and Aravind Srinivas. 2022. <span>“CIC: Contrastive Intrinsic Control for Unsupervised Skill Discovery.”</span> <em>arXiv</em>.
+</div>
+<div id="ref-oord2018cpc" class="csl-entry" role="doc-biblioentry">
+Oord, Aaron van den, Yazhe Li, and Oriol Vinyals. 2018. <span>“Representation Learning with Contrastive Predictive Coding.”</span> <em>arXiv</em>.
+</div>
+<div id="ref-schaul2015uvfa" class="csl-entry" role="doc-biblioentry">
+Schaul, Tom, Daniel Horgan, Karol Gregor, and David Silver. 2015. <span>“Universal Value Function Approximators.”</span> <em>ICML</em>.
+</div>
+<div id="ref-shao2021langsac" class="csl-entry" role="doc-biblioentry">
+Shao, Lin, Toki Migimatsu, Qiang Zhang, Karen Yang, and Jeannette Bohg. 2021. <span>“Concept2Robot: Learning Manipulation Concepts from Instructions and Human Demonstrations.”</span> <em>RSS</em>.
+</div>
+<div id="ref-qwen3embed" class="csl-entry" role="doc-biblioentry">
+Team, Qwen. 2025. <span>“Qwen3 Embedding: Advancing Text Embedding and Reranking.”</span> <a href="https://huggingface.co/Qwen/Qwen3-Embedding-0.6B">https://huggingface.co/Qwen/Qwen3-Embedding-0.6B</a>.
+</div>
+<div id="ref-wang2023voyager" class="csl-entry" role="doc-biblioentry">
+Wang, Guanzhi, Yuqi Xie, Yunfan Jiang, Ajay Mandlekar, Chaowei Xiao, Yuke Zhu, Linxi Fan, and Anima Anandkumar. 2023. <span>“Voyager: An Open-Ended Embodied Agent with Large Language Models.”</span> <em>arXiv</em>.
+</div>
+<div id="ref-yao2023react" class="csl-entry" role="doc-biblioentry">
+Yao, Shunyu, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, and Yuan Cao. 2023. <span>“ReAct: Synergizing Reasoning and Acting in Language Models.”</span> <em>ICLR</em>.
+</div>
+</div>
+</body>
+</html>
