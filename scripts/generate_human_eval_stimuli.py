@@ -4,6 +4,9 @@ Generate human-evaluation stimuli from a survey template.
 The generated stimuli show only behavior traces for NPC A/B. Persona text and
 Big Five labels are kept out of participant-facing fields to avoid priming.
 
+For survey readability, participant-facing traces are compacted to activity
+actions only and mark only whether an action is persona-preferred.
+
 Usage:
     conda run -n paper python scripts/generate_human_eval_stimuli.py --lang ko
     conda run -n paper python scripts/generate_human_eval_stimuli.py --lang en
@@ -34,6 +37,21 @@ ACTION_NAMES_KO = [
 NEED_NAMES_EN = ["hunger", "sleep", "social", "leisure", "hygiene", "fitness", "work", "learning"]
 NEED_NAMES_KO = ["허기", "수면", "사회성", "여가", "위생", "체력", "업무", "학습"]
 
+KO_STUDY_TITLE = "NPC 페르소나 구분 가능성 평가"
+KO_PARTICIPANT_INSTRUCTION = (
+    "아래의 두 NPC 행동 기록만 보고, 두 NPC가 서로 다른 사람처럼 행동한다고 느껴지는지 평가해 주세요."
+)
+KO_QUESTION = "두 NPC가 서로 다른 사람처럼 행동한다고 느껴지나요? (1: 전혀 그렇지 않다, 5: 매우 그렇다)"
+KO_SCALE = {
+    "1": "전혀 구분되지 않음",
+    "3": "어느 정도 구분됨",
+    "5": "매우 잘 구분됨",
+}
+
+EN_PARTICIPANT_INSTRUCTION = (
+    "Read only the two NPC behavior traces below and rate whether they feel like distinct people."
+)
+
 ACTION_TO_NEED = {
     0: 6,  # work
     1: 0,  # eat
@@ -56,6 +74,25 @@ def _load_json(path: Path) -> Any:
 
 def _persona_by_id(personas: list[dict[str, Any]]) -> dict[int, dict[str, Any]]:
     return {int(p["id"]): p for p in personas}
+
+
+def _normalize_template(template: dict[str, Any], lang: str) -> dict[str, Any]:
+    """Repair participant-facing Korean strings without changing pair ids."""
+    if lang != "ko":
+        return template
+
+    template = dict(template)
+    template["study_title"] = KO_STUDY_TITLE
+    template["scale"] = KO_SCALE
+    template["language"] = "ko"
+
+    pairs = []
+    for pair in template["pairs"]:
+        pair = dict(pair)
+        pair["question"] = KO_QUESTION
+        pairs.append(pair)
+    template["pairs"] = pairs
+    return template
 
 
 def _weighted_choice(rng: random.Random, weights: list[float]) -> int:
@@ -91,7 +128,7 @@ def _action_reason(action: int, persona: dict[str, Any], lang: str) -> str:
         if is_preferred and high_need:
             return f"선호 행동이며 {_need_label(need_idx, lang)} 욕구가 빠르게 변함"
         if is_preferred:
-            return "이 NPC가 자주 선택하는 선호 행동"
+            return "선호 행동"
         if high_need:
             return f"{_need_label(need_idx, lang)} 욕구 관리"
         return "상태 균형 유지"
@@ -99,7 +136,7 @@ def _action_reason(action: int, persona: dict[str, Any], lang: str) -> str:
     if is_preferred and high_need:
         return f"Preferred behavior and fast-changing {_need_label(need_idx, lang)} need"
     if is_preferred:
-        return "A preferred behavior for this NPC"
+        return "Preferred behavior"
     if high_need:
         return f"Manages the {_need_label(need_idx, lang)} need"
     return "Maintains state balance"
@@ -133,7 +170,7 @@ def _generate_trace(
         for action in MOVE_ACTIONS:
             weights[action] = 0.20
 
-        # Insert occasional movement so traces feel like grounded game behavior.
+        # Insert occasional movement so raw traces remain grounded game behavior.
         if step > 1 and step % 4 == 0:
             action = rng.choice(MOVE_ACTIONS)
         else:
@@ -145,15 +182,24 @@ def _generate_trace(
             "action_id": action,
             "action": _action_label(action, lang),
             "reason": _action_reason(action, persona, lang),
+            "is_preferred": action in preferred,
         })
 
     return trace
 
 
-def _trace_text(trace: list[dict[str, Any]], lang: str) -> str:
-    if lang == "ko":
-        return "\n".join(f"{t['step']:02d}. {t['action']} - {t['reason']}" for t in trace)
-    return "\n".join(f"{t['step']:02d}. {t['action']} - {t['reason']}" for t in trace)
+def _trace_text(
+    trace: list[dict[str, Any]],
+    lang: str,
+    display_trace_len: int,
+) -> str:
+    rows = [t for t in trace if int(t["action_id"]) not in MOVE_ACTIONS][:display_trace_len]
+    preferred_label = "선호 행동" if lang == "ko" else "Preferred behavior"
+    lines = []
+    for t in rows:
+        suffix = f" - {preferred_label}" if t.get("is_preferred") else ""
+        lines.append(f"{t['action']}{suffix}")
+    return "\n".join(lines)
 
 
 def _make_display_block(stimulus: dict[str, Any], lang: str) -> str:
@@ -178,9 +224,10 @@ def generate_stimuli(
     output_dir: Path,
     lang: str,
     trace_len: int,
+    display_trace_len: int,
     seed: int,
 ) -> dict[str, Any]:
-    template = _load_json(template_path)
+    template = _normalize_template(_load_json(template_path), lang)
     personas = _persona_by_id(_load_json(personas_path))
     rng = random.Random(seed)
 
@@ -202,8 +249,8 @@ def generate_stimuli(
             "scale": template["scale"],
             "npc_a_trace": trace_a,
             "npc_b_trace": trace_b,
-            "npc_a_trace_text": _trace_text(trace_a, lang),
-            "npc_b_trace_text": _trace_text(trace_b, lang),
+            "npc_a_trace_text": _trace_text(trace_a, lang, display_trace_len),
+            "npc_b_trace_text": _trace_text(trace_b, lang, display_trace_len),
         }
         stimulus["display_text"] = _make_display_block(stimulus, lang)
         stimuli.append(stimulus)
@@ -213,10 +260,11 @@ def generate_stimuli(
         "language": lang,
         "n_pairs": len(stimuli),
         "trace_len": trace_len,
+        "display_trace_len": display_trace_len,
         "participant_instruction": (
-            "아래의 두 NPC 행동 기록만 보고, 두 NPC가 서로 다른 사람처럼 행동한다고 느껴지는지 평가해 주세요."
+            KO_PARTICIPANT_INSTRUCTION
             if lang == "ko"
-            else "Read only the two NPC behavior traces below and rate whether they feel like distinct people."
+            else EN_PARTICIPANT_INSTRUCTION
         ),
         "scale": template["scale"],
         "stimuli": stimuli,
@@ -271,6 +319,7 @@ def generate_stimuli(
         "markdown": str(md_path),
         "n_pairs": len(stimuli),
         "trace_len": trace_len,
+        "display_trace_len": display_trace_len,
     }
 
 
@@ -281,6 +330,7 @@ def _parse_args() -> argparse.Namespace:
     p.add_argument("--personas", default="data/personas/train_240.json")
     p.add_argument("--output_dir", default="data/human_eval")
     p.add_argument("--trace_len", type=int, default=12)
+    p.add_argument("--display_trace_len", type=int, default=6)
     p.add_argument("--seed", type=int, default=42)
     return p.parse_args()
 
@@ -297,6 +347,7 @@ def main() -> None:
         output_dir=ROOT / args.output_dir,
         lang=args.lang,
         trace_len=args.trace_len,
+        display_trace_len=args.display_trace_len,
         seed=args.seed,
     )
     print(json.dumps(result, indent=2, ensure_ascii=False))
