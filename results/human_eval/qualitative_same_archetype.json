@@ -1,0 +1,7621 @@
+{
+  "mode": "same_archetype",
+  "policy": "results/pcsp/full/policy.pt",
+  "personas": "data/personas/train_240.json",
+  "n_pairs": 3,
+  "max_steps": 80,
+  "seed": 2026,
+  "pairs": [
+    {
+      "pair_index": 0,
+      "a": {
+        "id": 106,
+        "label": "#106 35세 공무원 | BF=[high,low,mid,mid,high]",
+        "events": [
+          {
+            "step": 1,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 8,
+            "position": [
+              1,
+              2
+            ],
+            "place": "desk",
+            "nearby_agents": [],
+            "description_ko": "08:00 책상에서 먼저 말을 걸어 대화"
+          },
+          {
+            "step": 2,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 9,
+            "position": [
+              1,
+              2
+            ],
+            "place": "desk",
+            "nearby_agents": [],
+            "description_ko": "09:00 책상에서 가볍게 안부 묻기"
+          },
+          {
+            "step": 3,
+            "action_id": 11,
+            "action": "move_right",
+            "time_of_day": 10,
+            "position": [
+              1,
+              2
+            ],
+            "place": "desk",
+            "nearby_agents": [],
+            "description_ko": "10:00 오른쪽으로 이동"
+          },
+          {
+            "step": 4,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 11,
+            "position": [
+              1,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "11:00 욕실에서 새로운 아이디어 탐색"
+          },
+          {
+            "step": 5,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 12,
+            "position": [
+              1,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "12:00 욕실에서 먼저 말을 걸어 대화"
+          },
+          {
+            "step": 6,
+            "action_id": 2,
+            "action": "sleep",
+            "time_of_day": 13,
+            "position": [
+              1,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "13:00 욕실에서 잠자기"
+          },
+          {
+            "step": 7,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 14,
+            "position": [
+              1,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "14:00 욕실에서 꼼꼼하게 할 일 점검"
+          },
+          {
+            "step": 8,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 15,
+            "position": [
+              1,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "15:00 욕실에서 짧게 의견 나누기 (근처 NPC 1명)"
+          },
+          {
+            "step": 9,
+            "action_id": 2,
+            "action": "sleep",
+            "time_of_day": 16,
+            "position": [
+              1,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "16:00 욕실에서 일찍 잠자리에 들기"
+          },
+          {
+            "step": 10,
+            "action_id": 11,
+            "action": "move_right",
+            "time_of_day": 17,
+            "position": [
+              1,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "17:00 오른쪽으로 이동"
+          },
+          {
+            "step": 11,
+            "action_id": 2,
+            "action": "sleep",
+            "time_of_day": 18,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "18:00 주방에서 짧게 눈 붙이기"
+          },
+          {
+            "step": 12,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 19,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "19:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 13,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 20,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "20:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 14,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 21,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "21:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 15,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 22,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "22:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 16,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 23,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "23:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 17,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 0,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "00:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 18,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 1,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "01:00 주방에서 혼자 조용히 쉬기"
+          },
+          {
+            "step": 19,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 2,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "02:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 20,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 3,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "03:00 주방에서 새로운 아이디어 탐색"
+          },
+          {
+            "step": 21,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 4,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "04:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 22,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 5,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "05:00 주방에서 업무 관련 문서 읽기"
+          },
+          {
+            "step": 23,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 6,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "06:00 주방에서 간단히 식사"
+          },
+          {
+            "step": 24,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 7,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "07:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 25,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 8,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "08:00 주방에서 편하게 휴식"
+          },
+          {
+            "step": 26,
+            "action_id": 6,
+            "action": "clean",
+            "time_of_day": 9,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "09:00 주방에서 주변 정리"
+          },
+          {
+            "step": 27,
+            "action_id": 4,
+            "action": "exercise",
+            "time_of_day": 10,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "10:00 주방에서 규칙적으로 운동"
+          },
+          {
+            "step": 28,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 11,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "11:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 29,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 12,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "12:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 30,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 13,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "13:00 주방에서 혼자 조용히 쉬기"
+          },
+          {
+            "step": 31,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 14,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "14:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 32,
+            "action_id": 6,
+            "action": "clean",
+            "time_of_day": 15,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "15:00 주방에서 위생 관리를 위해 정리"
+          },
+          {
+            "step": 33,
+            "action_id": 2,
+            "action": "sleep",
+            "time_of_day": 16,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "16:00 주방에서 일찍 잠자리에 들기"
+          },
+          {
+            "step": 34,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 17,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "17:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 35,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 18,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "18:00 주방에서 전문 자료 읽기"
+          },
+          {
+            "step": 36,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 19,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "19:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 37,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 20,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "20:00 주방에서 허기를 채우기 위해 식사"
+          },
+          {
+            "step": 38,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 21,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "21:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 39,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 22,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "22:00 주방에서 전문 자료 읽기"
+          },
+          {
+            "step": 40,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 23,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "23:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 41,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 0,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "00:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 42,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 1,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "01:00 주방에서 업무 관련 문서 읽기"
+          },
+          {
+            "step": 43,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 2,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "02:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 44,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 3,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "03:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 45,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 4,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "04:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 46,
+            "action_id": 2,
+            "action": "sleep",
+            "time_of_day": 5,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "05:00 주방에서 잠자기"
+          },
+          {
+            "step": 47,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 6,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "06:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 48,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 7,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "07:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 49,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 8,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "08:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 50,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 9,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "09:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 51,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 10,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "10:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 52,
+            "action_id": 4,
+            "action": "exercise",
+            "time_of_day": 11,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "11:00 주방에서 운동하기"
+          },
+          {
+            "step": 53,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 12,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "12:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 54,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 13,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "13:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 55,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 14,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "14:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 56,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 15,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "15:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 57,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 16,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "16:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 58,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 17,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "17:00 주방에서 식사하며 컨디션 회복"
+          },
+          {
+            "step": 59,
+            "action_id": 4,
+            "action": "exercise",
+            "time_of_day": 18,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "18:00 주방에서 규칙적으로 운동"
+          },
+          {
+            "step": 60,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 19,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "19:00 주방에서 새로운 아이디어 탐색"
+          },
+          {
+            "step": 61,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 20,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "20:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 62,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 21,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "21:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 63,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 22,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "22:00 주방에서 간단히 식사"
+          },
+          {
+            "step": 64,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 23,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "23:00 주방에서 짧게 재충전"
+          },
+          {
+            "step": 65,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 0,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "00:00 주방에서 편하게 휴식"
+          },
+          {
+            "step": 66,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 1,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "01:00 주방에서 마감 업무 처리"
+          },
+          {
+            "step": 67,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 2,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "02:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 68,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 3,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "03:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 69,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 4,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "04:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 70,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 5,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "05:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 71,
+            "action_id": 2,
+            "action": "sleep",
+            "time_of_day": 6,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "06:00 주방에서 짧게 눈 붙이기"
+          },
+          {
+            "step": 72,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 7,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "07:00 주방에서 집중해서 업무 처리"
+          },
+          {
+            "step": 73,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 8,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "08:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 74,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 9,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "09:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 75,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 10,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "10:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 76,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 11,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "11:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 77,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 12,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "12:00 주방에서 조용히 책 읽기"
+          },
+          {
+            "step": 78,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 13,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "13:00 주방에서 업무 관련 문서 읽기"
+          },
+          {
+            "step": 79,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 14,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "14:00 주방에서 간단히 식사"
+          },
+          {
+            "step": 80,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 15,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "15:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          }
+        ]
+      },
+      "b": {
+        "id": 1,
+        "label": "#1 30세 마케터 | BF=[high,low,mid,mid,high]",
+        "events": [
+          {
+            "step": 1,
+            "action_id": 11,
+            "action": "move_right",
+            "time_of_day": 8,
+            "position": [
+              1,
+              2
+            ],
+            "place": "desk",
+            "nearby_agents": [],
+            "description_ko": "08:00 오른쪽으로 이동"
+          },
+          {
+            "step": 2,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 9,
+            "position": [
+              1,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "09:00 욕실에서 가볍게 안부 묻기"
+          },
+          {
+            "step": 3,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 10,
+            "position": [
+              1,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "10:00 욕실에서 간단히 식사"
+          },
+          {
+            "step": 4,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 11,
+            "position": [
+              1,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "11:00 욕실에서 짧게 의견 나누기"
+          },
+          {
+            "step": 5,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 12,
+            "position": [
+              1,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "12:00 욕실에서 먼저 말을 걸어 대화"
+          },
+          {
+            "step": 6,
+            "action_id": 2,
+            "action": "sleep",
+            "time_of_day": 13,
+            "position": [
+              1,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "13:00 욕실에서 잠자기"
+          },
+          {
+            "step": 7,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 14,
+            "position": [
+              1,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "14:00 욕실에서 꼼꼼하게 할 일 점검"
+          },
+          {
+            "step": 8,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 15,
+            "position": [
+              1,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "15:00 욕실에서 짧게 의견 나누기 (근처 NPC 1명)"
+          },
+          {
+            "step": 9,
+            "action_id": 2,
+            "action": "sleep",
+            "time_of_day": 16,
+            "position": [
+              1,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "16:00 욕실에서 일찍 잠자리에 들기"
+          },
+          {
+            "step": 10,
+            "action_id": 11,
+            "action": "move_right",
+            "time_of_day": 17,
+            "position": [
+              1,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "17:00 오른쪽으로 이동"
+          },
+          {
+            "step": 11,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 18,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "18:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 12,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 19,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "19:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 13,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 20,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "20:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 14,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 21,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "21:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 15,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 22,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "22:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 16,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 23,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "23:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 17,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 0,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "00:00 주방에서 조용히 책 읽기"
+          },
+          {
+            "step": 18,
+            "action_id": 11,
+            "action": "move_right",
+            "time_of_day": 1,
+            "position": [
+              1,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "01:00 오른쪽으로 이동"
+          },
+          {
+            "step": 19,
+            "action_id": 4,
+            "action": "exercise",
+            "time_of_day": 2,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "02:00 주방에서 규칙적으로 운동"
+          },
+          {
+            "step": 20,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 3,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "03:00 주방에서 새로운 아이디어 탐색"
+          },
+          {
+            "step": 21,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 4,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "04:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 22,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 5,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "05:00 주방에서 업무 관련 문서 읽기"
+          },
+          {
+            "step": 23,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 6,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "06:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 24,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 7,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "07:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 25,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 8,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "08:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 26,
+            "action_id": 6,
+            "action": "clean",
+            "time_of_day": 9,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "09:00 주방에서 주변 정리"
+          },
+          {
+            "step": 27,
+            "action_id": 2,
+            "action": "sleep",
+            "time_of_day": 10,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "10:00 주방에서 짧게 눈 붙이기"
+          },
+          {
+            "step": 28,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 11,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "11:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 29,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 12,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "12:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 30,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 13,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "13:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 31,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 14,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "14:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 32,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 15,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "15:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 33,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 16,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "16:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 34,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 17,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "17:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 35,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 18,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "18:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 36,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 19,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "19:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 37,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 20,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "20:00 주방에서 허기를 채우기 위해 식사"
+          },
+          {
+            "step": 38,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 21,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "21:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 39,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 22,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "22:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 40,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 23,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "23:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 41,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 0,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "00:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 42,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 1,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "01:00 주방에서 업무 관련 문서 읽기"
+          },
+          {
+            "step": 43,
+            "action_id": 6,
+            "action": "clean",
+            "time_of_day": 2,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "02:00 주방에서 꼼꼼하게 청소"
+          },
+          {
+            "step": 44,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 3,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "03:00 주방에서 새로운 아이디어 탐색"
+          },
+          {
+            "step": 45,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 4,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "04:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 46,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 5,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "05:00 주방에서 업무 관련 문서 읽기"
+          },
+          {
+            "step": 47,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 6,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "06:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 48,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 7,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "07:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 49,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 8,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "08:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 50,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 9,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "09:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 51,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 10,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "10:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 52,
+            "action_id": 4,
+            "action": "exercise",
+            "time_of_day": 11,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "11:00 주방에서 운동하기"
+          },
+          {
+            "step": 53,
+            "action_id": 4,
+            "action": "exercise",
+            "time_of_day": 12,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "12:00 주방에서 활동적으로 몸 풀기"
+          },
+          {
+            "step": 54,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 13,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "13:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 55,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 14,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "14:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 56,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 15,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "15:00 주방에서 천천히 식사"
+          },
+          {
+            "step": 57,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 16,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "16:00 주방에서 업무 계획 정리"
+          },
+          {
+            "step": 58,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 17,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "17:00 주방에서 혼자 조용히 쉬기"
+          },
+          {
+            "step": 59,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 18,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "18:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 60,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 19,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "19:00 주방에서 짧게 재충전"
+          },
+          {
+            "step": 61,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 20,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "20:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 62,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 21,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "21:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 63,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 22,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "22:00 주방에서 간단히 식사"
+          },
+          {
+            "step": 64,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 23,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "23:00 주방에서 짧게 재충전"
+          },
+          {
+            "step": 65,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 0,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "00:00 주방에서 조용히 책 읽기"
+          },
+          {
+            "step": 66,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 1,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "01:00 주방에서 마감 업무 처리"
+          },
+          {
+            "step": 67,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 2,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "02:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 68,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 3,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "03:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 69,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 4,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "04:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 70,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 5,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "05:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 71,
+            "action_id": 2,
+            "action": "sleep",
+            "time_of_day": 6,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "06:00 주방에서 짧게 눈 붙이기"
+          },
+          {
+            "step": 72,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 7,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "07:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 73,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 8,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "08:00 주방에서 조용히 책 읽기"
+          },
+          {
+            "step": 74,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 9,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "09:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 75,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 10,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "10:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 76,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 11,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "11:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 77,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 12,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "12:00 주방에서 조용히 책 읽기"
+          },
+          {
+            "step": 78,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 13,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "13:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 79,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 14,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "14:00 주방에서 꼼꼼하게 할 일 점검"
+          },
+          {
+            "step": 80,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 15,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "15:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          }
+        ]
+      }
+    },
+    {
+      "pair_index": 1,
+      "a": {
+        "id": 40,
+        "label": "#40 38세 회계사 | BF=[low,low,high,mid,mid]",
+        "events": [
+          {
+            "step": 1,
+            "action_id": 8,
+            "action": "move_up",
+            "time_of_day": 8,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "08:00 위로 이동"
+          },
+          {
+            "step": 2,
+            "action_id": 11,
+            "action": "move_right",
+            "time_of_day": 9,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "09:00 오른쪽으로 이동"
+          },
+          {
+            "step": 3,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 10,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "10:00 주방에서 간단히 식사"
+          },
+          {
+            "step": 4,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 11,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "11:00 주방에서 짧게 재충전"
+          },
+          {
+            "step": 5,
+            "action_id": 11,
+            "action": "move_right",
+            "time_of_day": 12,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "12:00 오른쪽으로 이동"
+          },
+          {
+            "step": 6,
+            "action_id": 8,
+            "action": "move_up",
+            "time_of_day": 13,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "13:00 위로 이동"
+          },
+          {
+            "step": 7,
+            "action_id": 11,
+            "action": "move_right",
+            "time_of_day": 14,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [],
+            "description_ko": "14:00 오른쪽으로 이동"
+          },
+          {
+            "step": 8,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 15,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [],
+            "description_ko": "15:00 주방에서 새로운 아이디어 탐색"
+          },
+          {
+            "step": 9,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 16,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [],
+            "description_ko": "16:00 주방에서 편하게 휴식"
+          },
+          {
+            "step": 10,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 17,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [],
+            "description_ko": "17:00 주방에서 업무 관련 문서 읽기"
+          },
+          {
+            "step": 11,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 18,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [],
+            "description_ko": "18:00 주방에서 스트레스를 가라앉히며 휴식"
+          },
+          {
+            "step": 12,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 19,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [],
+            "description_ko": "19:00 주방에서 짧게 재충전"
+          },
+          {
+            "step": 13,
+            "action_id": 2,
+            "action": "sleep",
+            "time_of_day": 20,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [],
+            "description_ko": "20:00 주방에서 일찍 잠자리에 들기"
+          },
+          {
+            "step": 14,
+            "action_id": 4,
+            "action": "exercise",
+            "time_of_day": 21,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [],
+            "description_ko": "21:00 주방에서 체력 관리를 위해 운동"
+          },
+          {
+            "step": 15,
+            "action_id": 8,
+            "action": "move_up",
+            "time_of_day": 22,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [],
+            "description_ko": "22:00 위로 이동"
+          },
+          {
+            "step": 16,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 23,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [],
+            "description_ko": "23:00 주방에서 짧게 재충전"
+          },
+          {
+            "step": 17,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 0,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [],
+            "description_ko": "00:00 주방에서 먼저 말을 걸어 대화"
+          },
+          {
+            "step": 18,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 1,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [],
+            "description_ko": "01:00 주방에서 가볍게 안부 묻기"
+          },
+          {
+            "step": 19,
+            "action_id": 6,
+            "action": "clean",
+            "time_of_day": 2,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [],
+            "description_ko": "02:00 주방에서 꼼꼼하게 청소"
+          },
+          {
+            "step": 20,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 3,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [],
+            "description_ko": "03:00 주방에서 짧게 의견 나누기"
+          },
+          {
+            "step": 21,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 4,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [],
+            "description_ko": "04:00 주방에서 업무 계획 정리"
+          },
+          {
+            "step": 22,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 5,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [],
+            "description_ko": "05:00 주방에서 업무 관련 문서 읽기"
+          },
+          {
+            "step": 23,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 6,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [],
+            "description_ko": "06:00 주방에서 상대와 협력적으로 대화"
+          },
+          {
+            "step": 24,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 7,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [],
+            "description_ko": "07:00 주방에서 새로운 아이디어 탐색"
+          },
+          {
+            "step": 25,
+            "action_id": 4,
+            "action": "exercise",
+            "time_of_day": 8,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [],
+            "description_ko": "08:00 주방에서 활동적으로 몸 풀기"
+          },
+          {
+            "step": 26,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 9,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [],
+            "description_ko": "09:00 주방에서 식사하며 컨디션 회복"
+          },
+          {
+            "step": 27,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 10,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [],
+            "description_ko": "10:00 주방에서 상대와 협력적으로 대화"
+          },
+          {
+            "step": 28,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 11,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [],
+            "description_ko": "11:00 주방에서 짧게 재충전"
+          },
+          {
+            "step": 29,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 12,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [],
+            "description_ko": "12:00 주방에서 먼저 말을 걸어 대화"
+          },
+          {
+            "step": 30,
+            "action_id": 9,
+            "action": "move_down",
+            "time_of_day": 13,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [],
+            "description_ko": "13:00 아래로 이동"
+          },
+          {
+            "step": 31,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 14,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "14:00 주방에서 스트레스를 가라앉히며 휴식"
+          },
+          {
+            "step": 32,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 15,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "15:00 주방에서 집중해서 업무 처리"
+          },
+          {
+            "step": 33,
+            "action_id": 4,
+            "action": "exercise",
+            "time_of_day": 16,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "16:00 주방에서 활동적으로 몸 풀기"
+          },
+          {
+            "step": 34,
+            "action_id": 8,
+            "action": "move_up",
+            "time_of_day": 17,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "17:00 위로 이동"
+          },
+          {
+            "step": 35,
+            "action_id": 10,
+            "action": "move_left",
+            "time_of_day": 18,
+            "position": [
+              0,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "18:00 왼쪽으로 이동"
+          },
+          {
+            "step": 36,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 19,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "19:00 주방에서 집중해서 업무 처리"
+          },
+          {
+            "step": 37,
+            "action_id": 8,
+            "action": "move_up",
+            "time_of_day": 20,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "20:00 위로 이동"
+          },
+          {
+            "step": 38,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 21,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "21:00 주방에서 식사하며 컨디션 회복"
+          },
+          {
+            "step": 39,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 22,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "22:00 주방에서 꼼꼼하게 할 일 점검"
+          },
+          {
+            "step": 40,
+            "action_id": 6,
+            "action": "clean",
+            "time_of_day": 23,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "23:00 주방에서 위생 관리를 위해 정리"
+          },
+          {
+            "step": 41,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 0,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "00:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 2명)"
+          },
+          {
+            "step": 42,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 1,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "01:00 주방에서 가볍게 안부 묻기 (근처 NPC 2명)"
+          },
+          {
+            "step": 43,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 2,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "02:00 주방에서 상대와 협력적으로 대화 (근처 NPC 2명)"
+          },
+          {
+            "step": 44,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 3,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "03:00 주방에서 짧게 재충전"
+          },
+          {
+            "step": 45,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 4,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "04:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 2명)"
+          },
+          {
+            "step": 46,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 5,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "05:00 주방에서 가볍게 안부 묻기 (근처 NPC 2명)"
+          },
+          {
+            "step": 47,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 6,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "06:00 주방에서 전문 자료 읽기"
+          },
+          {
+            "step": 48,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 7,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "07:00 주방에서 짧게 재충전"
+          },
+          {
+            "step": 49,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 8,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "08:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 2명)"
+          },
+          {
+            "step": 50,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 9,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "09:00 주방에서 가볍게 안부 묻기 (근처 NPC 2명)"
+          },
+          {
+            "step": 51,
+            "action_id": 6,
+            "action": "clean",
+            "time_of_day": 10,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "10:00 주방에서 꼼꼼하게 청소"
+          },
+          {
+            "step": 52,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 11,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "11:00 주방에서 짧게 의견 나누기 (근처 NPC 2명)"
+          },
+          {
+            "step": 53,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 12,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "12:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 54,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 13,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "13:00 주방에서 업무 관련 문서 읽기"
+          },
+          {
+            "step": 55,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 14,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "14:00 주방에서 간단히 식사"
+          },
+          {
+            "step": 56,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 15,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "15:00 주방에서 천천히 식사"
+          },
+          {
+            "step": 57,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 16,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "16:00 주방에서 조용히 책 읽기"
+          },
+          {
+            "step": 58,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 17,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "17:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 59,
+            "action_id": 4,
+            "action": "exercise",
+            "time_of_day": 18,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "18:00 주방에서 규칙적으로 운동"
+          },
+          {
+            "step": 60,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 19,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "19:00 주방에서 집중해서 업무 처리"
+          },
+          {
+            "step": 61,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 20,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "20:00 주방에서 업무 계획 정리"
+          },
+          {
+            "step": 62,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 21,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "21:00 주방에서 식사하며 컨디션 회복"
+          },
+          {
+            "step": 63,
+            "action_id": 10,
+            "action": "move_left",
+            "time_of_day": 22,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "22:00 왼쪽으로 이동"
+          },
+          {
+            "step": 64,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 23,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "23:00 욕실에서 천천히 식사"
+          },
+          {
+            "step": 65,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 0,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "00:00 욕실에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 66,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 1,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "01:00 욕실에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 67,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 2,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "02:00 욕실에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 68,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 3,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "03:00 욕실에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 69,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 4,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "04:00 욕실에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 70,
+            "action_id": 2,
+            "action": "sleep",
+            "time_of_day": 5,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "05:00 욕실에서 잠자기"
+          },
+          {
+            "step": 71,
+            "action_id": 11,
+            "action": "move_right",
+            "time_of_day": 6,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "06:00 오른쪽으로 이동"
+          },
+          {
+            "step": 72,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 7,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "07:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 73,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 8,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "08:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 74,
+            "action_id": 6,
+            "action": "clean",
+            "time_of_day": 9,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "09:00 주방에서 주변 정리"
+          },
+          {
+            "step": 75,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 10,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "10:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 76,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 11,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "11:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 77,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 12,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "12:00 주방에서 허기를 채우기 위해 식사"
+          },
+          {
+            "step": 78,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 13,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "13:00 주방에서 업무 관련 문서 읽기"
+          },
+          {
+            "step": 79,
+            "action_id": 10,
+            "action": "move_left",
+            "time_of_day": 14,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "14:00 왼쪽으로 이동"
+          },
+          {
+            "step": 80,
+            "action_id": 11,
+            "action": "move_right",
+            "time_of_day": 15,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "15:00 오른쪽으로 이동"
+          }
+        ]
+      },
+      "b": {
+        "id": 25,
+        "label": "#25 40세 SW연구원 | BF=[low,low,high,mid,mid]",
+        "events": [
+          {
+            "step": 1,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 8,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "08:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 2,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 9,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "09:00 주방에서 가볍게 안부 묻기 (근처 NPC 1명)"
+          },
+          {
+            "step": 3,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 10,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "10:00 주방에서 상대와 협력적으로 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 4,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 11,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "11:00 주방에서 짧게 의견 나누기 (근처 NPC 1명)"
+          },
+          {
+            "step": 5,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 12,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "12:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 6,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 13,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "13:00 주방에서 가볍게 안부 묻기 (근처 NPC 1명)"
+          },
+          {
+            "step": 7,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 14,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "14:00 주방에서 상대와 협력적으로 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 8,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 15,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "15:00 주방에서 짧게 의견 나누기 (근처 NPC 1명)"
+          },
+          {
+            "step": 9,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 16,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "16:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 10,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 17,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "17:00 주방에서 혼자 조용히 쉬기"
+          },
+          {
+            "step": 11,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 18,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "18:00 주방에서 스트레스를 가라앉히며 휴식"
+          },
+          {
+            "step": 12,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 19,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "19:00 주방에서 짧게 의견 나누기 (근처 NPC 1명)"
+          },
+          {
+            "step": 13,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 20,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "20:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 14,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 21,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "21:00 주방에서 가볍게 안부 묻기 (근처 NPC 1명)"
+          },
+          {
+            "step": 15,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 22,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "22:00 주방에서 상대와 협력적으로 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 16,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 23,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "23:00 주방에서 짧게 재충전"
+          },
+          {
+            "step": 17,
+            "action_id": 8,
+            "action": "move_up",
+            "time_of_day": 0,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "00:00 위로 이동"
+          },
+          {
+            "step": 18,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 1,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "01:00 주방에서 가볍게 안부 묻기 (근처 NPC 1명)"
+          },
+          {
+            "step": 19,
+            "action_id": 6,
+            "action": "clean",
+            "time_of_day": 2,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              3
+            ],
+            "description_ko": "02:00 주방에서 꼼꼼하게 청소"
+          },
+          {
+            "step": 20,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 3,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              3
+            ],
+            "description_ko": "03:00 주방에서 새로운 아이디어 탐색"
+          },
+          {
+            "step": 21,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 4,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              3
+            ],
+            "description_ko": "04:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 2명)"
+          },
+          {
+            "step": 22,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 5,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              3
+            ],
+            "description_ko": "05:00 주방에서 가볍게 안부 묻기 (근처 NPC 2명)"
+          },
+          {
+            "step": 23,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 6,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              3
+            ],
+            "description_ko": "06:00 주방에서 상대와 협력적으로 대화 (근처 NPC 2명)"
+          },
+          {
+            "step": 24,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 7,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              3
+            ],
+            "description_ko": "07:00 주방에서 새로운 아이디어 탐색"
+          },
+          {
+            "step": 25,
+            "action_id": 4,
+            "action": "exercise",
+            "time_of_day": 8,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              3
+            ],
+            "description_ko": "08:00 주방에서 활동적으로 몸 풀기"
+          },
+          {
+            "step": 26,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 9,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              3
+            ],
+            "description_ko": "09:00 주방에서 가볍게 안부 묻기 (근처 NPC 2명)"
+          },
+          {
+            "step": 27,
+            "action_id": 2,
+            "action": "sleep",
+            "time_of_day": 10,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              3
+            ],
+            "description_ko": "10:00 주방에서 짧게 눈 붙이기"
+          },
+          {
+            "step": 28,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 11,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              3
+            ],
+            "description_ko": "11:00 주방에서 짧게 의견 나누기 (근처 NPC 2명)"
+          },
+          {
+            "step": 29,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 12,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "12:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 30,
+            "action_id": 9,
+            "action": "move_down",
+            "time_of_day": 13,
+            "position": [
+              1,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "13:00 아래로 이동"
+          },
+          {
+            "step": 31,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 14,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "14:00 주방에서 스트레스를 가라앉히며 휴식"
+          },
+          {
+            "step": 32,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 15,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "15:00 주방에서 집중해서 업무 처리"
+          },
+          {
+            "step": 33,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 16,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "16:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 34,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 17,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "17:00 주방에서 가볍게 안부 묻기 (근처 NPC 1명)"
+          },
+          {
+            "step": 35,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 18,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "18:00 주방에서 상대와 협력적으로 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 36,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 19,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "19:00 주방에서 집중해서 업무 처리"
+          },
+          {
+            "step": 37,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 20,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "20:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 38,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 21,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "21:00 주방에서 식사하며 컨디션 회복"
+          },
+          {
+            "step": 39,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 22,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "22:00 주방에서 꼼꼼하게 할 일 점검"
+          },
+          {
+            "step": 40,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 23,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "23:00 주방에서 짧게 의견 나누기 (근처 NPC 1명)"
+          },
+          {
+            "step": 41,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 0,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "00:00 주방에서 조용히 책 읽기"
+          },
+          {
+            "step": 42,
+            "action_id": 4,
+            "action": "exercise",
+            "time_of_day": 1,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "01:00 주방에서 체력 관리를 위해 운동"
+          },
+          {
+            "step": 43,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 2,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "02:00 주방에서 상대와 협력적으로 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 44,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 3,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "03:00 주방에서 짧게 재충전"
+          },
+          {
+            "step": 45,
+            "action_id": 4,
+            "action": "exercise",
+            "time_of_day": 4,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "04:00 주방에서 활동적으로 몸 풀기"
+          },
+          {
+            "step": 46,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 5,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "05:00 주방에서 가볍게 안부 묻기 (근처 NPC 1명)"
+          },
+          {
+            "step": 47,
+            "action_id": 2,
+            "action": "sleep",
+            "time_of_day": 6,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "06:00 주방에서 짧게 눈 붙이기"
+          },
+          {
+            "step": 48,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 7,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "07:00 주방에서 짧게 재충전"
+          },
+          {
+            "step": 49,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 8,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "08:00 주방에서 조용히 책 읽기"
+          },
+          {
+            "step": 50,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 9,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "09:00 주방에서 가볍게 안부 묻기 (근처 NPC 1명)"
+          },
+          {
+            "step": 51,
+            "action_id": 6,
+            "action": "clean",
+            "time_of_day": 10,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "10:00 주방에서 꼼꼼하게 청소"
+          },
+          {
+            "step": 52,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 11,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "11:00 주방에서 짧게 의견 나누기 (근처 NPC 1명)"
+          },
+          {
+            "step": 53,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 12,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "12:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 54,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 13,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "13:00 주방에서 가볍게 안부 묻기 (근처 NPC 1명)"
+          },
+          {
+            "step": 55,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 14,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "14:00 주방에서 간단히 식사"
+          },
+          {
+            "step": 56,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 15,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "15:00 주방에서 천천히 식사"
+          },
+          {
+            "step": 57,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 16,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "16:00 주방에서 조용히 책 읽기"
+          },
+          {
+            "step": 58,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 17,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "17:00 주방에서 가볍게 안부 묻기 (근처 NPC 1명)"
+          },
+          {
+            "step": 59,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 18,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "18:00 주방에서 간단히 식사"
+          },
+          {
+            "step": 60,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 19,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "19:00 주방에서 짧게 의견 나누기 (근처 NPC 1명)"
+          },
+          {
+            "step": 61,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 20,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "20:00 주방에서 업무 계획 정리"
+          },
+          {
+            "step": 62,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 21,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "21:00 주방에서 식사하며 컨디션 회복"
+          },
+          {
+            "step": 63,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 22,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "22:00 주방에서 상대와 협력적으로 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 64,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 23,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "23:00 주방에서 천천히 식사"
+          },
+          {
+            "step": 65,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 0,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "00:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 66,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 1,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "01:00 주방에서 가볍게 안부 묻기 (근처 NPC 1명)"
+          },
+          {
+            "step": 67,
+            "action_id": 2,
+            "action": "sleep",
+            "time_of_day": 2,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "02:00 주방에서 짧게 눈 붙이기"
+          },
+          {
+            "step": 68,
+            "action_id": 4,
+            "action": "exercise",
+            "time_of_day": 3,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "03:00 주방에서 운동하기"
+          },
+          {
+            "step": 69,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 4,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "04:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 70,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 5,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "05:00 주방에서 가볍게 안부 묻기 (근처 NPC 1명)"
+          },
+          {
+            "step": 71,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 6,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "06:00 주방에서 상대와 협력적으로 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 72,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 7,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "07:00 주방에서 짧게 의견 나누기 (근처 NPC 1명)"
+          },
+          {
+            "step": 73,
+            "action_id": 2,
+            "action": "sleep",
+            "time_of_day": 8,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "08:00 주방에서 일찍 잠자리에 들기"
+          },
+          {
+            "step": 74,
+            "action_id": 6,
+            "action": "clean",
+            "time_of_day": 9,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "09:00 주방에서 주변 정리"
+          },
+          {
+            "step": 75,
+            "action_id": 10,
+            "action": "move_left",
+            "time_of_day": 10,
+            "position": [
+              2,
+              5
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1
+            ],
+            "description_ko": "10:00 왼쪽으로 이동"
+          },
+          {
+            "step": 76,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 11,
+            "position": [
+              2,
+              4
+            ],
+            "place": "desk",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "11:00 책상에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 77,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 12,
+            "position": [
+              2,
+              4
+            ],
+            "place": "desk",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "12:00 책상에서 허기를 채우기 위해 식사"
+          },
+          {
+            "step": 78,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 13,
+            "position": [
+              2,
+              4
+            ],
+            "place": "desk",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "13:00 책상에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 79,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 14,
+            "position": [
+              2,
+              4
+            ],
+            "place": "desk",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "14:00 책상에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 80,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 15,
+            "position": [
+              2,
+              4
+            ],
+            "place": "desk",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "15:00 책상에서 짧게 재충전"
+          }
+        ]
+      }
+    },
+    {
+      "pair_index": 2,
+      "a": {
+        "id": 138,
+        "label": "#138 38세 작가 | BF=[high,mid,high,mid,mid]",
+        "events": [
+          {
+            "step": 1,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 8,
+            "position": [
+              0,
+              1
+            ],
+            "place": "bed",
+            "nearby_agents": [],
+            "description_ko": "08:00 침대에서 조용히 책 읽기"
+          },
+          {
+            "step": 2,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 9,
+            "position": [
+              0,
+              1
+            ],
+            "place": "bed",
+            "nearby_agents": [],
+            "description_ko": "09:00 침대에서 가볍게 안부 묻기"
+          },
+          {
+            "step": 3,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 10,
+            "position": [
+              0,
+              1
+            ],
+            "place": "bed",
+            "nearby_agents": [],
+            "description_ko": "10:00 침대에서 상대와 협력적으로 대화"
+          },
+          {
+            "step": 4,
+            "action_id": 11,
+            "action": "move_right",
+            "time_of_day": 11,
+            "position": [
+              0,
+              1
+            ],
+            "place": "bed",
+            "nearby_agents": [],
+            "description_ko": "11:00 오른쪽으로 이동"
+          },
+          {
+            "step": 5,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 12,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "12:00 욕실에서 먼저 말을 걸어 대화"
+          },
+          {
+            "step": 6,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 13,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "13:00 욕실에서 식사하며 컨디션 회복"
+          },
+          {
+            "step": 7,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 14,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "14:00 욕실에서 상대와 협력적으로 대화"
+          },
+          {
+            "step": 8,
+            "action_id": 11,
+            "action": "move_right",
+            "time_of_day": 15,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "15:00 오른쪽으로 이동"
+          },
+          {
+            "step": 9,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 16,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "16:00 욕실에서 먼저 말을 걸어 대화"
+          },
+          {
+            "step": 10,
+            "action_id": 11,
+            "action": "move_right",
+            "time_of_day": 17,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "17:00 오른쪽으로 이동"
+          },
+          {
+            "step": 11,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 18,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "18:00 주방에서 상대와 협력적으로 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 12,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 19,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "19:00 주방에서 천천히 식사"
+          },
+          {
+            "step": 13,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 20,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "20:00 주방에서 편하게 휴식"
+          },
+          {
+            "step": 14,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 21,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "21:00 주방에서 혼자 조용히 쉬기"
+          },
+          {
+            "step": 15,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 22,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              3
+            ],
+            "description_ko": "22:00 주방에서 스트레스를 가라앉히며 휴식"
+          },
+          {
+            "step": 16,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 23,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              2,
+              3
+            ],
+            "description_ko": "23:00 주방에서 짧게 의견 나누기 (근처 NPC 2명)"
+          },
+          {
+            "step": 17,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 0,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              2,
+              3
+            ],
+            "description_ko": "00:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 2명)"
+          },
+          {
+            "step": 18,
+            "action_id": 6,
+            "action": "clean",
+            "time_of_day": 1,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              2,
+              3
+            ],
+            "description_ko": "01:00 주방에서 주변 정리"
+          },
+          {
+            "step": 19,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 2,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              2,
+              3
+            ],
+            "description_ko": "02:00 주방에서 상대와 협력적으로 대화 (근처 NPC 2명)"
+          },
+          {
+            "step": 20,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 3,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              2,
+              3
+            ],
+            "description_ko": "03:00 주방에서 짧게 의견 나누기 (근처 NPC 2명)"
+          },
+          {
+            "step": 21,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 4,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              2,
+              3
+            ],
+            "description_ko": "04:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 2명)"
+          },
+          {
+            "step": 22,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 5,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "05:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 23,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 6,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "06:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 24,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 7,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "07:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 25,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 8,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "08:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 26,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 9,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "09:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 27,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 10,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "10:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 28,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 11,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "11:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 29,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 12,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "12:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 30,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 13,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "13:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 31,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 14,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "14:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 32,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 15,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "15:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 33,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 16,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "16:00 주방에서 조용히 책 읽기"
+          },
+          {
+            "step": 34,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 17,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "17:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 35,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 18,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "18:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 36,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 19,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "19:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 37,
+            "action_id": 4,
+            "action": "exercise",
+            "time_of_day": 20,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "20:00 주방에서 활동적으로 몸 풀기"
+          },
+          {
+            "step": 38,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 21,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "21:00 주방에서 마감 업무 처리"
+          },
+          {
+            "step": 39,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 22,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "22:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 40,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 23,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "23:00 주방에서 짧게 재충전"
+          },
+          {
+            "step": 41,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 0,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "00:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 42,
+            "action_id": 6,
+            "action": "clean",
+            "time_of_day": 1,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "01:00 주방에서 주변 정리"
+          },
+          {
+            "step": 43,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 2,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "02:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 44,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 3,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "03:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 45,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 4,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "04:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 46,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 5,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "05:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 47,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 6,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "06:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 48,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 7,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "07:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 49,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 8,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "08:00 주방에서 업무 계획 정리"
+          },
+          {
+            "step": 50,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 9,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "09:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 51,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 10,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "10:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 52,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 11,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "11:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 53,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 12,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "12:00 주방에서 허기를 채우기 위해 식사"
+          },
+          {
+            "step": 54,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 13,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "13:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 55,
+            "action_id": 4,
+            "action": "exercise",
+            "time_of_day": 14,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "14:00 주방에서 규칙적으로 운동"
+          },
+          {
+            "step": 56,
+            "action_id": 2,
+            "action": "sleep",
+            "time_of_day": 15,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "15:00 주방에서 피로 회복을 위해 잠자기"
+          },
+          {
+            "step": 57,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 16,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "16:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 58,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 17,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "17:00 주방에서 업무 관련 문서 읽기"
+          },
+          {
+            "step": 59,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 18,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "18:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 60,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 19,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "19:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 61,
+            "action_id": 2,
+            "action": "sleep",
+            "time_of_day": 20,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "20:00 주방에서 일찍 잠자리에 들기"
+          },
+          {
+            "step": 62,
+            "action_id": 4,
+            "action": "exercise",
+            "time_of_day": 21,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "21:00 주방에서 체력 관리를 위해 운동"
+          },
+          {
+            "step": 63,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 22,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "22:00 주방에서 스트레스를 가라앉히며 휴식"
+          },
+          {
+            "step": 64,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 23,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "23:00 주방에서 천천히 식사"
+          },
+          {
+            "step": 65,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 0,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "00:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 66,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 1,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "01:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 67,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 2,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "02:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 68,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 3,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "03:00 주방에서 천천히 식사"
+          },
+          {
+            "step": 69,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 4,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "04:00 주방에서 먼저 말을 걸어 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 70,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 5,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "05:00 주방에서 가볍게 안부 묻기 (근처 NPC 3명)"
+          },
+          {
+            "step": 71,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 6,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "06:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 72,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 7,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "07:00 주방에서 짧게 의견 나누기 (근처 NPC 3명)"
+          },
+          {
+            "step": 73,
+            "action_id": 2,
+            "action": "sleep",
+            "time_of_day": 8,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "08:00 주방에서 일찍 잠자리에 들기"
+          },
+          {
+            "step": 74,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 9,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "09:00 주방에서 마감 업무 처리"
+          },
+          {
+            "step": 75,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 10,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "10:00 주방에서 상대와 협력적으로 대화 (근처 NPC 3명)"
+          },
+          {
+            "step": 76,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 11,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "11:00 주방에서 집중해서 업무 처리"
+          },
+          {
+            "step": 77,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 12,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "12:00 주방에서 허기를 채우기 위해 식사"
+          },
+          {
+            "step": 78,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 13,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "13:00 주방에서 업무 관련 문서 읽기"
+          },
+          {
+            "step": 79,
+            "action_id": 4,
+            "action": "exercise",
+            "time_of_day": 14,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "14:00 주방에서 규칙적으로 운동"
+          },
+          {
+            "step": 80,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 15,
+            "position": [
+              0,
+              4
+            ],
+            "place": "kitchen",
+            "nearby_agents": [
+              1,
+              2,
+              3
+            ],
+            "description_ko": "15:00 주방에서 집중해서 업무 처리"
+          }
+        ]
+      },
+      "b": {
+        "id": 198,
+        "label": "#198 38세 번역가 | BF=[high,mid,high,mid,mid]",
+        "events": [
+          {
+            "step": 1,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 8,
+            "position": [
+              0,
+              1
+            ],
+            "place": "bed",
+            "nearby_agents": [],
+            "description_ko": "08:00 침대에서 조용히 책 읽기"
+          },
+          {
+            "step": 2,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 9,
+            "position": [
+              0,
+              1
+            ],
+            "place": "bed",
+            "nearby_agents": [],
+            "description_ko": "09:00 침대에서 가볍게 안부 묻기"
+          },
+          {
+            "step": 3,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 10,
+            "position": [
+              0,
+              1
+            ],
+            "place": "bed",
+            "nearby_agents": [],
+            "description_ko": "10:00 침대에서 상대와 협력적으로 대화"
+          },
+          {
+            "step": 4,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 11,
+            "position": [
+              0,
+              1
+            ],
+            "place": "bed",
+            "nearby_agents": [],
+            "description_ko": "11:00 침대에서 짧게 의견 나누기"
+          },
+          {
+            "step": 5,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 12,
+            "position": [
+              0,
+              1
+            ],
+            "place": "bed",
+            "nearby_agents": [],
+            "description_ko": "12:00 침대에서 먼저 말을 걸어 대화"
+          },
+          {
+            "step": 6,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 13,
+            "position": [
+              0,
+              1
+            ],
+            "place": "bed",
+            "nearby_agents": [],
+            "description_ko": "13:00 침대에서 식사하며 컨디션 회복"
+          },
+          {
+            "step": 7,
+            "action_id": 11,
+            "action": "move_right",
+            "time_of_day": 14,
+            "position": [
+              0,
+              1
+            ],
+            "place": "bed",
+            "nearby_agents": [],
+            "description_ko": "14:00 오른쪽으로 이동"
+          },
+          {
+            "step": 8,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 15,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "15:00 욕실에서 짧게 의견 나누기"
+          },
+          {
+            "step": 9,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 16,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "16:00 욕실에서 먼저 말을 걸어 대화"
+          },
+          {
+            "step": 10,
+            "action_id": 6,
+            "action": "clean",
+            "time_of_day": 17,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "17:00 욕실에서 주변 정리"
+          },
+          {
+            "step": 11,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 18,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "18:00 욕실에서 상대와 협력적으로 대화"
+          },
+          {
+            "step": 12,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 19,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "19:00 욕실에서 천천히 식사"
+          },
+          {
+            "step": 13,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 20,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "20:00 욕실에서 허기를 채우기 위해 식사"
+          },
+          {
+            "step": 14,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 21,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "21:00 욕실에서 혼자 조용히 쉬기"
+          },
+          {
+            "step": 15,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 22,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "22:00 욕실에서 스트레스를 가라앉히며 휴식"
+          },
+          {
+            "step": 16,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 23,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "23:00 욕실에서 짧게 재충전"
+          },
+          {
+            "step": 17,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 0,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "00:00 욕실에서 먼저 말을 걸어 대화"
+          },
+          {
+            "step": 18,
+            "action_id": 6,
+            "action": "clean",
+            "time_of_day": 1,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "01:00 욕실에서 주변 정리"
+          },
+          {
+            "step": 19,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 2,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "02:00 욕실에서 상대와 협력적으로 대화"
+          },
+          {
+            "step": 20,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 3,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "03:00 욕실에서 새로운 아이디어 탐색"
+          },
+          {
+            "step": 21,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 4,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "04:00 욕실에서 먼저 말을 걸어 대화"
+          },
+          {
+            "step": 22,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 5,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "05:00 욕실에서 가볍게 안부 묻기"
+          },
+          {
+            "step": 23,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 6,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "06:00 욕실에서 상대와 협력적으로 대화"
+          },
+          {
+            "step": 24,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 7,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "07:00 욕실에서 짧게 의견 나누기"
+          },
+          {
+            "step": 25,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 8,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "08:00 욕실에서 조용히 책 읽기"
+          },
+          {
+            "step": 26,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 9,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "09:00 욕실에서 가볍게 안부 묻기"
+          },
+          {
+            "step": 27,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 10,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "10:00 욕실에서 상대와 협력적으로 대화"
+          },
+          {
+            "step": 28,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 11,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "11:00 욕실에서 짧게 의견 나누기"
+          },
+          {
+            "step": 29,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 12,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "12:00 욕실에서 먼저 말을 걸어 대화"
+          },
+          {
+            "step": 30,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 13,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "13:00 욕실에서 가볍게 안부 묻기"
+          },
+          {
+            "step": 31,
+            "action_id": 11,
+            "action": "move_right",
+            "time_of_day": 14,
+            "position": [
+              0,
+              2
+            ],
+            "place": "bathroom",
+            "nearby_agents": [],
+            "description_ko": "14:00 오른쪽으로 이동"
+          },
+          {
+            "step": 32,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 15,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              2
+            ],
+            "description_ko": "15:00 욕실에서 짧게 의견 나누기 (근처 NPC 1명)"
+          },
+          {
+            "step": 33,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 16,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              2
+            ],
+            "description_ko": "16:00 욕실에서 허기를 채우기 위해 식사"
+          },
+          {
+            "step": 34,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 17,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              2
+            ],
+            "description_ko": "17:00 욕실에서 가볍게 안부 묻기 (근처 NPC 1명)"
+          },
+          {
+            "step": 35,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 18,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              2
+            ],
+            "description_ko": "18:00 욕실에서 상대와 협력적으로 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 36,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 19,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              2
+            ],
+            "description_ko": "19:00 욕실에서 천천히 식사"
+          },
+          {
+            "step": 37,
+            "action_id": 4,
+            "action": "exercise",
+            "time_of_day": 20,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              2
+            ],
+            "description_ko": "20:00 욕실에서 활동적으로 몸 풀기"
+          },
+          {
+            "step": 38,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 21,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              2
+            ],
+            "description_ko": "21:00 욕실에서 가볍게 안부 묻기 (근처 NPC 1명)"
+          },
+          {
+            "step": 39,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 22,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              2
+            ],
+            "description_ko": "22:00 욕실에서 간단히 식사"
+          },
+          {
+            "step": 40,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 23,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              2
+            ],
+            "description_ko": "23:00 욕실에서 집중해서 업무 처리"
+          },
+          {
+            "step": 41,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 0,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              2
+            ],
+            "description_ko": "00:00 욕실에서 먼저 말을 걸어 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 42,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 1,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              2
+            ],
+            "description_ko": "01:00 욕실에서 가볍게 안부 묻기 (근처 NPC 1명)"
+          },
+          {
+            "step": 43,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 2,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              2
+            ],
+            "description_ko": "02:00 욕실에서 상대와 협력적으로 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 44,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 3,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              2
+            ],
+            "description_ko": "03:00 욕실에서 짧게 의견 나누기 (근처 NPC 1명)"
+          },
+          {
+            "step": 45,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 4,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              2
+            ],
+            "description_ko": "04:00 욕실에서 먼저 말을 걸어 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 46,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 5,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              2
+            ],
+            "description_ko": "05:00 욕실에서 가볍게 안부 묻기 (근처 NPC 1명)"
+          },
+          {
+            "step": 47,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 6,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              2
+            ],
+            "description_ko": "06:00 욕실에서 상대와 협력적으로 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 48,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 7,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              2
+            ],
+            "description_ko": "07:00 욕실에서 짧게 의견 나누기 (근처 NPC 1명)"
+          },
+          {
+            "step": 49,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 8,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              2
+            ],
+            "description_ko": "08:00 욕실에서 업무 계획 정리"
+          },
+          {
+            "step": 50,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 9,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              2
+            ],
+            "description_ko": "09:00 욕실에서 가볍게 안부 묻기 (근처 NPC 1명)"
+          },
+          {
+            "step": 51,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 10,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              2
+            ],
+            "description_ko": "10:00 욕실에서 상대와 협력적으로 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 52,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 11,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              2
+            ],
+            "description_ko": "11:00 욕실에서 짧게 의견 나누기 (근처 NPC 1명)"
+          },
+          {
+            "step": 53,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 12,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              2
+            ],
+            "description_ko": "12:00 욕실에서 먼저 말을 걸어 대화 (근처 NPC 1명)"
+          },
+          {
+            "step": 54,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 13,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              2
+            ],
+            "description_ko": "13:00 욕실에서 마감 업무 처리"
+          },
+          {
+            "step": 55,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 14,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              2
+            ],
+            "description_ko": "14:00 욕실에서 꼼꼼하게 할 일 점검"
+          },
+          {
+            "step": 56,
+            "action_id": 2,
+            "action": "sleep",
+            "time_of_day": 15,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "15:00 욕실에서 피로 회복을 위해 잠자기"
+          },
+          {
+            "step": 57,
+            "action_id": 4,
+            "action": "exercise",
+            "time_of_day": 16,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "16:00 욕실에서 활동적으로 몸 풀기"
+          },
+          {
+            "step": 58,
+            "action_id": 2,
+            "action": "sleep",
+            "time_of_day": 17,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "17:00 욕실에서 잠자기"
+          },
+          {
+            "step": 59,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 18,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "18:00 욕실에서 스트레스를 가라앉히며 휴식"
+          },
+          {
+            "step": 60,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 19,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "19:00 욕실에서 집중해서 업무 처리"
+          },
+          {
+            "step": 61,
+            "action_id": 2,
+            "action": "sleep",
+            "time_of_day": 20,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "20:00 욕실에서 일찍 잠자리에 들기"
+          },
+          {
+            "step": 62,
+            "action_id": 4,
+            "action": "exercise",
+            "time_of_day": 21,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "21:00 욕실에서 체력 관리를 위해 운동"
+          },
+          {
+            "step": 63,
+            "action_id": 7,
+            "action": "rest",
+            "time_of_day": 22,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "22:00 욕실에서 스트레스를 가라앉히며 휴식"
+          },
+          {
+            "step": 64,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 23,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "23:00 욕실에서 짧게 의견 나누기 (근처 NPC 2명)"
+          },
+          {
+            "step": 65,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 0,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "00:00 욕실에서 먼저 말을 걸어 대화 (근처 NPC 2명)"
+          },
+          {
+            "step": 66,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 1,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "01:00 욕실에서 가볍게 안부 묻기 (근처 NPC 2명)"
+          },
+          {
+            "step": 67,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 2,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "02:00 욕실에서 상대와 협력적으로 대화 (근처 NPC 2명)"
+          },
+          {
+            "step": 68,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 3,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "03:00 욕실에서 짧게 의견 나누기 (근처 NPC 2명)"
+          },
+          {
+            "step": 69,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 4,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "04:00 욕실에서 먼저 말을 걸어 대화 (근처 NPC 2명)"
+          },
+          {
+            "step": 70,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 5,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "05:00 욕실에서 가볍게 안부 묻기 (근처 NPC 2명)"
+          },
+          {
+            "step": 71,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 6,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "06:00 욕실에서 상대와 협력적으로 대화 (근처 NPC 2명)"
+          },
+          {
+            "step": 72,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 7,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "07:00 욕실에서 짧게 의견 나누기 (근처 NPC 2명)"
+          },
+          {
+            "step": 73,
+            "action_id": 2,
+            "action": "sleep",
+            "time_of_day": 8,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "08:00 욕실에서 일찍 잠자리에 들기"
+          },
+          {
+            "step": 74,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 9,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "09:00 욕실에서 가볍게 안부 묻기 (근처 NPC 2명)"
+          },
+          {
+            "step": 75,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 10,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "10:00 욕실에서 상대와 협력적으로 대화 (근처 NPC 2명)"
+          },
+          {
+            "step": 76,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 11,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "11:00 욕실에서 짧게 의견 나누기 (근처 NPC 2명)"
+          },
+          {
+            "step": 77,
+            "action_id": 3,
+            "action": "socialize",
+            "time_of_day": 12,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "12:00 욕실에서 먼저 말을 걸어 대화 (근처 NPC 2명)"
+          },
+          {
+            "step": 78,
+            "action_id": 5,
+            "action": "read",
+            "time_of_day": 13,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "13:00 욕실에서 업무 관련 문서 읽기"
+          },
+          {
+            "step": 79,
+            "action_id": 0,
+            "action": "work",
+            "time_of_day": 14,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "14:00 욕실에서 꼼꼼하게 할 일 점검"
+          },
+          {
+            "step": 80,
+            "action_id": 1,
+            "action": "eat",
+            "time_of_day": 15,
+            "position": [
+              0,
+              3
+            ],
+            "place": "bathroom",
+            "nearby_agents": [
+              1,
+              2
+            ],
+            "description_ko": "15:00 욕실에서 천천히 식사"
+          }
+        ]
+      }
+    }
+  ]
+}

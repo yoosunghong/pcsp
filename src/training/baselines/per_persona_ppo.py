@@ -13,6 +13,7 @@ import json
 import sys
 import time
 from pathlib import Path
+from typing import Callable
 
 import numpy as np
 import torch
@@ -115,6 +116,10 @@ def train_b2(
     output_dir: str | Path = "results/baselines/b2_per_persona",
     n_train_personas: int = N_TRAIN_PERSONAS,
     n_iterations: int | None = None,
+    obs_dim:    int = OBS_DIM,
+    n_actions:  int = N_ACTS,
+    n_agents:   int = 4,
+    env_factory: Callable | None = None,
 ) -> dict:
     """Train B2 and save results."""
     root = Path(__file__).resolve().parents[3]
@@ -134,19 +139,21 @@ def train_b2(
     rng = np.random.default_rng(config.seed)
 
     def persona_sampler():
-        """Sample 4 personas from our subset, return policy indices."""
-        idxs = rng.choice(len(train_personas), size=4, replace=False)
+        """Sample n_agents personas from our subset, return policy indices."""
+        idxs = rng.choice(len(train_personas), size=n_agents, replace=False)
         personas = [PersonaConfig.from_dict(train_personas[i]) for i in idxs]
         agent_ctxs = {
             f"agent_{j}": {"persona_idx": int(idxs[j])}
-            for j in range(4)
+            for j in range(n_agents)
         }
         return personas, agent_ctxs
 
-    def make_env_fn(personas):
+    def _default_make_env_fn(personas):
         return MiniInzoiEnv(personas=personas, max_steps=200)
 
-    policy = PerPersonaActorCritic(n_train_personas, OBS_DIM, N_ACTS)
+    make_env_fn = env_factory if env_factory is not None else _default_make_env_fn
+
+    policy = PerPersonaActorCritic(n_train_personas, obs_dim, n_actions)
     n_params = sum(p.numel() for p in policy.parameters())
     trainer = PPOTrainer(policy, config, device)
 

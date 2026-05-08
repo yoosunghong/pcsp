@@ -39,6 +39,7 @@ from pathlib import Path
 import numpy as np
 import torch
 import torch.nn.functional as F
+from typing import Callable
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
@@ -47,6 +48,10 @@ from src.env.mini_inzoi import MiniInzoiEnv, PersonaConfig, N_ACTIONS
 from src.models.trajectory_encoder import TrajectoryEncoder
 from src.training.pcsp_trainer import PCSPActorCritic
 from src.eval.consistency import _rollout_persona, _encode_trajectories
+from src.eval.human_eval import wilson_ci
+
+SPLITS_DIR = Path("data/personas/splits")
+SPLIT_FAMILIES = ("unseen_occupation", "unseen_archetype", "unseen_combo")
 
 OBS_DIM = 20
 N_ACTS  = N_ACTIONS  # 12
@@ -61,6 +66,8 @@ def zero_shot_consistency(
     n_episodes:          int  = 5,
     device:              str  = "cuda",
     seed:                int  = 1000,
+    n_agents:            int  = 4,
+    env_factory:         Callable | None = None,
 ) -> dict:
     """
     Evaluate PCSP on 60 unseen test personas.
@@ -98,6 +105,8 @@ def zero_shot_consistency(
         trajs = _rollout_persona(
             policy, e_llm, pcfg, n_episodes, dev,
             seed_offset=seed + p_idx * 997,
+            n_agents=n_agents,
+            env_factory=env_factory,
         )
         if not trajs:
             continue
@@ -152,6 +161,58 @@ def zero_shot_consistency(
     }
 
 
+def compositional_zero_shot(
+    policy:           PCSPActorCritic,
+    traj_encoder:     TrajectoryEncoder,
+    split_family:     str,
+    all_embeddings:   np.ndarray,
+    n_episodes:       int = 5,
+    device:           str = "cuda",
+    seed:             int = 1000,
+    splits_dir:       Path = SPLITS_DIR,
+    n_agents:         int = 4,
+    env_factory:      Callable | None = None,
+    split_suffix:     str = "",
+) -> dict:
+    """
+    Run zero-shot consistency on one of the §4.3 compositional splits.
+
+    Wraps ``zero_shot_consistency`` and adds:
+      - Wilson 95% CI on the trajectory-level accuracy.
+      - Split-family metadata so results from different runs can be aggregated.
+
+    The caller is responsible for loading the policy/encoder weights that match
+    the chosen split. ``unseen_occupation`` matches the existing PCSP-full
+    training run (train_240/test_60), so its checkpoint can be reused. The
+    other families require a new training run on their split's train file.
+    """
+    if split_family not in SPLIT_FAMILIES:
+        raise ValueError(f"Unknown split family {split_family!r}; choose from {SPLIT_FAMILIES}.")
+
+    test_path = ROOT / splits_dir / f"{split_family}{split_suffix}_test.json"
+    if not test_path.exists():
+        raise FileNotFoundError(
+            f"{test_path} not found. Run scripts/build_compositional_splits.py first."
+        )
+    with open(test_path, encoding="utf-8") as f:
+        test_personas = json.load(f)
+
+    result = zero_shot_consistency(
+        policy, traj_encoder, test_personas, all_embeddings,
+        n_episodes=n_episodes, device=device, seed=seed,
+        n_agents=n_agents, env_factory=env_factory,
+    )
+    accuracy = float(result.get("accuracy", 0.0))
+    n_traj = int(result.get("n_trajectories", 0))
+    k = int(round(accuracy * n_traj))
+    lo, hi = wilson_ci(k, n_traj) if n_traj else (0.0, 0.0)
+    result["wilson_ci_95"] = [lo, hi]
+    result["split_family"] = split_family
+    result["split_suffix"] = split_suffix
+    result["random_chance"] = 1.0 / max(1, len(test_personas))
+    return result
+
+
 def zeroshot_vs_train(
     policy:              PCSPActorCritic,
     traj_encoder:        TrajectoryEncoder,
@@ -161,6 +222,8 @@ def zeroshot_vs_train(
     n_episodes:          int  = 5,
     n_train_sample:      int  = 24,     # sample subset of train personas to keep runtime similar
     device:              str  = "cuda",
+    n_agents:            int  = 4,
+    env_factory:         Callable | None = None,
 ) -> dict:
     """
     Compare zero-shot accuracy (test_60) vs in-distribution accuracy (sample of train_240).
@@ -179,6 +242,8 @@ def zeroshot_vs_train(
         n_personas=n_train_sample,
         device=device,
         seed=0,
+        n_agents=n_agents,
+        env_factory=env_factory,
     )
 
     print("\n=== Zero-shot (test_60) ===")
@@ -187,6 +252,8 @@ def zeroshot_vs_train(
         n_episodes=n_episodes,
         device=device,
         seed=1000,
+        n_agents=n_agents,
+        env_factory=env_factory,
     )
 
     gap = train_result["accuracy"] - test_result["accuracy"]
@@ -211,7 +278,20 @@ def _parse_args():
     p.add_argument("--n_train_sample",  type=int, default=24)
     p.add_argument("--compare",         action="store_true",
                    help="Compare train vs test (generalisation gap)")
+    p.add_argument("--split_family",    choices=list(SPLIT_FAMILIES) + ["legacy"],
+                   default="legacy",
+                   help="Which §4.3 compositional split to evaluate; 'legacy' uses --test_personas.")
+    p.add_argument("--split_suffix",    default="",
+                   help="Suffix on the split filename (e.g. '_v3' for v3-aligned splits).")
     p.add_argument("--device",          default="cuda")
+    p.add_argument("--obs_dim",         type=int, default=OBS_DIM,
+                   help="Observation dim for the loaded checkpoint (v1=20, v3 base=33, v3 large=69).")
+    p.add_argument("--n_actions",       type=int, default=N_ACTS,
+                   help="Action count for the loaded checkpoint (v1=12, v3=20).")
+    p.add_argument("--env_variant",     choices=("v1", "v3"), default="v1",
+                   help="Which env class to roll out with; v1 uses MiniInzoiEnv, v3 uses MiniInzoiV3Env.")
+    p.add_argument("--n_agents",        type=int, default=4,
+                   help="Number of agents the env is constructed with.")
     return p.parse_args()
 
 
@@ -224,11 +304,18 @@ if __name__ == "__main__":
         test_data = json.load(f)
     all_emb = np.load(ROOT / args.embeddings)
 
-    policy = PCSPActorCritic(OBS_DIM, N_ACTS)
+    policy = PCSPActorCritic(args.obs_dim, args.n_actions)
     policy.load_state_dict(torch.load(ROOT / args.policy, map_location="cpu"))
 
-    traj_enc = TrajectoryEncoder(OBS_DIM, N_ACTS)
+    traj_enc = TrajectoryEncoder(args.obs_dim, args.n_actions)
     traj_enc.load_state_dict(torch.load(ROOT / args.traj_enc, map_location="cpu"))
+
+    env_factory = None
+    if args.env_variant == "v3":
+        from src.env.mini_inzoi_v3 import MiniInzoiV3Env
+
+        def env_factory(personas):
+            return MiniInzoiV3Env(personas=personas, max_steps=200)
 
     if args.compare:
         result = zeroshot_vs_train(
@@ -237,6 +324,19 @@ if __name__ == "__main__":
             n_episodes=args.n_episodes,
             n_train_sample=args.n_train_sample,
             device=args.device,
+            n_agents=args.n_agents,
+            env_factory=env_factory,
+        )
+    elif args.split_family != "legacy":
+        suffix = args.split_suffix
+        print(f"=== Compositional zero-shot ({args.split_family}{suffix}) ===")
+        result = compositional_zero_shot(
+            policy, traj_enc, args.split_family, all_emb,
+            n_episodes=args.n_episodes,
+            device=args.device,
+            n_agents=args.n_agents,
+            env_factory=env_factory,
+            split_suffix=suffix,
         )
     else:
         print("=== Zero-shot consistency (test_60) ===")
@@ -244,6 +344,8 @@ if __name__ == "__main__":
             policy, traj_enc, test_data, all_emb,
             n_episodes=args.n_episodes,
             device=args.device,
+            n_agents=args.n_agents,
+            env_factory=env_factory,
         )
 
     print(json.dumps(result, indent=2))

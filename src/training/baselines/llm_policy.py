@@ -16,7 +16,7 @@ import json
 import sys
 import time
 from pathlib import Path
-from typing import Optional
+from typing import Callable, Optional
 
 import numpy as np
 import torch
@@ -146,12 +146,18 @@ def benchmark_llm_policy(
     device: str = "cuda",
     output_dir: str | Path = "results/baselines/b5_llm",
     seed: int = 42,
+    n_agents: int = 4,
+    env_factory: Callable | None = None,
 ) -> dict:
     """
     Run the LLM policy for n_steps in the environment.
     Measures latency and records episode reward.
 
     n_steps=50 by default (full 200-step episode would take ~100s+ at 500ms/step).
+
+    n_agents / env_factory let v3 callers swap envs. Note: v3 will also need a
+    prompt-builder rewrite (current prompt enumerates the v1 12 actions); thread
+    only the env wiring here, leave prompt construction to a future v3 wrapper.
     """
     root = Path(__file__).resolve().parents[3]
     output_dir = root / output_dir
@@ -161,13 +167,16 @@ def benchmark_llm_policy(
         personas_data = json.load(f)
 
     rng = np.random.default_rng(seed)
-    idxs = rng.choice(len(personas_data), size=4, replace=False)
+    idxs = rng.choice(len(personas_data), size=n_agents, replace=False)
     personas = [PersonaConfig.from_dict(personas_data[i]) for i in idxs]
-    persona_texts = {f"agent_{j}": personas_data[int(idxs[j])]["text"] for j in range(4)}
+    persona_texts = {f"agent_{j}": personas_data[int(idxs[j])]["text"] for j in range(n_agents)}
 
     policy = LLMPolicy(device=device)
 
-    env = MiniInzoiEnv(personas=personas, max_steps=n_steps)
+    if env_factory is None:
+        env = MiniInzoiEnv(personas=personas, max_steps=n_steps)
+    else:
+        env = env_factory(personas)
     env.reset(seed=seed)
 
     latencies: list[float] = []

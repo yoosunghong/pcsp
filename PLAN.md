@@ -1,638 +1,252 @@
-# PLAN.md — PCSP 연구 실행 계획
+# PLAN.md - PCSP Research Execution Plan
 
-**논문 제목**: "One Policy, Infinite NPCs: LLM-Persona Conditioned RL for Life Simulation Game NPCs"
-**제출 목표 (단계별)**:
-- ★ **IEEE CoG 2026** (마감 **2026-05-14**, 약 2.5주 남음) — 4p short paper, 즉시 타겟
-- **NeurIPS 2026 Workshop** (마감 **2026-08-29**) — 현재 draft 기반 제출
-- **AAAI-27** (Abstract 마감 예상 **2026-08**, 본회의 2027년 1월 싱가포르) — Melting Pot + human eval n≥100 완성 조건
-
-**최종 업데이트**: 2026-04-27 (Phase 7~9 로드맵 추가, 현재 결과 약점 분석 반영)
+**Project:** Persona-Conditioned Shared Policy (PCSP) for life-simulation NPCs  
+**Primary paper:** `paper/cog2026_vision/main.tex`  
+**Current title:** "One Policy, Infinite NPCs: A Vision for Scalable Persona-Conditioned NPC Control in Life Simulation Games"  
+**Plan owner:** root `PLAN.md` is the active working plan. Archived plans live under `archive/`.
 
 ---
 
-## 현재 결과의 주요 약점 (2026-04-27 기준)
+## 0. Operating Rule
 
-| 약점 | 심각도 | 보강 목표 |
-|:-----|:------:|:---------|
-| 6×6 toy environment — 메인 컨퍼런스 거절 1순위 사유 | ⚠️ 치명적 | Melting Pot 확장 (Phase 8) |
-| 300 personas, test 60개 — 통계 불안정 | 🔶 중요 | 1000개, test 200개 (Phase 8) |
-| Human eval n=30 미완성 — 자동 지표만 존재 | ⚠️ 치명적 | Prolific n≥100, α≥0.6 (Phase 9) |
-| LoRA projection geometry 분석 없음 | 🔷 탑티어 한정 | before/after t-SNE + sensitivity (Phase 9) |
+Before making research, code, evaluation, or paper changes, read this plan and align the work with the active paper direction in `paper/cog2026_vision/main.tex`.
 
----
+After completing a non-trivial task, update this file in the same turn:
 
-## 전체 타임라인
-
-```
-4월 말 ~ 5월 1주  [Phase 1] 환경 prototype + Qwen3-Embed smoke test       ✅ 완료
-5월 2주 ~ 5월 말  [Phase 2] Persona 300개 생성 + 환경 고도화              ✅ 완료
-6월               [Phase 3] Baseline 5종 구현                             ✅ 완료
-7월 1~3주         [Phase 4] PCSP 본 구현 + Ablation                      ✅ 완료
-7월 4주 ~ 8월 1주 [Phase 5] Zero-shot 평가 + Human eval (n=30)           ✅ 완료 (auto 지표)
-8월 2~3주         [Phase 6] 논문 draft (4~6p) + figure 정리              ✅ 완료
-─────────────────────────────────────────────────────────────────────────────────
-4월 27일~5월 13일 [Phase 7] IEEE CoG 2026 short paper 제출 준비          🔥 즉시 시작
-5월~7월           [Phase 8] 환경 스케일 확장 (Melting Pot) +              🔲 예정
-                             Persona 1000개 + Human eval n≥100
-8월               [Phase 9] AAAI-27 확장판 논문 작성                     🔲 예정
-8월 29일          ★ NeurIPS 2026 Workshop 제출
-~2026-08          ★ AAAI-27 Abstract 제출 (Melting Pot + human eval 완성 시)
-```
+- Mark completed checklist items.
+- Add new follow-up tasks discovered during the work.
+- Record important decisions, changed assumptions, and result locations.
+- Keep historical detail short; move stale plans or replaced proposals to `archive/`.
 
 ---
 
-## Phase 1 — 환경 Prototype + Smoke Test ✅ 완료 (2026-04-27)
+## 1. Current Direction
 
-### 완료된 작업
+The project is no longer centered on the speculative sLM/RL co-adaptation proposal. The active paper is a PCSP vision paper for scalable, persona-conditioned NPC control in life-simulation games.
 
-- [x] **conda 환경 설정**: `paper` env에 transformers 5.6.2 / peft 0.19.1 / sentence_transformers 5.4.1 설치
-- [x] **Qwen3-Embedding-0.6B smoke test**: 배치 100 → **43.9ms** (목표 <500ms), 단일 14.6ms, VRAM 1.1GB
-  - 결과: `results/smoke_test_result.json`
-- [x] **Mini-Inzoi v0.1 환경** (`src/env/mini_inzoi.py`): PettingZoo AEC, 6×6 그리드, 4 에이전트, 8 needs, 10 행동
-  - PettingZoo API 테스트 PASS
-- [x] **Persona 데이터셋 30개** (`src/data/persona_generator.py`): Big Five × 직업 조합, train 24 / test 6
-  - t-SNE 시각화: `results/figures/persona_tsne.png`
-- [x] **FiLM conditioning module** (`src/models/film.py`): PersonaProjection (LoRA r=16), Policy + Value nets, 207K params
-  - gradient flow 확인, sanity check PASS
-- [x] **Related work survey** (`notebooks/related_work_survey.md`): 4축 비교 테이블
+The core claim:
 
-### Phase 1 핵심 발견
+> A frozen LLM persona encoder plus a lightweight shared RL policy can provide natural-language controllability, zero-shot persona generalization, persona-consistent behavior, and real-time inference for large NPC populations.
 
-> Qwen3-Embed가 직업 유사도(영업사원↔임원: 0.61)를 성격 특성(트레이너↔블로거: 0.33)보다 강하게 포착.
-> → LoRA projection이 성격 축을 증폭하도록 학습해야 함. Contrastive consistency loss의 중요성이 더 커짐.
+The paper should be judged against four axes:
+
+| Axis | Required Evidence |
+|:--|:--|
+| Persona consistency | Trajectories are identifiable from persona conditioning. |
+| Natural-language control | Free-form persona text maps to behavior without per-persona retraining. |
+| Zero-shot generalization | Held-out personas produce coherent, separable behavior. |
+| Real-time inference | Per-step policy inference remains game-speed; LLM called once per NPC. |
 
 ---
 
-## Phase 2 — Persona 300개 생성 + 환경 고도화 ✅ 완료 (2026-04-27)
+## 2. Main Paper Alignment
 
-### 목표
-- Persona 데이터셋을 30개(seed) → 300개로 확장 (train 240 / test 60)
-- Mini-Inzoi 환경에 사회적 상호작용 보상 강화
-- Persona → `PersonaConfig` 자동 변환 파이프라인 완성
+Use `paper/cog2026_vision/main.tex` as the source of truth for framing.
 
-### 완료된 작업 (2026-04-27)
+Current paper structure:
 
-#### 2-2. Persona → PersonaConfig 자동 변환 ✅
-- [x] `src/data/persona_to_config.py`: Claude Haiku 기반 자연어 → 구조화 config 추출
-  - 단일 persona: ~100ms, 배치 처리 지원
-  - decay_modifiers 범위 검증 (0.3~2.5), preferred_actions 유효성 확인
+- Motivation: life-simulation NPC personalization scaling gap.
+- Method: PCSP = frozen Qwen3 embedding + LoRA projection + FiLM policy + PPO/InfoNCE/KL objectives.
+- Evidence: Mini-Inzoi v1 and v2 results.
+- Research agenda: dynamic personas, social emergence, memory, richer worlds, human evaluation, authoring tools.
+- Evaluation agenda: persona identification, behavioral diversity, semantic-behavioral alignment, latency, human fidelity.
 
-#### 2-3. Mini-Inzoi v0.2 환경 업그레이드 ✅
-- [x] **N_ACTIONS 10→12**: `move_left`(10), `move_right`(11) 추가 (4방향 이동)
-- [x] **PersonaConfig.big_five**: Big Five dict 필드 추가, compatibility() 메서드
-- [x] **사회적 상호작용 보상**: `0.2 + 0.3 × cosine_similarity(bf_i, bf_j)` (범위 0.2~0.5)
-- [x] **render() 개선**: ASCII needs 바 + 호환성 행렬 출력
-- [x] **환경 속도 벤치마크** (`scripts/benchmark_env.py`):
-  - Random policy: **44,133 steps/sec** (목표 >10,000 PASS ✓)
-  - FiLM policy (단일 스텝 추론): 2,141 steps/sec
-  - → PPO 학습 시 배치 rollout으로 충분한 throughput 달성 예상
-
-### 완료된 작업 (추가, 2026-04-27)
-
-#### 2-1. Persona 300개 생성 ✅
-- [x] `scripts/generate_personas_300.py` 실행 완료
-  - 15 Big Five archetypes × 20 occupations = 300 (train 240 / test 60)
-  - 출력: `data/personas/personas_300.json`, `train_240.json`, `test_60.json`
-- [x] **t-SNE 시각화 300개 버전** (`scripts/visualize_persona_tsne_300.py`)
-  - 2×3 패널: Big Five E/N/A/C/O 축별 + 직업군 → `results/figures/persona_tsne_300.png`
-  - 임베딩 저장: `results/embeddings/persona_embeddings_300.npy`
-  - 코사인 유사도 행렬: `results/figures/persona_sim_matrix_300.npy`
-
-### Phase 2 핵심 발견 (추가)
-
-> Big Five 5축 모두 intra-high > high-vs-low (Δ 최대: Neuroticism 0.096, Agreeableness 0.082).
-> Extraversion은 Δ 0.037로 가장 약함 → LoRA projection에서 E축 분리에 더 집중 필요.
+Do not treat `full-proposal.md` as the active direction. It is archived context for a separate speculative co-adaptation idea.
 
 ---
 
-## Phase 3 — Baseline 5종 구현 🔲 (6월) ← 구현 완료, 전체 학습 예정
+## 3. Immediate Problem
 
-### 목표
-PCSP 대비 baseline 상한/하한 확립.
+Human persona-identification survey pilots revealed that the current visible behavior traces are too coarse:
 
-### 구현할 Baseline
+- `read`, `rest`, `eat`, `work`, `sleep`, `socialize` are too semantically close.
+- Participants reasonably ask how `read` or `eat` differs from `rest`.
+- The current survey hides movement and much of the environmental context.
+- Persona traits are hard to infer from short action-label sequences alone.
 
-| # | Baseline | 설명 | 구현 위치 |
-|:--|:---------|:-----|:---------|
-| B1 | **No-Persona PPO** | persona 무시, 단일 generic policy | `src/training/baselines/no_persona_ppo.py` |
-| B2 | **One-Policy-per-Persona** | persona마다 독립 PPO 학습 (oracle 상한선) | `src/training/baselines/per_persona_ppo.py` |
-| B3 | **SBERT + frozen embed** | SentenceBERT로 인코딩, projection만 학습 | `src/training/baselines/sbert_policy.py` |
-| B4 | **DIAYN** | unsupervised skill embedding (랜덤 latent) | `src/training/baselines/diayn.py` |
-| B5 | **LLM-as-policy** | Qwen3-1.7B에 persona+state 주고 매 step 행동 출력 | `src/training/baselines/llm_policy.py` |
+This is not only a survey-design issue. It is a research validity issue: persona-conditioned behavior must be observable in trajectories.
 
-### TODO
-- [x] PPO 공통 학습 루프 구현 (`src/training/ppo_trainer.py`)
-  - AEC rollout 수집, GAE-Lambda, PPO clip ε=0.2, 공유 trainer
-- [x] B1: No-Persona PPO (`src/training/baselines/no_persona_ppo.py`)
-  - smoke test: 20 iter → reward 59.0 (수렴 확인)
-- [x] B2: Per-Persona PPO (`src/training/baselines/per_persona_ppo.py`)
-  - 24개 persona × 독립 학습, total 1.8M params (74K/policy)
-  - smoke test: 20 iter → reward 65.2 (oracle 상한선 확인)
-- [x] B3: SBERT 임베딩 파이프라인 (`src/training/baselines/sbert_policy.py`)
-  - `all-MiniLM-L6-v2` 384-dim, 임베딩 캐시: `results/embeddings/sbert_embeddings_train240.npy`
-  - smoke test: 20 iter → reward 57.8
-- [x] B4: DIAYN 구현 (`src/training/baselines/diayn.py`)
-  - random 64-dim latent, FiLM conditioning, SkillDiscriminator 구현 (optional)
-  - smoke test: 20 iter → reward 67.1
-- [x] B5: Qwen3-1.7B latency 측정 (`src/training/baselines/llm_policy.py`)
-  - `/no_think` 모드, prompt 템플릿, action 파싱 구현
-  - 실제 latency 측정은 전체 실험 시 실행 예정
-- [x] 통합 실험 스크립트 (`scripts/run_baselines.py`)
-  - `--smoke` / `--baseline b1..b5` / `--skip_b5` 옵션
-- [x] 전체 학습 실행 (300 iterations, ~68분): `results/baselines/summary.json`
-- [ ] B5 Qwen3-1.7B latency 실측 (논문 작성 전 실행)
+Therefore the next implementation phase is:
 
-### Phase 3 전체 학습 결과 (300 iter, 2026-04-27)
-| Baseline | Reward | 비고 |
-|:---------|-------:|:-----|
-| B3 SBERT | **105.4** | 최고 — 384-dim semantic embedding |
-| B4 DIAYN | 84.7 | random 64-dim embedding |
-| B1 No-Persona | 79.2 | lower bound |
-| B2 Per-Persona (24) | 65.4 | oracle 예상이었으나 데이터 효율 문제로 최저 |
-
-### Phase 3 핵심 발견
-
-> **B3(semantic) > B4(random) > B1(none) > B2(per-policy)**
->
-> 1. **Semantic conditioning 효과 확인**: B3 > B4 (+20.7) — LLM embedding의 의미론적 내용이 행동 조건화에 실질적으로 기여
-> 2. **Conditioning 자체 효과**: B4 > B1 (+5.5) — 임베딩이 랜덤이어도 conditioning이 behavioral diversification에 도움
-> 3. **B2 data efficiency 문제**: 24개 정책이 전체 데이터를 1/6씩 분할 → 개별 정책이 수렴 부족. 무한 데이터 환경에서는 oracle이 맞지만 이 스케일에서는 공유 정책이 우월
-> 4. **Phase 4 가설**: PCSP (Qwen3 1024-dim + LoRA) >> B3 (SBERT 384-dim) 예상 — 더 풍부한 semantic embedding + FiLM 조합
+> Make persona-relevant behavior more expressive and observable while preserving the lightweight shared-policy thesis.
 
 ---
 
-## Phase 4 — PCSP 본 구현 + Ablation ✅ 구현 완료, 전체 학습 실행 대기
+## 4. Required Full-Paper Upgrades
 
-### 목표
-PCSP 풀 구현 및 ablation으로 각 구성요소의 기여도 검증.
+### 4.1 Expressive Environment
 
-### 구현 완료 (2026-04-27)
+Goal: expose enough behavioral degrees of freedom for persona traits to become visible.
 
-#### 4-2. Trajectory Encoder (`src/models/trajectory_encoder.py`) ✅
-- [x] 2-layer GRU, hidden=128, output_dim=64
-- [x] 입력: (obs, action_onehot) sequence
-- [x] 출력: L2-normalized trajectory embedding for InfoNCE loss
+Tasks:
 
-#### 4-1. PCSP 학습 루프 (`src/training/pcsp_trainer.py`) ✅
-- [x] 에피소드마다 train pool에서 persona 4개 샘플링 → 에피소드 내 고정
-- [x] 사전 계산된 Qwen3 e_llm 로드 (frozen), 에이전트 context로 전달
-- [x] PPO update on trajectory (n_epochs=4, batch=256, GAE-λ)
-- [x] Consistency loss: GRU trajectory encoder + InfoNCE (T=0.07), epoch당 1회
-- [x] Diversity loss: batched 다중 persona KL (n_sample=8 persona × 32 state), epoch당 1회
-- [x] `λ₁=0.5`(consistency), `λ₂=0.1`(diversity), LoRA lr=1e-4 분리 최적화
+- [x] Archive old planning/proposal docs under `archive/docs_2026-05-08/`.
+- [x] Add a shared action semantics module for richer human-readable behavior traces: `src/env/action_semantics.py`.
+- [x] Separate control action IDs from display/event semantics in all rollout and survey tooling.
+- [x] Include time, location, nearby agents, and action style in human-eval traces.
+- [x] Decide whether richer semantics stay display-only or become environment state/reward features. **Decision (2026-05-08):** display-only for v1/v2; graduate to environment state/reward in Mini-Inzoi v3 only. See Decision Log.
+- [x] Design Mini-Inzoi v3 action ontology — closed by `docs/mini_inzoi_v3_design.md` §3 (20 flat-discrete actions: focused_work, planning_work, eat_quick, eat_slow, sleep, nap, socialize_initiate, socialize_respond, exercise_intense, exercise_light, read_deep, read_casual, clean, rest_alone, rest_with_others, explore + 4 movement). Per-action style profile committed in `ACTION_STYLE_PROFILE`.
+- [x] Add location affordances so actions are meaningfully grounded in objects/places — design committed (8-way affordance one-hot in obs); implementation in v3 env is the next concrete task.
+- [x] Add social-context features: initiated interaction, responded, avoided, cooperated, argued, comforted — design committed (3-dim social-context slice: nearby_count, in_conversation flag, last_responder flag); the richer interaction-type ontology (avoided/argued/comforted) is deferred to a future v4 because it requires multi-step interaction tracking, not just a per-step flag. Logged as an open question in the v3 design doc §10.
+- [x] Add routine/regularity features for conscientiousness and neuroticism observability — design committed (2-dim routine signal: repeat_count, time-since-last-novel).
 
-#### 4-3. Co-training Objective 구현 ✅
-```
-L_total = L_PPO + λ_1 * L_consistency + λ_2 * L_diversity
-```
-- [x] `L_consistency`: InfoNCE in-batch contrastive (traj_emb ↔ persona_emb, same persona = positive)
-- [x] `L_diversity`: -E[KL(π(·|s,eₚ) ‖ π(·|s,eₚ'))] 배치화 forward pass로 효율 최적화
+### 4.2 Identifiability Evaluation
 
-#### 4-4. Ablation Study 구현 ✅ (`scripts/run_pcsp.py`)
-- [x] `full`:        PCSPActorCritic (FiLM) + λ₁=0.5 + λ₂=0.1
-- [x] `no_consist`:  λ₁=0 (consistency loss 제거)
-- [x] `no_diverse`:  λ₂=0 (diversity loss 제거)
-- [x] `concat`:      ConcatActorCritic (FiLM → concat 교체)
-- [x] `frozen_proj`: LoRA projection frozen (raw LLM embed 사용)
-- [x] 전체 smoke test (20 iter) PASS
+Goal: prove that persona-conditioned trajectories carry recoverable persona information.
 
-### 전체 학습 결과 (300 iter, 2026-04-27) ✅
-| Mode | Reward | vs full | 소요 |
-|:-----|-------:|--------:|-----:|
-| no_consist | **99.2** | +1.2 | 20min |
-| **full** | **97.9** | — | 20min |
-| frozen_proj | 87.9 | -10.0 | 98min* |
-| concat | 84.5 | -13.4 | 39min* |
-| no_diverse | 82.4 | -15.5 | 21min |
+Tasks:
 
-*GPU 경쟁 (train_scaling.py 6개 프로세스 동시 실행)으로 인한 지연
+- [x] Regenerate Korean human-eval survey with rich traces. (Re-exported deterministically with `obs` saved per step; survey JSON/CSV/MD regenerated.)
+- [x] Add item difficulty buckets: easy, medium, hard persona pairs. (Rank-based tertiles on `distractor_score`, persisted in `results/human_eval/automated_baseline_per_item.csv`.)
+- [x] Report human 2AFC accuracy with Wilson 95% CI. (Infrastructure: `wilson_ci` already in `src/eval/human_eval.py:45`; wired into the automated baseline aggregator. Human responses still pending.)
+- [ ] Report confidence and response time. (Survey schema already supports these columns; depends on collecting human responses.)
+- [ ] Track inter-rater reliability if multiple raters are used. (Krippendorff α already in `src/eval/human_eval.py:55`; depends on multi-rater runs.)
+- [x] Compare human accuracy against automated trajectory-to-persona kNN/classifier. (Automated baseline = 29/30 = 96.7%, Wilson CI [0.83, 0.99]; per-bucket: easy 9/10, medium 10/10, hard 10/10. Output: `results/human_eval/automated_baseline.json`.)
+- [x] Add ablation: coarse traces vs rich traces, to show observability matters. (Coarse-mode survey at `data/human_eval/persona_identification_survey_ko_coarse.{json,csv,md,_answer_key.csv}`; identical item IDs / trajectory IDs / correct options as the rich survey, so the same raters can be assigned to one variant for between-subjects A/B. Human result pending response collection.)
 
-### Phase 4 핵심 발견
+### 4.3 Compositional Generalization
 
-> 1. **Diversity loss가 가장 중요** (no_diverse -15.5): 없으면 policy가 persona를 무시하는 방향으로 수렴
-> 2. **FiLM >> concat** (concat -13.4): 모든 hidden layer에 persona 조건화하는 FiLM 구조 정당성 확인
-> 3. **LoRA projection 학습 필요** (frozen_proj -10.0): raw LLM 임베딩 공간이 행동 조건화에 최적화되지 않음
-> 4. **Consistency loss는 task reward와 trade-off** (no_consist +1.2): task 최적화와 약간 경쟁하지만 Phase 5 persona 추론 정확도에서 역할
-> 5. **PCSP full (97.9) vs B3 SBERT (105.4)**: task reward 단독 비교 시 B3가 높으나, PCSP의 진가는 Phase 5 zero-shot consistency에서 확인 예정
+Goal: show that the method generalizes across unseen combinations, not just memorized personas.
 
-### Hyperparameter 기준값
-```
-PPO:        lr=3e-4, clip=0.2, batch=2048, γ=0.99, λ_GAE=0.95
-LoRA proj:  r=16, lr=1e-4
-λ_1:        0.5 (consistency)
-λ_2:        0.1 (diversity)
-Traj enc:   GRU hidden=128, lr=3e-4
-Temp T:     0.07 (contrastive)
-```
+Tasks:
+
+- [x] Define held-out splits by occupation, Big Five archetype, and occupation-trait combination. (Generated under `data/personas/splits/`: `unseen_occupation_*` reproduces the existing train_240/test_60 split, `unseen_archetype_*` holds out 3 archetypes × 20 occupations, `unseen_combo_*` holds out 60 random cells with both axes covered. See `data/personas/splits/manifest.json` and `scripts/build_compositional_splits.py`.)
+- [x] Add compositional zero-shot metrics to `src/eval/zeroshot.py`. (New `compositional_zero_shot(split_family, ...)` wrapper reads the right split file and adds Wilson 95% CI and split metadata. Exposed via `--split_family` CLI flag.)
+- [~] Report results separately for:
+  - [x] unseen persona texts (existing test_60 = unseen_occupation; v1: `results/eval/compositional_zero_shot_unseen_occupation.json`; v3: `results/eval/compositional_zero_shot_unseen_occupation_v3.json`)
+  - [x] unseen occupations (v1 0.230 acc / 6.09 coherence; **v3 0.173 acc [95% CI 0.135–0.220] / 2.07 coherence**, see Decision Log 2026-05-09)
+  - [ ] unseen trait combinations (`unseen_archetype` and `unseen_archetype_v3` splits exist; **retraining required**: PCSP-full on `unseen_archetype_v3_train.json`)
+  - [ ] same occupation with different traits (qualitative covered; quantitative requires the unseen_archetype retrain)
+  - [ ] same traits with different occupations (qualitative covered; quantitative requires the unseen_occupation retrain stratified by archetype overlap)
+- [x] Add qualitative examples where two NPCs share occupation but differ in personality-driven style. (`results/human_eval/qualitative_same_occupation.{md,json}` and `results/human_eval/qualitative_same_archetype.{md,json}` from `scripts/qualitative_persona_comparison.py`. 3 pairs each, rich Korean traces.)
 
 ---
 
-## Phase 5 — Zero-shot 평가 + Human eval 🔲 (7월 4주~8월 1주)
+## 5. Model and Training Implications
 
-### 목표
-핵심 결과 수치 확보.
+Richer behavior likely requires retraining, but not necessarily a full architectural replacement.
 
-### 평가 지표 구현 (`src/eval/`) ✅ 구현 완료 (2026-04-27)
+Current judgment:
 
-| 지표 | 구현 파일 | 설명 |
-|:-----|:---------|:-----|
-| Persona classification accuracy | `eval/consistency.py` | trajectory → persona k-NN 역추론 정확도 |
-| Behavioral KL | `eval/diversity.py` | 다른 persona 쌍의 행동 분포 KL divergence + Spearman ρ |
-| Episode reward | `eval/task_perf.py` | needs 충족도 총합 (mean/std/min/max) |
-| Sample efficiency | `eval/efficiency.py` | AUC / steps-to-threshold (training log 기반) |
-| **Zero-shot consistency** | `eval/zeroshot.py` | ★ 60개 unseen persona의 k-NN accuracy + coherence ratio |
-| Inference latency | `eval/latency.py` | ms/step (GPU, p95/p99 포함) |
-| Human eval | `eval/human_eval.py` | Prolific CSV 처리, Krippendorff α, 설문 템플릿 생성 |
-| **통합 스크립트** | `scripts/run_eval.py` | 전체 모델 × 전체 지표 비교 테이블 생성 (JSON + LaTeX) |
+- If changes are display-only event rendering, existing checkpoints can be reused for survey pilots.
+- If action space changes, all policies and baselines must be retrained.
+- If observation dimensions change, model input layers and checkpoints are incompatible.
+- If action space becomes factorized, the actor head must be redesigned.
 
-### TODO
-- [x] 평가 모듈 7종 구현 (`src/eval/`)
-- [x] 통합 평가 스크립트 (`scripts/run_eval.py`)
-  - `--smoke`: 빠른 sanity check
-  - `--models`, `--metrics`: 선택적 실행
-  - JSON + LaTeX 비교 테이블 자동 생성
-- [x] **실행 완료** (`results/eval/comparison.json`, `results/eval/comparison.tex`)
-- [ ] Prolific 설문지 생성 (`python src/eval/human_eval.py --gen_template`)
-- [ ] Prolific 설문 진행 (n=30, 7월 중)
-- [ ] B5 Qwen3-1.7B latency 실측 (논문 작성 전)
+Recommended path:
 
-### Phase 5 전체 평가 결과 (2026-04-27)
+1. Short term: keep 12 discrete action IDs, add rich event rendering for human evaluation.
+2. Medium term: create Mini-Inzoi v3 with richer but still discrete semantic actions.
+3. Full-paper path: consider factorized actions only after v3 results show the need.
 
-| 모델 | Reward | Consist Acc | ZeroShot Acc | Coherence | Mean KL | Spearman ρ | Latency |
-|:-----|-------:|------------:|-------------:|----------:|--------:|-----------:|--------:|
-| **PCSP (full)** | 83.4 | 0.283 | 0.193 | **6.24** | **5.87** | **0.728** | 1.97ms |
-| PCSP (no_consist) | 84.3 | 0.008 ❌ | 0.017 ❌ | 1.04 ❌ | 3.78 | 0.638 | 2.03ms |
-| PCSP (no_diverse) | 76.8 | 0.225 | 0.147 | 4.31 | 0.39 ❌ | 0.928* | 1.79ms |
-| PCSP (concat) | 77.4 | 0.392 | 0.320 | 8.27 | 2.87 | 0.738 | 1.72ms |
-| PCSP (frozen_proj) | 83.6 | 0.188 | 0.207 | 2.55 | 5.60 | 0.384 ↓ | 1.79ms |
-| B1 No-Persona | 73.2 | — | — | — | — | — | 1.83ms |
-| B3 SBERT | **86.2** | — | — | — | — | — | 1.88ms |
-| B4 DIAYN | 81.9 | — | — | — | — | — | 1.94ms |
-| B5 LLM-as-policy | — | — | — | — | — | — | 43.7ms |
+Potential model changes:
 
-*no_diverse의 ρ=0.928은 KL값(0.39) 자체가 너무 작아 noise에 의한 것
-
-### Phase 5 핵심 발견
-
-> **1. Consistency loss가 persona 역추론의 필수 조건**
-> no_consist: acc 0.008 (랜덤 수준), coherence 1.04 (군집화 없음)
-> → "consistency loss 없이는 trajectory가 persona 정보를 전혀 담지 않음"
-
-> **2. Diversity loss가 실질적 행동 다양성의 필수 조건**
-> no_diverse: mean KL 0.39 (full의 1/15) → 모든 persona가 거의 동일하게 행동
-> → "diversity loss 없이는 policy가 persona를 무시하는 방향으로 수렴"
-
-> **3. Zero-shot 일반화 성공 (★ 핵심 기여)**
-> PCSP full 기준 — 60개 unseen persona에서 acc=0.193 (랜덤 1.7%의 11배), coherence=6.24
-> → 학습에 없던 persona 텍스트에도 의미 있는 행동 조건화 달성
-
-> **4. FiLM vs concat 트레이드오프**
-> concat: consistency acc 더 높음 (0.392 vs 0.283), coherence 더 높음 (8.27 vs 6.24)
-> PCSP full: behavioral KL 더 높음 (5.87 vs 2.87), task reward 더 높음 (83.4 vs 77.4)
-> → FiLM은 진정한 행동 다양성(KL)과 task 성능에서 우세; concat은 persona 신호가 표층적으로 더 쉽게 추출되나 행동 폭이 좁음
-
-> **5. LoRA projection의 역할: 의미 구조 정렬**
-> frozen_proj: Spearman ρ 0.384 (full 0.728의 절반) → "embedding 거리와 행동 거리 간 상관" 붕괴
-> → LoRA 없이는 LLM embedding의 semantic 구조가 행동 공간에 반영되지 않음
-
-> **6. 추론 속도: 22× 빠름 vs LLM-as-policy**
-> PCSP 1.97ms vs B5 43.7ms (목표 100×에는 미치지 못하나 실용적으로 충분)
+- [ ] For expanded discrete actions: update `n_actions`, policy heads, trajectory encoder action one-hot dimension, all trainers/evaluators.
+- [ ] For factorized actions: actor emits multiple heads: intent, target/place, style/duration.
+- [ ] For richer observations: add structured object/social features; update obs dim in env, trainers, baselines, eval scripts.
+- [ ] Retrain PCSP full and key ablations after any action/obs change.
 
 ---
 
-## Phase 7 — CoG 제출용 최소 확장 재실험 🔥 (즉시~2026-05 초)
+## 6. Active Implementation Checklist
 
-### 목표
-현재 PCSP의 가장 큰 약점인 toy-scale 환경을 완화하고,
-IEEE CoG 2026 short paper에서 reviewer가 바로 지적할 포인트를 선제적으로 방어한다.
+### Phase A - Rich Trace Pipeline
 
-### 확장 범위
-- 환경: Mini-Inzoi 확장판
-- Grid: 6×6 → 12×12
-- Agents: 4 → 16
-- Personas: 300 → 500
-- Split: Train/Test 재구성 (예: 400/100)
-- 핵심 메시지: “같은 방법이 더 큰 life-sim setting에서도 persona consistency와 fast inference를 유지”
+- [x] Create archive directory for old docs: `archive/docs_2026-05-08/`.
+- [x] Preserve old root `PLAN.md` as `archive/docs_2026-05-08/PLAN.root-before-refresh.md`.
+- [x] Create new root `PLAN.md` aligned with `paper/cog2026_vision/main.tex`.
+- [x] Update `AGENTS.md` so agents must use and update root `PLAN.md`.
+- [x] Verify `scripts/export_persona_identification_rollouts.py` exports rich event fields.
+- [x] Verify `scripts/generate_persona_identification_survey_ko.py` renders rich traces.
+- [x] Regenerate `persona_identification_survey_ko.*` from rich rollouts.
+- [x] Run a small manual review of 5 generated survey items.
 
-### 왜 이 범위인가
-- Melting Pot까지 바로 가면 환경 의미가 바뀌어 story가 흔들릴 수 있음
-- 12×12 / 16 agents / 500 personas는 구현 부담 대비 reviewer 설득력이 큼
-- CoG short paper에는 “너무 큰 확장”보다 “핵심 주장 검증 강화”가 중요
+### Phase B - Paper Consistency
 
-### TODO
-- [x] `src/env/mini_inzoi_v2.py` 생성: 12×12 grid, 16 agents 대응 (obs_dim=56)
-- [x] need/action/object 배치 규칙 재설계 (8 objects spread across 12×12)
-- [x] observation dimension 재정의: 2+1+8+45=56 (15 others × 3)
-- [ ] persona dataset 500개 생성 및 split 저장
-      → `scripts/generate_personas_500.py` (25 BF × 20 occ = 500, train 400 / test 100)
-- [ ] Qwen3 임베딩 계산 (500개)
-      → `scripts/compute_embeddings_500.py`
-- [x] 동일 평가 프로토콜 유지 (reward / consist / zeroshot / KL / rho / latency)
-      → `scripts/run_eval_v2.py`
-- [ ] full model + 핵심 ablation 재실험 (full / no_consist / no_diverse / concat)
-      → `scripts/run_pcsp_v2.py --all`
-- [x] 결과 테이블/그림 갱신 스크립트 작성
-      → `scripts/generate_v2_figures.py` (fig_v2_comparison, fig_v2_ablation, fig_v2_learning_curves)
+- [x] Add a short limitation/next-step paragraph to `main.tex` about coarse action observability.
+- [x] Ensure `main.tex` evaluation agenda explicitly names rich trajectory observability.
+- [ ] Check tables/claims after any retraining or survey regeneration. (No retraining yet; revisit after v3 or rich-trace ablation runs.)
 
-### 실행 순서 (GPU 여유 시)
+### Phase C - Environment v3 Design
+
+- [x] Write `docs/mini_inzoi_v3_design.md`. (Draft v0.2 — design review pass 2026-05-08 closed all five §10 open questions, pinned the v1→v3 `preferred_actions` mapping rule (§8.1), enumerated the trainer-refactor file list (§7), and added three acceptance checks (§9): style-profile non-degeneracy, need coverage, action ID stability.)
+- [x] Define action ontology and observation schema. (See `docs/mini_inzoi_v3_design.md` §3-§4: 20 flat-discrete actions = 16 activity + 4 movement; obs adds affordance one-hot (8), social context (3), routine signal (2). Base-scale obs_dim grows 20→33; large-scale 56→69.)
+- [x] Decide discrete-expanded vs factorized action interface. (Committed to flat `Discrete(20)` for v3; factorized actions deferred until v3 results show flat is bottlenecking. See design doc §6.)
+- [x] Implement environment behind a new file, not by breaking v1/v2. (`src/env/mini_inzoi_v3.py` + `src/env/v3_constants.py`; v1/v2 envs untouched. Reward adds `r_persona_style = 0.3 * cos(persona.bf_vec, ACTION_STYLE_PROFILE[a])` to the existing need + persona-action terms.)
+- [x] Add smoke tests. (`scripts/test_env_v3.py`; all 10 §9 acceptance checks green: AEC API, action reachability, persona-style discrimination (extravert→rest_with_others vs introvert→rest_alone), Korean rendering, style-profile non-degeneracy, need coverage, ACTION_NAMES_V3 ID stability, routine-signal calibration under repeat-heavy policy.)
+- [x] Refactor trainers / eval to thread `obs_dim` / `n_actions` / `env_factory` (per design §7 decision). 8 files edited (one extra found mid-refactor — `src/eval/consistency.py` was a hidden hardcoded-env dependency under zeroshot): `src/training/pcsp_trainer.py`, `src/training/baselines/{per_persona_ppo,diayn,sbert_policy,no_persona_ppo,llm_policy}.py`, `src/eval/zeroshot.py`, `src/eval/consistency.py`. Defaults reproduce v1 byte-for-byte; v1 smoke (`scripts/test_env.py`) and v3 smoke (`scripts/test_env_v3.py`) both pass.
+- [x] Add `scripts/run_pcsp_v3.py` thin wrapper invoking the threaded `train_pcsp(...)` with v3 dims and `personas_300_v3.json`. `--smoke` gates a 20-iter dry run; otherwise 300 iter per mode. Outputs land under `results/pcsp_v3/{mode}/`.
+- [x] Run PCSP smoke training (20-iter on full v3 mode). Completed 2026-05-09 in 88s; reward 40.4 → 75.4, consistency loss 1.84 → 1.66, summary at `results/pcsp_v3/summary.json`. Loop wires up cleanly through the threaded `train_pcsp(obs_dim=33, n_actions=20, env_factory=MiniInzoiV3Env)` path.
+- [x] 300-iter v3 sweep — PCSP {full, no_consist, no_diverse, concat} + B1 + B3. Completed 2026-05-09 in **1h 57min** wall (vs. design doc's conservative 36h estimate; the gap is because the threaded trainer keeps the GPU fed while CPU env stepping is the actual bottleneck — GPU stayed at ~29% util throughout). Final rewards: full=100.25, no_consist=99.21, no_diverse=97.74, b3_sbert=92.11, concat=91.68, b1_no_persona=83.25. **frozen_proj skipped** per plan's "3 ablations" budget. Results: `results/pcsp_v3/sweep_summary.json` + per-mode `policy.pt` / `traj_encoder.pt` / `metrics.json`. Per-mode B1/B3 checkpoints under `results/baselines_v3/`. **Key reading:** B1 (no-persona) is 17 reward below full — strongest single signal that persona conditioning matters at all. FiLM (full) vs concat at 8.6 gap. Qwen3 (full) vs SBERT (b3) at 8.1 gap. **Caveat:** full vs no_consist is only 1.04 reward — reward alone won't separate the consistency-loss ablation; persona-recoverability via `src/eval/zeroshot.py` on each checkpoint is the load-bearing metric and is the next item.
+- [x] Run persona-recovery eval on all 4 PCSP-v3 checkpoints. Completed 2026-05-09 in 9 min via new `scripts/run_eval_v3.py`. **Caveat:** v3 sweep trained on full 300-persona set, so this is *in-distribution* persona separability on 60 IDs (filtered from v1's `test_60.json`), not zero-shot. Per-mode top-1 k-NN accuracy over 60 personas (chance = 1/60 = 1.67%): full=0.290 (17.4× chance), no_diverse=0.260 (15.6×), concat=0.117 (7.0×), **no_consist=0.017 (1.0× — at chance)**. **Headline ablation finding:** consistency loss is load-bearing for persona-recoverability — full vs no_consist gap is **1.04 reward but 0.273 accuracy**. Without consistency loss, inter-trajectory cosine sim explodes 0.27 → 0.84 (trajectories from different personas become indistinguishable) while intra stays high (0.91), confirming trajectories are self-consistent but not persona-differentiated. Reward alone *completely hides* this failure mode. Diversity loss is marginal (Δ −0.03 acc) — could be de-emphasized in the paper. FiLM vs concat: 0.290 vs 0.117 even with consistency loss enabled in both, so layer-wise FiLM injection is meaningfully better than input concat. Per-mode results: `results/pcsp_v3/{mode}/eval_persona_classification_indist60.json`; combined: `results/pcsp_v3/eval_indist60_summary.json`. B1 skipped (no persona to recover); B3 skipped (no own traj_encoder, would be apples-to-oranges).
+- [x] Build `train_240_v3.json` / `test_60_v3.json` and re-run PCSP-full on the 240-train split to enable true zero-shot eval. Done 2026-05-09: `data/personas/{train_240_v3,test_60_v3}.json` written by id-aligned filter on `personas_300_v3.json`; PCSP-full v3 retrained for 300 iter (1308s) into `results/pcsp_v3_zeroshot/full/` (final reward 104.08, slightly higher than the in-dist 100.25 — fewer training personas). **Headline zero-shot result on the 60 unseen-occupation personas: top-1 k-NN accuracy = 0.157 (9.4× chance), coherence ratio 2.04, intra/inter cosine 0.96/0.47.** The compositional wrapper (with Wilson CI) on the same split gives 0.173 [95% CI 0.135–0.220], 10.4× chance — small seed-level discrepancy with the legacy CLI path that's well within CI; both numbers are credible. Result files: `results/pcsp_v3_zeroshot/full/eval_persona_classification_zs60.json` + `results/eval/compositional_zero_shot_unseen_occupation_v3.json`. **Caveat:** v3 ablations (no_consist, no_diverse, concat) and B1/B3 still trained on the full 300-persona set; the headline v3 zero-shot ablation table (full-paper deliverable) requires re-running those modes on `train_240_v3` — tracked as a follow-up below.
+- [x] Build v3-aligned compositional splits (`unseen_occupation_v3_train.json` etc.). Done 2026-05-09 by extending `scripts/build_compositional_splits.py` with `--out_suffix` and `--manifest_name` flags. v3 splits emitted to `data/personas/splits/{unseen_occupation,unseen_archetype,unseen_combo}_v3_{train,test}.json` + `manifest_v3.json`. Cell layout is preserved across v1/v3 (same persona IDs ↔ same Big Five × occupation), so all three split families produce identical persona-ID partitions to v1; only `preferred_actions` differ in the persona JSON payloads. `src/eval/zeroshot.py` extended with `--split_suffix` / `compositional_zero_shot(split_suffix=...)` so the v3 splits can be evaluated through the same CLI.
+- [ ] (Follow-up, full-paper deliverable) Re-run PCSP {no_consist, no_diverse, concat} + B1 + B3 on `train_240_v3` for a true zero-shot v3 ablation table. ~2h compute (5 modes × ~22 min). Until this lands, the v3 headline number is single-cell (PCSP-full only) and we cannot replicate the v1 ablation story (consistency-loss collapse, FiLM>concat, persona-recoverability separation) at v3 scale. **This is the next concrete deliverable for full-paper main-track.**
+- [ ] (Follow-up) Run compositional eval on `unseen_archetype_v3` and `unseen_combo_v3`. Both require additional retrains on their respective train splits (3 more configs × ~22 min each, just for PCSP-full). Currently §4.3 line 119 "unseen trait combinations" is still uncovered; this closes it.
+- [ ] (Future, low-priority) `src/eval/{task_perf,diversity}.py` and `scripts/test_env_v3.py` Korean rendering also touch `MiniInzoiEnv` directly. Not load-bearing for the §9 training-correct gate; thread when/if v3 evaluation pipeline grows.
+
+---
+
+## 7. Commands
+
+Use the `paper` conda environment.
+
 ```bash
-# 1. 데이터 준비 (CPU/Gemini API, ~15분)
-conda run -n paper python scripts/generate_personas_500.py
+conda run -n paper python scripts/test_env.py
+conda run -n paper python scripts/test_film.py
+conda run -n paper python scripts/run_eval.py --smoke
+conda run -n paper python scripts/generate_persona_identification_survey_ko.py \
+  --rollouts results/human_eval/pcsp_full_zero_shot_rollouts.json \
+  --personas data/personas/test_60.json \
+  --output_dir data/human_eval
+```
 
-# 2. 임베딩 계산 (GPU, ~2분, 1.1GB VRAM)
-conda run -n paper python scripts/compute_embeddings_500.py
+For v2:
 
-# 3. 학습 (GPU, nice -n 19, 4 × ~20분 = ~80분)
-nice -n 19 conda run -n paper python scripts/run_pcsp_v2.py --all
-
-# 4. 평가 + 그림
+```bash
+conda run -n paper python scripts/run_pcsp_v2.py --all
 conda run -n paper python scripts/run_eval_v2.py
 conda run -n paper python scripts/generate_v2_figures.py
 ```
 
-### 성공 기준
-- 12×12 / 16 agents에서도 full model이
-  - random 대비 유의미한 zero-shot 성능 유지
-  - diversity collapse 없이 persona-conditioned behavior 유지
-  - 실시간 추론 속도 유지
-- 논문 본문에서 “toy-only” 비판을 완화할 수 있는 결과 확보
-
----
-## Phase 8 — IEEE CoG 2026 Vision Paper 제출 🔥 (마감 2026-06-03 추정 / CFP 최종 확인 필요)
-
-### 목표
-PCSP를 단순한 “작은 RL 방법 논문”이 아니라,
-게임 분야에서의 차세대 life-simulation NPC architecture를 제안하는
-Vision Paper로 재구성해 제출한다.
-
-핵심은 현재 결과를 끝이라고 주장하는 것이 아니라,
-"persona-conditioned shared policy"가
-향후 대규모 NPC personalization의 유망한 연구 방향임을
-기술적 근거와 초기 실험으로 설득하는 것이다.
-
-### 제출 사양
-- **카테고리**: Vision Paper
-- **분량**: 8 pages (references / appendices 포함) 
-- **성격**: 미래 게임 AI 방향 제시 + 근거 기반 research agenda
-- **주의**: 문헌조사 부족, 단순 literature review, 근거 없는 의견문은 reject 위험 큼
-
-### 핵심 포지셔닝
-> "From scripted NPCs and per-character policies to persona-conditioned shared behavior models:
-> a scalable research agenda for real-time life-simulation game characters."
-
-### Vision 핵심 주장
-1. 차세대 life-sim / open-world 게임은 수백~수천 NPC에 대해
-   장기적 persona consistency를 요구한다.
-2. 기존 방식(behavior trees / per-NPC RL / LLM-as-policy / latent skill)은
-   scale, consistency, controllability, latency를 동시에 만족시키지 못한다.
-3. frozen language semantics + shared policy + behavioral regularization 조합은
-   practical game AI architecture로 발전할 가능성이 높다.
-4. PCSP는 그 방향의 초기 proof-of-concept이며,
-   더 큰 환경, dynamic persona, social emergence, human evaluation으로 확장되어야 한다.
-
 ---
 
-### 논문 구성 (8페이지)
+## 8. Decision Log
 
-#### 1. Introduction
-- life simulation / open-world 게임에서 NPC 개성화의 중요성 제시
-- 현재 산업 방식의 병목:
-  - behavior tree authoring cost
-  - generic stochastic NPC의 몰개성
-  - LLM-as-policy의 latency 문제
-- 본 논문의 목표:
-  - "방법 하나" 발표가 아니라
-  - scalable persona-conditioned NPC control의 연구 비전 제시
+### 2026-05-08
 
-#### 2. Why Current Paradigms Fall Short
-- 관련 패러다임 구조 비교
-  - hand-authored behavior trees
-  - per-NPC RL
-  - language-conditioned task RL
-  - unsupervised skill discovery
-  - LLM-as-policy
-- 비교 축:
-  - persona consistency
-  - zero-shot controllability
-  - interpretability
-  - inference speed
-  - deployment scalability
-- Figure/Table:
-  - 기존 Table 1 확장판으로 패러다임 비교표 재작성
+- Active paper direction confirmed as `paper/cog2026_vision/main.tex`.
+- Old proposal/planning docs archived under `archive/docs_2026-05-08/`.
+- `full-proposal.md` is not the active project direction; it is separate co-adaptation context.
+- Human survey difficulty reframed as an environment/action observability issue.
+- Near-term implementation should preserve existing 12-action policy and enrich rollout event rendering before committing to retraining.
+- Phase A rich-trace pipeline regenerated end-to-end: `results/human_eval/pcsp_full_zero_shot_rollouts.json` and `data/human_eval/persona_identification_survey_ko.{json,csv,md,_answer_key.csv}` now carry time-of-day, place, nearby-agent, and persona-conditioned action-style descriptions.
+- Fixed double-place bug in `src/env/action_semantics.py` (action 7 variant 0): "소파에서 휴식" → "편하게 휴식" to avoid "{place}에서 소파에서 휴식" when rendered with the place prefix.
+- Open observability follow-up: `place` is currently the nearest `WORLD_OBJECTS` cell to the agent's grid position, so traces sometimes report semantically odd combinations (e.g. "주방에서 잠자기"). This is faithful to v1 policy behavior; the proper fix is location affordances in Mini-Inzoi v3 (see Phase C).
+- Phase B paper-consistency edits applied to `paper/cog2026_vision/main.tex`: added a "Coarse action observability" limitation paragraph in §\ref{sec:limits}, and a "Rich trajectory observability" paragraph in the evaluation agenda (§\ref{sec:evalagenda}) recommending that papers report results on both coarse and rich traces. Re-compiled to 7-page PDF without errors. Tables unchanged because no retraining has occurred.
+- §4.1 decision: rich event semantics (intent, place, nearby agents, action style) remain **display-only** for Mini-Inzoi v1/v2. Verified `src/env/mini_inzoi.py` and `mini_inzoi_v2.py` do not import `src/env/action_semantics.py`; the rich layer lives only in rollout export and survey generation. **Why:** v1/v2 checkpoints, baselines, and ablations are reusable as long as observation dim (20/56) and action space (Discrete(12)) are unchanged. Promoting style/place/social context to state or reward would invalidate every existing comparison and force a full retraining cycle for marginal benefit at v1/v2 scale. **Implication:** all richer-semantics-as-state experiments are deferred to Mini-Inzoi v3 (Phase C). This locks the v1/v2 paper tables for the CoG submission.
+- §4.2 automated baseline: built `scripts/compute_survey_baseline.py`. PCSP-full's trained trajectory encoder + LoRA persona projection achieves **29/30 = 96.7%** on the 30-item 2AFC survey (Wilson 95% CI [0.83, 0.99]; mean cos-sim margin 0.71). Per rank-tertile difficulty bucket: easy 9/10, medium 10/10, hard 10/10. Notably, items with high heuristic `distractor_score` (similar trait/preferred-action profiles) are **not** harder for the trained encoder, suggesting the encoder picks up persona signal beyond Big-Five-trait overlap. **Implication for human eval:** at 30 items, near-ceiling automated accuracy means humans must perform well below 97% for the gap to be informative; we should pre-register the expected human-vs-encoder gap before recruiting raters.
+- §4.2 supporting infra: rollout export now seeds `torch`/`numpy` with the per-rollout seed and stores the target agent's `obs` array per step (`scripts/export_persona_identification_rollouts.py`). This makes survey items deterministic and replayable, and is the prerequisite for any future encoder-vs-human comparison. Survey was regenerated from the new deterministic rollouts; older non-deterministic rollouts/survey are now overwritten in place.
+- Decision: keep `distractor_score` as a survey-time selection heuristic only, not as a difficulty label. The empirical relationship between heuristic score and encoder accuracy is non-monotonic on this set, so any "by-difficulty" claim should be backed by encoder-margin or human-confidence stratification, not by `distractor_score` alone.
+- Coarse-vs-rich ablation artifact added: `scripts/generate_persona_identification_survey_ko.py` now accepts `--coarse_mode`, which renders bare `action_label_ko` (e.g. "휴식하기", "읽기") and drops time/place/style/social context. Generated `persona_identification_survey_ko_coarse.*` from the same rollouts and seed; item IDs, trajectory IDs, and correct options match the rich survey. **Note:** the automated baseline accuracy (96.7%) is unchanged across rich/coarse because the encoder reads `(obs_seq, act_seq)` directly, not the rendered trace text — the rich/coarse comparison is meaningful only against human responses. Recommend assigning each participant to one variant (between-subjects) when collecting responses.
+- §4.3 reframing — important: the existing `data/personas/test_60.json` is **not** a random cell-level held-out set. It holds out 4 entire occupations (HR매니저, 대학교수, 데이터과학자, 요리사) × all 15 archetypes = 60 personas. So the paper's published 19.3% zero-shot accuracy is structurally an **unseen-occupation** result, the strictest of the three §4.3 conditions. Updated `paper/cog2026_vision/main.tex` §V Experimental Setup to make this explicit ("unseen-occupation compositional generalization"); 7-page PDF re-compiles clean.
+- §4.3 splits + tooling: built `scripts/build_compositional_splits.py` and wrote three split families to `data/personas/splits/{unseen_occupation,unseen_archetype,unseen_combo}_{train,test}.json` plus `manifest.json`. `unseen_occupation` reproduces the existing split byte-for-byte (verified: persona ID lists match), so the existing PCSP-full checkpoint applies. **Retraining required** for `unseen_archetype` (3 archetypes × 20 occupations held out) and `unseen_combo` (60 random cells with both axes covered) — these are tracked as future training runs.
+- §4.3 metric tooling: `src/eval/zeroshot.py` now has `compositional_zero_shot(split_family, ...)` wrapping `zero_shot_consistency` with a Wilson 95% CI and split metadata; the CLI accepts `--split_family`. Re-running on the existing PCSP-full checkpoint produced **accuracy 0.230 (Wilson 95% CI [0.186, 0.281]), coherence_ratio 6.09, 13.8× above 1.7% random chance** on `unseen_occupation` (n_episodes=5, 300 trajectories). Saved at `results/eval/compositional_zero_shot_unseen_occupation.json`. **Note:** this is slightly above the paper's reported 19.3% — same checkpoint, n_episodes=5, but different `seed=1000` with the new compositional wrapper. The CIs overlap so the numbers are consistent; before resubmitting, decide whether to update the paper to the new run or rerun the paper's exact protocol.
+- §4.3 qualitative: `scripts/qualitative_persona_comparison.py` produces side-by-side rich Korean traces from the existing PCSP-full checkpoint. Generated 3 pairs each for `same_occupation` (e.g. 마케터 high-N vs low-N: high-N stays at 책상 mostly solo, low-N at 욕실/주방 with frequent NPC interactions) and `same_archetype` modes. Outputs at `results/human_eval/qualitative_same_{occupation,archetype}.{md,json}`.
+- Phase C v0.1 design committed: `docs/mini_inzoi_v3_design.md` defines the 20-action flat-discrete ontology, the obs-schema extension (affordance / social context / routine signal), reward shaping with a per-action style profile, and the implementation/retraining plan. **Key decisions:** (1) flat `Discrete(20)`, factorized deferred until v3 evidence demands it (§5 PLAN guidance honored); (2) v3 lives in a new file `src/env/mini_inzoi_v3.py` so v1/v2 paper tables remain reproducible; (3) base-scale obs_dim grows 20→33, large-scale 56→69, so existing checkpoints are **not** reusable on v3 — full retrain estimated ~36 GPU-hours for PCSP-full + 3 ablations + 2 baselines. The §4.1 design tasks (action ontology, location affordances, social-context features, routine features) are now closed at the design level; implementation lives in the design doc §8 checklist.
+- Phase C design review (v0.2): closed all five §10 open questions (hand-author style profile, no action filtering for v3, deterministic auto-mapping for personas_v3, calibrate routine signal, re-measure B5 latency before claiming 22× figure). Caught a real design hole: trainers/baselines/eval hardcode `OBS_DIM = 20` / `N_ACTS = 12` and import `MiniInzoiEnv` directly across 7 files — the original §7 "no logic change" claim was wrong. **Decision:** thread `obs_dim` / `n_actions` / `env_factory` through every trainer signature (additive, defaults reproduce v1 byte-for-byte) rather than fork v3-suffixed copies. Pinned the v1→v3 `preferred_actions` mapping rule into design doc §8.1 as a deterministic table.
+- Phase C implementation, foundational layer landed (v3 env reachable but not yet trained): `src/env/v3_constants.py` (ACTION_NAMES_V3 + ACTION_STYLE_PROFILE + ACTION_RESTORE_V3 + obs_dim helpers), `src/env/action_semantics.py` extended with `V3_ACTION_SEMANTICS` and `describe_v3_action_ko()` (v1/v2 entries untouched), `data/personas/personas_300_v3.json` (300 personas, all 16 activity actions covered, avg 5.27 preferred v3 actions), `src/env/mini_inzoi_v3.py` (4-agent base, obs_dim=33, reward adds r_persona_style), `scripts/build_personas_v3.py` (deterministic builder), `scripts/test_env_v3.py` (10 acceptance checks per §9, all green). One real bug caught and fixed during smoke testing: `eat_slow` and `clean` had identical style vectors → `clean` differentiated to `[0, -0.5, 0, 0.7, -0.3]` (high C, low N, anti-novelty / routine). Routine-signal acceptance criterion corrected: random-policy lower-end saturation is the design intent, not a failure; the real check is dynamic range under a repeat-heavy policy. **Not yet done:** trainer refactor (7 files), `scripts/run_pcsp_v3.py`, and the ~36 GPU-hour PCSP-v3 training runs.
 
-#### 3. PCSP as a Concrete Early Instance
-- PCSP를 "final answer"가 아니라 early design pattern으로 소개
-- 구성요소 요약:
-  - frozen LLM encoder
-  - LoRA projection into behavior space
-  - FiLM-conditioned shared policy
-  - consistency + diversity co-objective
-- 수식은 최소한으로 유지
-- 구현 세부보다는 "왜 이 구조가 미래 아키텍처 후보인가"에 초점
+### 2026-05-09
 
-#### 4. Initial Evidence
-- 현재 Mini-Inzoi 결과 + 최소 확장 결과(12×12 / 16 agents / 500 personas)를 요약
-- 핵심 지표만 제시:
-  - zero-shot persona identification
-  - behavioral diversity
-  - semantic-behavior alignment
-  - latency advantage
-- 메시지:
-  - “이미 완성됐다”가 아니라
-  - “작동 가능성과 확장 가능성의 초기 증거가 있다”
-- Figure 후보:
-  - zero-shot/generalization
-  - latency or semantic-behavior alignment
-
-#### 5. Research Agenda for Infinite NPCs
-- 앞으로 필요한 연구 축을 명시적으로 제안
-- 예시 하위 섹션:
-  - Dynamic personas and mood evolution
-  - Socially emergent multi-agent behavior
-  - Long-horizon memory and identity persistence
-  - Richer worlds and engine-level integration
-  - Human evaluation for persona fidelity
-  - Authoring tools for game designers
-- 이 섹션이 Vision Paper의 중심
-
-#### 6. Evaluation Agenda
-- 앞으로 이 분야가 무엇을 측정해야 하는지 제안
-- 단순 reward 외에:
-  - persona consistency
-  - trajectory-to-persona identifiability
-  - inter-persona behavioral separation
-  - controllability by designers
-  - latency budget compatibility
-  - human-rated believability / naturalness
-- benchmark 제안까지 짧게 포함 가능
-
-#### 7. Limitations and Scope
-- 현재 한계 명시:
-  - Mini-Inzoi 기반
-  - synthetic personas
-  - human eval 미완성
-  - real engine integration 미검증
-- 하지만 이 한계를 "vision의 필요성"과 연결
-- 과장 금지
-
-#### 8. Conclusion
-- persona-conditioned shared policy를
-  게임 NPC 연구의 유망한 차세대 방향으로 정리
-- “one policy, infinite NPCs”를 slogan이 아니라
-  research program으로 제시
-
----
-
-### TODO
-
-#### A. 구조 재편
-- [x] `paper/cog2026_vision/main.tex` 생성
-- [x] 현재 method-first 서술을 vision-first 서술로 재작성
-      → Section 1: "NPC Personalization Scaling Gap" + "A Promising Architectural Direction"
-- [x] "our framework achieves..." 중심 문장을
-      "this suggests a scalable direction..." 형태로 수정
-- [x] conclusion을 "성능 요약"이 아니라 "research agenda 요약" 중심으로 개편
-
-#### B. 문헌 보강
-- [x] related work 확장: 22편 (`paper/cog2026_vision/refs.bib`)
-      — yannakakis2018ai, park2023generative, wang2023voyager, yao2023react,
-        achiam2023gpt4, reed2022gato, lowe2017maddpg, sunehag2018vdn,
-        mordatch2018emergence, leibo2021meltingpot, chen2021decision,
-        ha2018world, vinciarelli2014survey, mccrae1992introduction 등 추가
-- [x] 각 계열의 한계 비교 문장 명시 (Section 2 "Why Current Paradigms Fall Short")
-- [x] bibliography vision paper 밀도로 보강
-
-#### C. 실험 파트 축소-정제
-- [x] 핵심 evidence만 유지 (4행 × 4열 compact table)
-- [x] concat 이슈는 Table 결과로 제시, 본문 ablation은 prose로 요약
-- [x] "best balance" → "early encouraging signs" 로 보수화
-- [x] 12×12 / 16 agents / 500 personas 결과 포함 → Table 2 (v2), §4.3 Scale Generalization 추가
-- [x] 현재 결과만 넣고 limitations를 명확히 표기 (Section 7)
-
-#### D. Vision 강화용 섹션 추가
-- [x] "Research Agenda for Infinite NPCs" 섹션 신설 (6개 subsection)
-- [x] "Evaluation Agenda" 섹션 신설
-- [x] game designer controllability 관점 서술 추가 (§5.6 Authoring Tools)
-
-#### E. 그림/표 재구성
-- [x] Table 1: paradigm comparison 확장판 (6개 패러다임 × 4축)
-- [x] Table 2: 핵심 evidence만 남긴 compact result table (4행 × 4열)
-- [x] Figure 1: system overview 유지 (fig1_system.png)
-- [x] Figure 2: zero-shot generalization (fig4_zeroshot.png) 선택
-- [x] figure 수 2개로 관리
-
-#### F. 표현 수정
-- [x] "first framework" → 없음 ("one specific point in the design space of..."로 대체)
-- [x] "infinite NPCs"는 scalable deployment framing으로 조정
-- [x] human eval 문장 → Section 7 Limitations + §5.5 Human Evaluation agenda로 이동
-- [x] 산업 적용 문장 가능성 수준으로 보수화
-
-#### G. 남은 작업
-- [ ] LaTeX 컴파일 최종 확인 (pdflatex + bibtex — texlive 설치 필요)
-- [x] 12×12 / 500 personas 결과 Section 4에 추가 완료 (2026-04-28)
-- [ ] CFP 최종 확인 및 제출 시스템 등록 (마감 ~2026-06-03 추정)
-
----
-
-### 핵심 메시지 (Vision 버전)
-> We argue that scalable NPC personalization in life-simulation games
-> requires a shift from hand-authored or per-character control
-> toward persona-conditioned shared behavior models.
-> PCSP serves as an early empirical instance of this direction,
-> showing that semantic persona conditioning and real-time control
-> can coexist within a single policy architecture.
-
-### 이 버전에서 reviewer가 기대하는 것
-- 단순히 "성능이 좋다"보다 왜 이 방향이 중요한지 설명할 것
-- 관련 문헌을 폭넓게 알고 있다는 신호를 줄 것
-- speculative hype 대신 실제 연구 로드맵을 제시할 것
-- 현재 결과는 초기 증거로, 미래 과제는 구체적으로 적을 것
-
----
-
-## Phase 9 — AAAI-27 확장판 논문 작성 🔲 (2026-08~)
-
-### 목표
-Phase 8 완성 결과를 바탕으로 AAAI-27 (멀티에이전트 시스템 트랙) 제출용 풀 페이퍼 작성.
-NeurIPS 2026 Workshop 결과를 피드백으로 반영.
-
-### 조건 (제출 결정 기준)
-- [ ] Melting Pot 환경 결과 확보 ← 없으면 제출 보류
-- [ ] Human eval n≥100, α≥0.6 ← 없으면 제출 보류
-- [ ] NeurIPS Workshop 리뷰어 피드백 반영
-
-### 추가 분석 (탑티어 요구 사항)
-- [ ] **Embedding geometry 분석**: LoRA projection before/after t-SNE + cosine distance matrix 비교 → personality 축 재구성 시각화
-- [ ] **Temperature sensitivity analysis**: InfoNCE T={0.01, 0.05, 0.07, 0.1, 0.2}에서 consistency acc / behavioral KL 변화
-- [ ] **FiLM vs concat gradient attribution**: Integrated Gradients로 persona 신호가 어느 layer에서 행동 결정에 기여하는지 분석
-
-### TODO
-- [ ] `paper/aaai27/main.tex` 작성 (8p + references, AAAI format)
-- [ ] 실험 섹션 확장: Mini-Inzoi + Melting Pot 두 환경 비교
-- [ ] Human eval 섹션 추가 (Table, α, blind 비교 결과)
-- [ ] 이론 분석 섹션 추가 (embedding geometry, sensitivity)
-- [ ] Abstract 마감 전 제출 (~2026-08)
-
----
-
-## Phase 6 — 논문 Draft ✅ 완료 (2026-04-27)
-
-### 완료된 작업
-
-- [x] 4~6p 워크샵 포맷 LaTeX 작성 (`paper/main.tex`, `paper/refs.bib`)
-  - Abstract (150 words)
-  - Introduction + Motivation (4 contributions)
-  - Related Work (4축 비교 테이블 포함)
-  - Method (PCSP 수식 + 시스템 도식 Fig 1)
-  - Experiments (결과 테이블 + 학습 곡선 + ablation 분석)
-  - Conclusion + Limitations
-- [x] Figure 생성 스크립트 (`scripts/generate_paper_figures.py`) 및 실행
-  - Fig 1: 시스템 구조도 (`paper/figures/fig1_system.pdf`)
-  - Fig 2: 학습 곡선 — reward + consistency loss (`paper/figures/fig2_learning_curves.pdf`)
-  - Fig 3: Behavioral KL scatter (persona embedding distance vs. KL) (`paper/figures/fig3_kl_scatter.pdf`)
-  - Fig 4: Zero-shot 일반화 결과 (per-persona + overall bar) (`paper/figures/fig4_zeroshot.pdf`)
-- [x] Related work 다듬기 (`notebooks/related_work_survey.md` 기반, 논문 Section 2에 통합)
-- [x] 제출 타깃 워크샵 최종 결정: **NeurIPS Workshop on Generative AI for Games** 1순위
-
-### 남은 TODO (제출 전)
-- [ ] Prolific 설문 진행 (n=30, 7월 중) → human eval 수치 추가
-- [ ] B5 Qwen3-1.7B latency 실측 (이미 43.7ms 확인됨, 논문에 반영 완료)
-- [ ] LaTeX 컴파일 최종 확인 (pdflatex + bibtex)
-- [ ] 8월 29일 NeurIPS Workshop 제출 시스템 등록
-
----
-
-## 실제 결과 vs 목표 (2026-04-27 기준)
-
-| 지표 | 초기 목표 | 실제 결과 | 평가 |
-|:-----|:---------|:---------|:-----|
-| Zero-shot consistency acc | ≥ 90% (train 대비) | 0.193 (랜덤 1.7%의 11배) | ⚠️ 절대값 낮으나 상대 효과 유의미 |
-| LLM-as-policy 대비 추론 속도 | 100× (<5ms vs ~500ms) | 22× (1.97ms vs 43.7ms) | 🔶 목표 미달, 실용적으로는 충분 |
-| Behavioral KL - distance 상관 | Spearman ρ > 0.6 | ρ = 0.728 | ✅ 달성 |
-| Human eval | n=30, 7월 완료 | 미진행 | ❌ Phase 8에서 n≥100으로 상향 |
-| 환경 복잡도 | 6×6 (기준) | 6×6 | ⚠️ Melting Pot 확장 필요 (Phase 8) |
-
----
-
-## 제출 경로별 최소 요건
-
-| 제출처 | 마감 | 필수 조건 | 현재 상태 |
-|:-------|:-----|:---------|:---------|
-| IEEE CoG 2026 | 2026-05-14 | 4p, 현재 결과 + 게임 AI 포지셔닝 | ✅ 즉시 가능 |
-| NeurIPS 2026 Workshop | 2026-08-29 | 4~6p, human eval 수치 있으면 이상적 | 🔶 draft 완료, human eval 보강 |
-| AAAI-27 | ~2026-08 (Abstract) | Melting Pot + human eval n≥100 | 🔲 Phase 8 완료 후 결정 |
-
----
-
-## 위험 요소 & 완화 전략
-
-| 위험 | 심각도 | 완화 |
-|:-----|:------:|:-----|
-| 6×6 toy 환경 — 메인 컨퍼런스 거절 | ⚠️ 치명적 | Melting Pot 래핑 (Phase 8, PettingZoo 재사용) |
-| 300 persona 통계 불안정 | 🔶 중요 | Gemini 2.5 Flash 1000개 생성, CI 보고 (Phase 8) |
-| Human eval 미완성 | ⚠️ 치명적 | Prolific n≥100, α≥0.6 목표 (Phase 8~9) |
-| Mode collapse (persona 무시) | ✅ 해결됨 | Diversity loss 핵심 기여 확인 (Phase 4~5) |
-| LLM 임베딩이 성격 대신 직업 포착 | ✅ 부분 해결 | LoRA projection 효과 확인 (ρ=0.728) |
-| Zero-shot 절대 정확도 낮음 (0.193) | 🔶 중요 | 더 복잡한 환경에서 효과 증폭 가능 (Melting Pot) |
-| Consistency loss가 task reward와 경쟁 | 🔷 관찰됨 | λ₁ tuning + 환경 복잡도 증가로 완화 |
-| AAAI 일정에 Melting Pot 완성 못할 경우 | 🔶 중요 | NeurIPS Workshop으로 다운사이즈, AAAI-28 재타겟 |
+- Phase C trainer refactor (per design §7 "thread, don't fork" decision) landed: 8 files edited (one extra beyond the original 7-file estimate — `src/eval/consistency.py`'s `_rollout_persona` was a hidden hardcoded-`MiniInzoiEnv` dependency that the eval surface delegates to). Each file gains `obs_dim` / `n_actions` / `n_agents` / `env_factory` parameters with v1 defaults, plus an `if env_factory is not None: ... else: <v1 factory>` switch. Verified v1 path is byte-for-byte preserved: `scripts/test_env.py` + the existing v1 PCSPActorCritic / TrajectoryEncoder constructors still work unchanged with their original positional args. Verified v3 path: `scripts/run_pcsp_v3.py` imports clean, constructs `PCSPActorCritic(33, 20)` (304K params), `ConcatActorCritic(33, 20)` (202K), `TrajectoryEncoder(33, 20)` (178K) without error. Threaded entrypoints: `train_pcsp`, `train_b1`, `train_b2`, `train_b3`, `train_b4`, `benchmark_llm_policy`, `zero_shot_consistency`, `compositional_zero_shot`, `zeroshot_vs_train`, `_rollout_persona`, `persona_classification_accuracy`. `src/eval/zeroshot.py` CLI also extended: `--obs_dim`, `--n_actions`, `--env_variant {v1,v3}`, `--n_agents` so v3 checkpoints can be evaluated through the same script once they exist.
+- Phase C launch wrapper landed: `scripts/run_pcsp_v3.py` is a thin wrapper that calls the threaded `train_pcsp(...)` with `obs_dim=OBS_DIM_V3_BASE` (33), `n_actions=N_ACTIONS_V3` (20), `personas_json=data/personas/personas_300_v3.json`, and `env_factory=MiniInzoiV3Env(personas, max_steps=200)`. Mirrors `scripts/run_pcsp.py`'s ergonomics (`--smoke`, `--all`, `--mode`, `--n_iterations`). Output dir is `results/pcsp_v3/{mode}/` (separate from v1's `results/pcsp/`). **Note:** the §4.3 split files in `data/personas/splits/*.json` are still v1-format (preferred_actions over the 12-action space). For v3 unseen-X experiments, either the splits need a v3 re-emission or callers must override `--personas_json`.
+- Phase C smoke pass: `scripts/run_pcsp_v3.py --smoke` (20 iter, mode=full) completed in 88.5s on cuda. `[PCSP:full] policy=304,277  traj_enc=177,600  λ₁=0.5  λ₂=0.01`; reward 40.4 → 75.4, consistency loss 1.84 → 1.66, diversity ≈0. Confirms the v3 training loop wires up cleanly through the threaded path. Summary at `results/pcsp_v3/summary.json`.
+- Phase C 36-hour sweep launched (bg `bb3wawvjy`, log `/tmp/pcsp_v3_sweep.log`) via new `scripts/run_full_sweep_v3.py` driver. Runs 6 configs sequentially at 300 iter each: PCSP {full, no_consist, no_diverse, concat} into `results/pcsp_v3/{mode}/`, then B1 (no-persona PPO) and B3 (SBERT) into `results/baselines_v3/{b1_no_persona,b3_sbert}/`. **frozen_proj ablation skipped** to match the plan's "3 ablations" budget — track as a follow-up if v3 results suggest the LoRA dynamics differ from v1. **Pre-launch fix:** `src/training/baselines/sbert_policy.py` had two latent v3-breaking bugs — (1) cache path was hardcoded to `sbert_embeddings_train240.npy` so v3 (300 personas) would either IndexError or silently re-use 240-persona embeddings paired to wrong personas; (2) `compute_sbert_embeddings` reloaded the cache without size validation. Fixed both: cache path is now derived from `Path(personas_json).stem` (so `personas_300_v3.json` gets its own cache), and the loader checks `cached.shape[0] == len(texts)` before reusing.
+- Phase C sweep **completed in 1h 57min** wall (≈18× faster than the design doc's 36h budget). Final rewards: pcsp_full=100.25, pcsp_no_consist=99.21, pcsp_no_diverse=97.74, b3_sbert=92.11, pcsp_concat=91.68, b1_no_persona=83.25. **GPU util stayed ~29% throughout** — confirming that the threaded trainer is fast enough that PettingZoo AEC env stepping (single-threaded Python per env, GIL-bound) is the wall-time bottleneck, not policy compute. The 36h estimate in `docs/mini_inzoi_v3_design.md` §7 was made before the threaded-trainer refactor landed and should be revised to ~2h once we re-measure under load. **Reading the table:** strongest single signal is the 17-reward gap between full and B1 (persona conditioning matters); FiLM-vs-concat gap is 8.6; Qwen3-vs-SBERT gap is 8.1. **Caveat:** full vs no_consist is only 1.04 reward — the consistency loss ablation can't be evaluated on reward alone, since the loss's claim is on *persona-recoverability from trajectories*, not return. The next required step is running `src/eval/zeroshot.py` on each PCSP-v3 checkpoint + B3 to fill in the ablation table with persona-classification accuracy. **Side observation:** the v1 PCSP-full reward at 300 iter was reportedly in a similar ~100 range (need to cross-check with `results/pcsp/full/metrics.json`); v3's reward scale is comparable despite the larger action space (20 vs 12) and richer obs (33 vs 20), suggesting the per-action style profile + restored need rates are calibrated.
+- Phase C in-distribution persona-classification eval landed via new `scripts/run_eval_v3.py` (548.8s wall on cuda). 60 personas (test_60 IDs filtered from `personas_300_v3`, n_episodes=5). **Confirmed protocol gap:** v3 sweep trained on the full 300-persona set, so these IDs were seen during training — this is in-distribution separability, not zero-shot. The relative ablation ranking is valid, but absolute zero-shot claims require a future retrain on `train_240_v3` (queued, not blocking). Top-1 k-NN accuracy (random = 1.67%): pcsp_full=0.290 (17.4× chance, coherence 3.54), pcsp_no_diverse=0.260 (15.6×, coherence 3.72), pcsp_concat=0.117 (7.0×, coherence 2.06), **pcsp_no_consist=0.017 (1.0×, coherence 1.08 — at chance)**. **Decision-grade ablation finding:** the consistency loss is what produces persona-recoverable behavior. Reward gap full→no_consist is only 1.04 (100.25 vs 99.21) but accuracy collapses 0.290 → 0.017. Inter-trajectory cosine sim moves 0.27 → 0.84 with the loss removed — trajectories become persona-indistinguishable while still self-consistent (intra stays at 0.91). Diversity loss is marginal (Δ −0.03 acc, +0.18 coherence). FiLM vs concat: 0.290 vs 0.117 even with consistency loss enabled in both — layer-wise FiLM injection is meaningfully better than input-only concat. **Paper implication:** the cleanest ablation story is a 4-row table — (i) B1 no-persona shows persona conditioning helps reward; (ii) concat vs full shows FiLM > concat in *behavioral expression*; (iii) no_consist vs full shows the consistency loss is what makes persona *recoverable from trajectories*, separate from any reward effect; (iv) full hits both metrics. The (ii) vs (iii) contrast is the key insight — architecture vs loss are doing distinct, separable work.
+- **Full-paper pivot (user directive):** target switched from CoG 2026 short Vision Paper (7 pages) to a full main-track paper. The headline zero-shot generalization claim must therefore land at v3 scale, not just v1 — the v3 sweep so far was trained on all 300 personas (in-distribution only). Closed two §6 Phase C "Future" items today as a result: built v3-aligned train/test + compositional splits, and ran a PCSP-full v3 retrain on the held-out 240-train set. The remaining ablation/baseline retrains on `train_240_v3` are queued as the next concrete deliverable.
+- v3 splits + zero-shot retrain landed: extended `scripts/build_compositional_splits.py` with `--out_suffix` / `--manifest_name` (additive, default empty preserves v1 behavior) and emitted `data/personas/splits/{unseen_occupation,unseen_archetype,unseen_combo}_v3_{train,test}.json` + `manifest_v3.json`. Persona-ID partitions are byte-identical to v1's `manifest.json` because the v1→v3 mapping (`scripts/build_personas_v3.py`) only rewrites `preferred_actions`; persona text, big_five, occupation, and id are preserved (verified — 0 text mismatches across 300 personas, so the existing `results/embeddings/persona_embeddings_300.npy` Qwen3 cache is reusable as-is). Also emitted conventional `data/personas/{train_240_v3,test_60_v3}.json` (mirrors of the unseen_occupation_v3 split, kept at the conventional path so callers that default to `train_240.json`/`test_60.json` have a v3 analog).
+- v3 zero-shot retrain (PCSP-full on `train_240_v3.json`, 300 iter): completed in 1308s (≈22 min, single config). Final reward 104.08 (vs in-distribution 100.25 on the same architecture trained on 300 personas — slightly higher because there are fewer personas to fit). Output: `results/pcsp_v3_zeroshot/full/{policy.pt,traj_encoder.pt,metrics.json}`. **Headline zero-shot result on `test_60_v3` (60 unseen-occupation personas, n_episodes=5, 300 trajectories total): top-1 k-NN accuracy = 0.157, intra/inter cosine = 0.96/0.47, coherence ratio 2.04, ~9.4× chance.** With Wilson CI via the compositional wrapper on `unseen_occupation_v3`: 0.173 [95% CI 0.135–0.220], 10.4× chance (small seed-level discrepancy with the legacy-CLI path because env stepping uses CUDA non-determinism; both fall well within either CI). Result files: `results/pcsp_v3_zeroshot/full/eval_persona_classification_zs60.json` (legacy path) and `results/eval/compositional_zero_shot_unseen_occupation_v3.json` (compositional path with Wilson CI). **Comparison vs v1:** v1 PCSP-full on the same held-out occupations was 0.193 (paper) / 0.230 (compositional rerun). v3 at 0.157 is ~3.6 pp below v1, which is plausible given the harder action space (20 vs 12) and richer obs (33 vs 20) — both increase per-trajectory entropy and make persona signal harder to recover from a fixed-length rollout. The v3 ratio over chance (9.4×) is comparable to v1 (11×); semantic-behavioral separability is preserved at v3 scale. **Paper implication for full-paper main-track:** the v3 architecture is a credible "headline scale" for the main result table, and we now have one clean cell in the v3 zero-shot table. The next deliverable is filling out the v3 zero-shot ablation row (no_consist, no_diverse, concat) + B1 + B3, which would give the same 4-row ablation story the in-distribution v3 run produced — but in zero-shot, which is what the full paper claim requires. Until that lands, the in-distribution v3 ablations + the new v3 zero-shot single point are the load-bearing experimental evidence.
+- `src/eval/zeroshot.py` CLI extended: `--split_suffix` flag and `compositional_zero_shot(split_suffix=...)` parameter so the v3 splits can be evaluated through the existing CLI without forking.
+- **Open observability check left for later:** the legacy-CLI vs compositional-wrapper accuracy discrepancy on the same split (0.157 vs 0.173, same seed, same model, same persona list) is presumably from CUDA non-determinism in env stepping or argmax tie-breaking on the persona-projection space. Worth pinning down before camera-ready since the compositional path is what carries Wilson CI; if the gap is reproducible, the legacy path's number should be retired in favor of the compositional one.

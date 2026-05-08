@@ -17,6 +17,7 @@ import json
 import sys
 import time
 from pathlib import Path
+from typing import Callable
 
 import numpy as np
 import torch
@@ -157,6 +158,10 @@ def train_b4(
     z_dim: int = Z_DIM,
     use_discriminator: bool = False,
     n_iterations: int | None = None,
+    obs_dim:    int = OBS_DIM,
+    n_actions:  int = N_ACTS,
+    n_agents:   int = 4,
+    env_factory: Callable | None = None,
 ) -> dict:
     """Train B4 and save results."""
     root = Path(__file__).resolve().parents[3]
@@ -177,18 +182,20 @@ def train_b4(
     rng = np.random.default_rng(config.seed)
 
     def persona_sampler():
-        idxs = rng.choice(len(personas_data), size=4, replace=False)
+        idxs = rng.choice(len(personas_data), size=n_agents, replace=False)
         personas = [PersonaConfig.from_dict(personas_data[i]) for i in idxs]
         agent_ctxs = {
             f"agent_{j}": {"e_embed": embedder[int(idxs[j])]}
-            for j in range(4)
+            for j in range(n_agents)
         }
         return personas, agent_ctxs
 
-    def make_env_fn(personas):
+    def _default_make_env_fn(personas):
         return MiniInzoiEnv(personas=personas, max_steps=200)
 
-    policy = DIAYNActorCritic(OBS_DIM, N_ACTS, z_dim)
+    make_env_fn = env_factory if env_factory is not None else _default_make_env_fn
+
+    policy = DIAYNActorCritic(obs_dim, n_actions, z_dim)
     n_params = sum(p.numel() for p in policy.parameters())
     trainer = PPOTrainer(policy, config, device)
 

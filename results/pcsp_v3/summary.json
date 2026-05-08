@@ -1,0 +1,17 @@
+{
+  "modes": {
+    "full": {
+      "iteration": 19,
+      "mean_ep_reward": 75.44066459808337,
+      "n_transitions": 6400,
+      "policy_loss": -0.020842746910639108,
+      "value_loss": 14.34556077003479,
+      "entropy": 2.665766665935516,
+      "consistency_loss": 1.6557295620441437,
+      "diversity_loss": -0.0004568237745843362
+    }
+  },
+  "elapsed_sec": 88.48470401763916,
+  "obs_dim": 33,
+  "n_actions": 20
+}

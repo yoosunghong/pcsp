@@ -41,28 +41,16 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from src.env.action_semantics import action_label_ko, describe_action_ko
+from src.env.mini_inzoi import WORLD_OBJECTS
+
 STUDY_TITLE = "NPC 페르소나 식별 평가"
 INSTRUCTION = (
     "아래에는 한 NPC의 실제 행동 기록과 두 개의 후보 페르소나가 제시됩니다. "
-    "행동 기록만 보고 어느 후보 페르소나에 더 가까운 NPC인지 선택해 주세요. "
+    "행동의 시간, 장소, 주변 상황을 함께 보고 어느 후보 페르소나에 더 가까운 NPC인지 선택해 주세요. "
     "정답을 맞히는 과제이므로, 두 후보 중 더 그럴듯한 쪽을 골라 주세요."
 )
 QUESTION = "이 행동 기록은 어느 후보 페르소나의 NPC에 더 가까워 보이나요?"
-
-ACTION_NAMES_KO = {
-    0: "일하기",
-    1: "식사하기",
-    2: "잠자기",
-    3: "대화하기",
-    4: "운동하기",
-    5: "읽기",
-    6: "청소하기",
-    7: "휴식하기",
-    8: "위로 이동",
-    9: "아래로 이동",
-    10: "왼쪽으로 이동",
-    11: "오른쪽으로 이동",
-}
 
 BIG_FIVE_LEVEL = {"low": 0, "mid": 1, "high": 2}
 TRAIT_ORDER = ["E", "N", "A", "C", "O"]
@@ -152,14 +140,22 @@ def _action_id_from_step(step: Any) -> int:
     return int(step)
 
 
-def _trace_text(rollout: dict[str, Any], display_trace_len: int, include_movement: bool) -> str:
+def _trace_text(
+    rollout: dict[str, Any],
+    display_trace_len: int,
+    include_movement: bool,
+    coarse_mode: bool = False,
+) -> str:
     raw_actions = rollout.get("actions", rollout.get("action_ids", []))
     rows: list[str] = []
     for step in raw_actions:
         action_id = _action_id_from_step(step)
         if not include_movement and action_id >= 8:
             continue
-        rows.append(ACTION_NAMES_KO.get(action_id, f"행동 {action_id}"))
+        if coarse_mode or not isinstance(step, dict):
+            rows.append(action_label_ko(action_id))
+        else:
+            rows.append(describe_action_ko(step, WORLD_OBJECTS))
         if len(rows) >= display_trace_len:
             break
     if not rows:
@@ -189,6 +185,7 @@ def generate_survey(
     include_movement: bool,
     seed: int,
     distractor_top_k: int,
+    coarse_mode: bool = False,
 ) -> dict[str, Any]:
     rollouts_payload = _load_json(rollouts_path)
     rollouts = _normalise_rollouts(rollouts_payload)
@@ -227,7 +224,7 @@ def generate_survey(
             "candidate_b_id": int(candidate_b["id"]),
             "correct_option": correct_option,
             "question": QUESTION,
-            "trace_text": _trace_text(rollout, display_trace_len, include_movement),
+            "trace_text": _trace_text(rollout, display_trace_len, include_movement, coarse_mode),
             "candidate_a_text": _persona_label(candidate_a),
             "candidate_b_text": _persona_label(candidate_b),
         }
@@ -243,6 +240,7 @@ def generate_survey(
         "n_items": len(items),
         "display_trace_len": display_trace_len,
         "include_movement": include_movement,
+        "coarse_mode": coarse_mode,
         "participant_instruction": INSTRUCTION,
         "question": QUESTION,
         "response_columns": ["participant_id", "item_id", "response", "confidence", "response_time_sec"],
@@ -324,6 +322,12 @@ def _parse_args() -> argparse.Namespace:
     p.add_argument("--include_movement", action="store_true")
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--distractor_top_k", type=int, default=12)
+    p.add_argument(
+        "--coarse_mode",
+        action="store_true",
+        help="Render bare action labels only (no time/place/style/social context). "
+        "Used for the rich-vs-coarse observability ablation.",
+    )
     return p.parse_args()
 
 
@@ -339,6 +343,7 @@ def main() -> None:
         include_movement=args.include_movement,
         seed=args.seed,
         distractor_top_k=args.distractor_top_k,
+        coarse_mode=args.coarse_mode,
     )
     print(json.dumps(result, indent=2, ensure_ascii=False))
 

@@ -19,6 +19,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from typing import Callable
 
 import numpy as np
 import torch
@@ -43,10 +44,18 @@ def _rollout_persona(
     n_episodes:  int,
     device:      torch.device,
     seed_offset: int = 0,
+    n_agents:    int = 4,
+    env_factory: Callable | None = None,
 ) -> list[dict]:
-    """Collect n_episodes trajectories for one persona."""
+    """Collect n_episodes trajectories for one persona.
+
+    n_agents / env_factory let v3 callers swap envs without forking; defaults
+    reproduce v1 (4-agent MiniInzoiEnv with persona_cfg replicated)."""
     trajs = []
-    make_env = lambda: MiniInzoiEnv(personas=[persona_cfg] * 4, max_steps=200)
+    if env_factory is None:
+        make_env = lambda: MiniInzoiEnv(personas=[persona_cfg] * n_agents, max_steps=200)
+    else:
+        make_env = lambda: env_factory([persona_cfg] * n_agents)
 
     for ep in range(n_episodes):
         env = make_env()
@@ -112,6 +121,8 @@ def persona_classification_accuracy(
     n_personas:       int  | None = None,  # None → use all
     device:           str  = "cuda",
     seed:             int  = 0,
+    n_agents:         int  = 4,
+    env_factory:      Callable | None = None,
 ) -> dict:
     """
     For each persona in personas_data (up to n_personas), roll out n_episodes
@@ -150,6 +161,8 @@ def persona_classification_accuracy(
         trajs = _rollout_persona(
             policy, e_llm, pcfg, n_episodes, dev,
             seed_offset=seed + p_idx * 1000,
+            n_agents=n_agents,
+            env_factory=env_factory,
         )
         if not trajs:
             continue

@@ -348,6 +348,11 @@ whether the architectural properties hold as the environment grows.
 
 \textbf{v1 (base scale).}
 Mini-Inzoi 6$\times$6, 4 agents, 300 personas (240 train / 60 zero-shot test).
+The held-out 60 personas comprise \emph{four entire occupations} (HR manager,
+professor, data scientist, chef) crossed with all 15 Big Five archetypes, so
+this evaluates \textbf{unseen-occupation compositional generalization}: the
+target occupation never appears in training, only the personality structure
+does.
 All models train for 300 PPO iterations ($\approx$1.9M steps) on an NVIDIA
 RTX 6000 Ada (49\,GB VRAM).
 Baselines: \textbf{B1} No-Persona PPO; \textbf{B3} SBERT-conditioned policy
@@ -632,6 +637,17 @@ Observer ratings of persona consistency and character naturalness, aggregated wi
 inter-rater agreement (Krippendorff's $\alpha$). This is the ground-truth criterion
 for production deployment and should not be deferred indefinitely.
 
+\paragraph{Rich trajectory observability.}
+Identification and believability scores are only as informative as the trajectory
+traces they are computed on. Coarse action sequences compress out the temporal,
+spatial, social, and stylistic dimensions that personality traits typically
+modulate, so a low score may reflect rendering loss rather than genuine
+behavioral collapse. We therefore recommend that human and automated evaluators
+receive rich trajectory traces---time-of-day, location, nearby agents, action
+style, and short-form event semantics---and that papers report results both on
+coarse and rich traces so that the contribution of observability can be
+separated from the contribution of the policy itself.
+
 We further advocate for a dedicated \emph{persona-conditioned NPC benchmark}---perhaps
 an adaptation of Melting Pot~\cite{leibo2021meltingpot} with curated personality
 profiles and standardized evaluation protocols---to enable reproducible comparison
@@ -650,6 +666,20 @@ are far removed from commercial life-simulation complexity. While the v2
 experiment shows that key architectural properties hold at larger grid scale,
 continuous physics, longer time horizons, and richer action semantics remain
 untested.
+
+\textbf{Coarse action observability.}
+The current 12-action discrete space (8 activity + 4 movement) exposes only
+a thin slice of persona-relevant behavior. In pilot human-evaluation surveys
+we found that short sequences of coarse action labels (\eg \texttt{read},
+\texttt{rest}, \texttt{eat}) are too semantically close to support reliable
+persona discrimination by human observers; participants reasonably asked how
+\texttt{read} or \texttt{eat} differ from \texttt{rest} when stripped of
+temporal, spatial, and social context. This is not solely a survey-design
+issue---it indicates that persona-conditioned behavior must be observable in
+the trajectory itself. We have extended rollout rendering with time-of-day,
+location, nearby-agent, and action-style fields for human evaluation, and we
+identify a richer action ontology---intent, activity, place, target, style---as
+a medium-term environment redesign target (\S\ref{sec:agenda}, richer worlds).
 
 \textbf{Synthetic personas.}
 All 300 personas are algorithmically generated from Big Five archetypes and

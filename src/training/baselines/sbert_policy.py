@@ -12,6 +12,7 @@ import json
 import sys
 import time
 from pathlib import Path
+from typing import Callable
 
 import numpy as np
 import torch
@@ -38,10 +39,14 @@ def compute_sbert_embeddings(
 ) -> np.ndarray:
     """
     Encode texts with all-MiniLM-L6-v2. Returns (N, 384) float32 array.
-    Loads from cache_path if it exists; saves after computation.
+    Loads from cache_path if it exists and its first dim matches len(texts);
+    otherwise recomputes and overwrites. Saves after computation.
     """
     if cache_path and cache_path.exists():
-        return np.load(cache_path)
+        cached = np.load(cache_path)
+        if cached.shape[0] == len(texts):
+            return cached
+        print(f"[B3] cache size mismatch ({cached.shape[0]} vs {len(texts)}); recomputing")
 
     from sentence_transformers import SentenceTransformer
     model = SentenceTransformer("all-MiniLM-L6-v2", device=device)
@@ -131,6 +136,10 @@ def train_b3(
     device: str = "cuda",
     output_dir: str | Path = "results/baselines/b3_sbert",
     n_iterations: int | None = None,
+    obs_dim:    int = OBS_DIM,
+    n_actions:  int = N_ACTS,
+    n_agents:   int = 4,
+    env_factory: Callable | None = None,
 ) -> dict:
     """Train B3 and save results."""
     root = Path(__file__).resolve().parents[3]
@@ -140,9 +149,11 @@ def train_b3(
     with open(root / personas_json) as f:
         personas_data = json.load(f)
 
-    # Compute / load SBERT embeddings
+    # Compute / load SBERT embeddings (cache keyed on personas file basename
+    # so v1 train_240 and v3 personas_300_v3 don't share a cache)
     texts = [p["text"] for p in personas_data]
-    cache = root / "results/embeddings/sbert_embeddings_train240.npy"
+    cache_stem = Path(personas_json).stem
+    cache = root / f"results/embeddings/sbert_embeddings_{cache_stem}.npy"
     embeddings = compute_sbert_embeddings(texts, cache_path=cache, device=device)
     # embeddings: (N, 384)
 
@@ -155,18 +166,20 @@ def train_b3(
     rng = np.random.default_rng(config.seed)
 
     def persona_sampler():
-        idxs = rng.choice(len(personas_data), size=4, replace=False)
+        idxs = rng.choice(len(personas_data), size=n_agents, replace=False)
         personas = [PersonaConfig.from_dict(personas_data[i]) for i in idxs]
         agent_ctxs = {
             f"agent_{j}": {"e_embed": embed_tensors[idxs[j]]}
-            for j in range(4)
+            for j in range(n_agents)
         }
         return personas, agent_ctxs
 
-    def make_env_fn(personas):
+    def _default_make_env_fn(personas):
         return MiniInzoiEnv(personas=personas, max_steps=200)
 
-    policy = SBERTActorCritic(OBS_DIM, N_ACTS, SBERT_DIM)
+    make_env_fn = env_factory if env_factory is not None else _default_make_env_fn
+
+    policy = SBERTActorCritic(obs_dim, n_actions, SBERT_DIM)
     n_params = sum(p.numel() for p in policy.parameters())
     trainer = PPOTrainer(policy, config, device)
 

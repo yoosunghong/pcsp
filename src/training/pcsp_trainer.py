@@ -574,6 +574,11 @@ class PCSPTrainer:
 
 # ── Training entry point ───────────────────────────────────────────────────────
 
+def _default_v1_env_factory(personas):
+    """Default env factory used when no explicit factory is passed (v1 behavior)."""
+    return MiniInzoiEnv(personas=personas, max_steps=200)
+
+
 def train_pcsp(
     mode:          str        = "full",
     personas_json: str | Path = "data/personas/train_240.json",
@@ -582,6 +587,10 @@ def train_pcsp(
     device:        str        = "cuda",
     output_dir:    str | Path = "results/pcsp",
     n_iterations:  int | None = None,
+    obs_dim:       int        = OBS_DIM,
+    n_actions:     int        = N_ACTS,
+    n_agents:      int        = 4,
+    env_factory:   Callable | None = None,
 ) -> dict:
     """
     Train PCSP (or an ablation variant) and save results.
@@ -592,6 +601,10 @@ def train_pcsp(
       no_diverse    — λ₂ = 0 (no diversity loss)
       concat        — concat conditioning instead of FiLM
       frozen_proj   — freeze LoRA projection (raw LLM embed)
+
+    obs_dim / n_actions / n_agents / env_factory let v3 callers (and any future
+    env variants) supply their own dims and env constructor without forking the
+    trainer. Defaults reproduce v1 byte-for-byte.
     """
     root       = Path(__file__).resolve().parents[2]
     output_dir = root / output_dir / mode
@@ -623,36 +636,35 @@ def train_pcsp(
     rng = np.random.default_rng(config.seed)
 
     def persona_sampler():
-        idxs    = rng.choice(len(personas_data), size=4, replace=False)
+        idxs    = rng.choice(len(personas_data), size=n_agents, replace=False)
         personas = [PersonaConfig.from_dict(personas_data[i]) for i in idxs]
         agent_ctxs = {
             f"agent_{j}": {"e_llm": embed_tensors[idxs[j]]}
-            for j in range(4)
+            for j in range(n_agents)
         }
         return personas, agent_ctxs
 
-    def make_env_fn(personas):
-        return MiniInzoiEnv(personas=personas, max_steps=200)
+    make_env_fn = env_factory if env_factory is not None else _default_v1_env_factory
 
     # Build policy
     if config.use_film:
         policy = PCSPActorCritic(
-            OBS_DIM, N_ACTS,
+            obs_dim, n_actions,
             persona_dim=config.traj_output_dim,
             llm_dim=LLM_DIM,
             freeze_proj=config.freeze_projection,
         )
     else:
         policy = ConcatActorCritic(
-            OBS_DIM, N_ACTS,
+            obs_dim, n_actions,
             persona_dim=config.traj_output_dim,
             llm_dim=LLM_DIM,
             freeze_proj=config.freeze_projection,
         )
 
     traj_encoder = TrajectoryEncoder(
-        obs_dim=OBS_DIM,
-        n_actions=N_ACTS,
+        obs_dim=obs_dim,
+        n_actions=n_actions,
         hidden_dim=config.traj_hidden_dim,
         output_dim=config.traj_output_dim,
     )

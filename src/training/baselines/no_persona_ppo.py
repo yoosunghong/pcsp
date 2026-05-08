@@ -11,6 +11,7 @@ import os
 import sys
 import time
 from pathlib import Path
+from typing import Callable
 
 import numpy as np
 import torch
@@ -72,8 +73,16 @@ def train_b1(
     device: str = "cuda",
     output_dir: str | Path = "results/baselines/b1_no_persona",
     n_iterations: int | None = None,
+    obs_dim:    int = OBS_DIM,
+    n_actions:  int = N_ACTS,
+    n_agents:   int = 4,
+    env_factory: Callable | None = None,
 ) -> dict:
-    """Train B1 and save results. Returns final metrics dict."""
+    """Train B1 and save results. Returns final metrics dict.
+
+    obs_dim / n_actions / n_agents / env_factory let v3 callers supply alternate
+    dims and env constructor without forking; defaults reproduce v1.
+    """
     root = Path(__file__).resolve().parents[3]
     output_dir = root / output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -88,16 +97,18 @@ def train_b1(
     rng = np.random.default_rng(config.seed)
 
     def persona_sampler():
-        """Sample 4 personas; no embeddings (no-persona baseline)."""
-        idxs = rng.choice(len(personas_data), size=4, replace=False)
+        """Sample n_agents personas; no embeddings (no-persona baseline)."""
+        idxs = rng.choice(len(personas_data), size=n_agents, replace=False)
         personas = [PersonaConfig.from_dict(personas_data[i]) for i in idxs]
-        agent_ctxs = {f"agent_{j}": {} for j in range(4)}
+        agent_ctxs = {f"agent_{j}": {} for j in range(n_agents)}
         return personas, agent_ctxs
 
-    def make_env_fn(personas):
+    def _default_make_env_fn(personas):
         return MiniInzoiEnv(personas=personas, max_steps=200)
 
-    policy = MLPActorCritic(OBS_DIM, N_ACTS)
+    make_env_fn = env_factory if env_factory is not None else _default_make_env_fn
+
+    policy = MLPActorCritic(obs_dim, n_actions)
     trainer = PPOTrainer(policy, config, device)
 
     print(f"\n[B1] No-Persona PPO | device={trainer.device} | params={sum(p.numel() for p in policy.parameters()):,}")

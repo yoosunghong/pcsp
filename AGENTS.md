@@ -4,9 +4,38 @@
 
 **PCSP (Persona-Conditioned Shared Policy)** 연구 프로젝트.
 자연어 persona 텍스트를 조건으로 받는 단일 공유 RL policy를 학습해, 수천 명의 NPC가 각자 다른 성격으로 행동하는 시스템 구현.
-NeurIPS 2026 Workshop 제출 목표 (마감: 2026-08-29).
+현재 주 논문 방향은 `paper/cog2026_vision/main.tex`의 IEEE CoG 2026 Vision Paper이다.
 
-제안서: `persona-proposal.md` (주 연구), `full-proposal.md` (co-adaptation 연구 참고)
+**활성 실행 계획**: `PLAN.md`
+
+`persona-proposal.md`, `full-proposal.md` 등 과거 제안서는 참고 자료이며, 활성 방향이 아니다. 오래된 계획/제안은 `archive/` 아래에 보존한다.
+
+---
+
+## 작업 운영 규칙
+
+모든 에이전트와 자동화 작업은 루트 `PLAN.md`를 기준으로 진행한다.
+
+1. **작업 시작 전**
+   - 먼저 `PLAN.md`를 읽고 현재 active paper direction, immediate problem, active checklist를 확인한다.
+   - 논문 프레이밍은 `paper/cog2026_vision/main.tex`를 source of truth로 삼는다.
+   - `full-proposal.md`의 speculative sLM/RL co-adaptation 방향을 현재 PCSP 논문 방향으로 착각하지 않는다.
+
+2. **작업 중**
+   - 새 코드/실험/문서 변경은 `PLAN.md`의 체크리스트 항목 중 하나에 연결한다.
+   - 기존 v1/v2 결과와 호환성을 깨는 변경(action space, observation dim, model head 변경 등)은 반드시 `PLAN.md`에 retraining 필요성을 기록한다.
+   - 기존 문서를 삭제하지 않는다. 방향이 바뀐 문서는 `archive/YYYY-MM-DD` 또는 `archive/docs_YYYY-MM-DD` 아래로 보존한다.
+
+3. **작업 완료 후**
+   - 비 trivial 작업을 완료했다면 같은 턴에서 `PLAN.md`를 업데이트한다.
+   - 완료한 항목은 `[x]`로 바꾸고, 새로 발견한 TODO는 적절한 Phase에 추가한다.
+   - 중요한 결정, 결과 파일 경로, 실패한 실험, 재학습 필요 여부는 `PLAN.md`의 Decision Log 또는 관련 Phase에 남긴다.
+
+4. **현재 우선순위**
+   - 사람에게 관찰 가능한 persona-conditioned behavior를 강화한다.
+   - coarse action label만 보여주는 human eval을 rich trajectory trace 평가로 확장한다.
+   - 단기적으로는 기존 12-action policy를 유지하고, rollout/event rendering을 풍부하게 만든다.
+   - 중기적으로 Mini-Inzoi v3 action ontology와 environment redesign을 설계한다.
 
 ---
 
@@ -36,19 +65,23 @@ conda run -n paper python <script>
 ```
 co-spec/
 ├── AGENTS.md                        ← 이 파일
-├── PLAN.md                          ← 연구 실행 계획 (단계별 TODO)
-├── persona-proposal.md              ← 주 연구 제안서
-├── full-proposal.md                 ← co-adaptation 연구 제안서 (참고)
+├── PLAN.md                          ← 활성 연구 실행 계획 (작업 전/후 업데이트 필수)
+├── paper/cog2026_vision/main.tex    ← 현재 주 논문
+├── archive/                         ← 과거 계획/제안서 보관
+├── persona-proposal.md              ← 과거 제안서/참고
+├── full-proposal.md                 ← 별도 co-adaptation 제안서/참고
 │
 ├── src/
 │   ├── env/
-│   │   └── mini_inzoi.py            ← PettingZoo AEC 환경 (6×6, 4 agents, 8 needs, 10 actions)
+│   │   ├── mini_inzoi.py            ← PettingZoo AEC 환경 v1 (6×6, 4 agents, 8 needs, 12 actions)
+│   │   ├── mini_inzoi_v2.py         ← scale-up 환경 v2 (12×12, 16 agents)
+│   │   └── action_semantics.py      ← action id와 human-readable event semantics 분리
 │   ├── models/
 │   │   └── film.py                  ← FiLM conditioning: PersonaProjection, Policy, Value
 │   ├── data/
 │   │   └── persona_generator.py     ← 30개 persona 데이터셋 정의 (Big Five × 직업)
-│   ├── training/                    ← PPO 학습 루프 (미구현, 6월 예정)
-│   └── eval/                        ← 평가 지표 (미구현, 7월 예정)
+│   ├── training/                    ← PPO/PCSP 학습 루프 및 baselines
+│   └── eval/                        ← consistency/diversity/zeroshot/human eval 지표
 │
 ├── scripts/
 │   ├── smoke_test_qwen3_embed.py    ← Qwen3-Embedding 속도 벤치마크
@@ -58,9 +91,11 @@ co-spec/
 │
 ├── data/
 │   └── personas/
-│       ├── personas_30.json         ← 전체 30개 (seed dataset)
-│       ├── train.json               ← 24개 학습용
-│       └── test.json                ← 6개 zero-shot 평가용
+│       ├── personas_300.json        ← v1 persona set
+│       ├── train_240.json           ← v1 train split
+│       ├── test_60.json             ← v1 zero-shot split
+│       ├── train_400.json           ← v2 train split
+│       └── test_100.json            ← v2 zero-shot split
 │
 ├── results/
 │   ├── smoke_test_result.json       ← 임베딩 속도 벤치마크 결과
@@ -96,7 +131,7 @@ for agent in env.agent_iter():
 ```
 
 - 관측 차원: `(20,)` — 위치(2) + 시간(1) + needs(8) + 타 에이전트(9)
-- 행동 공간: `Discrete(10)`
+- 행동 공간: `Discrete(12)` — 8개 activity + 4방향 movement
 - Persona별 needs decay 속도와 선호 행동(+0.5 보너스)이 다름
 
 ### FiLM 정책 (`src/models/film.py`)
@@ -104,11 +139,11 @@ for agent in env.agent_iter():
 ```python
 from src.models.film import PersonaConditionedPolicy, PersonaConditionedValue
 
-policy = PersonaConditionedPolicy(obs_dim=20, n_actions=10, persona_dim=64, llm_dim=1024)
+policy = PersonaConditionedPolicy(obs_dim=20, n_actions=12, persona_dim=64, llm_dim=1024)
 value  = PersonaConditionedValue(obs_dim=20, persona_dim=64, llm_dim=1024)
 
 # e_llm: Qwen3-Embed 출력 (사전 계산, frozen)
-logits = policy(obs, e_llm)       # (B, 10)
+logits = policy(obs, e_llm)       # (B, 12)
 v      = value(obs, e_llm)        # (B,)
 action, log_prob = policy.act(obs, e_llm)
 ```
