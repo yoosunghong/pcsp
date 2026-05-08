@@ -1,26 +1,18 @@
 """
-Human evaluation processing — eval/human_eval.py
+Human evaluation analysis for PCSP.
 
-Processes Prolific survey data for the "Two-NPC distinctiveness" study.
+Supported study types:
+  1. 2AFC persona identification
+     Columns: participant_id, item_id, response, confidence, response_time_sec.
+     Join with an answer-key CSV containing item_id and correct_option.
 
-Survey format (CSV columns):
-  participant_id, persona_pair_id, persona_a_id, persona_b_id,
-  likert_score (1–5), response_time_sec
-
-Likert scale:
-  1 = 전혀 다르지 않음 (not distinct at all)
-  5 = 매우 다름 (very distinct)
-
-Computes:
-  - Mean distinctiveness score (overall + per model)
-  - Krippendorff's alpha (inter-rater reliability)
-  - Correlation with behavioral KL (if provided)
-  - Comparison table: PCSP vs baselines
+  2. Legacy Likert distinctiveness
+     Columns: participant_id, persona_pair_id, likert_score.
 
 Usage:
-    python src/eval/human_eval.py \
+    conda run -n paper python src/eval/human_eval.py \
         --csv data/human_eval/prolific_results.csv \
-        --kl_json results/eval/diversity_full.json \
+        --answer_key data/human_eval/persona_identification_survey_ko_answer_key.csv \
         --output results/eval/human_eval_summary.json
 """
 from __future__ import annotations
@@ -28,287 +20,224 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-import sys
+import math
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT))
 
 
-# ── Krippendorff's alpha ──────────────────────────────────────────────────────
+def _read_csv(path: Path) -> list[dict[str, str]]:
+    with open(path, newline="", encoding="utf-8-sig") as f:
+        return list(csv.DictReader(f))
 
-def krippendorff_alpha(
-    ratings_by_rater: list[list[float | None]],
-    metric:           str = "ordinal",
-) -> float:
-    """
-    Compute Krippendorff's alpha for inter-rater reliability.
 
-    ratings_by_rater: list of length n_raters; each sub-list has n_items scores
-                      (None = missing).
-    metric: "nominal", "ordinal", or "interval" — distance function.
-    """
-    n_raters = len(ratings_by_rater)
-    n_items  = max(len(r) for r in ratings_by_rater)
+def _mean(values: list[float]) -> float | None:
+    return float(np.mean(values)) if values else None
 
-    # Pad shorter lists with None
+
+def _std(values: list[float]) -> float | None:
+    return float(np.std(values)) if values else None
+
+
+def wilson_ci(k: int, n: int, z: float = 1.96) -> tuple[float, float]:
+    if n == 0:
+        return (0.0, 0.0)
+    phat = k / n
+    denom = 1 + z * z / n
+    centre = phat + z * z / (2 * n)
+    margin = z * math.sqrt((phat * (1 - phat) + z * z / (4 * n)) / n)
+    return ((centre - margin) / denom, (centre + margin) / denom)
+
+
+def krippendorff_alpha_nominal(ratings_by_rater: list[list[str | None]]) -> float | None:
+    """Krippendorff alpha for nominal labels such as A/B responses."""
+    if len(ratings_by_rater) < 2:
+        return None
+    n_items = max(len(r) for r in ratings_by_rater)
     data = [r + [None] * (n_items - len(r)) for r in ratings_by_rater]
 
-    # Coincidence matrix
-    values = sorted({v for rater in data for v in rater if v is not None})
-    val_idx = {v: i for i, v in enumerate(values)}
-    n_v     = len(values)
+    values = sorted({v for row in data for v in row if v is not None})
+    if len(values) <= 1:
+        return 1.0
+    idx = {v: i for i, v in enumerate(values)}
+    coincidence = np.zeros((len(values), len(values)), dtype=float)
 
-    coincidence = np.zeros((n_v, n_v), dtype=float)
-    for item in range(n_items):
-        obs = [data[r][item] for r in range(n_raters) if data[r][item] is not None]
-        m   = len(obs)
+    for item_idx in range(n_items):
+        obs = [row[item_idx] for row in data if row[item_idx] is not None]
+        m = len(obs)
         if m < 2:
             continue
-        for i in range(len(obs)):
-            for j in range(i + 1, len(obs)):
-                ci, cj = val_idx[obs[i]], val_idx[obs[j]]
-                coincidence[ci, cj] += 1 / (m - 1)
-                coincidence[cj, ci] += 1 / (m - 1)
+        for i in range(m):
+            for j in range(m):
+                if i == j:
+                    continue
+                coincidence[idx[obs[i]], idx[obs[j]]] += 1 / (m - 1)
 
-    n_total  = coincidence.sum()
-    n_k      = coincidence.sum(axis=1)
-
-    # Distance function
-    if metric == "nominal":
-        d = lambda k, l: 0.0 if k == l else 1.0
-    elif metric == "ordinal":
-        def d(k, l):
-            if k == l:
-                return 0.0
-            lo, hi = (k, l) if k < l else (l, k)
-            s = sum(n_k[lo:hi+1]) - (n_k[lo] + n_k[hi]) / 2.0
-            return s * s
-    else:  # interval
-        d = lambda k, l: (values[k] - values[l]) ** 2
-
-    # Observed disagreement Do
-    Do = sum(
-        coincidence[k, l] * d(k, l)
-        for k in range(n_v) for l in range(n_v)
-    ) / n_total
-
-    # Expected disagreement De
-    De = sum(
-        n_k[k] * n_k[l] * d(k, l)
-        for k in range(n_v) for l in range(n_v)
-    ) / (n_total * (n_total - 1))
-
-    return 1.0 - Do / De if De != 0 else 1.0
+    total = float(coincidence.sum())
+    if total == 0:
+        return None
+    observed = float(coincidence.sum() - np.trace(coincidence)) / total
+    marginals = coincidence.sum(axis=1)
+    expected = 1.0 - float(np.sum(marginals * (marginals - 1))) / (total * (total - 1))
+    if expected <= 0:
+        return 1.0
+    return float(1.0 - observed / expected)
 
 
-# ── Main processing ───────────────────────────────────────────────────────────
-
-def process_human_eval(
-    csv_path:    str | Path,
-    kl_json:     str | Path | None = None,
-    output_path: str | Path | None = None,
-) -> dict:
-    """
-    Load Prolific survey CSV, compute statistics, and optionally save JSON.
-
-    Expected CSV columns (flexible — falls back gracefully):
-      participant_id, model, persona_pair_id, persona_a_id, persona_b_id,
-      likert_score, response_time_sec
-    """
-    p = Path(csv_path)
-    if not p.exists():
-        return _placeholder_result()
-
-    rows: list[dict] = []
-    with open(p, newline="", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            rows.append(row)
-
-    if not rows:
-        return _placeholder_result()
-
-    # Extract scores
-    scores_by_model:  dict[str, list[float]] = {}
-    scores_by_pair:   dict[str, list[float]] = {}
-    participant_ids:  list[str] = []
-    all_scores:       list[float] = []
-
+def _group_accuracy(rows: list[dict[str, Any]], key: str) -> dict[str, dict[str, Any]]:
+    groups: dict[str, list[dict[str, Any]]] = {}
     for row in rows:
-        score = float(row.get("likert_score", 0))
-        model = row.get("model", "unknown")
-        pair  = row.get("persona_pair_id", "?")
-        pid   = row.get("participant_id", "?")
+        groups.setdefault(str(row.get(key, "unknown")), []).append(row)
+    out: dict[str, dict[str, Any]] = {}
+    for group, group_rows in groups.items():
+        n = len(group_rows)
+        k = sum(1 for r in group_rows if r["is_correct"])
+        lo, hi = wilson_ci(k, n)
+        out[group] = {
+            "n": n,
+            "correct": k,
+            "accuracy": k / n if n else 0.0,
+            "wilson_ci_95": [lo, hi],
+            "mean_confidence": _mean([r["confidence"] for r in group_rows if r["confidence"] is not None]),
+            "mean_response_time_sec": _mean([
+                r["response_time_sec"] for r in group_rows if r["response_time_sec"] is not None
+            ]),
+        }
+    return out
 
-        all_scores.append(score)
-        scores_by_model.setdefault(model, []).append(score)
-        scores_by_pair.setdefault(pair, []).append(score)
-        if pid not in participant_ids:
-            participant_ids.append(pid)
 
-    # Per-model means
-    model_means = {m: float(np.mean(s)) for m, s in scores_by_model.items()}
+def process_2afc_identification(
+    csv_path: str | Path,
+    answer_key_path: str | Path,
+    output_path: str | Path | None = None,
+) -> dict[str, Any]:
+    responses = _read_csv(Path(csv_path))
+    key_rows = _read_csv(Path(answer_key_path))
+    key = {row["item_id"]: row for row in key_rows}
 
-    # Krippendorff's alpha
-    # Reshape: raters × items (pairs)
-    pair_list = sorted(scores_by_pair.keys())
-    rater_list = participant_ids
-    ratings_by_rater: list[list[float | None]] = []
-    for pid in rater_list:
-        pid_rows = [r for r in rows if r.get("participant_id") == pid]
-        pair_score: dict[str, float] = {}
-        for row in pid_rows:
-            pair_score[row.get("persona_pair_id", "?")] = float(row.get("likert_score", 0))
-        ratings_by_rater.append([pair_score.get(pair) for pair in pair_list])
+    scored: list[dict[str, Any]] = []
+    for row in responses:
+        item_id = row.get("item_id", "").strip()
+        if item_id not in key:
+            continue
+        response = row.get("response", "").strip().upper()
+        if response not in {"A", "B"}:
+            continue
+        correct_option = key[item_id]["correct_option"].strip().upper()
+        confidence = row.get("confidence", "").strip()
+        response_time = row.get("response_time_sec", "").strip()
+        scored.append({
+            "participant_id": row.get("participant_id", "unknown"),
+            "item_id": item_id,
+            "response": response,
+            "correct_option": correct_option,
+            "is_correct": response == correct_option,
+            "model": key[item_id].get("model", row.get("model", "unknown")),
+            "split": key[item_id].get("split", row.get("split", "unknown")),
+            "confidence": float(confidence) if confidence else None,
+            "response_time_sec": float(response_time) if response_time else None,
+        })
 
-    alpha = krippendorff_alpha(ratings_by_rater, metric="ordinal") if len(rater_list) >= 2 else None
+    n = len(scored)
+    k = sum(1 for row in scored if row["is_correct"])
+    lo, hi = wilson_ci(k, n)
 
-    # Correlation with behavioral KL
-    kl_corr = None
-    if kl_json:
-        try:
-            with open(kl_json) as f:
-                kl_data = json.load(f)
-            mean_kl = kl_data.get("mean_kl")
-            if mean_kl:
-                kl_corr = {"note": "Spearman ρ requires pair-level KL data; use diversity.py"}
-        except Exception:
-            pass
+    participant_ids = sorted({row["participant_id"] for row in scored})
+    item_ids = sorted({row["item_id"] for row in scored})
+    ratings_by_rater: list[list[str | None]] = []
+    for pid in participant_ids:
+        by_item = {row["item_id"]: row["response"] for row in scored if row["participant_id"] == pid}
+        ratings_by_rater.append([by_item.get(item_id) for item_id in item_ids])
 
     result: dict[str, Any] = {
-        "n_participants":     len(rater_list),
-        "n_pairs":            len(pair_list),
-        "n_responses":        len(rows),
-        "mean_score":         float(np.mean(all_scores)),
-        "std_score":          float(np.std(all_scores)),
-        "model_means":        model_means,
-        "krippendorff_alpha": alpha,
-        "kl_correlation":     kl_corr,
-        "scale":              "1=not distinct, 5=very distinct",
+        "study_type": "2afc_persona_identification",
+        "n_participants": len(participant_ids),
+        "n_items": len(item_ids),
+        "n_responses": n,
+        "correct": k,
+        "chance_level": 0.5,
+        "accuracy": k / n if n else 0.0,
+        "wilson_ci_95": [lo, hi],
+        "krippendorff_alpha_nominal": krippendorff_alpha_nominal(ratings_by_rater),
+        "mean_confidence": _mean([r["confidence"] for r in scored if r["confidence"] is not None]),
+        "mean_response_time_sec": _mean([r["response_time_sec"] for r in scored if r["response_time_sec"] is not None]),
+        "by_model": _group_accuracy(scored, "model"),
+        "by_split": _group_accuracy(scored, "split"),
     }
 
     if output_path:
-        Path(output_path).parent.mkdir(parents=True, exist_ok=True)
-        with open(output_path, "w") as f:
-            json.dump(result, f, indent=2)
-        print(f"Saved to {output_path}")
-
+        out = Path(output_path)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        with open(out, "w", encoding="utf-8") as f:
+            json.dump(result, f, indent=2, ensure_ascii=False)
     return result
 
 
-def _placeholder_result() -> dict:
-    """Return placeholder when survey data is not yet collected."""
-    result = {
-        "status":    "pending",
-        "note":      "Prolific survey not yet conducted (planned: 2026-07-04 ~ 2026-08-01)",
-        "target_n":  30,
-        "pairs":     "PCSP vs baseline NPC behavior trajectories",
-        "scale":     "Likert 1-5: 1=Not distinct at all, 5=Very distinct",
-        "survey_q":  "Do the two NPCs behave like distinct people?",
+def process_likert_distinctiveness(
+    csv_path: str | Path,
+    output_path: str | Path | None = None,
+) -> dict[str, Any]:
+    rows = _read_csv(Path(csv_path))
+    scores = [float(r["likert_score"]) for r in rows if r.get("likert_score")]
+    by_model: dict[str, list[float]] = {}
+    for row in rows:
+        if not row.get("likert_score"):
+            continue
+        by_model.setdefault(row.get("model", "unknown"), []).append(float(row["likert_score"]))
+
+    result: dict[str, Any] = {
+        "study_type": "likert_distinctiveness",
+        "n_responses": len(scores),
+        "mean_score": _mean(scores),
+        "std_score": _std(scores),
+        "by_model": {
+            model: {"n": len(vals), "mean": _mean(vals), "std": _std(vals)}
+            for model, vals in by_model.items()
+        },
+        "scale": "1=not distinct, 5=very distinct",
     }
+    if output_path:
+        out = Path(output_path)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        with open(out, "w", encoding="utf-8") as f:
+            json.dump(result, f, indent=2, ensure_ascii=False)
     return result
 
 
-def generate_prolific_survey_template(
-    personas_data: list[dict],
-    n_pairs:       int = 30,
-    seed:          int = 0,
-    output_path:   str | Path = "data/human_eval/survey_template.json",
-    lang:          str = "en",
-) -> dict:
-    """
-    Generate a survey template: randomly sample n_pairs of persona pairs.
-    Outputs a JSON that can be imported into Prolific / Qualtrics.
-    """
-    copy = {
-        "en": {
-            "study_title": "NPC Persona Distinctiveness Evaluation",
-            "question": "Do the two NPCs behave like distinct people? (1: Not at all, 5: Very much)",
-            "scale": {"1": "Not distinct at all", "3": "Somewhat distinct", "5": "Very distinct"},
-        },
-        "ko": {
-            "study_title": "NPC 페르소나 구분 가능성 평가",
-            "question": "두 NPC가 서로 다른 사람처럼 행동한다고 느껴지나요? (1: 전혀 그렇지 않다, 5: 매우 그렇다)",
-            "scale": {"1": "전혀 구분되지 않음", "3": "어느 정도 구분됨", "5": "매우 잘 구분됨"},
-        },
-    }
-    if lang not in copy:
-        raise ValueError(f"Unsupported survey language: {lang}")
-
-    rng   = np.random.default_rng(seed)
-    N     = len(personas_data)
-    pairs = []
-
-    while len(pairs) < n_pairs:
-        i, j = rng.choice(N, size=2, replace=False)
-        pair  = tuple(sorted([int(i), int(j)]))
-        if pair not in [p["indices"] for p in pairs]:
-            pairs.append({
-                "pair_id":     f"pair_{len(pairs):03d}",
-                "indices":     list(pair),
-                "persona_a_id": personas_data[pair[0]]["id"],
-                "persona_b_id": personas_data[pair[1]]["id"],
-                "question":    copy[lang]["question"],
-            })
-
-    template = {
-        "study_title": copy[lang]["study_title"],
-        "language": lang,
-        "n_participants_target": 30,
-        "n_pairs": n_pairs,
-        "scale": copy[lang]["scale"],
-        "pairs": pairs,
+def _placeholder_result() -> dict[str, Any]:
+    return {
+        "status": "pending",
+        "note": "Human evaluation has not been collected yet.",
+        "recommended_study": "2AFC persona identification on real held-out PCSP rollouts.",
+        "minimum_response_columns": ["participant_id", "item_id", "response", "confidence", "response_time_sec"],
     }
 
-    out = Path(output_path)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    with open(out, "w", encoding="utf-8") as f:
-        json.dump(template, f, indent=2, ensure_ascii=False)
-    print(f"Survey template saved to {out}")
-    return template
 
-
-# ── CLI ───────────────────────────────────────────────────────────────────────
-
-def _parse_args():
+def _parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser()
-    p.add_argument("--csv",            default=None,
-                   help="Path to Prolific survey CSV")
-    p.add_argument("--kl_json",        default=None)
-    p.add_argument("--output",         default="results/eval/human_eval_summary.json")
-    p.add_argument("--gen_template",   action="store_true",
-                   help="Generate survey template JSON from personas")
-    p.add_argument("--personas",       default="data/personas/train_240.json")
-    p.add_argument("--n_pairs",        type=int, default=30)
-    p.add_argument("--lang",           choices=["en", "ko"], default="en")
-    p.add_argument("--template_output", default=None,
-                   help="Output path for generated survey template")
+    p.add_argument("--csv", default=None, help="Participant response CSV.")
+    p.add_argument("--answer_key", default=None, help="2AFC answer-key CSV.")
+    p.add_argument("--output", default="results/eval/human_eval_summary.json")
     return p.parse_args()
 
 
-if __name__ == "__main__":
+def main() -> None:
     args = _parse_args()
-
-    if args.gen_template:
-        with open(ROOT / args.personas) as f:
-            personas_data = json.load(f)
-        default_name = f"survey_template_{args.lang}.json" if args.lang != "en" else "survey_template.json"
-        result = generate_prolific_survey_template(
-            personas_data, n_pairs=args.n_pairs,
-            output_path=ROOT / (args.template_output or f"data/human_eval/{default_name}"),
-            lang=args.lang,
-        )
-        print(json.dumps(result, indent=2, ensure_ascii=False))
-    elif args.csv:
-        result = process_human_eval(
+    if not args.csv:
+        result = _placeholder_result()
+    elif args.answer_key:
+        result = process_2afc_identification(
             ROOT / args.csv,
-            kl_json=ROOT / args.kl_json if args.kl_json else None,
-            output_path=ROOT / args.output,
+            ROOT / args.answer_key,
+            ROOT / args.output,
         )
-        print(json.dumps(result, indent=2, ensure_ascii=False))
     else:
-        print(json.dumps(_placeholder_result(), indent=2, ensure_ascii=False))
+        result = process_likert_distinctiveness(ROOT / args.csv, ROOT / args.output)
+    print(json.dumps(result, indent=2, ensure_ascii=False))
+
+
+if __name__ == "__main__":
+    main()

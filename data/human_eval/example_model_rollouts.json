@@ -1,0 +1,19 @@
+{
+  "note": "Example schema only. Do not use this file for paper results.",
+  "rollouts": [
+    {
+      "model": "PCSP-full",
+      "trajectory_id": "example_p241_ep000",
+      "persona_id": 241,
+      "split": "test",
+      "action_ids": [3, 5, 8, 0, 1, 2, 4, 6, 7, 3, 5, 0]
+    },
+    {
+      "model": "PCSP-full",
+      "trajectory_id": "example_p242_ep000",
+      "persona_id": 242,
+      "split": "test",
+      "action_ids": [0, 0, 5, 3, 8, 1, 4, 7, 6, 2, 5, 3]
+    }
+  ]
+}
