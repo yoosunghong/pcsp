@@ -1,0 +1,2405 @@
+{
+  "metrics": [
+    {
+      "iteration": 0,
+      "mean_ep_reward": 37.50197229809404,
+      "n_transitions": 6400,
+      "policy_loss": -0.010273343459703028,
+      "value_loss": 4.320773961544037,
+      "entropy": 2.9809367513656615
+    },
+    {
+      "iteration": 1,
+      "mean_ep_reward": 45.04114132251405,
+      "n_transitions": 6400,
+      "policy_loss": -0.007296113437041641,
+      "value_loss": 5.831172678470612,
+      "entropy": 2.9544890666007997
+    },
+    {
+      "iteration": 2,
+      "mean_ep_reward": 48.72854249772658,
+      "n_transitions": 6400,
+      "policy_loss": -0.00972843898460269,
+      "value_loss": 5.841470503807068,
+      "entropy": 2.907993175983429
+    },
+    {
+      "iteration": 3,
+      "mean_ep_reward": 50.71705288411376,
+      "n_transitions": 6400,
+      "policy_loss": -0.003371671438217163,
+      "value_loss": 6.495885462760925,
+      "entropy": 2.885647611618042
+    },
+    {
+      "iteration": 4,
+      "mean_ep_reward": 56.312223409278815,
+      "n_transitions": 6400,
+      "policy_loss": -0.007952116224914789,
+      "value_loss": 6.016014058589935,
+      "entropy": 2.850047585964203
+    },
+    {
+      "iteration": 5,
+      "mean_ep_reward": 57.63217236556079,
+      "n_transitions": 6400,
+      "policy_loss": -0.0038197020394727587,
+      "value_loss": 6.802032656669617,
+      "entropy": 2.8308937430381773
+    },
+    {
+      "iteration": 6,
+      "mean_ep_reward": 63.133894920592425,
+      "n_transitions": 6400,
+      "policy_loss": -0.0035722334729507564,
+      "value_loss": 9.9367870759964,
+      "entropy": 2.791155834197998
+    },
+    {
+      "iteration": 7,
+      "mean_ep_reward": 59.90820236071799,
+      "n_transitions": 6400,
+      "policy_loss": -0.006081470302306115,
+      "value_loss": 10.401259922981263,
+      "entropy": 2.776633267402649
+    },
+    {
+      "iteration": 8,
+      "mean_ep_reward": 68.80569354124776,
+      "n_transitions": 6400,
+      "policy_loss": -0.005925526767969131,
+      "value_loss": 12.178280835151673,
+      "entropy": 2.703199245929718
+    },
+    {
+      "iteration": 9,
+      "mean_ep_reward": 61.87190140578942,
+      "n_transitions": 6400,
+      "policy_loss": -0.006948515139520169,
+      "value_loss": 17.28264895439148,
+      "entropy": 2.6697411870956422
+    },
+    {
+      "iteration": 10,
+      "mean_ep_reward": 69.12680048859887,
+      "n_transitions": 6400,
+      "policy_loss": -0.00021756576374173164,
+      "value_loss": 22.903028783798216,
+      "entropy": 2.6437813997268678
+    },
+    {
+      "iteration": 11,
+      "mean_ep_reward": 64.39356232949596,
+      "n_transitions": 6400,
+      "policy_loss": -0.004372646780684591,
+      "value_loss": 18.582285261154176,
+      "entropy": 2.616916437149048
+    },
+    {
+      "iteration": 12,
+      "mean_ep_reward": 71.60780179367742,
+      "n_transitions": 6400,
+      "policy_loss": -0.0029621693957597017,
+      "value_loss": 18.216506175994873,
+      "entropy": 2.630671112537384
+    },
+    {
+      "iteration": 13,
+      "mean_ep_reward": 67.15564309681235,
+      "n_transitions": 6400,
+      "policy_loss": -0.006788785932585597,
+      "value_loss": 23.271306943893432,
+      "entropy": 2.5958418369293215
+    },
+    {
+      "iteration": 14,
+      "mean_ep_reward": 58.59898397593256,
+      "n_transitions": 6400,
+      "policy_loss": -0.0005956798698753119,
+      "value_loss": 21.83591757774353,
+      "entropy": 2.583718147277832
+    },
+    {
+      "iteration": 15,
+      "mean_ep_reward": 75.57954412552962,
+      "n_transitions": 6400,
+      "policy_loss": -0.0028214228712022307,
+      "value_loss": 19.23996307373047,
+      "entropy": 2.5201062679290773
+    },
+    {
+      "iteration": 16,
+      "mean_ep_reward": 71.9238080582031,
+      "n_transitions": 6400,
+      "policy_loss": -0.006920796716585755,
+      "value_loss": 23.542369718551637,
+      "entropy": 2.5241044306755067
+    },
+    {
+      "iteration": 17,
+      "mean_ep_reward": 72.10616272735615,
+      "n_transitions": 6400,
+      "policy_loss": -0.003124837321229279,
+      "value_loss": 26.450128631591795,
+      "entropy": 2.4977460050582887
+    },
+    {
+      "iteration": 18,
+      "mean_ep_reward": 71.39750324953756,
+      "n_transitions": 6400,
+      "policy_loss": -0.0010425156727433204,
+      "value_loss": 34.19401973724365,
+      "entropy": 2.422192714214325
+    },
+    {
+      "iteration": 19,
+      "mean_ep_reward": 67.13873415018676,
+      "n_transitions": 6400,
+      "policy_loss": -0.0019003985915333032,
+      "value_loss": 30.333809776306154,
+      "entropy": 2.3670293283462525
+    },
+    {
+      "iteration": 20,
+      "mean_ep_reward": 76.52274173683493,
+      "n_transitions": 6400,
+      "policy_loss": -0.003945157118141651,
+      "value_loss": 29.26112531661987,
+      "entropy": 2.3639645838737486
+    },
+    {
+      "iteration": 21,
+      "mean_ep_reward": 66.679945644033,
+      "n_transitions": 6400,
+      "policy_loss": -0.0025408441061154008,
+      "value_loss": 28.786722812652588,
+      "entropy": 2.3618037939071654
+    },
+    {
+      "iteration": 22,
+      "mean_ep_reward": 61.53581298360025,
+      "n_transitions": 6400,
+      "policy_loss": -0.0029853826994076372,
+      "value_loss": 32.57708055496216,
+      "entropy": 2.3392074632644655
+    },
+    {
+      "iteration": 23,
+      "mean_ep_reward": 61.63481764424098,
+      "n_transitions": 6400,
+      "policy_loss": -0.005114176119677722,
+      "value_loss": 28.68116554260254,
+      "entropy": 2.415938720703125
+    },
+    {
+      "iteration": 24,
+      "mean_ep_reward": 66.05130754006714,
+      "n_transitions": 6400,
+      "policy_loss": -0.0013824710762128233,
+      "value_loss": 25.165843925476075,
+      "entropy": 2.41189430475235
+    },
+    {
+      "iteration": 25,
+      "mean_ep_reward": 70.10806937822424,
+      "n_transitions": 6400,
+      "policy_loss": -0.004312943341210485,
+      "value_loss": 19.633903913497925,
+      "entropy": 2.4152977371215822
+    },
+    {
+      "iteration": 26,
+      "mean_ep_reward": 73.46943171096771,
+      "n_transitions": 6400,
+      "policy_loss": -0.001518885362893343,
+      "value_loss": 25.536957664489748,
+      "entropy": 2.4017064499855043
+    },
+    {
+      "iteration": 27,
+      "mean_ep_reward": 65.76614518081698,
+      "n_transitions": 6400,
+      "policy_loss": -0.0036458639707416295,
+      "value_loss": 27.139790897369384,
+      "entropy": 2.364647901058197
+    },
+    {
+      "iteration": 28,
+      "mean_ep_reward": 71.7475130472369,
+      "n_transitions": 6400,
+      "policy_loss": -0.0035939807444810867,
+      "value_loss": 26.09924104690552,
+      "entropy": 2.367196660041809
+    },
+    {
+      "iteration": 29,
+      "mean_ep_reward": 73.59093404432687,
+      "n_transitions": 6400,
+      "policy_loss": -0.00025903728790581225,
+      "value_loss": 32.90759958267212,
+      "entropy": 2.3156690883636473
+    },
+    {
+      "iteration": 30,
+      "mean_ep_reward": 63.956128129888526,
+      "n_transitions": 6400,
+      "policy_loss": -0.002286612233147025,
+      "value_loss": 27.297552089691163,
+      "entropy": 2.3316689634323122
+    },
+    {
+      "iteration": 31,
+      "mean_ep_reward": 69.00617154202891,
+      "n_transitions": 6400,
+      "policy_loss": -0.003967230152338744,
+      "value_loss": 24.350532035827637,
+      "entropy": 2.3401445245742796
+    },
+    {
+      "iteration": 32,
+      "mean_ep_reward": 70.80828824395661,
+      "n_transitions": 6400,
+      "policy_loss": 0.00022515499033033847,
+      "value_loss": 30.282514457702636,
+      "entropy": 2.33387131690979
+    },
+    {
+      "iteration": 33,
+      "mean_ep_reward": 67.98338870389401,
+      "n_transitions": 6400,
+      "policy_loss": -0.0029955960903316737,
+      "value_loss": 25.743559770584106,
+      "entropy": 2.3591650557518005
+    },
+    {
+      "iteration": 34,
+      "mean_ep_reward": 70.91780587665164,
+      "n_transitions": 6400,
+      "policy_loss": -0.0009795638732612133,
+      "value_loss": 22.801874303817748,
+      "entropy": 2.3363480043411253
+    },
+    {
+      "iteration": 35,
+      "mean_ep_reward": 74.84080024144848,
+      "n_transitions": 6400,
+      "policy_loss": -0.002136691976338625,
+      "value_loss": 17.226102781295776,
+      "entropy": 2.312313277721405
+    },
+    {
+      "iteration": 36,
+      "mean_ep_reward": 74.45850207826359,
+      "n_transitions": 6400,
+      "policy_loss": -0.005198564799502492,
+      "value_loss": 17.237732620239257,
+      "entropy": 2.280649347305298
+    },
+    {
+      "iteration": 37,
+      "mean_ep_reward": 74.67809066325333,
+      "n_transitions": 6400,
+      "policy_loss": -0.0010780078265815974,
+      "value_loss": 24.58709673881531,
+      "entropy": 2.234267852306366
+    },
+    {
+      "iteration": 38,
+      "mean_ep_reward": 68.24390936057323,
+      "n_transitions": 6400,
+      "policy_loss": -0.0008263727556914091,
+      "value_loss": 24.31020471572876,
+      "entropy": 2.2583636665344238
+    },
+    {
+      "iteration": 39,
+      "mean_ep_reward": 83.41793124354155,
+      "n_transitions": 6400,
+      "policy_loss": -0.0020086934231221677,
+      "value_loss": 26.657121629714965,
+      "entropy": 2.2593854308128356
+    },
+    {
+      "iteration": 40,
+      "mean_ep_reward": 73.8094955818745,
+      "n_transitions": 6400,
+      "policy_loss": -0.0010716611985117197,
+      "value_loss": 22.11953434944153,
+      "entropy": 2.2227659583091737
+    },
+    {
+      "iteration": 41,
+      "mean_ep_reward": 80.51284865706265,
+      "n_transitions": 6400,
+      "policy_loss": -0.002696821689605713,
+      "value_loss": 15.808730411529542,
+      "entropy": 2.2348485517501833
+    },
+    {
+      "iteration": 42,
+      "mean_ep_reward": 76.0315555900636,
+      "n_transitions": 6400,
+      "policy_loss": -0.0039757035858929155,
+      "value_loss": 23.399084100723268,
+      "entropy": 2.211740596294403
+    },
+    {
+      "iteration": 43,
+      "mean_ep_reward": 78.2860194528673,
+      "n_transitions": 6400,
+      "policy_loss": -0.002634411416947842,
+      "value_loss": 17.672115535736083,
+      "entropy": 2.200231578350067
+    },
+    {
+      "iteration": 44,
+      "mean_ep_reward": 59.87486632292222,
+      "n_transitions": 6400,
+      "policy_loss": -0.005543365953490138,
+      "value_loss": 17.107146883010863,
+      "entropy": 2.1962523674964904
+    },
+    {
+      "iteration": 45,
+      "mean_ep_reward": 71.36556500889121,
+      "n_transitions": 6400,
+      "policy_loss": -0.002878182125277817,
+      "value_loss": 21.834843311309815,
+      "entropy": 2.1239725804328917
+    },
+    {
+      "iteration": 46,
+      "mean_ep_reward": 84.39593759311744,
+      "n_transitions": 6400,
+      "policy_loss": -0.004296042323112488,
+      "value_loss": 23.450998764038086,
+      "entropy": 2.1326050209999083
+    },
+    {
+      "iteration": 47,
+      "mean_ep_reward": 88.67669766830215,
+      "n_transitions": 6400,
+      "policy_loss": -0.004078005691990256,
+      "value_loss": 26.2359903717041,
+      "entropy": 2.130595543384552
+    },
+    {
+      "iteration": 48,
+      "mean_ep_reward": 83.97915455323441,
+      "n_transitions": 6400,
+      "policy_loss": -0.00019240331836044787,
+      "value_loss": 25.88084906578064,
+      "entropy": 2.1822051787376404
+    },
+    {
+      "iteration": 49,
+      "mean_ep_reward": 79.63159809022319,
+      "n_transitions": 6400,
+      "policy_loss": -0.004642506083473563,
+      "value_loss": 27.077702770233156,
+      "entropy": 2.192437219619751
+    },
+    {
+      "iteration": 50,
+      "mean_ep_reward": 78.97183313968465,
+      "n_transitions": 6400,
+      "policy_loss": -0.002316695209592581,
+      "value_loss": 26.79174635887146,
+      "entropy": 2.1773083186149598
+    },
+    {
+      "iteration": 51,
+      "mean_ep_reward": 75.59329906892847,
+      "n_transitions": 6400,
+      "policy_loss": -0.001292763843666762,
+      "value_loss": 25.60907554626465,
+      "entropy": 2.219189856052399
+    },
+    {
+      "iteration": 52,
+      "mean_ep_reward": 81.0970775306283,
+      "n_transitions": 6400,
+      "policy_loss": -0.0011332917865365744,
+      "value_loss": 28.94028480529785,
+      "entropy": 2.230548050403595
+    },
+    {
+      "iteration": 53,
+      "mean_ep_reward": 77.93277446946273,
+      "n_transitions": 6400,
+      "policy_loss": -0.0027659853594377637,
+      "value_loss": 20.466742095947264,
+      "entropy": 2.2087190914154053
+    },
+    {
+      "iteration": 54,
+      "mean_ep_reward": 75.20262567359005,
+      "n_transitions": 6400,
+      "policy_loss": -0.0031446213554590942,
+      "value_loss": 20.721996421813966,
+      "entropy": 2.191371726989746
+    },
+    {
+      "iteration": 55,
+      "mean_ep_reward": 82.25343739849379,
+      "n_transitions": 6400,
+      "policy_loss": -0.004837261978536844,
+      "value_loss": 21.060014781951903,
+      "entropy": 2.125356605052948
+    },
+    {
+      "iteration": 56,
+      "mean_ep_reward": 76.53250743893025,
+      "n_transitions": 6400,
+      "policy_loss": -0.002541210148483515,
+      "value_loss": 16.99858441352844,
+      "entropy": 2.1918318557739256
+    },
+    {
+      "iteration": 57,
+      "mean_ep_reward": 72.6611750984276,
+      "n_transitions": 6400,
+      "policy_loss": -0.0024465588014572857,
+      "value_loss": 19.220525102615355,
+      "entropy": 2.163070080280304
+    },
+    {
+      "iteration": 58,
+      "mean_ep_reward": 67.1342736610593,
+      "n_transitions": 6400,
+      "policy_loss": -0.0028729136195033787,
+      "value_loss": 25.154909563064574,
+      "entropy": 2.20405752658844
+    },
+    {
+      "iteration": 59,
+      "mean_ep_reward": 70.90502306972355,
+      "n_transitions": 6400,
+      "policy_loss": -0.004193395478650928,
+      "value_loss": 20.34200608253479,
+      "entropy": 2.1896410822868346
+    },
+    {
+      "iteration": 60,
+      "mean_ep_reward": 73.54685011870731,
+      "n_transitions": 6400,
+      "policy_loss": -0.0012771293427795171,
+      "value_loss": 17.20829619407654,
+      "entropy": 2.201601514816284
+    },
+    {
+      "iteration": 61,
+      "mean_ep_reward": 78.9188700214267,
+      "n_transitions": 6400,
+      "policy_loss": -0.0030286164861172437,
+      "value_loss": 17.083043212890626,
+      "entropy": 2.155460093021393
+    },
+    {
+      "iteration": 62,
+      "mean_ep_reward": 70.98311570207012,
+      "n_transitions": 6400,
+      "policy_loss": -0.005561287309974432,
+      "value_loss": 16.065809383392335,
+      "entropy": 2.1924899435043335
+    },
+    {
+      "iteration": 63,
+      "mean_ep_reward": 71.69190874955936,
+      "n_transitions": 6400,
+      "policy_loss": -0.004079008083790541,
+      "value_loss": 17.105625886917114,
+      "entropy": 2.1771145701408385
+    },
+    {
+      "iteration": 64,
+      "mean_ep_reward": 74.49339624639624,
+      "n_transitions": 6400,
+      "policy_loss": -0.004366529053077102,
+      "value_loss": 18.604415893554688,
+      "entropy": 2.1981713557243348
+    },
+    {
+      "iteration": 65,
+      "mean_ep_reward": 71.9022825121241,
+      "n_transitions": 6400,
+      "policy_loss": -0.0020924797933548687,
+      "value_loss": 18.851447610855104,
+      "entropy": 2.1995415902137756
+    },
+    {
+      "iteration": 66,
+      "mean_ep_reward": 70.66946336743037,
+      "n_transitions": 6400,
+      "policy_loss": -0.007331921039149165,
+      "value_loss": 21.822528257369996,
+      "entropy": 2.2116946244239806
+    },
+    {
+      "iteration": 67,
+      "mean_ep_reward": 94.47243847110545,
+      "n_transitions": 6400,
+      "policy_loss": 2.232504077255726e-05,
+      "value_loss": 22.25001468658447,
+      "entropy": 2.0765193414688112
+    },
+    {
+      "iteration": 68,
+      "mean_ep_reward": 77.43362754832688,
+      "n_transitions": 6400,
+      "policy_loss": -0.0036572569981217383,
+      "value_loss": 16.35440628051758,
+      "entropy": 2.132707839012146
+    },
+    {
+      "iteration": 69,
+      "mean_ep_reward": 76.72695088414241,
+      "n_transitions": 6400,
+      "policy_loss": -0.0011114453012123703,
+      "value_loss": 19.53660723686218,
+      "entropy": 2.1671320748329164
+    },
+    {
+      "iteration": 70,
+      "mean_ep_reward": 89.47062922563317,
+      "n_transitions": 6400,
+      "policy_loss": -0.003999758469872177,
+      "value_loss": 16.536515369415284,
+      "entropy": 2.114327416419983
+    },
+    {
+      "iteration": 71,
+      "mean_ep_reward": 86.53681565767654,
+      "n_transitions": 6400,
+      "policy_loss": -0.005159512488171458,
+      "value_loss": 15.496730442047118,
+      "entropy": 2.1473327589035036
+    },
+    {
+      "iteration": 72,
+      "mean_ep_reward": 82.29037315443415,
+      "n_transitions": 6400,
+      "policy_loss": -0.00365970223210752,
+      "value_loss": 16.65233428001404,
+      "entropy": 2.126942503452301
+    },
+    {
+      "iteration": 73,
+      "mean_ep_reward": 82.92310980677169,
+      "n_transitions": 6400,
+      "policy_loss": -0.002434732960537076,
+      "value_loss": 21.404793338775633,
+      "entropy": 2.0623770320415495
+    },
+    {
+      "iteration": 74,
+      "mean_ep_reward": 77.61274603809646,
+      "n_transitions": 6400,
+      "policy_loss": -0.003836873462423682,
+      "value_loss": 20.165184059143066,
+      "entropy": 2.102023639678955
+    },
+    {
+      "iteration": 75,
+      "mean_ep_reward": 98.99229138359496,
+      "n_transitions": 6400,
+      "policy_loss": -0.005246230671182275,
+      "value_loss": 18.10580358505249,
+      "entropy": 2.0327402114868165
+    },
+    {
+      "iteration": 76,
+      "mean_ep_reward": 83.28810365474324,
+      "n_transitions": 6400,
+      "policy_loss": -0.0021464357059448958,
+      "value_loss": 20.583179197311402,
+      "entropy": 2.1234808206558227
+    },
+    {
+      "iteration": 77,
+      "mean_ep_reward": 77.4533002536844,
+      "n_transitions": 6400,
+      "policy_loss": -0.0019898940064013004,
+      "value_loss": 22.459103651046753,
+      "entropy": 2.120979912281036
+    },
+    {
+      "iteration": 78,
+      "mean_ep_reward": 83.11431303388522,
+      "n_transitions": 6400,
+      "policy_loss": -0.004136829636991024,
+      "value_loss": 19.884077806472778,
+      "entropy": 2.1500868248939513
+    },
+    {
+      "iteration": 79,
+      "mean_ep_reward": 70.90689746207659,
+      "n_transitions": 6400,
+      "policy_loss": -0.005057727769017219,
+      "value_loss": 19.819324321746826,
+      "entropy": 2.1629218363761904
+    },
+    {
+      "iteration": 80,
+      "mean_ep_reward": 84.3109173695769,
+      "n_transitions": 6400,
+      "policy_loss": -0.0019467063806951047,
+      "value_loss": 24.64779273033142,
+      "entropy": 2.0911751890182497
+    },
+    {
+      "iteration": 81,
+      "mean_ep_reward": 76.94057296587685,
+      "n_transitions": 6400,
+      "policy_loss": -0.0025460170209407806,
+      "value_loss": 19.595941429138183,
+      "entropy": 2.1490028953552245
+    },
+    {
+      "iteration": 82,
+      "mean_ep_reward": 75.4082280630651,
+      "n_transitions": 6400,
+      "policy_loss": -0.0024131640978157522,
+      "value_loss": 19.46947635650635,
+      "entropy": 2.177506890296936
+    },
+    {
+      "iteration": 83,
+      "mean_ep_reward": 82.90480447792743,
+      "n_transitions": 6400,
+      "policy_loss": -0.0011849776469171048,
+      "value_loss": 26.205188093185424,
+      "entropy": 2.1586949491500853
+    },
+    {
+      "iteration": 84,
+      "mean_ep_reward": 86.25994968543756,
+      "n_transitions": 6400,
+      "policy_loss": -0.002790171718224883,
+      "value_loss": 20.833654861450196,
+      "entropy": 2.1947853708267213
+    },
+    {
+      "iteration": 85,
+      "mean_ep_reward": 80.14479313934552,
+      "n_transitions": 6400,
+      "policy_loss": 0.00012815493158996105,
+      "value_loss": 21.155062856674196,
+      "entropy": 2.1693156290054323
+    },
+    {
+      "iteration": 86,
+      "mean_ep_reward": 83.53103139731058,
+      "n_transitions": 6400,
+      "policy_loss": -0.0027765257190912962,
+      "value_loss": 16.225713319778443,
+      "entropy": 2.2187208271026613
+    },
+    {
+      "iteration": 87,
+      "mean_ep_reward": 88.73524814950521,
+      "n_transitions": 6400,
+      "policy_loss": -0.0033661219757050278,
+      "value_loss": 15.608208446502685,
+      "entropy": 2.191359760761261
+    },
+    {
+      "iteration": 88,
+      "mean_ep_reward": 90.99526369301796,
+      "n_transitions": 6400,
+      "policy_loss": -0.0012903323350474238,
+      "value_loss": 17.44396288871765,
+      "entropy": 2.173299129009247
+    },
+    {
+      "iteration": 89,
+      "mean_ep_reward": 88.42589221969854,
+      "n_transitions": 6400,
+      "policy_loss": -0.006456992728635669,
+      "value_loss": 16.70424390792847,
+      "entropy": 2.20392391204834
+    },
+    {
+      "iteration": 90,
+      "mean_ep_reward": 86.9072384975537,
+      "n_transitions": 6400,
+      "policy_loss": 0.00010138698853552341,
+      "value_loss": 19.111487855911253,
+      "entropy": 2.204360327720642
+    },
+    {
+      "iteration": 91,
+      "mean_ep_reward": 62.3356771314623,
+      "n_transitions": 6400,
+      "policy_loss": -0.0037147784419357776,
+      "value_loss": 19.875239963531495,
+      "entropy": 2.2457262754440306
+    },
+    {
+      "iteration": 92,
+      "mean_ep_reward": 67.06759067065303,
+      "n_transitions": 6400,
+      "policy_loss": -0.0019204294355586171,
+      "value_loss": 16.301301765441895,
+      "entropy": 2.2950953435897827
+    },
+    {
+      "iteration": 93,
+      "mean_ep_reward": 70.73720362571439,
+      "n_transitions": 6400,
+      "policy_loss": -0.0013778006890788675,
+      "value_loss": 17.576813879013063,
+      "entropy": 2.272348394393921
+    },
+    {
+      "iteration": 94,
+      "mean_ep_reward": 80.57633225372949,
+      "n_transitions": 6400,
+      "policy_loss": -0.0023463968141004443,
+      "value_loss": 17.573370666503905,
+      "entropy": 2.150520746707916
+    },
+    {
+      "iteration": 95,
+      "mean_ep_reward": 90.45872505872725,
+      "n_transitions": 6400,
+      "policy_loss": -0.001410310259088874,
+      "value_loss": 17.58020266532898,
+      "entropy": 2.1186004185676577
+    },
+    {
+      "iteration": 96,
+      "mean_ep_reward": 67.53071751613854,
+      "n_transitions": 6400,
+      "policy_loss": -0.002514599049463868,
+      "value_loss": 16.502918176651,
+      "entropy": 2.1621091985702514
+    },
+    {
+      "iteration": 97,
+      "mean_ep_reward": 85.34483613611954,
+      "n_transitions": 6400,
+      "policy_loss": -0.0018889755569398404,
+      "value_loss": 17.665932254791258,
+      "entropy": 2.1197451615333556
+    },
+    {
+      "iteration": 98,
+      "mean_ep_reward": 72.86488272413666,
+      "n_transitions": 6400,
+      "policy_loss": -0.005290244231000543,
+      "value_loss": 16.67336365699768,
+      "entropy": 2.153349676132202
+    },
+    {
+      "iteration": 99,
+      "mean_ep_reward": 85.03427017702427,
+      "n_transitions": 6400,
+      "policy_loss": -0.0022017365880310537,
+      "value_loss": 17.403623723983763,
+      "entropy": 2.1179455757141112
+    },
+    {
+      "iteration": 100,
+      "mean_ep_reward": 90.9055099506023,
+      "n_transitions": 6400,
+      "policy_loss": -0.0018784392485395073,
+      "value_loss": 17.855085010528565,
+      "entropy": 2.091703631877899
+    },
+    {
+      "iteration": 101,
+      "mean_ep_reward": 88.4090288315155,
+      "n_transitions": 6400,
+      "policy_loss": -0.0011267284397035837,
+      "value_loss": 17.142877683639526,
+      "entropy": 2.0573198223114013
+    },
+    {
+      "iteration": 102,
+      "mean_ep_reward": 81.69829227580371,
+      "n_transitions": 6400,
+      "policy_loss": -0.0011538897827267647,
+      "value_loss": 17.647146530151367,
+      "entropy": 2.118764390945435
+    },
+    {
+      "iteration": 103,
+      "mean_ep_reward": 87.64152087326015,
+      "n_transitions": 6400,
+      "policy_loss": -0.00402412467636168,
+      "value_loss": 16.246155366897582,
+      "entropy": 2.0830931198596954
+    },
+    {
+      "iteration": 104,
+      "mean_ep_reward": 70.55485916013389,
+      "n_transitions": 6400,
+      "policy_loss": -0.004236811939626932,
+      "value_loss": 16.301264719963072,
+      "entropy": 2.1017802810668944
+    },
+    {
+      "iteration": 105,
+      "mean_ep_reward": 85.0432243412126,
+      "n_transitions": 6400,
+      "policy_loss": -0.0017665050225332379,
+      "value_loss": 19.279113063812257,
+      "entropy": 2.090305824279785
+    },
+    {
+      "iteration": 106,
+      "mean_ep_reward": 83.82714443016893,
+      "n_transitions": 6400,
+      "policy_loss": -0.0030656634736806153,
+      "value_loss": 18.083623466491698,
+      "entropy": 2.1130552554130553
+    },
+    {
+      "iteration": 107,
+      "mean_ep_reward": 79.75726366158945,
+      "n_transitions": 6400,
+      "policy_loss": -0.002642210591584444,
+      "value_loss": 18.455331602096557,
+      "entropy": 2.1289067316055297
+    },
+    {
+      "iteration": 108,
+      "mean_ep_reward": 78.6717743632224,
+      "n_transitions": 6400,
+      "policy_loss": -0.0019578197691589596,
+      "value_loss": 17.219645776748656,
+      "entropy": 2.101764419078827
+    },
+    {
+      "iteration": 109,
+      "mean_ep_reward": 72.23139865539467,
+      "n_transitions": 6400,
+      "policy_loss": -0.0043304359028115864,
+      "value_loss": 16.464107875823974,
+      "entropy": 2.1184253978729246
+    },
+    {
+      "iteration": 110,
+      "mean_ep_reward": 86.75071829713725,
+      "n_transitions": 6400,
+      "policy_loss": -0.0027189651457592847,
+      "value_loss": 15.10090425491333,
+      "entropy": 2.1291553497314455
+    },
+    {
+      "iteration": 111,
+      "mean_ep_reward": 93.13541763220489,
+      "n_transitions": 6400,
+      "policy_loss": -0.004529340984299779,
+      "value_loss": 18.703304634094238,
+      "entropy": 1.9738486230373382
+    },
+    {
+      "iteration": 112,
+      "mean_ep_reward": 95.55233409473445,
+      "n_transitions": 6400,
+      "policy_loss": -0.0019544740952551366,
+      "value_loss": 14.884372801780701,
+      "entropy": 2.0331069588661195
+    },
+    {
+      "iteration": 113,
+      "mean_ep_reward": 75.22972340393827,
+      "n_transitions": 6400,
+      "policy_loss": -0.005936005800031126,
+      "value_loss": 15.417491359710693,
+      "entropy": 1.9796690583229064
+    },
+    {
+      "iteration": 114,
+      "mean_ep_reward": 84.22902462138532,
+      "n_transitions": 6400,
+      "policy_loss": -0.0029235368175432085,
+      "value_loss": 17.502228288650514,
+      "entropy": 1.9379586005210876
+    },
+    {
+      "iteration": 115,
+      "mean_ep_reward": 79.51167039077775,
+      "n_transitions": 6400,
+      "policy_loss": -0.002933286423794925,
+      "value_loss": 17.36621817588806,
+      "entropy": 2.06715376496315
+    },
+    {
+      "iteration": 116,
+      "mean_ep_reward": 87.93995422003528,
+      "n_transitions": 6400,
+      "policy_loss": -0.004244959116913378,
+      "value_loss": 17.345641250610353,
+      "entropy": 1.9966567933559418
+    },
+    {
+      "iteration": 117,
+      "mean_ep_reward": 87.52685220525471,
+      "n_transitions": 6400,
+      "policy_loss": -0.004929557628929615,
+      "value_loss": 17.802944107055666,
+      "entropy": 2.061032327413559
+    },
+    {
+      "iteration": 118,
+      "mean_ep_reward": 76.83716578391738,
+      "n_transitions": 6400,
+      "policy_loss": -0.00364904117770493,
+      "value_loss": 14.981642141342164,
+      "entropy": 2.0517704665660856
+    },
+    {
+      "iteration": 119,
+      "mean_ep_reward": 86.13975342778087,
+      "n_transitions": 6400,
+      "policy_loss": 4.627063870429993e-05,
+      "value_loss": 11.34590901374817,
+      "entropy": 2.0393092489242552
+    },
+    {
+      "iteration": 120,
+      "mean_ep_reward": 73.46177469746362,
+      "n_transitions": 6400,
+      "policy_loss": -0.001039797766134143,
+      "value_loss": 13.216604232788086,
+      "entropy": 2.0882630491256715
+    },
+    {
+      "iteration": 121,
+      "mean_ep_reward": 86.48503198753984,
+      "n_transitions": 6400,
+      "policy_loss": -0.0018127431534230708,
+      "value_loss": 19.9551132106781,
+      "entropy": 2.0981428205966948
+    },
+    {
+      "iteration": 122,
+      "mean_ep_reward": 79.56169270224393,
+      "n_transitions": 6400,
+      "policy_loss": -0.0024325107177719475,
+      "value_loss": 15.700939474105835,
+      "entropy": 2.1283552193641664
+    },
+    {
+      "iteration": 123,
+      "mean_ep_reward": 75.36868931745072,
+      "n_transitions": 6400,
+      "policy_loss": -0.00342888044193387,
+      "value_loss": 13.988471775054931,
+      "entropy": 2.135502452850342
+    },
+    {
+      "iteration": 124,
+      "mean_ep_reward": 84.9104212150263,
+      "n_transitions": 6400,
+      "policy_loss": 0.000252051567658782,
+      "value_loss": 15.251547904014588,
+      "entropy": 2.112465703487396
+    },
+    {
+      "iteration": 125,
+      "mean_ep_reward": 90.67265630062843,
+      "n_transitions": 6400,
+      "policy_loss": -0.0017634024238213897,
+      "value_loss": 20.06878692626953,
+      "entropy": 2.1110045528411865
+    },
+    {
+      "iteration": 126,
+      "mean_ep_reward": 83.3387779544475,
+      "n_transitions": 6400,
+      "policy_loss": -0.0011482264939695597,
+      "value_loss": 20.543775262832643,
+      "entropy": 2.1331783080101014
+    },
+    {
+      "iteration": 127,
+      "mean_ep_reward": 87.46624554255281,
+      "n_transitions": 6400,
+      "policy_loss": -0.003217576532624662,
+      "value_loss": 17.392923288345337,
+      "entropy": 2.1219893956184386
+    },
+    {
+      "iteration": 128,
+      "mean_ep_reward": 75.65106775208504,
+      "n_transitions": 6400,
+      "policy_loss": -0.0018786171730607749,
+      "value_loss": 17.667223920822142,
+      "entropy": 2.1053679060935973
+    },
+    {
+      "iteration": 129,
+      "mean_ep_reward": 76.41012723284291,
+      "n_transitions": 6400,
+      "policy_loss": -0.001791269858367741,
+      "value_loss": 15.825795364379882,
+      "entropy": 2.15039169549942
+    },
+    {
+      "iteration": 130,
+      "mean_ep_reward": 71.44875115268201,
+      "n_transitions": 6400,
+      "policy_loss": -0.0026114863250404595,
+      "value_loss": 17.544525270462035,
+      "entropy": 2.098383445739746
+    },
+    {
+      "iteration": 131,
+      "mean_ep_reward": 89.16314060954673,
+      "n_transitions": 6400,
+      "policy_loss": -0.0019145227782428264,
+      "value_loss": 20.841710081100462,
+      "entropy": 2.002231570482254
+    },
+    {
+      "iteration": 132,
+      "mean_ep_reward": 82.83102403908296,
+      "n_transitions": 6400,
+      "policy_loss": -0.005694350390695035,
+      "value_loss": 15.21229229927063,
+      "entropy": 2.088674943447113
+    },
+    {
+      "iteration": 133,
+      "mean_ep_reward": 74.61125847006012,
+      "n_transitions": 6400,
+      "policy_loss": -0.001490059867501259,
+      "value_loss": 15.896243677139282,
+      "entropy": 2.0368974936008453
+    },
+    {
+      "iteration": 134,
+      "mean_ep_reward": 73.06126993125804,
+      "n_transitions": 6400,
+      "policy_loss": 0.00011284820735454559,
+      "value_loss": 13.188062143325805,
+      "entropy": 2.0070761609077454
+    },
+    {
+      "iteration": 135,
+      "mean_ep_reward": 68.3580066346053,
+      "n_transitions": 6400,
+      "policy_loss": -0.004803477209061384,
+      "value_loss": 13.475892844200134,
+      "entropy": 2.0680642342567443
+    },
+    {
+      "iteration": 136,
+      "mean_ep_reward": 103.5883923767772,
+      "n_transitions": 6400,
+      "policy_loss": -0.0017034317832440137,
+      "value_loss": 16.29999432563782,
+      "entropy": 2.0654563164710997
+    },
+    {
+      "iteration": 137,
+      "mean_ep_reward": 81.89770754912928,
+      "n_transitions": 6400,
+      "policy_loss": -0.0034595175087451936,
+      "value_loss": 20.695725116729736,
+      "entropy": 2.0914410829544066
+    },
+    {
+      "iteration": 138,
+      "mean_ep_reward": 78.90683619919551,
+      "n_transitions": 6400,
+      "policy_loss": -0.0024261695239692926,
+      "value_loss": 20.402405977249146,
+      "entropy": 1.9956717586517334
+    },
+    {
+      "iteration": 139,
+      "mean_ep_reward": 71.36685320607309,
+      "n_transitions": 6400,
+      "policy_loss": -0.00609818852506578,
+      "value_loss": 17.84100969314575,
+      "entropy": 2.0296890926361084
+    },
+    {
+      "iteration": 140,
+      "mean_ep_reward": 80.78994168347202,
+      "n_transitions": 6400,
+      "policy_loss": -0.0014365086192265153,
+      "value_loss": 16.643973960876465,
+      "entropy": 1.9960542261600493
+    },
+    {
+      "iteration": 141,
+      "mean_ep_reward": 80.63909882662747,
+      "n_transitions": 6400,
+      "policy_loss": -0.001636183620430529,
+      "value_loss": 16.57487063407898,
+      "entropy": 2.0689316034317016
+    },
+    {
+      "iteration": 142,
+      "mean_ep_reward": 94.68056966553853,
+      "n_transitions": 6400,
+      "policy_loss": 0.0007055082777515054,
+      "value_loss": 22.513797178268433,
+      "entropy": 1.9975568294525146
+    },
+    {
+      "iteration": 143,
+      "mean_ep_reward": 80.71898422488184,
+      "n_transitions": 6400,
+      "policy_loss": -0.0030353554338216782,
+      "value_loss": 23.574557104110717,
+      "entropy": 2.041725250482559
+    },
+    {
+      "iteration": 144,
+      "mean_ep_reward": 74.19182163089198,
+      "n_transitions": 6400,
+      "policy_loss": -0.0009725471958518028,
+      "value_loss": 20.500974931716918,
+      "entropy": 2.171235761642456
+    },
+    {
+      "iteration": 145,
+      "mean_ep_reward": 76.1511017270787,
+      "n_transitions": 6400,
+      "policy_loss": -0.001773051586933434,
+      "value_loss": 23.29751856803894,
+      "entropy": 2.13367210149765
+    },
+    {
+      "iteration": 146,
+      "mean_ep_reward": 94.32001821815007,
+      "n_transitions": 6400,
+      "policy_loss": -1.0657855309545994e-05,
+      "value_loss": 27.110707998275757,
+      "entropy": 2.046520403623581
+    },
+    {
+      "iteration": 147,
+      "mean_ep_reward": 73.73524923259987,
+      "n_transitions": 6400,
+      "policy_loss": -0.0013916049199178815,
+      "value_loss": 18.535766925811767,
+      "entropy": 2.127878324985504
+    },
+    {
+      "iteration": 148,
+      "mean_ep_reward": 90.03006735946752,
+      "n_transitions": 6400,
+      "policy_loss": -0.0006867882749065757,
+      "value_loss": 17.314631814956666,
+      "entropy": 2.0937184953689574
+    },
+    {
+      "iteration": 149,
+      "mean_ep_reward": 64.83169475795475,
+      "n_transitions": 6400,
+      "policy_loss": -0.006337975403293967,
+      "value_loss": 16.432289361953735,
+      "entropy": 2.1200647950172424
+    },
+    {
+      "iteration": 150,
+      "mean_ep_reward": 80.01322158786188,
+      "n_transitions": 6400,
+      "policy_loss": -0.0005731031484901905,
+      "value_loss": 18.585243501663207,
+      "entropy": 2.08649062871933
+    },
+    {
+      "iteration": 151,
+      "mean_ep_reward": 83.67752794540328,
+      "n_transitions": 6400,
+      "policy_loss": -0.0011530902702361345,
+      "value_loss": 20.153040733337402,
+      "entropy": 2.013399350643158
+    },
+    {
+      "iteration": 152,
+      "mean_ep_reward": 79.08241743318447,
+      "n_transitions": 6400,
+      "policy_loss": -0.0003153710346668959,
+      "value_loss": 17.488287525177,
+      "entropy": 2.1111583495140076
+    },
+    {
+      "iteration": 153,
+      "mean_ep_reward": 75.10457303410703,
+      "n_transitions": 6400,
+      "policy_loss": -0.00038866831455379723,
+      "value_loss": 23.397451038360597,
+      "entropy": 2.0892570304870604
+    },
+    {
+      "iteration": 154,
+      "mean_ep_reward": 87.83297363013986,
+      "n_transitions": 6400,
+      "policy_loss": -0.0011328880535438656,
+      "value_loss": 18.63473108291626,
+      "entropy": 2.039756715297699
+    },
+    {
+      "iteration": 155,
+      "mean_ep_reward": 92.55352728779172,
+      "n_transitions": 6400,
+      "policy_loss": -0.0007910335948690772,
+      "value_loss": 19.96658547401428,
+      "entropy": 2.0534078168869017
+    },
+    {
+      "iteration": 156,
+      "mean_ep_reward": 76.54055065003269,
+      "n_transitions": 6400,
+      "policy_loss": -0.004811100224032998,
+      "value_loss": 16.45255549430847,
+      "entropy": 2.084026334285736
+    },
+    {
+      "iteration": 157,
+      "mean_ep_reward": 82.2601189684465,
+      "n_transitions": 6400,
+      "policy_loss": -0.00028885757550597193,
+      "value_loss": 19.711888198852538,
+      "entropy": 2.154986705780029
+    },
+    {
+      "iteration": 158,
+      "mean_ep_reward": 88.25994393492074,
+      "n_transitions": 6400,
+      "policy_loss": -0.00199539789929986,
+      "value_loss": 23.211000452041628,
+      "entropy": 2.142952857017517
+    },
+    {
+      "iteration": 159,
+      "mean_ep_reward": 80.3453034083515,
+      "n_transitions": 6400,
+      "policy_loss": -0.003222445258870721,
+      "value_loss": 20.42235622406006,
+      "entropy": 2.1643637299537657
+    },
+    {
+      "iteration": 160,
+      "mean_ep_reward": 84.01859290748757,
+      "n_transitions": 6400,
+      "policy_loss": -0.001946709288749844,
+      "value_loss": 15.315114488601685,
+      "entropy": 2.1688649892807006
+    },
+    {
+      "iteration": 161,
+      "mean_ep_reward": 84.61399368911843,
+      "n_transitions": 6400,
+      "policy_loss": -0.003754101814702153,
+      "value_loss": 22.031660680770873,
+      "entropy": 2.1014365196228026
+    },
+    {
+      "iteration": 162,
+      "mean_ep_reward": 68.2657548020305,
+      "n_transitions": 6400,
+      "policy_loss": -0.003567146980203688,
+      "value_loss": 18.536940355300903,
+      "entropy": 2.102498023509979
+    },
+    {
+      "iteration": 163,
+      "mean_ep_reward": 88.05697033497653,
+      "n_transitions": 6400,
+      "policy_loss": -0.0022700065281242134,
+      "value_loss": 16.272423887252806,
+      "entropy": 2.087259285449982
+    },
+    {
+      "iteration": 164,
+      "mean_ep_reward": 83.27217472328412,
+      "n_transitions": 6400,
+      "policy_loss": -0.0016659598052501678,
+      "value_loss": 13.35231915473938,
+      "entropy": 2.159816551208496
+    },
+    {
+      "iteration": 165,
+      "mean_ep_reward": 77.47495954718407,
+      "n_transitions": 6400,
+      "policy_loss": 0.0017898591700941323,
+      "value_loss": 19.883121604919435,
+      "entropy": 2.017275549173355
+    },
+    {
+      "iteration": 166,
+      "mean_ep_reward": 73.17115119927726,
+      "n_transitions": 6400,
+      "policy_loss": -0.002168170241639018,
+      "value_loss": 16.259956102371216,
+      "entropy": 2.0388589191436766
+    },
+    {
+      "iteration": 167,
+      "mean_ep_reward": 66.60970365467504,
+      "n_transitions": 6400,
+      "policy_loss": -0.0006341826263815165,
+      "value_loss": 14.854705271720887,
+      "entropy": 2.0694575238227846
+    },
+    {
+      "iteration": 168,
+      "mean_ep_reward": 88.19235058891277,
+      "n_transitions": 6400,
+      "policy_loss": -0.0010428498592227697,
+      "value_loss": 17.319661560058595,
+      "entropy": 2.0321139657497405
+    },
+    {
+      "iteration": 169,
+      "mean_ep_reward": 58.91959456633411,
+      "n_transitions": 6400,
+      "policy_loss": -0.002342795617878437,
+      "value_loss": 12.72575876235962,
+      "entropy": 2.15061443567276
+    },
+    {
+      "iteration": 170,
+      "mean_ep_reward": 67.93960052236557,
+      "n_transitions": 6400,
+      "policy_loss": 0.0010767484735697509,
+      "value_loss": 16.59843897819519,
+      "entropy": 2.017547849416733
+    },
+    {
+      "iteration": 171,
+      "mean_ep_reward": 75.82870062457938,
+      "n_transitions": 6400,
+      "policy_loss": -0.0011685079988092183,
+      "value_loss": 14.029935159683227,
+      "entropy": 2.124801778793335
+    },
+    {
+      "iteration": 172,
+      "mean_ep_reward": 76.42885311610019,
+      "n_transitions": 6400,
+      "policy_loss": -0.002316167214885354,
+      "value_loss": 15.960218534469604,
+      "entropy": 2.1334180998802186
+    },
+    {
+      "iteration": 173,
+      "mean_ep_reward": 83.92896500169206,
+      "n_transitions": 6400,
+      "policy_loss": -0.005435749022290111,
+      "value_loss": 18.240051174163817,
+      "entropy": 2.0338949239254
+    },
+    {
+      "iteration": 174,
+      "mean_ep_reward": 78.13818463725295,
+      "n_transitions": 6400,
+      "policy_loss": -0.001828509825281799,
+      "value_loss": 18.81210210800171,
+      "entropy": 2.068632687330246
+    },
+    {
+      "iteration": 175,
+      "mean_ep_reward": 82.26048023782951,
+      "n_transitions": 6400,
+      "policy_loss": -0.002884315922856331,
+      "value_loss": 18.734861850738525,
+      "entropy": 2.0509310972690584
+    },
+    {
+      "iteration": 176,
+      "mean_ep_reward": 77.9840276278344,
+      "n_transitions": 6400,
+      "policy_loss": 0.00034015893936157227,
+      "value_loss": 20.322626266479492,
+      "entropy": 2.017817426919937
+    },
+    {
+      "iteration": 177,
+      "mean_ep_reward": 79.56575465261926,
+      "n_transitions": 6400,
+      "policy_loss": -0.004321377230808139,
+      "value_loss": 16.920264382362365,
+      "entropy": 2.003692227602005
+    },
+    {
+      "iteration": 178,
+      "mean_ep_reward": 76.95868049021627,
+      "n_transitions": 6400,
+      "policy_loss": 0.0030604613665491344,
+      "value_loss": 19.457418613433838,
+      "entropy": 2.0676087296009062
+    },
+    {
+      "iteration": 179,
+      "mean_ep_reward": 85.25936336460089,
+      "n_transitions": 6400,
+      "policy_loss": 0.0013057737797498702,
+      "value_loss": 19.96278547286987,
+      "entropy": 2.0088424825668336
+    },
+    {
+      "iteration": 180,
+      "mean_ep_reward": 78.81558237571069,
+      "n_transitions": 6400,
+      "policy_loss": -0.005611046319827438,
+      "value_loss": 18.51616156578064,
+      "entropy": 1.9864260494709014
+    },
+    {
+      "iteration": 181,
+      "mean_ep_reward": 83.77072880917744,
+      "n_transitions": 6400,
+      "policy_loss": -0.001906207324936986,
+      "value_loss": 20.135365343093873,
+      "entropy": 1.9064917433261872
+    },
+    {
+      "iteration": 182,
+      "mean_ep_reward": 82.22837813191359,
+      "n_transitions": 6400,
+      "policy_loss": -0.004348028860986233,
+      "value_loss": 17.859528608322144,
+      "entropy": 1.9939162564277648
+    },
+    {
+      "iteration": 183,
+      "mean_ep_reward": 65.17593281119245,
+      "n_transitions": 6400,
+      "policy_loss": 0.0006419988907873631,
+      "value_loss": 14.287968683242799,
+      "entropy": 2.073534414768219
+    },
+    {
+      "iteration": 184,
+      "mean_ep_reward": 90.45774390070275,
+      "n_transitions": 6400,
+      "policy_loss": -0.0019027329096570611,
+      "value_loss": 16.11846583366394,
+      "entropy": 2.0095837187767027
+    },
+    {
+      "iteration": 185,
+      "mean_ep_reward": 84.26696517596011,
+      "n_transitions": 6400,
+      "policy_loss": 0.0006058722315356135,
+      "value_loss": 14.684032459259033,
+      "entropy": 1.9876593840122223
+    },
+    {
+      "iteration": 186,
+      "mean_ep_reward": 82.429930892686,
+      "n_transitions": 6400,
+      "policy_loss": 0.0033233019057661295,
+      "value_loss": 15.400342578887939,
+      "entropy": 1.9013936579227448
+    },
+    {
+      "iteration": 187,
+      "mean_ep_reward": 85.12869305440915,
+      "n_transitions": 6400,
+      "policy_loss": -0.001810995889827609,
+      "value_loss": 11.924903078079224,
+      "entropy": 1.9158476769924164
+    },
+    {
+      "iteration": 188,
+      "mean_ep_reward": 76.47142433471515,
+      "n_transitions": 6400,
+      "policy_loss": 0.0011724189994856715,
+      "value_loss": 12.476514086723327,
+      "entropy": 1.9542694914340972
+    },
+    {
+      "iteration": 189,
+      "mean_ep_reward": 82.0492325897884,
+      "n_transitions": 6400,
+      "policy_loss": 0.0026700488571077584,
+      "value_loss": 14.870032434463502,
+      "entropy": 1.899682321548462
+    },
+    {
+      "iteration": 190,
+      "mean_ep_reward": 64.94097318056102,
+      "n_transitions": 6400,
+      "policy_loss": -0.0034036193415522575,
+      "value_loss": 13.104991617202758,
+      "entropy": 1.826941843032837
+    },
+    {
+      "iteration": 191,
+      "mean_ep_reward": 90.1542697537509,
+      "n_transitions": 6400,
+      "policy_loss": 1.3327635824680329e-05,
+      "value_loss": 15.299290409088135,
+      "entropy": 1.832938573360443
+    },
+    {
+      "iteration": 192,
+      "mean_ep_reward": 72.14633342346782,
+      "n_transitions": 6400,
+      "policy_loss": -0.001675264681689441,
+      "value_loss": 18.916228895187377,
+      "entropy": 1.897782220840454
+    },
+    {
+      "iteration": 193,
+      "mean_ep_reward": 71.70800820239181,
+      "n_transitions": 6400,
+      "policy_loss": -0.006952503365464508,
+      "value_loss": 14.934446020126343,
+      "entropy": 1.9227959775924683
+    },
+    {
+      "iteration": 194,
+      "mean_ep_reward": 82.4612302982695,
+      "n_transitions": 6400,
+      "policy_loss": 0.000185498371720314,
+      "value_loss": 13.733236875534057,
+      "entropy": 1.8891374886035919
+    },
+    {
+      "iteration": 195,
+      "mean_ep_reward": 76.26716160621018,
+      "n_transitions": 6400,
+      "policy_loss": -0.002769479425624013,
+      "value_loss": 15.721486892700195,
+      "entropy": 1.8913335025310516
+    },
+    {
+      "iteration": 196,
+      "mean_ep_reward": 80.92849640329771,
+      "n_transitions": 6400,
+      "policy_loss": -0.003627793891355395,
+      "value_loss": 16.524361209869383,
+      "entropy": 1.9623882627487184
+    },
+    {
+      "iteration": 197,
+      "mean_ep_reward": 80.90603047958096,
+      "n_transitions": 6400,
+      "policy_loss": 0.0003116496093571186,
+      "value_loss": 16.476654710769655,
+      "entropy": 1.9440469205379487
+    },
+    {
+      "iteration": 198,
+      "mean_ep_reward": 76.8381762328152,
+      "n_transitions": 6400,
+      "policy_loss": -0.0016363821551203727,
+      "value_loss": 15.804322319030762,
+      "entropy": 1.9376620721817017
+    },
+    {
+      "iteration": 199,
+      "mean_ep_reward": 72.01973354995758,
+      "n_transitions": 6400,
+      "policy_loss": 0.0010482376348227263,
+      "value_loss": 15.643203783035279,
+      "entropy": 1.8880840134620667
+    },
+    {
+      "iteration": 200,
+      "mean_ep_reward": 89.34858906468324,
+      "n_transitions": 6400,
+      "policy_loss": -0.0030222120694816113,
+      "value_loss": 14.938319215774536,
+      "entropy": 1.864520789384842
+    },
+    {
+      "iteration": 201,
+      "mean_ep_reward": 85.57404858335103,
+      "n_transitions": 6400,
+      "policy_loss": -0.003410690212622285,
+      "value_loss": 18.115550689697265,
+      "entropy": 1.8110339426994324
+    },
+    {
+      "iteration": 202,
+      "mean_ep_reward": 87.41163249751212,
+      "n_transitions": 6400,
+      "policy_loss": -0.0016903038322925567,
+      "value_loss": 25.28089365005493,
+      "entropy": 1.807475484609604
+    },
+    {
+      "iteration": 203,
+      "mean_ep_reward": 84.66876467273238,
+      "n_transitions": 6400,
+      "policy_loss": -0.0006334673054516315,
+      "value_loss": 16.782111959457396,
+      "entropy": 1.8312935793399812
+    },
+    {
+      "iteration": 204,
+      "mean_ep_reward": 71.90629753965763,
+      "n_transitions": 6400,
+      "policy_loss": -0.0009520712029188872,
+      "value_loss": 15.618371305465699,
+      "entropy": 1.9353824627399445
+    },
+    {
+      "iteration": 205,
+      "mean_ep_reward": 64.12672446350139,
+      "n_transitions": 6400,
+      "policy_loss": -0.0011257829703390598,
+      "value_loss": 18.0579039478302,
+      "entropy": 1.8885213804244996
+    },
+    {
+      "iteration": 206,
+      "mean_ep_reward": 84.08424349042761,
+      "n_transitions": 6400,
+      "policy_loss": -0.0022247859789058565,
+      "value_loss": 20.317093906402587,
+      "entropy": 1.919025309085846
+    },
+    {
+      "iteration": 207,
+      "mean_ep_reward": 90.35957460402199,
+      "n_transitions": 6400,
+      "policy_loss": -0.0033963353279978037,
+      "value_loss": 19.207854909896852,
+      "entropy": 1.9550108873844148
+    },
+    {
+      "iteration": 208,
+      "mean_ep_reward": 89.52757399721106,
+      "n_transitions": 6400,
+      "policy_loss": -0.0009539332240819931,
+      "value_loss": 24.69447898864746,
+      "entropy": 1.9342936503887176
+    },
+    {
+      "iteration": 209,
+      "mean_ep_reward": 73.79460057760205,
+      "n_transitions": 6400,
+      "policy_loss": -0.0018135088216513395,
+      "value_loss": 22.392182397842408,
+      "entropy": 1.9804864430427551
+    },
+    {
+      "iteration": 210,
+      "mean_ep_reward": 84.18017755542132,
+      "n_transitions": 6400,
+      "policy_loss": -0.0012554683303460479,
+      "value_loss": 20.794940433502198,
+      "entropy": 1.8866472816467286
+    },
+    {
+      "iteration": 211,
+      "mean_ep_reward": 69.33940410564013,
+      "n_transitions": 6400,
+      "policy_loss": 0.0001402177242562175,
+      "value_loss": 22.57489288330078,
+      "entropy": 1.9555900859832764
+    },
+    {
+      "iteration": 212,
+      "mean_ep_reward": 83.57470252151991,
+      "n_transitions": 6400,
+      "policy_loss": -0.0008141481783241033,
+      "value_loss": 21.87322569847107,
+      "entropy": 1.9757926607131957
+    },
+    {
+      "iteration": 213,
+      "mean_ep_reward": 82.61203246898654,
+      "n_transitions": 6400,
+      "policy_loss": -0.001057774224318564,
+      "value_loss": 17.218914556503297,
+      "entropy": 2.06274773478508
+    },
+    {
+      "iteration": 214,
+      "mean_ep_reward": 85.28172040033658,
+      "n_transitions": 6400,
+      "policy_loss": 0.0003792970022186637,
+      "value_loss": 20.91169080734253,
+      "entropy": 1.9406170678138732
+    },
+    {
+      "iteration": 215,
+      "mean_ep_reward": 84.45361774506932,
+      "n_transitions": 6400,
+      "policy_loss": 0.0017028070613741874,
+      "value_loss": 18.55261622428894,
+      "entropy": 2.001872316598892
+    },
+    {
+      "iteration": 216,
+      "mean_ep_reward": 63.264425662234444,
+      "n_transitions": 6400,
+      "policy_loss": 0.0032889500027522443,
+      "value_loss": 17.34022852897644,
+      "entropy": 2.1478198289871218
+    },
+    {
+      "iteration": 217,
+      "mean_ep_reward": 75.99683363160749,
+      "n_transitions": 6400,
+      "policy_loss": -0.002946259072050452,
+      "value_loss": 15.352514820098877,
+      "entropy": 2.0558069562911987
+    },
+    {
+      "iteration": 218,
+      "mean_ep_reward": 79.63926620908339,
+      "n_transitions": 6400,
+      "policy_loss": -0.00029685009270906447,
+      "value_loss": 12.252835097312927,
+      "entropy": 2.1272637248039246
+    },
+    {
+      "iteration": 219,
+      "mean_ep_reward": 73.07292374581831,
+      "n_transitions": 6400,
+      "policy_loss": 0.004320481289178133,
+      "value_loss": 13.66701699256897,
+      "entropy": 2.0848383617401125
+    },
+    {
+      "iteration": 220,
+      "mean_ep_reward": 72.68593105273943,
+      "n_transitions": 6400,
+      "policy_loss": 0.0037444987799972297,
+      "value_loss": 15.381440696716309,
+      "entropy": 2.0323146629333495
+    },
+    {
+      "iteration": 221,
+      "mean_ep_reward": 68.06671055676331,
+      "n_transitions": 6400,
+      "policy_loss": -0.0038697643391788004,
+      "value_loss": 15.044651765823364,
+      "entropy": 2.005012255907059
+    },
+    {
+      "iteration": 222,
+      "mean_ep_reward": 76.26229779170264,
+      "n_transitions": 6400,
+      "policy_loss": -0.002593294675461948,
+      "value_loss": 19.12774064064026,
+      "entropy": 1.9819655418395996
+    },
+    {
+      "iteration": 223,
+      "mean_ep_reward": 79.64590605223687,
+      "n_transitions": 6400,
+      "policy_loss": 0.0032973005715757607,
+      "value_loss": 14.039242043495179,
+      "entropy": 2.1273575973510743
+    },
+    {
+      "iteration": 224,
+      "mean_ep_reward": 65.43260775270656,
+      "n_transitions": 6400,
+      "policy_loss": 0.0006767300609499216,
+      "value_loss": 19.573713254928588,
+      "entropy": 2.0754228973388673
+    },
+    {
+      "iteration": 225,
+      "mean_ep_reward": 77.08743121809633,
+      "n_transitions": 6400,
+      "policy_loss": 0.002150545045733452,
+      "value_loss": 20.50969663619995,
+      "entropy": 2.106803369522095
+    },
+    {
+      "iteration": 226,
+      "mean_ep_reward": 77.50458639838075,
+      "n_transitions": 6400,
+      "policy_loss": 0.001266113156452775,
+      "value_loss": 19.662550067901613,
+      "entropy": 2.0733132481575014
+    },
+    {
+      "iteration": 227,
+      "mean_ep_reward": 74.04883448206992,
+      "n_transitions": 6400,
+      "policy_loss": -0.003316865940578282,
+      "value_loss": 22.55312059402466,
+      "entropy": 2.0717452478408815
+    },
+    {
+      "iteration": 228,
+      "mean_ep_reward": 85.73599854973523,
+      "n_transitions": 6400,
+      "policy_loss": -0.004181479089893401,
+      "value_loss": 20.49310709953308,
+      "entropy": 2.0075907588005064
+    },
+    {
+      "iteration": 229,
+      "mean_ep_reward": 82.68466106435811,
+      "n_transitions": 6400,
+      "policy_loss": -0.0037988569028675557,
+      "value_loss": 17.85896245956421,
+      "entropy": 2.0802605175971984
+    },
+    {
+      "iteration": 230,
+      "mean_ep_reward": 82.13045716153579,
+      "n_transitions": 6400,
+      "policy_loss": -0.002325435318052769,
+      "value_loss": 22.525561990737916,
+      "entropy": 1.992295389175415
+    },
+    {
+      "iteration": 231,
+      "mean_ep_reward": 83.4179380291944,
+      "n_transitions": 6400,
+      "policy_loss": -0.002487241365015507,
+      "value_loss": 18.085162343978883,
+      "entropy": 1.9502033388614655
+    },
+    {
+      "iteration": 232,
+      "mean_ep_reward": 69.38888496217405,
+      "n_transitions": 6400,
+      "policy_loss": -0.003113903421908617,
+      "value_loss": 15.948356304168701,
+      "entropy": 2.078602854013443
+    },
+    {
+      "iteration": 233,
+      "mean_ep_reward": 70.83579444820424,
+      "n_transitions": 6400,
+      "policy_loss": -0.002487712875008583,
+      "value_loss": 18.14576882362366,
+      "entropy": 2.112826635837555
+    },
+    {
+      "iteration": 234,
+      "mean_ep_reward": 82.72073044889706,
+      "n_transitions": 6400,
+      "policy_loss": -0.0027389095723628996,
+      "value_loss": 18.566832656860353,
+      "entropy": 2.043784079551697
+    },
+    {
+      "iteration": 235,
+      "mean_ep_reward": 76.41212204004164,
+      "n_transitions": 6400,
+      "policy_loss": 0.00011769720353186131,
+      "value_loss": 21.963848247528077,
+      "entropy": 1.997993996143341
+    },
+    {
+      "iteration": 236,
+      "mean_ep_reward": 93.4965266505753,
+      "n_transitions": 6400,
+      "policy_loss": -0.0030775465769693256,
+      "value_loss": 24.57712209701538,
+      "entropy": 1.9681353974342346
+    },
+    {
+      "iteration": 237,
+      "mean_ep_reward": 64.77170415290584,
+      "n_transitions": 6400,
+      "policy_loss": -0.00031889604404568674,
+      "value_loss": 16.583489227294923,
+      "entropy": 2.0844329524040224
+    },
+    {
+      "iteration": 238,
+      "mean_ep_reward": 68.98538924032478,
+      "n_transitions": 6400,
+      "policy_loss": -0.0007687674183398485,
+      "value_loss": 20.876213130950926,
+      "entropy": 2.0304565691947936
+    },
+    {
+      "iteration": 239,
+      "mean_ep_reward": 84.77669101141886,
+      "n_transitions": 6400,
+      "policy_loss": 2.808832097798586e-05,
+      "value_loss": 15.930284700393678,
+      "entropy": 1.9898167204856874
+    },
+    {
+      "iteration": 240,
+      "mean_ep_reward": 70.60191832922897,
+      "n_transitions": 6400,
+      "policy_loss": -0.0008563541807234288,
+      "value_loss": 14.077380075454712,
+      "entropy": 2.024434790611267
+    },
+    {
+      "iteration": 241,
+      "mean_ep_reward": 76.94609426802499,
+      "n_transitions": 6400,
+      "policy_loss": 0.00014850237872451543,
+      "value_loss": 18.749764442443848,
+      "entropy": 2.020056608915329
+    },
+    {
+      "iteration": 242,
+      "mean_ep_reward": 77.21796251375581,
+      "n_transitions": 6400,
+      "policy_loss": -0.0002717070560902357,
+      "value_loss": 19.127584323883056,
+      "entropy": 2.0734599876403808
+    },
+    {
+      "iteration": 243,
+      "mean_ep_reward": 77.85905921258878,
+      "n_transitions": 6400,
+      "policy_loss": -0.0017299736919812857,
+      "value_loss": 20.223100080490113,
+      "entropy": 1.8862406361103057
+    },
+    {
+      "iteration": 244,
+      "mean_ep_reward": 87.29429749307411,
+      "n_transitions": 6400,
+      "policy_loss": -0.00572645403444767,
+      "value_loss": 16.643159189224242,
+      "entropy": 2.0162929809093475
+    },
+    {
+      "iteration": 245,
+      "mean_ep_reward": 83.13244823796543,
+      "n_transitions": 6400,
+      "policy_loss": 0.0034182436671108007,
+      "value_loss": 21.257591867446898,
+      "entropy": 2.022448788881302
+    },
+    {
+      "iteration": 246,
+      "mean_ep_reward": 93.59994394333584,
+      "n_transitions": 6400,
+      "policy_loss": -0.0022461609821766617,
+      "value_loss": 21.288542728424073,
+      "entropy": 1.9702635788917542
+    },
+    {
+      "iteration": 247,
+      "mean_ep_reward": 75.38138260363728,
+      "n_transitions": 6400,
+      "policy_loss": -0.00388740127440542,
+      "value_loss": 17.846737327575685,
+      "entropy": 2.053906946182251
+    },
+    {
+      "iteration": 248,
+      "mean_ep_reward": 76.79809050969376,
+      "n_transitions": 6400,
+      "policy_loss": -0.0033650407195091247,
+      "value_loss": 16.6057004737854,
+      "entropy": 2.0614404487609863
+    },
+    {
+      "iteration": 249,
+      "mean_ep_reward": 84.29153107411523,
+      "n_transitions": 6400,
+      "policy_loss": -0.0018793376721441745,
+      "value_loss": 20.54831612586975,
+      "entropy": 1.9784851384162903
+    },
+    {
+      "iteration": 250,
+      "mean_ep_reward": 76.68059925806463,
+      "n_transitions": 6400,
+      "policy_loss": -0.004729501875117421,
+      "value_loss": 19.161537170410156,
+      "entropy": 2.0874156975746154
+    },
+    {
+      "iteration": 251,
+      "mean_ep_reward": 91.56072529079947,
+      "n_transitions": 6400,
+      "policy_loss": -0.0007301563490182162,
+      "value_loss": 24.1926563167572,
+      "entropy": 2.0208286380767824
+    },
+    {
+      "iteration": 252,
+      "mean_ep_reward": 74.19383041303738,
+      "n_transitions": 6400,
+      "policy_loss": -0.002300269976258278,
+      "value_loss": 17.288638362884523,
+      "entropy": 2.049374716281891
+    },
+    {
+      "iteration": 253,
+      "mean_ep_reward": 84.70641645138544,
+      "n_transitions": 6400,
+      "policy_loss": -0.0008651413209736348,
+      "value_loss": 17.09074993133545,
+      "entropy": 2.100657784938812
+    },
+    {
+      "iteration": 254,
+      "mean_ep_reward": 78.21821692399008,
+      "n_transitions": 6400,
+      "policy_loss": 0.0009842395596206188,
+      "value_loss": 22.0203417301178,
+      "entropy": 2.1278461384773255
+    },
+    {
+      "iteration": 255,
+      "mean_ep_reward": 76.09888138567453,
+      "n_transitions": 6400,
+      "policy_loss": -0.0030168550927191975,
+      "value_loss": 20.701599264144896,
+      "entropy": 2.059175441265106
+    },
+    {
+      "iteration": 256,
+      "mean_ep_reward": 71.7226503255687,
+      "n_transitions": 6400,
+      "policy_loss": -0.001395212896168232,
+      "value_loss": 23.041465454101562,
+      "entropy": 2.038651843070984
+    },
+    {
+      "iteration": 257,
+      "mean_ep_reward": 75.52766070128746,
+      "n_transitions": 6400,
+      "policy_loss": -0.0020506052067503335,
+      "value_loss": 18.54980100631714,
+      "entropy": 2.0695132327079775
+    },
+    {
+      "iteration": 258,
+      "mean_ep_reward": 79.81686660499918,
+      "n_transitions": 6400,
+      "policy_loss": -0.003965164772234857,
+      "value_loss": 18.413594074249268,
+      "entropy": 2.0353703439235686
+    },
+    {
+      "iteration": 259,
+      "mean_ep_reward": 86.86780723413976,
+      "n_transitions": 6400,
+      "policy_loss": -0.0018801209703087807,
+      "value_loss": 18.078449516296388,
+      "entropy": 1.9789034378528596
+    },
+    {
+      "iteration": 260,
+      "mean_ep_reward": 77.16203031476854,
+      "n_transitions": 6400,
+      "policy_loss": -0.0024619670026004314,
+      "value_loss": 14.503472423553466,
+      "entropy": 2.089110052585602
+    },
+    {
+      "iteration": 261,
+      "mean_ep_reward": 76.51457254691749,
+      "n_transitions": 6400,
+      "policy_loss": -0.001137452470138669,
+      "value_loss": 16.25128155708313,
+      "entropy": 2.084680153131485
+    },
+    {
+      "iteration": 262,
+      "mean_ep_reward": 85.5937886074959,
+      "n_transitions": 6400,
+      "policy_loss": -0.0012359955161809922,
+      "value_loss": 15.62786373615265,
+      "entropy": 2.0678024923801424
+    },
+    {
+      "iteration": 263,
+      "mean_ep_reward": 78.27767612463063,
+      "n_transitions": 6400,
+      "policy_loss": -0.002392495181411505,
+      "value_loss": 21.09350175857544,
+      "entropy": 2.031305330991745
+    },
+    {
+      "iteration": 264,
+      "mean_ep_reward": 84.0701442977048,
+      "n_transitions": 6400,
+      "policy_loss": -0.0005820181127637624,
+      "value_loss": 17.234827070236207,
+      "entropy": 2.122838099002838
+    },
+    {
+      "iteration": 265,
+      "mean_ep_reward": 69.73049328437952,
+      "n_transitions": 6400,
+      "policy_loss": -0.0017340155597776175,
+      "value_loss": 15.232961459159851,
+      "entropy": 2.0629953467845916
+    },
+    {
+      "iteration": 266,
+      "mean_ep_reward": 83.85544944169763,
+      "n_transitions": 6400,
+      "policy_loss": -0.0037236609729006886,
+      "value_loss": 19.915404977798463,
+      "entropy": 1.9924389708042145
+    },
+    {
+      "iteration": 267,
+      "mean_ep_reward": 91.55781250603232,
+      "n_transitions": 6400,
+      "policy_loss": 0.0009740243945270777,
+      "value_loss": 21.877433519363404,
+      "entropy": 1.9725227046012879
+    },
+    {
+      "iteration": 268,
+      "mean_ep_reward": 90.19947237711695,
+      "n_transitions": 6400,
+      "policy_loss": 0.0012817002274096011,
+      "value_loss": 23.558818578720093,
+      "entropy": 2.0022195053100584
+    },
+    {
+      "iteration": 269,
+      "mean_ep_reward": 80.87183684538752,
+      "n_transitions": 6400,
+      "policy_loss": -0.0036726226983591916,
+      "value_loss": 24.745298948287964,
+      "entropy": 1.9388039875030518
+    },
+    {
+      "iteration": 270,
+      "mean_ep_reward": 79.74596675119942,
+      "n_transitions": 6400,
+      "policy_loss": -0.0023158447910100223,
+      "value_loss": 21.032389879226685,
+      "entropy": 1.9483668541908263
+    },
+    {
+      "iteration": 271,
+      "mean_ep_reward": 79.45466743950483,
+      "n_transitions": 6400,
+      "policy_loss": 0.0005272177793085575,
+      "value_loss": 14.834754877090454,
+      "entropy": 2.0994628286361694
+    },
+    {
+      "iteration": 272,
+      "mean_ep_reward": 88.47006213461233,
+      "n_transitions": 6400,
+      "policy_loss": -0.0036849226895719765,
+      "value_loss": 14.818908452987671,
+      "entropy": 1.9698868083953858
+    },
+    {
+      "iteration": 273,
+      "mean_ep_reward": 77.11347549503992,
+      "n_transitions": 6400,
+      "policy_loss": -0.0008040576055645943,
+      "value_loss": 15.44349609375,
+      "entropy": 2.0647364652156828
+    },
+    {
+      "iteration": 274,
+      "mean_ep_reward": 84.92168218843241,
+      "n_transitions": 6400,
+      "policy_loss": -0.002796040549874306,
+      "value_loss": 16.870712404251098,
+      "entropy": 2.0374530792236327
+    },
+    {
+      "iteration": 275,
+      "mean_ep_reward": 76.99260978431386,
+      "n_transitions": 6400,
+      "policy_loss": 0.000240465197712183,
+      "value_loss": 12.064801826477051,
+      "entropy": 2.205983784198761
+    },
+    {
+      "iteration": 276,
+      "mean_ep_reward": 85.0547532055206,
+      "n_transitions": 6400,
+      "policy_loss": -0.0016429665917530656,
+      "value_loss": 14.69570339202881,
+      "entropy": 2.024563785791397
+    },
+    {
+      "iteration": 277,
+      "mean_ep_reward": 78.62879348408089,
+      "n_transitions": 6400,
+      "policy_loss": -0.0012524212850257754,
+      "value_loss": 15.837131271362304,
+      "entropy": 2.143490879535675
+    },
+    {
+      "iteration": 278,
+      "mean_ep_reward": 87.91991986667479,
+      "n_transitions": 6400,
+      "policy_loss": -0.0025396168371662497,
+      "value_loss": 12.96801167011261,
+      "entropy": 2.1505149483680723
+    },
+    {
+      "iteration": 279,
+      "mean_ep_reward": 77.49827567205955,
+      "n_transitions": 6400,
+      "policy_loss": 0.0007647070847451687,
+      "value_loss": 13.56955530166626,
+      "entropy": 2.1951338243484497
+    },
+    {
+      "iteration": 280,
+      "mean_ep_reward": 81.71510599191453,
+      "n_transitions": 6400,
+      "policy_loss": -0.0031212939228862525,
+      "value_loss": 12.148053302764893,
+      "entropy": 2.1448912835121154
+    },
+    {
+      "iteration": 281,
+      "mean_ep_reward": 82.6918532411984,
+      "n_transitions": 6400,
+      "policy_loss": -0.0021269425842911005,
+      "value_loss": 11.564809875488281,
+      "entropy": 2.178164083957672
+    },
+    {
+      "iteration": 282,
+      "mean_ep_reward": 85.20225147871605,
+      "n_transitions": 6400,
+      "policy_loss": -0.00211638193577528,
+      "value_loss": 14.776753978729248,
+      "entropy": 2.004717767238617
+    },
+    {
+      "iteration": 283,
+      "mean_ep_reward": 76.45978951610992,
+      "n_transitions": 6400,
+      "policy_loss": -0.0025235269870609047,
+      "value_loss": 16.03689308166504,
+      "entropy": 2.0341956043243408
+    },
+    {
+      "iteration": 284,
+      "mean_ep_reward": 85.14243062897816,
+      "n_transitions": 6400,
+      "policy_loss": -0.0004568726196885109,
+      "value_loss": 20.764242038726806,
+      "entropy": 1.9946096086502074
+    },
+    {
+      "iteration": 285,
+      "mean_ep_reward": 80.738174405688,
+      "n_transitions": 6400,
+      "policy_loss": -0.0008561710454523564,
+      "value_loss": 16.66274528503418,
+      "entropy": 1.9574112474918366
+    },
+    {
+      "iteration": 286,
+      "mean_ep_reward": 80.86214134955509,
+      "n_transitions": 6400,
+      "policy_loss": 0.002357198325917125,
+      "value_loss": 19.31062285423279,
+      "entropy": 1.953158164024353
+    },
+    {
+      "iteration": 287,
+      "mean_ep_reward": 80.46165861705072,
+      "n_transitions": 6400,
+      "policy_loss": 0.0006591882556676865,
+      "value_loss": 17.452694845199584,
+      "entropy": 1.9281554663181304
+    },
+    {
+      "iteration": 288,
+      "mean_ep_reward": 73.5703394180795,
+      "n_transitions": 6400,
+      "policy_loss": -0.0034719641879200937,
+      "value_loss": 16.315456447601317,
+      "entropy": 1.8666924393177033
+    },
+    {
+      "iteration": 289,
+      "mean_ep_reward": 84.77747075726975,
+      "n_transitions": 6400,
+      "policy_loss": -0.0005791884008795023,
+      "value_loss": 18.711285724639893,
+      "entropy": 1.8997005224227905
+    },
+    {
+      "iteration": 290,
+      "mean_ep_reward": 69.30894202314747,
+      "n_transitions": 6400,
+      "policy_loss": -0.00025053583551198243,
+      "value_loss": 17.76907377243042,
+      "entropy": 1.922459852695465
+    },
+    {
+      "iteration": 291,
+      "mean_ep_reward": 76.81099349850254,
+      "n_transitions": 6400,
+      "policy_loss": -0.0006710909772664308,
+      "value_loss": 20.461027517318726,
+      "entropy": 1.9215466260910035
+    },
+    {
+      "iteration": 292,
+      "mean_ep_reward": 79.89460018161881,
+      "n_transitions": 6400,
+      "policy_loss": -0.004423285061493516,
+      "value_loss": 19.4790194606781,
+      "entropy": 2.002939827442169
+    },
+    {
+      "iteration": 293,
+      "mean_ep_reward": 72.46372614422293,
+      "n_transitions": 6400,
+      "policy_loss": -0.0014659856446087361,
+      "value_loss": 21.171661252975465,
+      "entropy": 1.9773643851280212
+    },
+    {
+      "iteration": 294,
+      "mean_ep_reward": 83.76428918024092,
+      "n_transitions": 6400,
+      "policy_loss": -0.0053466326184570786,
+      "value_loss": 16.8984947681427,
+      "entropy": 2.045823642015457
+    },
+    {
+      "iteration": 295,
+      "mean_ep_reward": 72.41027934188702,
+      "n_transitions": 6400,
+      "policy_loss": -0.0001704037096351385,
+      "value_loss": 17.713102416992186,
+      "entropy": 2.050010845661163
+    },
+    {
+      "iteration": 296,
+      "mean_ep_reward": 79.1225861705706,
+      "n_transitions": 6400,
+      "policy_loss": -0.00034245029091835023,
+      "value_loss": 18.83208724975586,
+      "entropy": 1.9984014964103698
+    },
+    {
+      "iteration": 297,
+      "mean_ep_reward": 73.5196221278617,
+      "n_transitions": 6400,
+      "policy_loss": -0.0018964352551847697,
+      "value_loss": 21.082438049316405,
+      "entropy": 1.9747692549228668
+    },
+    {
+      "iteration": 298,
+      "mean_ep_reward": 76.7173401873528,
+      "n_transitions": 6400,
+      "policy_loss": -0.005132016576826572,
+      "value_loss": 16.679152841567994,
+      "entropy": 2.0582391476631163
+    },
+    {
+      "iteration": 299,
+      "mean_ep_reward": 79.77250835646768,
+      "n_transitions": 6400,
+      "policy_loss": -0.0010123803466558457,
+      "value_loss": 16.57745807647705,
+      "entropy": 2.019709047079086
+    }
+  ],
+  "elapsed_sec": 1446.7375564575195
+}

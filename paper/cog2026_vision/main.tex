@@ -48,10 +48,15 @@ conditioned on frozen LLM embeddings of free-form persona descriptions---represe
 a promising architectural direction that can satisfy all four axes simultaneously.
 To support this argument we introduce \PCSP (Persona-Conditioned Shared Policy),
 an early proof-of-concept combining frozen LLM encoding, LoRA projection,
-FiLM conditioning, and a PPO + InfoNCE consistency + KL diversity co-training
-objective. On a 300-persona life-simulation benchmark, \PCSP achieves zero-shot
-persona identification 11$\times$ above chance, Spearman $\rho\!=\!0.73$
-semantic-behavioral alignment, and 22$\times$ faster inference than LLM-as-policy.
+neural persona conditioning, and a PPO + InfoNCE consistency + KL diversity
+co-training objective. On a 300-persona life-simulation benchmark, \PCSP
+achieves zero-shot persona identification 11$\times$ above chance, Spearman
+$\rho\!=\!0.73$ semantic-behavioral alignment, and 22$\times$ faster inference
+than LLM-as-policy. Ablation studies across three environment scales identify
+the InfoNCE consistency objective---not the choice of conditioning architecture
+(FiLM vs.\ concatenation)---as the load-bearing component: removing it
+collapses zero-shot identification to chance even when task reward is
+preserved or improved.
 We then lay out a concrete research agenda---covering dynamic personas, social
 emergence, long-horizon memory, richer environments, human evaluation, and
 authoring tools---for the community to build on this direction.
@@ -137,8 +142,9 @@ to make the approach viable at game production scale.
     as an underexplored architectural direction and lay out six concrete open
     problems (\S\ref{sec:agenda}).
   \item \textbf{\PCSP}: An early proof-of-concept combining frozen
-    Qwen3-0.6B-Embedding, LoRA projection, FiLM conditioning, and a
-    PPO + InfoNCE + KL co-training objective (\S\ref{sec:method}).
+    Qwen3-0.6B-Embedding, LoRA projection, neural persona conditioning, and a
+    PPO + InfoNCE consistency + KL diversity co-training objective
+    (\S\ref{sec:method}).
   \item \textbf{Initial evidence}: On a 300-persona life-simulation benchmark,
     \PCSP achieves zero-shot persona identification 11$\times$ above chance,
     Spearman $\rho\!=\!0.73$ semantic-behavioral alignment, and 22$\times$
@@ -267,19 +273,25 @@ similarity relative to personality similarity (salesperson$\leftrightarrow$execu
 After LoRA training, Spearman $\rho$ between embedding distance and behavioral KL
 increases from 0.384 to 0.728 (\S\ref{sec:evidence}).
 
-\subsection{FiLM-Conditioned Shared Policy}
+\subsection{Persona-Conditioned Shared Policy}
 
 The shared policy $\pi_\theta(a \mid s, e_p)$ is a 3-layer MLP (256-256-10)
-where each hidden layer $h_\ell$ is conditioned via
-FiLM~\cite{perez2018film}:
+conditioned on the projected persona embedding $e_p$. Our reference
+implementation uses FiLM~\cite{perez2018film} to inject the persona signal at
+every hidden layer:
 \[
   h_\ell' = \gamma_\ell(e_p) \odot h_\ell + \beta_\ell(e_p),
 \]
 with small linear networks $\gamma_\ell, \beta_\ell : \mathbb{R}^{64} \to \mathbb{R}^{256}$.
-FiLM injects persona information at \emph{every} hidden layer, preventing the
-persona signal from being diluted in deep representations.
 An identical FiLM-conditioned value network $V_\phi(s, e_p)$ serves as the
 critic. Total trainable parameters: 207K (excluding the frozen LLM).
+We treat the choice of conditioning mechanism as an implementation detail
+rather than a contribution: the v3 zero-shot ablations in
+\S\ref{sec:evidence} show that input-concatenation conditioning is competitive
+with FiLM and in fact generalizes more strongly to unseen occupations. The
+load-bearing component is the consistency objective introduced next, which is
+what makes persona signal recoverable from trajectories regardless of how
+the policy is conditioned.
 
 \subsection{Co-Training Objective}
 
@@ -393,11 +405,12 @@ curves at v1/v2. Full ablation details appear in the supplementary.
     \textbf{Training reward curves at two scales.}
     (a) v1 (6$\times$6, 4 agents, 300 iters).
     (b) v2 (12$\times$12, 16 agents, 200 iters).
-    The diversity loss (no\_diverse) is the most critical ablation at both
-    scales: its removal causes the largest reward drop and, more importantly,
-    behavioral collapse (KL: v1 $0.39$, v2 $0.48$).
-    The consistency loss (no\_consist) trades slightly higher reward for total
-    loss of persona traceability.
+    Removing the consistency loss (no\_consist) preserves or even slightly
+    increases reward but collapses zero-shot persona traceability across all
+    scales (Tables~\ref{tab:results_v1}--\ref{tab:results_v3}).
+    Removing the diversity loss (no\_diverse) causes KL collapse at v1 and v2
+    ($0.39$ and $0.48$) and a v1 reward drop, but its effect on v3 zero-shot
+    accuracy is within the Wilson CI of full (\S\ref{sec:evidence}).
   }
   \label{fig:learning}
 \end{figure}
@@ -478,55 +491,78 @@ curves at v1/v2. Full ablation details appear in the supplementary.
 
 \subsection{Key Observations}
 
-Three findings from the v1 ablation study are replicated in v2, supporting
-their generality across environment scales.
+Across all three environment scales, the ablation evidence converges on a
+single load-bearing component---the InfoNCE consistency loss---while the
+choice of conditioning architecture proves to be secondary.
 
-\textbf{Consistency loss is necessary for persona traceability.}
-In v1, removing it drops zero-shot accuracy from 19.3\% to 1.7\% (random).
-In v2, it drops from 2.3\% to exactly 0\% against a 1.0\% random baseline.
-In both cases, trajectories carry no recoverable persona signal without this loss.
+\textbf{The consistency loss is the load-bearing component.}
+Removing the InfoNCE consistency term collapses zero-shot persona
+identification to chance at every scale we have tested:
+v1 drops from 19.3\% to 1.7\% (random), v2 drops from 2.3\% to exactly 0\%
+against a 1.0\% baseline, and v3 drops from 17.0\% to 1.7\% (Wilson CI
+$[.01, .04]$).
+The reward axis hides this failure entirely. At v1 the no\_consist ablation
+even slightly \emph{increases} reward (84.3 vs.\ 83.4); at v3 the gap is
+sharper still (118.4 vs.\ 104.1, +14 reward) while accuracy collapses by 15.3
+percentage points.
+Without the consistency objective, the policy chases reward through
+persona-agnostic strategies whose trajectories are no longer traceable back
+to the conditioning persona, regardless of how the persona signal is injected
+into the network.
 
-\textbf{Diversity loss prevents behavioral collapse.}
-In v1, removing it reduces mean KL from 5.87 to 0.39 ($15\times$).
-In v2, from 5.40 to 0.48 ($11\times$).
-The collapse pattern is consistent: without this loss, the policy converges to
-a persona-agnostic average regardless of environment size.
+\textbf{The conditioning architecture is secondary, and conditional on the
+type of OOD shift.}
+We initially conjectured that FiLM's layer-wise gating would dominate
+input-only concatenation. Across the v3 split families that test different
+kinds of compositional generalization, however, neither architecture
+dominates universally:
+under \emph{unseen-occupation} generalization (4 occupations held out from
+training), input-concatenation reaches 28.3\% accuracy
+($17.0\times$ chance, coherence 7.60) versus FiLM's 17.0\%
+($10.2\times$ chance, coherence 2.06), with disjoint Wilson CIs;
+under \emph{unseen-archetype} generalization (3 Big-Five archetypes held out),
+the ranking reverses---FiLM reaches 20.3\% ($12.2\times$ chance, CI
+$[.16, .25]$) while concat collapses to 10.3\% (CI $[.07, .14]$), again
+with disjoint CIs.
+At v1 and v2 the two choices were already statistically indistinguishable on
+zero-shot accuracy.
+Plausibly, FiLM's per-layer gating recombines seen-occupation features under
+novel personality conditioning but breaks on novel occupations, while concat's
+input-only routing supports nearest-neighbor lookup over seen-occupation
+prototypes but has no analogous mechanism for novel personalities.
+Taken together, the conditioning mechanism is a generalization-gap knob whose
+optimal setting depends on which axis of the persona space is novel at test
+time, not a fundamental architectural commitment. The consistency loss, in
+contrast, is the only component that universally fails across split families
+when removed, and it therefore carries the persona-traceability claim across
+all conditioning choices we have tested.
+
+\textbf{Diversity loss prevents behavioral collapse at v1/v2 but its effect
+weakens on the v3 zero-shot accuracy axis.}
+Removing the KL diversity term reduces mean policy KL by an order of
+magnitude at v1 (5.87 to 0.39, $15\times$) and v2 (5.40 to 0.48, $11\times$),
+matching the original behavioral-collapse story.
+At v3 zero-shot, however, diversity-loss removal lands within the Wilson CI
+of full (16.0\% vs.\ 17.0\%): the policy still achieves persona-recoverable
+behavior on the accuracy axis without the explicit KL term.
+We report diversity as a useful regularizer for KL-style behavioral spread
+rather than as a co-equal contribution to zero-shot identification.
 
 \textbf{Spearman $\rho$ is preserved across scales.}
 \PCSP (full) achieves $\rho\!=\!0.728$ in v1 and $\rho\!=\!0.725$ in v2---a
 difference of 0.003 despite a $4\times$ increase in grid area, $4\times$ more
 agents, and $67\%$ more personas. This suggests that semantic-behavioral
-alignment is a stable property of the architecture, not an artefact of the
+alignment is a stable property of the design, not an artefact of the
 minimal environment.
-
-\textbf{v3 reaffirms the consistency-loss finding and reveals a
-zero-shot architectural reversal.}
-At the richer 20-action ontology, removing the consistency loss again
-collapses zero-shot accuracy to chance (0.017, Wilson CI $[.01,.04]$) while
-\emph{raising} reward by 14 points (118.4 vs.\ 104.1). The reward--accuracy
-divergence sharpens at v3: without InfoNCE, the policy chases reward via
-persona-agnostic strategies, exactly as in v1/v2.
-A new finding emerges in v3 zero-shot: \textbf{input-concat conditioning beats
-FiLM} (concat 0.283 vs.\ full 0.170, $17.0\times$ vs.\ $10.2\times$ chance), and
-its trajectory coherence is dramatically tighter (7.60 vs.\ 2.06).
-Crucially, this reverses the v3 in-distribution ranking, where FiLM beats
-concat (0.290 vs.\ 0.117): FiLM's layer-wise persona gating fits seen
-personas more aggressively but generalizes worse to unseen occupations than
-concat's input-only conditioning. We report this honestly as a generalization-gap
-observation; revisiting the FiLM-vs-concat trade-off under longer rollouts and
-broader test-set structure is left for future work.
-Diversity-loss removal at v3 zero-shot is within Wilson CI of full
-(0.160 vs.\ 0.170), so its v1/v2-style behavioral-collapse story (measured via
-KL) does not directly translate to the zero-shot accuracy axis at v3 scale.
 
 \subsection{Significance}
 
 The absolute task reward and zero-shot accuracy are lower in v2, as expected for
 a substantially harder environment with more test personas.
 The key point is not the absolute numbers but the \emph{replication of
-qualitative structure}: the same architectural decisions matter at both scales,
-and the semantic-behavioral alignment property ($\rho \approx 0.73$) is
-preserved. Figure~\ref{fig:zeroshot} shows the zero-shot distribution for v1;
+qualitative structure}: the same design decisions---most centrally, the
+InfoNCE consistency objective---matter at both scales, and the
+semantic-behavioral alignment property ($\rho \approx 0.73$) is preserved. Figure~\ref{fig:zeroshot} shows the zero-shot distribution for v1;
 the v2 pattern is qualitatively similar with narrower per-persona bars.
 Figure~\ref{fig:kl} shows that the monotone relationship between persona
 embedding distance and behavioral KL is virtually unchanged across the two
@@ -773,10 +809,12 @@ early proof-of-concept supporting this argument.
 
 The central message is not that \PCSP solves NPC personalization. The central
 message is: \emph{there exists a region of design space---combining language
-semantics, shared policies, and behavioral regularization---where persona
-consistency, zero-shot controllability, and real-time inference can coexist}.
-Exploring that region systematically is a concrete and tractable research program.
-We hope this paper motivates the community to take it up.
+semantics, shared policies, and an InfoNCE-style consistency objective on
+trajectories---where persona consistency, zero-shot controllability, and
+real-time inference can coexist}, and that within this region the choice of
+neural conditioning architecture is a tunable knob rather than a fundamental
+commitment. Exploring that region systematically is a concrete and tractable
+research program. We hope this paper motivates the community to take it up.
 
 % ---------------------------------------------------------------
 \bibliographystyle{IEEEtran}
