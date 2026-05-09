@@ -367,11 +367,24 @@ The observation dimension expands to 56 (position 2, time 1, needs 8,
 15 other agents $\times$ 3).
 Random zero-shot chance is 1.0\% (1/100 test personas).
 
+\textbf{v3 (richer action ontology).}
+Mini-Inzoi v3 keeps the 6$\times$6/4-agent base scale but expands the action
+space to \textbf{20 flat-discrete actions} (16 activity + 4 movement) for
+finer behavioral granularity (e.g., \texttt{focused\_work} vs.\
+\texttt{planning\_work}, \texttt{rest\_alone} vs.\ \texttt{rest\_with\_others},
+\texttt{eat\_quick} vs.\ \texttt{eat\_slow}).
+Observations expand to 33 dimensions, adding location-affordance one-hot
+(8), social-context features (3), and a routine-regularity signal (2).
+Reward shaping adds a per-action persona-style term
+$r_{\text{style}} = 0.3 \cdot \cos(\mathbf{p}_{\text{BF}}, \mathbf{s}_a)$
+that aligns each action with a hand-authored Big-Five style profile.
+Same 240/60 unseen-occupation split as v1; 300 PPO iterations.
+
 \subsection{Results}
 
-Tables~\ref{tab:results_v1} and~\ref{tab:results_v2} show key metrics at each
-scale. Figure~\ref{fig:learning} shows training reward curves at both scales.
-Full ablation details appear in the supplementary.
+Tables~\ref{tab:results_v1}, \ref{tab:results_v2}, and~\ref{tab:results_v3}
+show key metrics at each scale. Figure~\ref{fig:learning} shows training reward
+curves at v1/v2. Full ablation details appear in the supplementary.
 
 \begin{figure}[t]
   \centering
@@ -437,6 +450,32 @@ Full ablation details appear in the supplementary.
     $^\ddagger$High KL without consistency reflects unstructured divergence, not persona alignment.}
 \end{table}
 
+\begin{table}[t]
+  \centering
+  \small
+  \caption{%
+    \textbf{v3 results} (6$\times$6, 4 agents, 300 personas, 20-action
+    ontology; 240 train / 60 zero-shot held-out occupations).
+    ZS Acc: zero-shot $k$-NN accuracy on 60 unseen-occupation personas
+    (random $\approx\!1.7\%$); brackets are Wilson 95\% CIs.
+    Coh.: trajectory coherence ratio (intra/inter persona cosine similarity).}
+  \label{tab:results_v3}
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{lrrr}
+    \toprule
+    Model & Reward $\uparrow$ & ZS Acc $\uparrow$ & Coh.\ $\uparrow$ \\
+    \midrule
+    \PCSP (full)                 & 104.1 & 0.170 \scriptsize{[.13,.22]}              & 2.06 \\
+    \PCSP (no\_consist)          & 118.4 & 0.017* \scriptsize{[.01,.04]}             & 1.07 \\
+    \PCSP (no\_diverse)          & 122.1 & 0.160 \scriptsize{[.12,.21]}              & 2.05 \\
+    \textbf{\PCSP (concat)}      & 107.0 & \textbf{0.283} \scriptsize{[.24,.34]}     & \textbf{7.60} \\
+    B1 No-Persona                & 100.3 & ---                                        & --- \\
+    B3 SBERT                     & 106.9 & ---                                        & --- \\
+    \bottomrule
+  \end{tabular}\\[2pt]
+  {\footnotesize * Near-random (failure mode).}
+\end{table}
+
 \subsection{Key Observations}
 
 Three findings from the v1 ablation study are replicated in v2, supporting
@@ -459,6 +498,26 @@ difference of 0.003 despite a $4\times$ increase in grid area, $4\times$ more
 agents, and $67\%$ more personas. This suggests that semantic-behavioral
 alignment is a stable property of the architecture, not an artefact of the
 minimal environment.
+
+\textbf{v3 reaffirms the consistency-loss finding and reveals a
+zero-shot architectural reversal.}
+At the richer 20-action ontology, removing the consistency loss again
+collapses zero-shot accuracy to chance (0.017, Wilson CI $[.01,.04]$) while
+\emph{raising} reward by 14 points (118.4 vs.\ 104.1). The reward--accuracy
+divergence sharpens at v3: without InfoNCE, the policy chases reward via
+persona-agnostic strategies, exactly as in v1/v2.
+A new finding emerges in v3 zero-shot: \textbf{input-concat conditioning beats
+FiLM} (concat 0.283 vs.\ full 0.170, $17.0\times$ vs.\ $10.2\times$ chance), and
+its trajectory coherence is dramatically tighter (7.60 vs.\ 2.06).
+Crucially, this reverses the v3 in-distribution ranking, where FiLM beats
+concat (0.290 vs.\ 0.117): FiLM's layer-wise persona gating fits seen
+personas more aggressively but generalizes worse to unseen occupations than
+concat's input-only conditioning. We report this honestly as a generalization-gap
+observation; revisiting the FiLM-vs-concat trade-off under longer rollouts and
+broader test-set structure is left for future work.
+Diversity-loss removal at v3 zero-shot is within Wilson CI of full
+(0.160 vs.\ 0.170), so its v1/v2-style behavioral-collapse story (measured via
+KL) does not directly translate to the zero-shot accuracy axis at v3 scale.
 
 \subsection{Significance}
 
