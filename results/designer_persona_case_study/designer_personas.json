@@ -1,0 +1,444 @@
+[
+  {
+    "id": 10001,
+    "name": "sims_workaholic_strategist",
+    "persona_name": "corporate strategist",
+    "text": "성실하고 목표 지향적인 기업 전략가입니다. 완성도 높은 계획을 세우는 것을 중요하게 여기며, 쉬는 시간에도 업무 성과와 다음 학습 목표를 점검합니다.",
+    "big_five": {
+      "E": "mid",
+      "N": "mid",
+      "A": "mid",
+      "C": "high",
+      "O": "high"
+    },
+    "occupation": "기업 전략가",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      1.1,
+      0.8,
+      1.2,
+      1.0,
+      1.0,
+      2.0,
+      1.6
+    ],
+    "preferred_actions": [
+      0,
+      1,
+      10
+    ],
+    "split": "designer_case_study",
+    "source": "The Sims 3",
+    "source_traits": "Workaholic + Ambitious + Perfectionist",
+    "alignment_expectation": "Expected to favor focused_work, planning_work, and read_deep."
+  },
+  {
+    "id": 10002,
+    "name": "sims_loner_researcher",
+    "persona_name": "introverted researcher",
+    "text": "조용하고 신중한 내성적인 연구원입니다. 사람 많은 장소보다 혼자 책을 읽고 자료를 정리하는 시간을 선호하며, 불안이 올라오면 익숙한 루틴으로 마음을 가라앉힙니다.",
+    "big_five": {
+      "E": "low",
+      "N": "high",
+      "A": "mid",
+      "C": "high",
+      "O": "high"
+    },
+    "occupation": "내성적인 연구원",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      1.1,
+      0.5,
+      1.0,
+      1.1,
+      0.9,
+      1.2,
+      2.0
+    ],
+    "preferred_actions": [
+      10,
+      13,
+      1
+    ],
+    "split": "designer_case_study",
+    "source": "The Sims 3",
+    "source_traits": "Loner + Bookworm + Neurotic",
+    "alignment_expectation": "Expected to favor read_deep, rest_alone, and planning_work."
+  },
+  {
+    "id": 10003,
+    "name": "sims_party_event_planner",
+    "persona_name": "outgoing event planner",
+    "text": "사교적이고 붙임성 좋은 이벤트 플래너입니다. 사람들을 한자리에 모으고 분위기를 띄우는 데 에너지를 얻으며, 하루 일과도 대화와 공동 휴식 중심으로 흘러갑니다.",
+    "big_five": {
+      "E": "high",
+      "N": "low",
+      "A": "high",
+      "C": "mid",
+      "O": "mid"
+    },
+    "occupation": "이벤트 플래너",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      0.9,
+      2.0,
+      1.3,
+      1.0,
+      1.0,
+      1.0,
+      0.9
+    ],
+    "preferred_actions": [
+      6,
+      7,
+      14
+    ],
+    "split": "designer_case_study",
+    "source": "The Sims 3",
+    "source_traits": "Party Animal + Charismatic + Friendly",
+    "alignment_expectation": "Expected to favor socialize_initiate, socialize_respond, and rest_with_others."
+  },
+  {
+    "id": 10004,
+    "name": "sims_athletic_trainer",
+    "persona_name": "competitive personal trainer",
+    "text": "용감하고 절제력이 강한 개인 트레이너입니다. 경쟁적인 운동 목표를 세우고 꾸준히 몸을 단련하며, 어려운 상황에서도 먼저 행동하는 편입니다.",
+    "big_five": {
+      "E": "high",
+      "N": "low",
+      "A": "mid",
+      "C": "high",
+      "O": "mid"
+    },
+    "occupation": "개인 트레이너",
+    "age": 30,
+    "decay_modifiers": [
+      1.1,
+      0.9,
+      1.1,
+      0.9,
+      1.2,
+      2.0,
+      1.2,
+      0.9
+    ],
+    "preferred_actions": [
+      8,
+      9,
+      0
+    ],
+    "split": "designer_case_study",
+    "source": "The Sims 3",
+    "source_traits": "Athletic + Brave + Disciplined",
+    "alignment_expectation": "Expected to favor exercise_intense, exercise_light, and focused_work."
+  },
+  {
+    "id": 10005,
+    "name": "sims_couch_potato_freelancer",
+    "persona_name": "unmotivated freelancer",
+    "text": "느긋하고 의욕이 낮은 프리랜서입니다. 일을 미루고 소파에서 쉬거나 간단히 먹는 습관이 있으며, 청소나 운동처럼 에너지가 많이 드는 일은 자주 피합니다.",
+    "big_five": {
+      "E": "low",
+      "N": "mid",
+      "A": "mid",
+      "C": "low",
+      "O": "low"
+    },
+    "occupation": "프리랜서",
+    "age": 30,
+    "decay_modifiers": [
+      1.5,
+      1.6,
+      0.7,
+      0.6,
+      0.5,
+      0.4,
+      0.5,
+      0.6
+    ],
+    "preferred_actions": [
+      2,
+      4,
+      13
+    ],
+    "split": "designer_case_study",
+    "source": "The Sims 3",
+    "source_traits": "Couch Potato + Slob + Lazy",
+    "alignment_expectation": "Expected to favor eat_quick, sleep/nap, and rest_alone."
+  },
+  {
+    "id": 10006,
+    "name": "ac_lazy_villager",
+    "persona_name": "lazy villager",
+    "text": "음식과 잠을 좋아하는 느긋한 마을 주민입니다. 서두르기보다 천천히 먹고 쉬는 일상을 즐기며, 친근하지만 큰 계획에는 별로 매달리지 않습니다.",
+    "big_five": {
+      "E": "low",
+      "N": "low",
+      "A": "high",
+      "C": "low",
+      "O": "mid"
+    },
+    "occupation": "느긋한 마을 주민",
+    "age": 30,
+    "decay_modifiers": [
+      1.7,
+      1.6,
+      0.9,
+      0.7,
+      0.8,
+      0.5,
+      0.5,
+      0.7
+    ],
+    "preferred_actions": [
+      3,
+      4,
+      13
+    ],
+    "split": "designer_case_study",
+    "source": "Animal Crossing",
+    "source_traits": "Lazy personality",
+    "alignment_expectation": "Expected to favor eat_slow, sleep/nap, and rest_alone."
+  },
+  {
+    "id": 10007,
+    "name": "ac_jock_villager",
+    "persona_name": "jock villager",
+    "text": "운동에 집착하는 활기찬 마을 주민입니다. 하루의 대부분을 체력 단련과 활동적인 놀이로 채우고, 대화에서도 더 강해지는 방법을 자주 이야기합니다.",
+    "big_five": {
+      "E": "high",
+      "N": "low",
+      "A": "mid",
+      "C": "high",
+      "O": "mid"
+    },
+    "occupation": "운동광 마을 주민",
+    "age": 30,
+    "decay_modifiers": [
+      1.2,
+      0.9,
+      1.2,
+      1.0,
+      1.2,
+      2.0,
+      0.8,
+      0.8
+    ],
+    "preferred_actions": [
+      8,
+      9,
+      15
+    ],
+    "split": "designer_case_study",
+    "source": "Animal Crossing",
+    "source_traits": "Jock personality",
+    "alignment_expectation": "Expected to favor exercise_intense, exercise_light, and explore."
+  },
+  {
+    "id": 10008,
+    "name": "ac_cranky_villager",
+    "persona_name": "cranky villager",
+    "text": "고집 있고 옛 방식을 좋아하는 무뚝뚝한 마을 주민입니다. 처음에는 까칠하게 굴지만 익숙한 사람에게는 조용히 챙겨 주며, 유행보다 혼자 쉬는 시간을 더 편하게 여깁니다.",
+    "big_five": {
+      "E": "low",
+      "N": "mid",
+      "A": "low",
+      "C": "mid",
+      "O": "low"
+    },
+    "occupation": "무뚝뚝한 마을 주민",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      1.1,
+      0.6,
+      0.9,
+      1.0,
+      0.8,
+      0.9,
+      0.9
+    ],
+    "preferred_actions": [
+      13,
+      10,
+      12
+    ],
+    "split": "designer_case_study",
+    "source": "Animal Crossing",
+    "source_traits": "Cranky personality",
+    "alignment_expectation": "Expected to favor rest_alone, read_deep, and clean."
+  },
+  {
+    "id": 10009,
+    "name": "ac_normal_villager",
+    "persona_name": "normal villager",
+    "text": "위생과 정돈을 중시하는 다정하고 보살피는 마을 주민입니다. 차분한 루틴 속에서 청소와 자기관리를 챙기며, 주변 사람이 편안하게 지내도록 조용히 도와줍니다.",
+    "big_five": {
+      "E": "mid",
+      "N": "low",
+      "A": "high",
+      "C": "high",
+      "O": "mid"
+    },
+    "occupation": "다정한 마을 주민",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      0.9,
+      1.1,
+      0.9,
+      1.8,
+      0.9,
+      0.9,
+      1.0
+    ],
+    "preferred_actions": [
+      12,
+      7,
+      14
+    ],
+    "split": "designer_case_study",
+    "source": "Animal Crossing",
+    "source_traits": "Normal personality",
+    "alignment_expectation": "Expected to favor clean, socialize_respond, and rest_with_others."
+  },
+  {
+    "id": 10010,
+    "name": "ac_peppy_villager",
+    "persona_name": "peppy villager",
+    "text": "팝스타를 꿈꾸는 에너지 넘치는 마을 주민입니다. 새로운 사람에게 먼저 말을 걸고 활동적인 놀이를 즐기며, 하루를 공연 연습처럼 밝고 빠르게 움직입니다.",
+    "big_five": {
+      "E": "high",
+      "N": "low",
+      "A": "high",
+      "C": "mid",
+      "O": "high"
+    },
+    "occupation": "팝스타 지망생",
+    "age": 30,
+    "decay_modifiers": [
+      1.1,
+      0.8,
+      1.8,
+      1.4,
+      1.1,
+      1.2,
+      0.8,
+      1.2
+    ],
+    "preferred_actions": [
+      6,
+      15,
+      14
+    ],
+    "split": "designer_case_study",
+    "source": "Animal Crossing",
+    "source_traits": "Peppy personality",
+    "alignment_expectation": "Expected to favor socialize_initiate, explore, and rest_with_others."
+  },
+  {
+    "id": 10011,
+    "name": "ac_snooty_villager",
+    "persona_name": "snooty villager",
+    "text": "패션에 집착하고 자기 기준이 뚜렷한 마을 주민입니다. 세련된 모습을 유지하는 데 신경을 쓰며, 남들과 어울릴 때도 자신감 있고 약간 거리를 둔 태도를 보입니다.",
+    "big_five": {
+      "E": "mid",
+      "N": "mid",
+      "A": "low",
+      "C": "high",
+      "O": "high"
+    },
+    "occupation": "패션 애호가",
+    "age": 30,
+    "decay_modifiers": [
+      0.9,
+      0.9,
+      1.0,
+      1.1,
+      1.8,
+      0.9,
+      1.0,
+      1.1
+    ],
+    "preferred_actions": [
+      12,
+      1,
+      6
+    ],
+    "split": "designer_case_study",
+    "source": "Animal Crossing",
+    "source_traits": "Snooty personality",
+    "alignment_expectation": "Expected to favor clean, planning_work, and controlled socializing."
+  },
+  {
+    "id": 10012,
+    "name": "ac_smug_villager",
+    "persona_name": "smug villager",
+    "text": "신사적이지만 스스로에게 꽤 만족하는 마을 주민입니다. 매너 있는 대화를 즐기고 자기 취향을 자주 드러내며, 일과 휴식 모두를 멋지게 보이도록 조율하려 합니다.",
+    "big_five": {
+      "E": "high",
+      "N": "low",
+      "A": "mid",
+      "C": "mid",
+      "O": "high"
+    },
+    "occupation": "신사적인 마을 주민",
+    "age": 30,
+    "decay_modifiers": [
+      0.9,
+      0.9,
+      1.4,
+      1.0,
+      1.3,
+      0.9,
+      1.1,
+      1.1
+    ],
+    "preferred_actions": [
+      6,
+      7,
+      1
+    ],
+    "split": "designer_case_study",
+    "source": "Animal Crossing",
+    "source_traits": "Smug personality",
+    "alignment_expectation": "Expected to favor social actions and planning_work."
+  },
+  {
+    "id": 10013,
+    "name": "ac_sisterly_villager",
+    "persona_name": "sisterly villager",
+    "text": "직설적이고 씩씩하며 주변 사람을 보호하려는 마을 주민입니다. 말투는 거칠 수 있지만 도움이 필요한 사람에게 먼저 다가가고, 활동적인 일과 공동 휴식을 모두 중요하게 여깁니다.",
+    "big_five": {
+      "E": "high",
+      "N": "mid",
+      "A": "high",
+      "C": "mid",
+      "O": "mid"
+    },
+    "occupation": "보호적인 마을 주민",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      1.0,
+      1.5,
+      1.0,
+      1.1,
+      1.3,
+      1.0,
+      0.9
+    ],
+    "preferred_actions": [
+      7,
+      14,
+      8
+    ],
+    "split": "designer_case_study",
+    "source": "Animal Crossing",
+    "source_traits": "Sisterly / Uchi personality",
+    "alignment_expectation": "Expected to favor socialize_respond, rest_with_others, and exercise."
+  }
+]

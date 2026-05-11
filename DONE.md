@@ -4,6 +4,25 @@ This file holds completed work details, decisions, result paths, and experiment 
 
 ---
 
+## 2026-05-11
+
+### arXiv Readiness Cleanup
+
+- Updated `paper/cog2026_vision/main.tex` after pre-upload review.
+- Fixed the persona projection notation to match the implementation: 1024 -> rank-16 -> 64 low-rank projection with normalization, instead of the stale 1024 -> 512 -> 64 MLP equation.
+- Fixed the policy architecture text from stale `(256-256-10)` to the implemented 3-hidden-layer `(256-256-128)` policy with an action-space-sized output head.
+- Renamed overloaded notation so the value network and trajectory encoder no longer both use `\phi`.
+- Deleted the legacy claim that FiLM and concat were statistically indistinguishable at v1/v2 zero-shot accuracy, per upload-review decision.
+- Replaced the unsupported `43--500 ms` LLM latency wording with the paper's measured Qwen3-1.7B LLM-as-policy baseline latency of 43.7 ms/decision step.
+- Removed the dangling "supplementary" reference from the results section.
+- Fixed `paper/cog2026_vision/refs.bib`:
+  - Corrected CIC authors to Laskin, Liu, Peng, Yarats, Rajeswaran, and Abbeel.
+  - Updated Qwen3 Embedding to the 2025 technical-report title and arXiv identifier.
+- Recompiled `paper/cog2026_vision/main.pdf` with `pdflatex -> bibtex -> pdflatex -> pdflatex`.
+- Build status: citations and references resolve; no overfull hboxes remain. Remaining warnings are underfull hboxes in prose/bibliography and the standard IEEEtran final-column reminder.
+
+---
+
 ## 2026-05-10
 
 ### Planning File Split
@@ -276,6 +295,68 @@ Interpretation: combo follows the archetype direction in point estimate but not 
 - The unseen-combo result is reported as FiLM higher in point estimate but not statistically separated from concat because Wilson intervals overlap.
 - Recompiled `paper/cog2026_vision/main.pdf`: clean 7-page PDF.
 - Remaining warnings are the same minor layout warnings seen before this update: one underfull intro paragraph, one 8.3pt overfull LoRA equation line, and one bibliography underfull hbox.
+
+### Designer-Authored Persona Case Study
+
+- Added and ran `scripts/run_designer_persona_case_study.py`.
+- Purpose: new top-priority qualitative case study to complete before human evaluation.
+- Protocol: inference only, no retraining; PCSP-v3 full checkpoint `results/pcsp_v3/full/policy.pt`; Mini-Inzoi v3, 5 episodes per designer persona, max_steps=200.
+- Persona set: 13 Korean natural-language designer-authored personas based on requested Sims 3 trait combinations and Animal Crossing villager personality categories.
+- Embedding path: Qwen3-Embedding-0.6B last-token pooling + L2 normalization, then trained PCSP LoRA projection for projected-embedding artifact.
+- Outputs:
+  - Report: `results/designer_persona_case_study/case_study_report.md`
+  - Full JSON: `results/designer_persona_case_study/case_study_results.json`
+  - Persona definitions: `results/designer_persona_case_study/designer_personas.json`
+  - Raw embeddings: `results/designer_persona_case_study/designer_persona_embeddings.npy`
+  - Projected embeddings: `results/designer_persona_case_study/designer_persona_projected_embeddings.npy`
+  - 13 action-distribution charts: `results/designer_persona_case_study/action_bars/`
+  - t-SNE plot: `results/designer_persona_case_study/designer_personas_tsne.png`
+
+| persona | top-3 actions | mean top-5 train cosine | qualitative read |
+|:--|:--|--:|:--|
+| corporate strategist | focused_work, planning_work, eat_slow | 0.714 | strong work/planning alignment |
+| introverted researcher | rest_alone, read_deep, socialize_respond | 0.693 | strong solitary/research alignment |
+| outgoing event planner | socialize_initiate, read_deep, eat_quick | 0.606 | partial social alignment |
+| competitive personal trainer | rest_alone, focused_work, planning_work | 0.752 | partial; exercise did not dominate |
+| unmotivated freelancer | rest_alone, eat_quick, sleep | 0.578 | strong low-motivation/rest alignment |
+| lazy villager | eat_slow, move_right, sleep | 0.614 | strong food/sleep alignment despite movement |
+| jock villager | socialize_initiate, rest_with_others, eat_slow | 0.556 | weak; fitness archetype not expressed |
+| cranky villager | socialize_initiate, rest_alone, read_deep | 0.588 | strong on rest/read, with social-initiation bias |
+| normal villager | focused_work, socialize_initiate, eat_slow | 0.579 | weak; hygiene/care was not expressed |
+| peppy villager | socialize_initiate, eat_slow, rest_with_others | 0.573 | strong social/communal alignment |
+| snooty villager | socialize_initiate, eat_slow, socialize_respond | 0.646 | partial controlled-social alignment |
+| smug villager | socialize_initiate, planning_work, eat_slow | 0.612 | strong social/planning alignment |
+| sisterly villager | socialize_initiate, eat_slow, planning_work | 0.609 | weak; protective/active signature not expressed |
+
+Interpretation: the case study produces both positive and negative qualitative evidence. Workaholic/corporate, introverted researcher, couch-potato freelancer, lazy, peppy, and smug personas show clear expected behavior; jock, normal, and sisterly are useful failure cases where v3 still exhibits a broad social-initiation/eating/planning bias. No existing checkpoint compatibility was changed and no retraining is required.
+
+### Paper Section IV-D: Qualitative Case Study
+
+- Added Section IV-D, "Qualitative Case Study: Designer-Authored Personas," to `paper/cog2026_vision/main.tex`.
+- Inserted after the v3/key-observations material and before the former Significance subsection, so the qualitative case study is now Section IV-D and Significance becomes Section IV-E.
+- Added `Table V` with: persona name, top-3 actions, nearest training persona, nearest-neighbor cosine similarity, and aligned/partial/no judgment.
+- Added t-SNE figure to the paper:
+  - Source: `results/designer_persona_case_study/designer_personas_tsne.png`
+  - Paper copy: `paper/figures/fig5_designer_personas_tsne.png`
+- Added citations for the source inspiration pages:
+  - `sims3traits`
+  - `nookipediaVillager`
+- Updated the limitations paragraph on synthetic personas to acknowledge the qualitative designer-authored case study while preserving the limitation that robustness to production-authored personas remains unproven.
+- Recompiled `paper/cog2026_vision/main.pdf`: citations and labels resolved; output is now 8 pages.
+- Remaining compile warnings: pre-existing LoRA equation overfull hbox plus several underfull boxes around qualitative prose/bibliography. No new fatal LaTeX errors.
+
+### Public Preprint / GitHub Metadata
+
+- User clarified there is no intention to submit this work to IEEE CoG.
+- Public arXiv/GitHub version should therefore not carry an IEEE submitted-work notice or imply conference submission.
+- Updated `paper/cog2026_vision/main.tex`:
+  - Author: Yoosung Hong
+  - Affiliation: Independent Researcher
+  - GitHub link: `https://github.com/yoosunghong/pcsp`
+- Removed the previously added IEEE submitted-work title-block footnote.
+- Added root `README.md` with project summary, commands, and GitHub link.
+- Added root `LICENSE` with MIT License for source code and scripts.
+- Recompiled `paper/cog2026_vision/main.pdf`; the first page contains the author, affiliation, and GitHub link, with no IEEE submitted-work notice.
 
 ---
 

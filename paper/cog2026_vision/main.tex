@@ -27,9 +27,9 @@ A Vision for Scalable Persona-Conditioned NPC Control\\
 in Life Simulation Games}
 
 \author{%
-  \IEEEauthorblockN{Anonymous Author(s)}
-  \IEEEauthorblockA{Anonymous Institution\\
-    anonymous@institution.edu}
+  \IEEEauthorblockN{Yoosung Hong}
+  \IEEEauthorblockA{Independent Researcher\\
+    \url{https://github.com/yoosunghong/pcsp}}
 }
 
 \begin{document}
@@ -47,12 +47,12 @@ We argue that \emph{persona-conditioned shared policies}---a single RL policy
 conditioned on frozen LLM embeddings of free-form persona descriptions---represent
 a promising architectural direction that can satisfy all four axes simultaneously.
 To support this argument we introduce \PCSP (Persona-Conditioned Shared Policy),
-an early proof-of-concept combining frozen LLM encoding, LoRA projection,
+an early proof-of-concept combining frozen LLM encoding, low-rank persona projection,
 neural persona conditioning, and a PPO + InfoNCE consistency + KL diversity
 co-training objective. On a 300-persona life-simulation benchmark, \PCSP
 achieves zero-shot persona identification 11$\times$ above chance, Spearman
 $\rho\!=\!0.73$ semantic-behavioral alignment, and 22$\times$ faster inference
-than LLM-as-policy. Ablation studies across three environment scales identify
+than LLM-as-policy. Ablation studies across three experimental settings identify
 the InfoNCE consistency objective---not the choice of conditioning architecture
 (FiLM vs.\ concatenation)---as the load-bearing component: removing it
 collapses zero-shot identification to chance even when task reward is
@@ -97,8 +97,8 @@ live-service games that regularly introduce new characters.
 \paragraph{LLM-as-policy} methods~\cite{park2023generative,wang2023voyager,yao2023react}
 achieve rich, natural-language-grounded persona expression by querying a language
 model at every decision step. This works well in offline or turn-based contexts,
-but current LLMs require 43--500\,ms per inference
-call~\cite{achiam2023gpt4},
+but even our local Qwen3-1.7B LLM-as-policy baseline requires 43.7\,ms per
+decision step (Table~\ref{tab:results_v1}),
 which exceeds the 16--33\,ms per-frame budget of real-time game simulations.
 Generative Agents~\cite{park2023generative} sidestep this by operating on
 minute-resolution plans rather than per-frame actions, which suits narrative
@@ -142,7 +142,7 @@ to make the approach viable at game production scale.
     as an underexplored architectural direction and lay out six concrete open
     problems (\S\ref{sec:agenda}).
   \item \textbf{\PCSP}: An early proof-of-concept combining frozen
-    Qwen3-0.6B-Embedding, LoRA projection, neural persona conditioning, and a
+    Qwen3-0.6B-Embedding, low-rank persona projection, neural persona conditioning, and a
     PPO + InfoNCE consistency + KL diversity co-training objective
     (\S\ref{sec:method}).
   \item \textbf{Initial evidence}: On a 300-persona life-simulation benchmark,
@@ -212,12 +212,15 @@ learning.'' This is not supported by design.
 
 \paragraph{LLM-as-policy.}
 Generative Agents~\cite{park2023generative}, Voyager~\cite{wang2023voyager},
-and ReAct~\cite{yao2023react} produce rich, persona-consistent behavior but at
-43--500\,ms per step. Techniques such as action caching, plan reuse, and
-smaller distilled models can reduce latency, but the fundamental tension---rich
-language reasoning versus real-time step budgets---remains. Generalist agents
-such as Gato~\cite{reed2022gato} demonstrate that a single model can handle
-diverse tasks, but inference cost is similar.
+and ReAct~\cite{yao2023react} produce rich, persona-consistent behavior but
+remain expensive when used as per-step controllers. In our benchmark, the
+Qwen3-1.7B LLM-as-policy baseline requires 43.7\,ms per decision step
+(Table~\ref{tab:results_v1}), already above a 16--33\,ms frame budget.
+Techniques such as action caching, plan reuse, and smaller distilled models can
+reduce latency, but the fundamental tension---rich language reasoning versus
+real-time step budgets---remains. Generalist agents such as
+Gato~\cite{reed2022gato} demonstrate that a single model can handle diverse
+tasks, but inference cost is similar.
 
 \paragraph{Summary.}
 No existing paradigm satisfies all four axes. The design space between
@@ -261,29 +264,36 @@ $\hat{e}_p \in \mathbb{R}^{1024}$ using Qwen3-0.6B-Embedding~\cite{qwen3embed}
 This is computed once per NPC lifetime (14.6\,ms/persona), imposing negligible
 runtime cost.
 
-A learned LoRA projection~\cite{hu2022lora} ($r\!=\!16$,
+A learned low-rank projection~\cite{hu2022lora} ($r\!=\!16$,
 $\text{lr}\!=\!10^{-4}$) maps $\hat{e}_p \to e_p \in \mathbb{R}^{64}$:
 \[
-  e_p = W_{\text{down}}^{\top}\,\sigma\!\left(W_{\text{up}}^{\top}\hat{e}_p\right),
-  \quad W_{\text{up}} \in \mathbb{R}^{1024\times 512},\; W_{\text{down}} \in \mathbb{R}^{512\times 64}.
+\begin{aligned}
+  e_p &= \operatorname{norm}\!\left(\alpha\, B A \hat{e}_p\right), \\
+  A &\in \mathbb{R}^{16\times1024},\quad
+  B \in \mathbb{R}^{64\times16},\quad
+  \alpha = 64^{-1/2}.
+\end{aligned}
 \]
 The projection is necessary: raw Qwen3 embeddings over-represent occupational
 similarity relative to personality similarity (salesperson$\leftrightarrow$executive:
 0.61 vs.\ trainer$\leftrightarrow$blogger: 0.33).
-After LoRA training, Spearman $\rho$ between embedding distance and behavioral KL
+After low-rank projection training, Spearman $\rho$ between embedding distance and behavioral KL
 increases from 0.384 to 0.728 (\S\ref{sec:evidence}).
 
 \subsection{Persona-Conditioned Shared Policy}
 
-The shared policy $\pi_\theta(a \mid s, e_p)$ is a 3-layer MLP (256-256-10)
-conditioned on the projected persona embedding $e_p$. Our reference
+The shared policy $\pi_\theta(a \mid s, e_p)$ is a 3-hidden-layer MLP
+(256-256-128) with an output head sized to the environment action space.
+Our reference
 implementation uses FiLM~\cite{perez2018film} to inject the persona signal at
 every hidden layer:
 \[
   h_\ell' = \gamma_\ell(e_p) \odot h_\ell + \beta_\ell(e_p),
 \]
-with small linear networks $\gamma_\ell, \beta_\ell : \mathbb{R}^{64} \to \mathbb{R}^{256}$.
-An identical FiLM-conditioned value network $V_\phi(s, e_p)$ serves as the
+with small linear networks
+$\gamma_\ell, \beta_\ell : \mathbb{R}^{64} \to \mathbb{R}^{d_\ell}$,
+where $d_\ell$ is the hidden width of layer $\ell$.
+An analogous FiLM-conditioned value network $V_\psi(s, e_p)$ serves as the
 critic. Total trainable parameters: 207K (excluding the frozen LLM).
 We treat the choice of conditioning mechanism as an implementation detail
 rather than a contribution: the v3 zero-shot ablations in
@@ -303,14 +313,14 @@ with $\lambda_1\!=\!0.5$, $\lambda_2\!=\!0.1$ (PPO: $\gamma\!=\!0.99$,
 $\epsilon\!=\!0.2$, GAE-$\lambda\!=\!0.95$, batch\,$=\!2048$~\cite{schulman2017ppo}).
 
 \textbf{Consistency loss.}
-A 2-layer GRU trajectory encoder $g_\phi(\tau) \in \mathbb{R}^{64}$
+A 2-layer GRU trajectory encoder $g_\eta(\tau) \in \mathbb{R}^{64}$
 maps episode trajectories to L2-normalized embeddings.
 InfoNCE~\cite{oord2018cpc} ($T\!=\!0.07$) aligns trajectory embeddings with
 their originating persona embeddings:
 \begin{equation}
   \mathcal{L}_{\text{consist}} = -\log
-  \frac{\exp\!\bigl(\text{sim}(g_\phi(\tau), e_p)/T\bigr)}
-       {\sum_{p' \in \mathcal{B}} \exp\!\bigl(\text{sim}(g_\phi(\tau), e_{p'})/T\bigr)}.
+  \frac{\exp\!\bigl(\text{sim}(g_\eta(\tau), e_p)/T\bigr)}
+       {\sum_{p' \in \mathcal{B}} \exp\!\bigl(\text{sim}(g_\eta(\tau), e_{p'})/T\bigr)}.
 \end{equation}
 This prevents the policy from producing trajectories that cannot be traced back
 to their conditioning persona.
@@ -334,7 +344,7 @@ This discourages behavioral collapse toward a persona-agnostic average.
   \caption{%
     \textbf{\PCSP system overview.}
     A frozen LLM encoder computes a once-per-NPC persona embedding.
-    A learned LoRA projection adapts it to behavior space.
+    A learned low-rank projection adapts it to behavior space.
     The shared FiLM-conditioned policy runs at game speed ($<$2\,ms/step) and is
     trained with PPO + consistency + diversity co-objectives.}
   \label{fig:system}
@@ -343,9 +353,8 @@ This discourages behavioral collapse toward a persona-agnostic average.
 \subsection{What This Is Not}
 
 \PCSP is a laboratory-scale proof-of-concept, not a production-ready NPC system.
-The two Mini-Inzoi variants (6$\times$6 and 12$\times$12) are intentionally
-minimal; the personas are synthetically generated; and human evaluation has not
-been completed.
+The Mini-Inzoi environments are intentionally minimal; the personas are
+synthetically generated; and human evaluation has not been completed.
 We present these results as evidence that the architectural direction is viable,
 not as a claim that NPC personalization has been solved.
 
@@ -353,8 +362,8 @@ not as a claim that NPC personalization has been solved.
 \section{Initial Evidence}
 \label{sec:evidence}
 
-We report experiments at two scales to test both the base design choices and
-whether the architectural properties hold as the environment grows.
+We report experiments across three settings to test the base design choices,
+scaling behavior, and the effect of a richer action ontology.
 
 \subsection{Experimental Setup}
 
@@ -395,8 +404,8 @@ Same 240/60 unseen-occupation split as v1; 300 PPO iterations.
 \subsection{Results}
 
 Tables~\ref{tab:results_v1}, \ref{tab:results_v2}, and~\ref{tab:results_v3}
-show key metrics at each scale. Figure~\ref{fig:learning} shows training reward
-curves at v1/v2. Full ablation details appear in the supplementary.
+show key metrics for each setting. Figure~\ref{fig:learning} shows training reward
+curves at v1/v2.
 
 \begin{figure}[t]
   \centering
@@ -491,13 +500,13 @@ curves at v1/v2. Full ablation details appear in the supplementary.
 
 \subsection{Key Observations}
 
-Across all three environment scales, the ablation evidence converges on a
+Across all three experimental settings, the ablation evidence converges on a
 single load-bearing component---the InfoNCE consistency loss---while the
 choice of conditioning architecture proves to be secondary.
 
 \textbf{The consistency loss is the load-bearing component.}
 Removing the InfoNCE consistency term collapses zero-shot persona
-identification to chance at every scale we have tested:
+identification to chance in every setting we have tested:
 v1 drops from 19.3\% to 1.7\% (random), v2 drops from 2.3\% to exactly 0\%
 against a 1.0\% baseline, and v3 drops from 17.0\% to 1.7\% (Wilson CI
 $[.01, .04]$).
@@ -518,8 +527,7 @@ On unseen occupations, concat reaches 28.3\% accuracy (CI $[.24,.34]$) versus
 FiLM's 17.0\% (CI $[.13,.22]$); on unseen archetypes, the ranking reverses,
 with FiLM at 20.3\% (CI $[.16,.25]$) and concat at 10.3\% (CI $[.07,.14]$).
 On unseen occupation--archetype combinations, FiLM is higher in point estimate
-(20.3\% vs.\ 17.0\%), but the Wilson intervals overlap. At v1 and v2 the two
-choices were already statistically indistinguishable on zero-shot accuracy.
+(20.3\% vs.\ 17.0\%), but the Wilson intervals overlap.
 Thus the conditioning mechanism is a generalization-gap knob whose best setting
 depends on the OOD axis; the consistency loss, in contrast, is the only
 component that universally fails across split families when removed.
@@ -541,6 +549,91 @@ difference of 0.003 despite a $4\times$ increase in grid area, $4\times$ more
 agents, and $67\%$ more personas. This suggests that semantic-behavioral
 alignment is a stable property of the design, not an artefact of the
 minimal environment.
+
+\subsection{Qualitative Case Study: Designer-Authored Personas}
+\label{sec:qualcase}
+
+To test whether \PCSP can be controlled by persona descriptions outside the
+synthetic Big-Five/occupation templates, 13 designer-authored personas were
+constructed from two familiar life-simulation sources. Five were based on
+trait combinations from \textit{The Sims 3} trait system
+(\eg Workaholic + Ambitious + Perfectionist)~\cite{sims3traits}, and eight were
+based on \textit{Animal Crossing} villager personality categories
+(\eg Lazy, Jock, Normal, and Sisterly)~\cite{nookipediaVillager}. Each source
+concept was rewritten as a 2--3 sentence natural-language NPC description in
+the same style as the training personas and was assigned a plausible occupation
+or daily habit. No retraining was performed: each text was encoded with the same
+Qwen3 embedding pipeline, passed through the learned low-rank projection, and rolled
+out for five v3 episodes.
+
+\begin{table*}[t]
+  \centering
+  \scriptsize
+  \caption{%
+    \textbf{Designer-authored persona case study.}
+    Top-3 actions are mean action proportions over five Mini-Inzoi v3 episodes.
+    The nearest training persona is computed in frozen Qwen3 embedding space;
+    cosine similarity is to that nearest neighbor.}
+  \label{tab:designer_personas}
+  \setlength{\tabcolsep}{3.5pt}
+  \begin{tabular}{llllc}
+    \toprule
+    Persona & Top-3 actions & Nearest train persona & Cos.\ sim. & Aligned? \\
+    \midrule
+    corporate strategist & \texttt{focused\_work}, \texttt{planning\_work}, \texttt{eat\_slow} & \#95 executive & .723 & yes \\
+    introverted researcher & \texttt{rest\_alone}, \texttt{read\_deep}, \texttt{socialize\_respond} & \#22 software researcher & .715 & yes \\
+    outgoing event planner & \texttt{socialize\_initiate}, \texttt{read\_deep}, \texttt{eat\_quick} & \#18 software researcher & .615 & partial \\
+    competitive personal trainer & \texttt{rest\_alone}, \texttt{focused\_work}, \texttt{planning\_work} & \#227 athlete & .782 & partial \\
+    unmotivated freelancer & \texttt{rest\_alone}, \texttt{eat\_quick}, \texttt{sleep} & \#74 elementary teacher & .592 & yes \\
+    lazy villager & \texttt{eat\_slow}, \texttt{move\_right}, \texttt{sleep} & \#115 civil servant & .618 & yes \\
+    jock villager & \texttt{socialize\_initiate}, \texttt{rest\_with\_others}, \texttt{eat\_slow} & \#237 athlete & .579 & no \\
+    cranky villager & \texttt{socialize\_initiate}, \texttt{rest\_alone}, \texttt{read\_deep} & \#115 civil servant & .594 & yes \\
+    normal villager & \texttt{focused\_work}, \texttt{socialize\_initiate}, \texttt{eat\_slow} & \#58 nurse & .613 & no \\
+    peppy villager & \texttt{socialize\_initiate}, \texttt{eat\_slow}, \texttt{rest\_with\_others} & \#16 software researcher & .590 & yes \\
+    snooty villager & \texttt{socialize\_initiate}, \texttt{eat\_slow}, \texttt{socialize\_respond} & \#35 accountant & .671 & partial \\
+    smug villager & \texttt{socialize\_initiate}, \texttt{planning\_work}, \texttt{eat\_slow} & \#31 accountant & .643 & yes \\
+    sisterly villager & \texttt{socialize\_initiate}, \texttt{eat\_slow}, \texttt{planning\_work} & \#213 personal trainer & .616 & no \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig5_designer_personas_tsne.png}
+  \caption{%
+    \textbf{Designer-authored personas in embedding space.}
+    A t-SNE projection of 240 training persona embeddings plus 13
+    designer-authored personas (stars) shows that the new personas lie within
+    the region occupied by training personas rather than forming a separated
+    out-of-distribution cluster. This supports the limited claim that the
+    training data encompasses the tested designer-authored persona space.}
+  \label{fig:designer_tsne}
+\end{figure}
+
+Three cases illustrate the intended control behavior. The workaholic corporate
+strategist, authored from Workaholic + Ambitious + Perfectionist, is dominated
+by \texttt{focused\_work} and \texttt{planning\_work}; this is the cleanest
+case where the source trait combination is expressed directly in the v3 action
+ontology. The introverted researcher, authored from Loner + Bookworm +
+Neurotic, selects \texttt{rest\_alone} and \texttt{read\_deep}, preserving the
+solitary and knowledge-seeking aspects of the description even though
+\texttt{socialize\_respond} appears as a lower-ranked action. The lazy
+villager and unmotivated freelancer similarly favor slow eating, sleep, and
+solitary rest, matching the requested food/sleep/leisure signature.
+
+The failure cases are equally informative. The jock, normal, and sisterly
+villagers are embedded near plausible training personas (athlete, nurse, and
+personal trainer), but their rollouts are dominated by broad
+\texttt{socialize\_initiate}, eating, or planning behaviors rather than by
+fitness, hygiene/care, or protective assistance. This suggests that the current
+action ontology does not sufficiently distinguish social behaviors: initiating
+conversation, caring for another agent, protecting a peer, performing friendly
+small talk, and showing energetic confidence are all collapsed into a small
+number of social labels. This limitation mirrors the coarse-action
+observability problem discussed in \S\ref{sec:limits}: when the action set and
+rendered traces do not expose the stylistic dimensions that humans use to
+recognize persona, a behavior may be reward-optimal and still fail as a
+designer-readable characterization.
 
 \subsection{Significance}
 
@@ -604,7 +697,7 @@ The key challenge is \emph{representation}: how should an evolving personality
 be maintained and encoded without expensive LLM calls at every update?
 Candidate approaches include (a) maintaining a low-dimensional latent personality
 state updated by a lightweight delta model at milestone events, (b) conditioning
-the LoRA projection on recent interaction history via a rolling context encoder,
+the persona projection on recent interaction history via a rolling context encoder,
 or (c) hierarchical persona representations that separate stable traits
 (\eg conscientiousness) from volatile moods (\eg current frustration level).
 
@@ -764,9 +857,11 @@ identify a richer action ontology---intent, activity, place, target, style---as
 a medium-term environment redesign target (\S\ref{sec:agenda}, richer worlds).
 
 \textbf{Synthetic personas.}
-All 300 personas are algorithmically generated from Big Five archetypes and
-occupation templates. Whether the method works with designer-authored personas---with
-all their nuance, inconsistency, and cultural specificity---is untested.
+All 300 training personas are algorithmically generated from Big Five archetypes
+and occupation templates. The designer-authored case study in
+\S\ref{sec:qualcase} is a first qualitative probe, but it covers only 13
+handwritten personas and does not yet establish robustness to the nuance,
+inconsistency, and cultural specificity of production-authored characters.
 
 \textbf{No human evaluation.}
 Zero-shot identification accuracy and Spearman $\rho$ are automated proxies.

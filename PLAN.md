@@ -33,6 +33,7 @@
 - [x] Regenerate Korean rich survey artifacts: `data/human_eval/persona_identification_survey_ko.*`.
 - [x] Regenerate Korean coarse survey artifacts: `data/human_eval/persona_identification_survey_ko_coarse.*`.
 - [x] Add automated survey baseline and item difficulty buckets.
+- [x] Run designer-authored qualitative case study before human eval: Sims 3 / Animal Crossing personas, v3 PCSP inference, action bars, nearest-neighbor similarity, and t-SNE.
 - [ ] Collect human responses for rich vs coarse survey variants.
 - [ ] Report human 2AFC accuracy with Wilson 95% CI.
 - [ ] Report confidence and response time.
@@ -50,6 +51,9 @@
 - [x] Update paper claims after `unseen_combo_v3` completes.
 - [x] Standardize on the v3 zero-shot eval-driver/compositional ablation summaries for paper accuracy claims; retire the legacy CLI-only number from paper claims.
 - [x] Recompile and inspect final PDF after all v3 compositional updates.
+- [x] Add Section IV-D qualitative case study for designer-authored Sims 3 / Animal Crossing personas, with table and t-SNE figure.
+- [x] Prepare public arXiv/GitHub metadata: author, affiliation, GitHub link, README, and MIT software license.
+- [x] Fix arXiv-readiness review issues in `main.tex`/`refs.bib`: projection notation, policy dimensions, legacy architecture claim, latency wording, and citation metadata.
 
 ---
 
