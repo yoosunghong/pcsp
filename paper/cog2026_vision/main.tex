@@ -512,30 +512,17 @@ into the network.
 
 \textbf{The conditioning architecture is secondary, and conditional on the
 type of OOD shift.}
-We initially conjectured that FiLM's layer-wise gating would dominate
-input-only concatenation. Across the v3 split families that test different
-kinds of compositional generalization, however, neither architecture
-dominates universally:
-under \emph{unseen-occupation} generalization (4 occupations held out from
-training), input-concatenation reaches 28.3\% accuracy
-($17.0\times$ chance, coherence 7.60) versus FiLM's 17.0\%
-($10.2\times$ chance, coherence 2.06), with disjoint Wilson CIs;
-under \emph{unseen-archetype} generalization (3 Big-Five archetypes held out),
-the ranking reverses---FiLM reaches 20.3\% ($12.2\times$ chance, CI
-$[.16, .25]$) while concat collapses to 10.3\% (CI $[.07, .14]$), again
-with disjoint CIs.
-At v1 and v2 the two choices were already statistically indistinguishable on
-zero-shot accuracy.
-Plausibly, FiLM's per-layer gating recombines seen-occupation features under
-novel personality conditioning but breaks on novel occupations, while concat's
-input-only routing supports nearest-neighbor lookup over seen-occupation
-prototypes but has no analogous mechanism for novel personalities.
-Taken together, the conditioning mechanism is a generalization-gap knob whose
-optimal setting depends on which axis of the persona space is novel at test
-time, not a fundamental architectural commitment. The consistency loss, in
-contrast, is the only component that universally fails across split families
-when removed, and it therefore carries the persona-traceability claim across
-all conditioning choices we have tested.
+We initially conjectured that FiLM's layer-wise gating would dominate input
+concatenation, but the v3 compositional splits show no universal winner.
+On unseen occupations, concat reaches 28.3\% accuracy (CI $[.24,.34]$) versus
+FiLM's 17.0\% (CI $[.13,.22]$); on unseen archetypes, the ranking reverses,
+with FiLM at 20.3\% (CI $[.16,.25]$) and concat at 10.3\% (CI $[.07,.14]$).
+On unseen occupation--archetype combinations, FiLM is higher in point estimate
+(20.3\% vs.\ 17.0\%), but the Wilson intervals overlap. At v1 and v2 the two
+choices were already statistically indistinguishable on zero-shot accuracy.
+Thus the conditioning mechanism is a generalization-gap knob whose best setting
+depends on the OOD axis; the consistency loss, in contrast, is the only
+component that universally fails across split families when removed.
 
 \textbf{Diversity loss prevents behavioral collapse at v1/v2 but its effect
 weakens on the v3 zero-shot accuracy axis.}
