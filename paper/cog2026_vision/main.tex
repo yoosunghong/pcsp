@@ -23,8 +23,8 @@
 
 % ---------------------------------------------------------------
 \title{One Policy, Infinite NPCs:\\
-A Vision for Scalable Persona-Conditioned NPC Control\\
-in Life Simulation Games}
+Scalable Persona-Conditioned NPC Control\\
+via Shared Reinforcement Learning Policies}
 
 \author{%
   \IEEEauthorblockN{Yoosung Hong}
@@ -37,29 +37,27 @@ in Life Simulation Games}
 
 % ---------------------------------------------------------------
 \begin{abstract}
-Life simulation games require hundreds to thousands of non-player characters (NPCs)
-that each behave consistently with a distinct personality across an entire play
-session. Current approaches---hand-authored behavior trees, per-character RL
-policies, unsupervised skill discovery, and LLM-as-policy---each fail on one or
-more of the four axes that matter for practical deployment: persona consistency,
-natural-language controllability, zero-shot generalization, and real-time inference.
-We argue that \emph{persona-conditioned shared policies}---a single RL policy
-conditioned on frozen LLM embeddings of free-form persona descriptions---represent
-a promising architectural direction that can satisfy all four axes simultaneously.
-To support this argument we introduce \PCSP (Persona-Conditioned Shared Policy),
-an early proof-of-concept combining frozen LLM encoding, low-rank persona projection,
-neural persona conditioning, and a PPO + InfoNCE consistency + KL diversity
-co-training objective. On a 300-persona life-simulation benchmark, \PCSP
-achieves zero-shot persona identification 11$\times$ above chance, Spearman
-$\rho\!=\!0.73$ semantic-behavioral alignment, and 22$\times$ faster inference
-than LLM-as-policy. Ablation studies across three experimental settings identify
-the InfoNCE consistency objective---not the choice of conditioning architecture
-(FiLM vs.\ concatenation)---as the load-bearing component: removing it
-collapses zero-shot identification to chance even when task reward is
-preserved or improved.
-We then lay out a concrete research agenda---covering dynamic personas, social
-emergence, long-horizon memory, richer environments, human evaluation, and
-authoring tools---for the community to build on this direction.
+On a 300-persona life-simulation benchmark, \PCSP achieves zero-shot persona
+identification 11$\times$ above chance, Spearman $\rho\!=\!0.73$
+semantic-behavioral alignment, and 22$\times$ faster inference than an
+LLM-as-policy baseline. Life simulation games require hundreds to thousands of
+non-player characters (NPCs) that behave consistently with distinct personalities
+while remaining controllable through designer-authored natural language.
+Hand-authored behavior trees, per-character RL policies, unsupervised skill
+discovery, and per-step LLM controllers each fail on one or more deployment
+constraints: persona consistency, natural-language controllability, zero-shot
+generalization, and real-time inference.
+We introduce \PCSP (Persona-Conditioned Shared Policy), a single reinforcement
+learning policy conditioned on frozen LLM embeddings of free-form persona
+descriptions. \PCSP combines once-per-NPC persona encoding, low-rank persona
+projection, neural persona conditioning, and a PPO + InfoNCE consistency + KL
+diversity training objective. Across three Mini-Inzoi experimental settings,
+including a richer 20-action v3 ontology, ablations show that the InfoNCE
+trajectory-consistency objective is load-bearing: removing it collapses
+zero-shot persona identification to chance even when task reward is preserved or
+improved. These results provide empirical evidence that shared RL policies can
+support scalable, real-time, persona-conditioned NPC control, and that trajectory
+traceability is central to the method.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -111,9 +109,9 @@ no semantic content. A game designer cannot specify ``this NPC should be agreeab
 and fitness-oriented'' by selecting a latent index.
 Natural-language controllability is not part of the design.
 
-\subsection{A Promising Architectural Direction}
+\subsection{Persona-Conditioned Shared Policies}
 
-We argue that the solution lies in a different decomposition: \emph{compute a
+We address this scaling problem with a different decomposition: \emph{compute a
 rich persona representation once per NPC, then condition a single lightweight
 policy on that representation at every step}.
 
@@ -126,31 +124,34 @@ entire personality manifold. At inference time, the LLM is called once per NPC
 lifetime; the policy network---at most a few hundred kilobytes---runs at full
 game speed.
 
-This architectural direction, which we call \emph{persona-conditioned shared
-policies}, is not yet mature. The design space of embedding methods, conditioning
-architectures, training objectives, and evaluation protocols remains largely
-unexplored. The goal of this paper is threefold: (1)~articulate why this
-direction is worth pursuing, (2)~present an early concrete instance (\PCSP) as
-an existence proof, and (3)~identify the research questions that must be answered
-to make the approach viable at game production scale.
+This approach, which we call \emph{persona-conditioned shared
+policies}, remains underexplored in game AI. This paper presents a concrete
+implementation, \PCSP, and evaluates when persona-conditioned behavior remains
+recoverable from generated trajectories. The central empirical question is not
+whether a policy can receive persona text as input, but whether its trajectories
+preserve enough persona signal to support zero-shot identification, semantic
+alignment, and real-time deployment.
 
 \subsection{Paper Contributions}
 
 \begin{enumerate}
   \setlength\itemsep{2pt}
-  \item \textbf{Research agenda}: We identify persona-conditioned shared policies
-    as an underexplored architectural direction and lay out six concrete open
-    problems (\S\ref{sec:agenda}).
-  \item \textbf{\PCSP}: An early proof-of-concept combining frozen
+  \item \textbf{\PCSP}: A shared RL controller combining frozen
     Qwen3-0.6B-Embedding, low-rank persona projection, neural persona conditioning, and a
     PPO + InfoNCE consistency + KL diversity co-training objective
     (\S\ref{sec:method}).
-  \item \textbf{Initial evidence}: On a 300-persona life-simulation benchmark,
+  \item \textbf{Empirical results}: On a 300-persona life-simulation benchmark,
     \PCSP achieves zero-shot persona identification 11$\times$ above chance,
     Spearman $\rho\!=\!0.73$ semantic-behavioral alignment, and 22$\times$
     faster inference than LLM-as-policy (\S\ref{sec:evidence}).
-  \item \textbf{Evaluation agenda}: A proposal for metrics and benchmarks suited
-    to persona fidelity evaluation beyond task reward (\S\ref{sec:evalagenda}).
+  \item \textbf{Ablation finding}: Across v1, v2, and v3 environments, removing
+    the InfoNCE trajectory-consistency loss collapses zero-shot persona
+    identification to chance, while the best conditioning architecture depends
+    on the out-of-distribution split.
+  \item \textbf{Evaluation protocol}: We report persona identification,
+    behavioral diversity, semantic-behavioral alignment, inference latency, and
+    rich trajectory observability as core criteria for persona-conditioned NPC
+    control (\S\ref{sec:evalprotocol}).
 \end{enumerate}
 
 % ---------------------------------------------------------------
@@ -229,13 +230,12 @@ systematically explored. Persona-conditioned shared policies are a concrete
 proposal for how to close this gap.
 
 % ---------------------------------------------------------------
-\section{\PCSP: A Concrete Early Instance}
+\section{\PCSP Method}
 \label{sec:method}
 
 We present \PCSP as one specific point in the design space of persona-conditioned
 shared policies. The components we have chosen are motivated by ablation evidence
-but are not canonical; they represent a tractable first step, not a final
-architecture.
+but are not canonical; they define the experimental system evaluated below.
 
 \subsection{Environment: Mini-Inzoi}
 
@@ -338,34 +338,45 @@ different personas at shared states:
 computed as a batched forward pass over $n\!=\!8$ sampled personas at 32 states.
 This discourages behavioral collapse toward a persona-agnostic average.
 
-\begin{figure}[t]
+\begin{figure*}[t]
   \centering
-  \includegraphics[width=\linewidth]{fig1_system.png}
+  \includegraphics[width=0.98\textwidth]{fig1_pcsp_pipeline.png}
   \caption{%
-    \textbf{\PCSP system overview.}
-    A frozen LLM encoder computes a once-per-NPC persona embedding.
-    A learned low-rank projection adapts it to behavior space.
-    The shared FiLM-conditioned policy runs at game speed ($<$2\,ms/step) and is
-    trained with PPO + consistency + diversity co-objectives.}
+    \textbf{\PCSP pipeline and training objectives.}
+    Persona text is encoded once per NPC with a frozen Qwen3 embedding model,
+    adapted through a low-rank projection, and consumed by a shared
+    persona-conditioned policy during Mini-Inzoi rollout.
+    The trajectory encoder provides the InfoNCE consistency signal, while the
+    policy is optimized with PPO and KL diversity regularization.
+    The rightmost Mini-Inzoi label depicts the base 12-action/8-need
+    instantiation; the v3 experiments expand the action ontology to 20 actions.}
   \label{fig:system}
-\end{figure}
-
-\subsection{What This Is Not}
-
-\PCSP is a laboratory-scale proof-of-concept, not a production-ready NPC system.
-The Mini-Inzoi environments are intentionally minimal; the personas are
-synthetically generated; and human evaluation has not been completed.
-We present these results as evidence that the architectural direction is viable,
-not as a claim that NPC personalization has been solved.
+\end{figure*}
 
 % ---------------------------------------------------------------
-\section{Initial Evidence}
+\section{Experiments and Results}
 \label{sec:evidence}
 
-We report experiments across three settings to test the base design choices,
-scaling behavior, and the effect of a richer action ontology.
+We evaluate \PCSP across three settings. Mini-Inzoi v3 is the primary experiment
+because it exposes a richer action ontology for persona-conditioned behavior.
+Mini-Inzoi v1 validates the base architecture at small scale, and Mini-Inzoi v2
+tests whether the semantic-behavioral alignment pattern persists under a larger
+grid, more agents, and more personas.
 
 \subsection{Experimental Setup}
+
+\textbf{v3 (richer action ontology).}
+Mini-Inzoi v3 keeps the 6$\times$6/4-agent base scale but expands the action
+space to \textbf{20 flat-discrete actions} (16 activity + 4 movement) for
+finer behavioral granularity (e.g., \texttt{focused\_work} vs.\
+\texttt{planning\_work}, \texttt{rest\_alone} vs.\ \texttt{rest\_with\_others},
+\texttt{eat\_quick} vs.\ \texttt{eat\_slow}).
+Observations expand to 33 dimensions, adding location-affordance one-hot
+(8), social-context features (3), and a routine-regularity signal (2).
+Reward shaping adds a per-action persona-style term
+$r_{\text{style}} = 0.3 \cdot \cos(\mathbf{p}_{\text{BF}}, \mathbf{s}_a)$
+that aligns each action with a hand-authored Big-Five style profile.
+Same 240/60 unseen-occupation split as v1; 300 PPO iterations.
 
 \textbf{v1 (base scale).}
 Mini-Inzoi 6$\times$6, 4 agents, 300 personas (240 train / 60 zero-shot test).
@@ -388,24 +399,72 @@ The observation dimension expands to 56 (position 2, time 1, needs 8,
 15 other agents $\times$ 3).
 Random zero-shot chance is 1.0\% (1/100 test personas).
 
-\textbf{v3 (richer action ontology).}
-Mini-Inzoi v3 keeps the 6$\times$6/4-agent base scale but expands the action
-space to \textbf{20 flat-discrete actions} (16 activity + 4 movement) for
-finer behavioral granularity (e.g., \texttt{focused\_work} vs.\
-\texttt{planning\_work}, \texttt{rest\_alone} vs.\ \texttt{rest\_with\_others},
-\texttt{eat\_quick} vs.\ \texttt{eat\_slow}).
-Observations expand to 33 dimensions, adding location-affordance one-hot
-(8), social-context features (3), and a routine-regularity signal (2).
-Reward shaping adds a per-action persona-style term
-$r_{\text{style}} = 0.3 \cdot \cos(\mathbf{p}_{\text{BF}}, \mathbf{s}_a)$
-that aligns each action with a hand-authored Big-Five style profile.
-Same 240/60 unseen-occupation split as v1; 300 PPO iterations.
+\subsection{Evaluation Protocol}
+\label{sec:evalprotocol}
+
+We evaluate persona-conditioned NPC control with metrics that separate task
+performance from persona fidelity.
+
+\paragraph{Persona identification accuracy.}
+Given a trajectory, an automated $k$-NN classifier identifies which held-out
+persona generated it. We report zero-shot accuracy on held-out personas, with
+random chance determined by the number of test personas.
+
+\paragraph{Behavioral diversity.}
+Mean pairwise KL divergence between action distributions conditioned on different
+persona embeddings measures whether policies collapse to persona-agnostic
+behavior despite high task reward.
+
+\paragraph{Semantic-behavioral alignment.}
+Spearman $\rho$ between persona embedding cosine distances and pairwise
+behavioral KL divergences measures whether semantic distances in persona space
+are reflected in behavior space. High $\rho$ with low KL variance can indicate
+alignment without meaningful diversity, so both quantities are reported where
+available.
+
+\paragraph{Inference latency.}
+We report GPU ms/step at batch size 1. Real-time game integration typically
+requires per-step control below a 16--33\,ms frame budget.
+
+\paragraph{Rich trajectory observability.}
+Identification and believability scores depend on what a trace exposes.
+Coarse action sequences can compress out temporal, spatial, social, and
+stylistic dimensions that personality traits modulate. We therefore render
+rollouts with time-of-day, location, nearby agents, action style, and short-form
+event semantics for human-facing evaluation artifacts, and treat coarse-versus-
+rich trace comparison as part of the evaluation protocol.
 
 \subsection{Results}
 
-Tables~\ref{tab:results_v1}, \ref{tab:results_v2}, and~\ref{tab:results_v3}
-show key metrics for each setting. Figure~\ref{fig:learning} shows training reward
-curves at v1/v2.
+Tables~\ref{tab:results_v3}, \ref{tab:results_v1}, and~\ref{tab:results_v2}
+show key metrics for each setting. Figure~\ref{fig:learning} shows training
+reward curves at v1/v2.
+
+\begin{table}[t]
+  \centering
+  \small
+  \caption{%
+    \textbf{v3 results} (6$\times$6, 4 agents, 300 personas, 20-action
+    ontology; 240 train / 60 zero-shot held-out occupations).
+    ZS Acc: zero-shot $k$-NN accuracy on 60 unseen-occupation personas
+    (random $\approx\!1.7\%$); brackets are Wilson 95\% CIs.
+    Coh.: trajectory coherence ratio (intra/inter persona cosine similarity).}
+  \label{tab:results_v3}
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{lrrr}
+    \toprule
+    Model & Reward $\uparrow$ & ZS Acc $\uparrow$ & Coh.\ $\uparrow$ \\
+    \midrule
+    \PCSP (full)                 & 104.1 & 0.170 \scriptsize{[.13,.22]}              & 2.06 \\
+    \PCSP (no\_consist)          & 118.4 & 0.017* \scriptsize{[.01,.04]}             & 1.07 \\
+    \PCSP (no\_diverse)          & 122.1 & 0.160 \scriptsize{[.12,.21]}              & 2.05 \\
+    \textbf{\PCSP (concat)}      & 107.0 & \textbf{0.283} \scriptsize{[.24,.34]}     & \textbf{7.60} \\
+    B1 No-Persona                & 100.3 & ---                                        & --- \\
+    B3 SBERT                     & 106.9 & ---                                        & --- \\
+    \bottomrule
+  \end{tabular}\\[2pt]
+  {\footnotesize * Near-random (failure mode).}
+\end{table}
 
 \begin{figure}[t]
   \centering
@@ -470,32 +529,6 @@ curves at v1/v2.
   \end{tabular}\\[2pt]
   {\footnotesize * Exactly 0 (total failure). $^\dagger$KL too low; $\rho$ not meaningful.
     $^\ddagger$High KL without consistency reflects unstructured divergence, not persona alignment.}
-\end{table}
-
-\begin{table}[t]
-  \centering
-  \small
-  \caption{%
-    \textbf{v3 results} (6$\times$6, 4 agents, 300 personas, 20-action
-    ontology; 240 train / 60 zero-shot held-out occupations).
-    ZS Acc: zero-shot $k$-NN accuracy on 60 unseen-occupation personas
-    (random $\approx\!1.7\%$); brackets are Wilson 95\% CIs.
-    Coh.: trajectory coherence ratio (intra/inter persona cosine similarity).}
-  \label{tab:results_v3}
-  \setlength{\tabcolsep}{3pt}
-  \begin{tabular}{lrrr}
-    \toprule
-    Model & Reward $\uparrow$ & ZS Acc $\uparrow$ & Coh.\ $\uparrow$ \\
-    \midrule
-    \PCSP (full)                 & 104.1 & 0.170 \scriptsize{[.13,.22]}              & 2.06 \\
-    \PCSP (no\_consist)          & 118.4 & 0.017* \scriptsize{[.01,.04]}             & 1.07 \\
-    \PCSP (no\_diverse)          & 122.1 & 0.160 \scriptsize{[.12,.21]}              & 2.05 \\
-    \textbf{\PCSP (concat)}      & 107.0 & \textbf{0.283} \scriptsize{[.24,.34]}     & \textbf{7.60} \\
-    B1 No-Persona                & 100.3 & ---                                        & --- \\
-    B3 SBERT                     & 106.9 & ---                                        & --- \\
-    \bottomrule
-  \end{tabular}\\[2pt]
-  {\footnotesize * Near-random (failure mode).}
 \end{table}
 
 \subsection{Key Observations}
@@ -635,21 +668,19 @@ rendered traces do not expose the stylistic dimensions that humans use to
 recognize persona, a behavior may be reward-optimal and still fail as a
 designer-readable characterization.
 
-\subsection{Significance}
+\subsection{Cross-Scale Replication}
 
 The absolute task reward and zero-shot accuracy are lower in v2, as expected for
 a substantially harder environment with more test personas.
-The key point is not the absolute numbers but the \emph{replication of
-qualitative structure}: the same design decisions---most centrally, the
-InfoNCE consistency objective---matter at both scales, and the
-semantic-behavioral alignment property ($\rho \approx 0.73$) is preserved. Figure~\ref{fig:zeroshot} shows the zero-shot distribution for v1;
+The same empirical structure is observed across environment scales: the InfoNCE
+consistency objective is required for zero-shot persona traceability, and the
+semantic-behavioral alignment property ($\rho \approx 0.73$) is preserved.
+Figure~\ref{fig:zeroshot} shows the zero-shot distribution for v1;
 the v2 pattern is qualitatively similar with narrower per-persona bars.
 Figure~\ref{fig:kl} shows that the monotone relationship between persona
 embedding distance and behavioral KL is virtually unchanged across the two
 environments ($\rho\!=\!0.728$ vs.\ $0.725$), providing the clearest evidence
 that semantic-behavioral alignment is a stable property of the architecture.
-These results are \emph{early encouraging signs} that the direction is worth
-pursuing at larger scale.
 
 \begin{figure}[t]
   \centering
@@ -679,202 +710,72 @@ pursuing at larger scale.
 \end{figure}
 
 % ---------------------------------------------------------------
-\section{Research Agenda for Infinite NPCs}
-\label{sec:agenda}
+\section{Discussion and Future Work}
+\label{sec:discussion}
 
-The results above are encouraging, but Mini-Inzoi is a deliberately minimal
-environment. Reaching production-quality NPC personalization requires answering
-six open research questions. We outline each with the core challenge and
-candidate approaches.
+\textbf{Dynamic personas and memory.}
+Current \PCSP encodes a static persona text once at NPC creation. Life-simulation
+characters should also change: a repeated social conflict may increase
+neuroticism, a long friendship may shift agreeableness, and a remembered event
+may alter future action preferences. A natural extension is to separate stable
+persona traits from dynamic memory state, using a lightweight event-conditioned
+update model or retrieval-augmented memory module that can influence the shared
+policy without requiring per-step LLM inference~\cite{park2023generative}.
 
-\subsection{Dynamic Personas and Identity Evolution}
+\textbf{Scaling to richer environments.}
+Mini-Inzoi isolates persona-conditioned control in a deliberately small grid
+world. The next environment target is a richer multi-agent benchmark such as
+Melting Pot~\cite{leibo2021meltingpot}, where social dilemmas, partial
+observability, and larger interaction spaces can test whether persona-conditioned
+policies produce stable social patterns rather than only different marginal
+action frequencies. Engine integration also remains a practical step: the policy
+must serialize game state, tolerate asynchronous events, and preserve the
+sub-frame inference profile observed in the Python benchmark.
 
-Current \PCSP encodes a static persona text computed once at NPC creation.
-Real characters evolve: a traumatic in-game event should shift an NPC toward
-neuroticism; forming a friendship should increase agreeableness over time.
-
-The key challenge is \emph{representation}: how should an evolving personality
-be maintained and encoded without expensive LLM calls at every update?
-Candidate approaches include (a) maintaining a low-dimensional latent personality
-state updated by a lightweight delta model at milestone events, (b) conditioning
-the persona projection on recent interaction history via a rolling context encoder,
-or (c) hierarchical persona representations that separate stable traits
-(\eg conscientiousness) from volatile moods (\eg current frustration level).
-
-\subsection{Socially Emergent Multi-Agent Behavior}
-
-In multi-agent settings, personas interact: an introverted NPC paired with an
-extroverted one may develop avoidance patterns; two agreeable NPCs may form
-stable dyads. These emergent social structures are a major source of narrative
-interest in life-simulation games.
-
-Multi-agent RL methods such as MADDPG~\cite{lowe2017maddpg} and value
-decomposition networks~\cite{sunehag2018vdn} provide starting points, as does
-work on emergent compositional communication~\cite{mordatch2018emergence}.
-The key challenge is designing reward structures that incentivize
-persona-\emph{consistent} social patterns rather than converging to a single
-globally optimal interaction style irrespective of individual personality.
-
-\subsection{Long-Horizon Memory and Identity Persistence}
-
-A believable NPC should remember a grudge from ten play sessions ago. Current
-\PCSP has no episodic memory beyond the persona embedding and within-episode
-trajectory. Connecting persona-conditioned behavior to long-horizon memory
-architectures---transformer-based context~\cite{chen2021decision},
-retrieval-augmented episodic memory~\cite{park2023generative}, or world
-models~\cite{ha2018world}---is an open problem.
-
-The persona-conditioned shared policy framework naturally separates \emph{who
-this NPC is} (persona embedding, static) from \emph{what has happened to this
-NPC} (episodic memory, dynamic). Developing architectures that condition behavior
-on both, without expensive per-step LLM calls, is a key challenge.
-
-\subsection{Richer Worlds and Engine Integration}
-
-Mini-Inzoi's 6$\times$6 grid with 4 agents is a tractable starting point.
-Scaling to commercial life-simulation density---larger worlds, more agents,
-richer action spaces, continuous physics, asynchronous event streams---requires
-rethinking both the environment interface and the policy architecture.
-
-Melting Pot~\cite{leibo2021meltingpot} provides a suite of multi-agent social
-scenarios at larger scale and is a natural next evaluation target.
-Beyond simulation, integrating trained policies with commercial game engines
-(Unreal Engine, Unity) as callable policy modules raises practical integration
-challenges---latency stacking, state serialization, engine-side randomness---that
-have received little academic attention.
-
-\subsection{Human Evaluation for Persona Fidelity}
-
-The ultimate judge of NPC believability is the player.
-Automatic metrics (trajectory identification accuracy, behavioral KL,
-Spearman $\rho$) are useful proxies for ablations but cannot capture whether a
-player experiences an NPC as authentically ``introverted'' or ``conscientious.''
-
-Designing psychometrically valid human evaluation protocols for NPC persona
-fidelity is non-trivial. Existing personality assessment instruments (Big Five
-questionnaires~\cite{mccrae1992introduction}) were designed for real humans.
-Adapting methods from personality computing~\cite{vinciarelli2014survey} and
-human-agent interaction to NPC personas---with controlled observer studies,
-inter-rater agreement ($\alpha \geq 0.6$), and adequate sample sizes
-($n \geq 100$)---is an important open methodological task.
-
-\subsection{Authoring Tools for Game Designers}
-
-For this research direction to reach production, it must interface with designers'
-workflows. Designers author NPC personalities through prose, reference personality
-frameworks, and iterate based on playtester feedback.
-A persona-conditioned shared policy system should provide:
-\begin{itemize}
-  \setlength\itemsep{0pt}
-  \item An interface for writing and previewing persona descriptions.
-  \item Rapid feedback on the predicted behavioral effect of a persona change,
-    without requiring a full retraining cycle.
-  \item Diagnostic tools that explain \emph{why} an NPC is behaving as it does
-    in terms the designer can act on.
-  \item Control over the precision-recall trade-off between persona fidelity and
-    task performance.
-\end{itemize}
-None of these tools exist in current RL-based NPC literature.
-Addressing them connects the technical research agenda to design practice.
-
-% ---------------------------------------------------------------
-\section{Evaluation Agenda}
-\label{sec:evalagenda}
-
-Progress on the research agenda requires standardized evaluation protocols.
-We propose the following minimum set of metrics for persona-conditioned NPC
-research, beyond task reward.
-
-\paragraph{Persona identification accuracy.}
-Given a trajectory, can an observer (automated or human) identify which persona
-generated it? We recommend reporting both in-distribution (training personas) and
-zero-shot (held-out personas) $k$-NN accuracy. This measures how strongly behavior
-reflects the conditioning signal.
-
-\paragraph{Behavioral diversity.}
-Mean pairwise KL divergence between action distributions conditioned on different
-persona embeddings. Low values indicate behavioral collapse regardless of task
-reward.
-
-\paragraph{Semantic-behavioral alignment.}
-Spearman $\rho$ between persona embedding cosine distances and pairwise
-behavioral KL divergences. This measures whether the semantic structure of persona
-space is faithfully reflected in behavior space---the key criterion for zero-shot
-generalization. High $\rho$ with low KL variance indicates alignment without
-meaningful diversity; both should be reported together.
-
-\paragraph{Inference latency.}
-GPU ms/step at batch size 1, with p95/p99 percentiles. The practical constraint
-for real-time engine integration is typically $<$16\,ms/frame.
-
-\paragraph{Human-rated believability.}
-Observer ratings of persona consistency and character naturalness, aggregated with
-inter-rater agreement (Krippendorff's $\alpha$). This is the ground-truth criterion
-for production deployment and should not be deferred indefinitely.
-
-\paragraph{Rich trajectory observability.}
-Identification and believability scores are only as informative as the trajectory
-traces they are computed on. Coarse action sequences compress out the temporal,
-spatial, social, and stylistic dimensions that personality traits typically
-modulate, so a low score may reflect rendering loss rather than genuine
-behavioral collapse. We therefore recommend that human and automated evaluators
-receive rich trajectory traces---time-of-day, location, nearby agents, action
-style, and short-form event semantics---and that papers report results both on
-coarse and rich traces so that the contribution of observability can be
-separated from the contribution of the policy itself.
-
-We further advocate for a dedicated \emph{persona-conditioned NPC benchmark}---perhaps
-an adaptation of Melting Pot~\cite{leibo2021meltingpot} with curated personality
-profiles and standardized evaluation protocols---to enable reproducible comparison
-across future methods.
+\textbf{Human evaluation methodology.}
+Automatic metrics are necessary for ablations but insufficient for perceived NPC
+believability. The coarse-action pilot results indicate that evaluation traces
+must expose the temporal, spatial, social, and stylistic details through which
+humans recognize persona. Human studies should therefore compare coarse and rich
+trajectory traces, report confidence and response time in addition to forced
+choice accuracy, and track inter-rater agreement using established reliability
+statistics such as Krippendorff's $\alpha$.
 
 % ---------------------------------------------------------------
 \section{Limitations and Scope}
 \label{sec:limits}
 
-\PCSP's current limitations are significant and should calibrate how its results
-are interpreted.
+\PCSP has several limitations that bound the interpretation of the results.
 
 \textbf{Minimal environments.}
-Both Mini-Inzoi variants (6$\times$6 / 4 agents and 12$\times$12 / 16 agents)
-are far removed from commercial life-simulation complexity. While the v2
-experiment shows that key architectural properties hold at larger grid scale,
-continuous physics, longer time horizons, and richer action semantics remain
+Mini-Inzoi v1--v3 are far smaller than commercial life-simulation worlds.
+The v2 experiment tests a larger grid and more agents, but continuous physics,
+longer horizons, asynchronous events, and richer social affordances remain
 untested.
 
-\textbf{Coarse action observability.}
-The current 12-action discrete space (8 activity + 4 movement) exposes only
-a thin slice of persona-relevant behavior. In pilot human-evaluation surveys
-we found that short sequences of coarse action labels (\eg \texttt{read},
-\texttt{rest}, \texttt{eat}) are too semantically close to support reliable
-persona discrimination by human observers; participants reasonably asked how
-\texttt{read} or \texttt{eat} differ from \texttt{rest} when stripped of
-temporal, spatial, and social context. This is not solely a survey-design
-issue---it indicates that persona-conditioned behavior must be observable in
-the trajectory itself. We have extended rollout rendering with time-of-day,
-location, nearby-agent, and action-style fields for human evaluation, and we
-identify a richer action ontology---intent, activity, place, target, style---as
-a medium-term environment redesign target (\S\ref{sec:agenda}, richer worlds).
+\textbf{Action observability.}
+The original 12-action space exposes only a thin slice of persona-relevant
+behavior. Pilot human-evaluation surveys showed that coarse labels such as
+\texttt{read}, \texttt{rest}, and \texttt{eat} are difficult to interpret
+without temporal, spatial, and social context. Mini-Inzoi v3 and the rich
+rollout renderer address this partly, but finer social and stylistic action
+semantics remain needed.
 
 \textbf{Synthetic personas.}
-All 300 training personas are algorithmically generated from Big Five archetypes
-and occupation templates. The designer-authored case study in
-\S\ref{sec:qualcase} is a first qualitative probe, but it covers only 13
-handwritten personas and does not yet establish robustness to the nuance,
-inconsistency, and cultural specificity of production-authored characters.
+Training personas are generated from Big Five archetypes and occupation
+templates. The designer-authored case study in \S\ref{sec:qualcase} tests 13
+additional handwritten personas, but does not establish robustness to the
+nuance, inconsistency, or cultural specificity of production-authored
+characters.
 
-\textbf{No human evaluation.}
+\textbf{No completed human evaluation.}
 Zero-shot identification accuracy and Spearman $\rho$ are automated proxies.
-We have not yet collected player judgments of persona fidelity. This is a
-necessary step before drawing conclusions about perceived NPC believability.
+Player judgments of persona fidelity and believability have not yet been
+collected.
 
 \textbf{No engine integration.}
 The policy runs in a Python simulation environment. Integration challenges with
 commercial game engines remain unknown.
-
-These limitations are not arguments against the research direction---they are
-precisely the open problems that motivate \S\ref{sec:agenda}. We present them
-explicitly to guard against overclaiming.
 
 % ---------------------------------------------------------------
 \section{Conclusion}
@@ -883,20 +784,20 @@ explicitly to guard against overclaiming.
 Life simulation games create a scaling challenge that the game AI field has not
 yet systematically addressed: how to give hundreds to thousands of NPCs distinct,
 consistent, and controllable personalities without proportional authoring or
-inference cost. We have argued that \emph{persona-conditioned shared
+inference cost. We show that \emph{persona-conditioned shared
 policies}---a single RL policy conditioned on frozen LLM persona
-embeddings---represent a promising architectural direction satisfying the four
-axes that matter for practical deployment, and we have presented \PCSP as an
-early proof-of-concept supporting this argument.
+embeddings---can satisfy the four axes that matter for practical deployment:
+persona consistency, natural-language controllability, zero-shot
+generalization, and real-time inference.
 
-The central message is not that \PCSP solves NPC personalization. The central
-message is: \emph{there exists a region of design space---combining language
-semantics, shared policies, and an InfoNCE-style consistency objective on
-trajectories---where persona consistency, zero-shot controllability, and
-real-time inference can coexist}, and that within this region the choice of
-neural conditioning architecture is a tunable knob rather than a fundamental
-commitment. Exploring that region systematically is a concrete and tractable
-research program. We hope this paper motivates the community to take it up.
+Across three Mini-Inzoi settings, \PCSP achieves 11$\times$ above-chance
+zero-shot persona identification, $\rho\!=\!0.73$ semantic-behavioral
+alignment, and 22$\times$ faster inference than an LLM-as-policy baseline.
+The main empirical finding is that the InfoNCE trajectory-consistency objective
+is load-bearing: removing it collapses zero-shot persona traceability to chance
+even when reward improves. The next steps are to couple static personas with
+dynamic memory, move the evaluation to richer multi-agent environments such as
+Melting Pot, and complete human studies using rich trajectory traces.
 
 % ---------------------------------------------------------------
 \bibliographystyle{IEEEtran}

@@ -44,6 +44,22 @@ MAX_LENGTH = 128
 BATCH_SIZE = 16
 TRAIT_KEYS = ("E", "N", "A", "C", "O")
 
+TSNE_LABEL_OFFSETS = {
+    "corporate strategist": (6, 4),
+    "introverted researcher": (6, 4),
+    "outgoing event planner": (6, 4),
+    "competitive personal trainer": (6, 4),
+    "unmotivated freelancer": (6, 4),
+    "lazy villager": (46, 14),
+    "jock villager": (14, 18),
+    "cranky villager": (44, -16),
+    "normal villager": (-6, -18),
+    "peppy villager": (14, -2),
+    "snooty villager": (8, -18),
+    "smug villager": (36, -28),
+    "sisterly villager": (14, 10),
+}
+
 
 @dataclass(frozen=True)
 class DesignerPersona:
@@ -440,20 +456,45 @@ def save_tsne_plot(
         label="designer personas",
         zorder=4,
     )
+    x_pad = (float(coords[:, 0].max()) - float(coords[:, 0].min())) * 0.06
+    y_pad = (float(coords[:, 1].max()) - float(coords[:, 1].min())) * 0.08
+    ax.set_xlim(float(coords[:, 0].min()) - x_pad, float(coords[:, 0].max()) + x_pad * 1.6)
+    ax.set_ylim(float(coords[:, 1].min()) - y_pad, float(coords[:, 1].max()) + y_pad)
+
     for xy, rec in zip(designer_xy, designer_records):
+        label = rec["persona_name"]
+        xytext = TSNE_LABEL_OFFSETS.get(label, (5, 4))
+        arrowprops = None
+        if abs(xytext[0]) > 12 or abs(xytext[1]) > 12:
+            arrowprops = {
+                "arrowstyle": "-",
+                "color": "#555555",
+                "alpha": 0.55,
+                "linewidth": 0.55,
+                "shrinkA": 2,
+                "shrinkB": 5,
+            }
         ax.annotate(
-            rec["persona_name"],
+            label,
             xy,
-            xytext=(5, 4),
+            xytext=xytext,
             textcoords="offset points",
-            fontsize=7.5,
-            alpha=0.92,
+            fontsize=7.0,
+            alpha=0.95,
+            arrowprops=arrowprops,
+            bbox={
+                "boxstyle": "round,pad=0.13",
+                "facecolor": "white",
+                "edgecolor": "none",
+                "alpha": 0.72,
+            },
+            zorder=5,
         )
     ax.set_title("Qwen3 persona embeddings: train_240_v3 + designer-authored personas")
     ax.set_xlabel("t-SNE dim 1")
     ax.set_ylabel("t-SNE dim 2")
     ax.grid(alpha=0.22)
-    ax.legend(loc="best")
+    ax.legend(loc="upper left")
     fig.tight_layout()
     fig.savefig(out_path, dpi=170)
     plt.close(fig)

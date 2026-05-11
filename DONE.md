@@ -6,6 +6,19 @@ This file holds completed work details, decisions, result paths, and experiment 
 
 ## 2026-05-11
 
+### Experimental Paper Restructure
+
+- Rewrote `paper/cog2026_vision/main.tex` from a vision/position-paper framing into a standard experimental research paper.
+- Updated title to "One Policy, Infinite NPCs: Scalable Persona-Conditioned NPC Control via Shared Reinforcement Learning Policies."
+- Rewrote abstract to lead with quantitative results: 11x zero-shot, Spearman rho = 0.73, and 22x faster inference.
+- Reframed introduction and contributions as empirical findings, with InfoNCE consistency as the load-bearing result.
+- Renamed Section III to "PCSP Method" and removed the standalone "What This Is Not" subsection.
+- Renamed Section IV to "Experiments and Results," elevated v3 as the primary experiment, and moved the evaluation protocol into Section IV.
+- Replaced the standalone research/evaluation agenda sections with a condensed "Discussion and Future Work" section focused on dynamic personas and memory, richer environments including Melting Pot, and human evaluation methodology.
+- Shortened limitations and removed defensive framing.
+- Rewrote the conclusion around empirical contributions and concrete next steps.
+- Confirmed banned framing phrases were removed from `main.tex`.
+
 ### arXiv Readiness Cleanup
 
 - Updated `paper/cog2026_vision/main.tex` after pre-upload review.
@@ -330,6 +343,17 @@ Interpretation: combo follows the archetype direction in point estimate but not 
 
 Interpretation: the case study produces both positive and negative qualitative evidence. Workaholic/corporate, introverted researcher, couch-potato freelancer, lazy, peppy, and smug personas show clear expected behavior; jock, normal, and sisterly are useful failure cases where v3 still exhibits a broad social-initiation/eating/planning bias. No existing checkpoint compatibility was changed and no retraining is required.
 
+### Figure 3 Label Overlap Fix
+
+- Fixed the crowded top-right designer-persona t-SNE labels in Figure 3.
+- Updated `scripts/run_designer_persona_case_study.py` so `save_tsne_plot` uses deterministic per-label offsets, light leader lines for displaced labels, slightly smaller label text, translucent white label backgrounds, and an expanded right margin.
+- Regenerated:
+  - `results/designer_persona_case_study/designer_personas_tsne.png`
+  - `paper/figures/fig5_designer_personas_tsne.png`
+  - `paper/cog2026_vision/main.pdf`
+- Verified the rebuilt PDF by rendering page 5; the former top-right overlap is resolved.
+- No experiment outputs, checkpoint compatibility, action spaces, or observations changed. No retraining is required.
+
 ### Paper Section IV-D: Qualitative Case Study
 
 - Added Section IV-D, "Qualitative Case Study: Designer-Authored Personas," to `paper/cog2026_vision/main.tex`.
@@ -357,6 +381,22 @@ Interpretation: the case study produces both positive and negative qualitative e
 - Added root `README.md` with project summary, commands, and GitHub link.
 - Added root `LICENSE` with MIT License for source code and scripts.
 - Recompiled `paper/cog2026_vision/main.pdf`; the first page contains the author, affiliation, and GitHub link, with no IEEE submitted-work notice.
+
+## 2026-05-12
+
+### Figure 1 PSPC Pipeline Replacement
+
+- Replaced the legacy Figure 1 system overview with the revised PSPC pipeline diagram.
+- Renamed the new asset from `paper/figures/pspc.drawio.png` to `paper/figures/fig1_pcsp_pipeline.png`.
+- Deleted the legacy Figure 1 assets:
+  - `paper/figures/fig1_system.png`
+  - `paper/figures/fig1_system.pdf`
+- Added the new Figure 1 to `paper/cog2026_vision/main.tex` as a two-column `figure*` at `width=0.98\textwidth`, preserving label `fig:system`.
+- Restored the designer-persona t-SNE figure block so it is again Figure 3.
+- Recompiled `paper/cog2026_vision/main.pdf` with `latexmk -pdf -interaction=nonstopmode main.tex`.
+- Verified `main.aux`: `fig:system` resolves to Figure 1 on page 4, `fig:learning` to Figure 2 on page 4, and `fig:designer_tsne` to Figure 3 on page 5.
+- Rendered pages 4--5 for visual inspection; Figure 1 spans both columns and Figure 3 is restored.
+- No code, checkpoints, action spaces, or observations changed. No retraining is required.
 
 ---
 

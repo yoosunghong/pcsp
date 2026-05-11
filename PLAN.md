@@ -54,6 +54,9 @@
 - [x] Add Section IV-D qualitative case study for designer-authored Sims 3 / Animal Crossing personas, with table and t-SNE figure.
 - [x] Prepare public arXiv/GitHub metadata: author, affiliation, GitHub link, README, and MIT software license.
 - [x] Fix arXiv-readiness review issues in `main.tex`/`refs.bib`: projection notation, policy dimensions, legacy architecture claim, latency wording, and citation metadata.
+- [x] Restructure `main.tex` from a vision/position-paper framing into a standard experimental-paper framing while preserving existing results.
+- [x] Fix Figure 3 designer-persona t-SNE label overlap and recompile `main.pdf`.
+- [x] Replace Figure 1 with the PSPC pipeline diagram, render it as a two-column figure, restore Figure 3, and recompile `main.pdf`.
 
 ---
 
