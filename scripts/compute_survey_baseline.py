@@ -36,12 +36,15 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from src.env.mini_inzoi import ACTION_NAMES
+from src.env.v3_constants import ACTION_NAMES_V3, OBS_DIM_V3_BASE
 from src.eval.human_eval import wilson_ci
 from src.models.trajectory_encoder import TrajectoryEncoder
 from src.training.pcsp_trainer import PCSPActorCritic, ConcatActorCritic
 
-OBS_DIM = 20
-N_ACTIONS = len(ACTION_NAMES)
+ENV_SPECS = {
+    "v1": {"obs_dim": 20, "n_actions": len(ACTION_NAMES)},
+    "v3": {"obs_dim": OBS_DIM_V3_BASE, "n_actions": len(ACTION_NAMES_V3)},
+}
 
 
 def _load_json(path: Path) -> Any:
@@ -49,15 +52,21 @@ def _load_json(path: Path) -> Any:
         return json.load(f)
 
 
-def _load_policy(policy_path: Path, model_type: str, device: torch.device) -> torch.nn.Module:
+def _load_policy(
+    policy_path: Path,
+    model_type: str,
+    obs_dim: int,
+    n_actions: int,
+    device: torch.device,
+) -> torch.nn.Module:
     cls = ConcatActorCritic if model_type == "concat" else PCSPActorCritic
-    policy = cls(OBS_DIM, N_ACTIONS)
+    policy = cls(obs_dim, n_actions)
     policy.load_state_dict(torch.load(policy_path, map_location="cpu", weights_only=True))
     return policy.to(device).eval()
 
 
-def _load_traj_encoder(path: Path, device: torch.device) -> TrajectoryEncoder:
-    enc = TrajectoryEncoder(obs_dim=OBS_DIM, n_actions=N_ACTIONS)
+def _load_traj_encoder(path: Path, obs_dim: int, n_actions: int, device: torch.device) -> TrajectoryEncoder:
+    enc = TrajectoryEncoder(obs_dim=obs_dim, n_actions=n_actions)
     enc.load_state_dict(torch.load(path, map_location="cpu", weights_only=True))
     return enc.to(device).eval()
 
@@ -132,16 +141,24 @@ def run_baseline(
     embeddings_path: Path,
     output_dir: Path,
     model_type: str,
+    env_variant: str,
     device_name: str,
 ) -> dict[str, Any]:
     survey = _load_json(survey_path)
     rollouts_payload = _load_json(rollouts_path)
     rollouts = {r["trajectory_id"]: r for r in rollouts_payload["rollouts"]}
     embeddings = np.load(embeddings_path)
+    inferred_env = str(rollouts_payload.get("env_variant", env_variant))
+    if env_variant == "auto":
+        env_variant = inferred_env
+    if env_variant not in ENV_SPECS:
+        raise ValueError(f"Unknown env_variant={env_variant!r}; expected one of {sorted(ENV_SPECS)} or 'auto'.")
+    obs_dim = int(rollouts_payload.get("obs_dim") or ENV_SPECS[env_variant]["obs_dim"])
+    n_actions = int(rollouts_payload.get("n_actions") or ENV_SPECS[env_variant]["n_actions"])
 
     device = torch.device(device_name if device_name == "cuda" and torch.cuda.is_available() else "cpu")
-    policy = _load_policy(policy_path, model_type, device)
-    encoder = _load_traj_encoder(traj_encoder_path, device)
+    policy = _load_policy(policy_path, model_type, obs_dim, n_actions, device)
+    encoder = _load_traj_encoder(traj_encoder_path, obs_dim, n_actions, device)
 
     items = survey["items"]
     scores = [float(item["distractor_score"]) for item in items]
@@ -203,6 +220,9 @@ def run_baseline(
         "policy": str(policy_path),
         "traj_encoder": str(traj_encoder_path),
         "embeddings": str(embeddings_path),
+        "env_variant": env_variant,
+        "obs_dim": obs_dim,
+        "n_actions": n_actions,
         "device": str(device),
         "n_items": len(per_item),
         "difficulty_thresholds": {
@@ -230,12 +250,13 @@ def run_baseline(
 def _parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser()
     p.add_argument("--survey", default="data/human_eval/persona_identification_survey_ko.json")
-    p.add_argument("--rollouts", default="results/human_eval/pcsp_full_zero_shot_rollouts.json")
-    p.add_argument("--policy", default="results/pcsp/full/policy.pt")
-    p.add_argument("--traj_encoder", default="results/pcsp/full/traj_encoder.pt")
+    p.add_argument("--rollouts", default="results/human_eval/pcsp_v3_full_zero_shot_rollouts.json")
+    p.add_argument("--policy", default="results/pcsp_v3/full/policy.pt")
+    p.add_argument("--traj_encoder", default="results/pcsp_v3/full/traj_encoder.pt")
     p.add_argument("--embeddings", default="results/embeddings/persona_embeddings_300.npy")
     p.add_argument("--output_dir", default="results/human_eval")
     p.add_argument("--model_type", choices=["pcsp", "concat"], default="pcsp")
+    p.add_argument("--env_variant", choices=["auto", *sorted(ENV_SPECS.keys())], default="auto")
     p.add_argument("--device", default="cuda")
     return p.parse_args()
 
@@ -250,6 +271,7 @@ def main() -> None:
         embeddings_path=ROOT / args.embeddings,
         output_dir=ROOT / args.output_dir,
         model_type=args.model_type,
+        env_variant=args.env_variant,
         device_name=args.device,
     )
     print(json.dumps(summary, indent=2, ensure_ascii=False))

@@ -41,8 +41,14 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from src.env.action_semantics import action_label_ko, describe_action_ko
+from src.env.action_semantics import (
+    action_label_ko,
+    describe_action_ko,
+    describe_v3_action_ko,
+    v3_action_label_ko,
+)
 from src.env.mini_inzoi import WORLD_OBJECTS
+from src.env.mini_inzoi_v3 import WORLD_OBJECTS as WORLD_OBJECTS_V3
 
 STUDY_TITLE = "NPC 페르소나 식별 평가"
 INSTRUCTION = (
@@ -88,9 +94,10 @@ def _trait_distance(a: dict[str, Any], b: dict[str, Any]) -> float:
 
 
 def _preferred_distance(a: dict[str, Any], b: dict[str, Any]) -> float:
-    pa = {int(x) for x in a.get("preferred_actions", []) if 0 <= int(x) <= 7}
-    pb = {int(x) for x in b.get("preferred_actions", []) if 0 <= int(x) <= 7}
-    return len(pa.symmetric_difference(pb)) / 8.0
+    pa = {int(x) for x in a.get("preferred_actions", []) if int(x) >= 0}
+    pb = {int(x) for x in b.get("preferred_actions", []) if int(x) >= 0}
+    denom = max(8, max(pa | pb, default=7) + 1)
+    return len(pa.symmetric_difference(pb)) / float(denom)
 
 
 def _distractor_score(target: dict[str, Any], candidate: dict[str, Any]) -> float:
@@ -117,10 +124,16 @@ def _select_distractor(
 
 
 def _normalise_rollouts(payload: Any) -> list[dict[str, Any]]:
+    meta: dict[str, Any] = {}
     if isinstance(payload, list):
         rollouts = payload
     elif isinstance(payload, dict) and isinstance(payload.get("rollouts"), list):
         rollouts = payload["rollouts"]
+        meta = {
+            "env_variant": payload.get("env_variant"),
+            "obs_dim": payload.get("obs_dim"),
+            "n_actions": payload.get("n_actions"),
+        }
     else:
         raise ValueError("Rollout JSON must be a list or an object with a 'rollouts' list.")
 
@@ -130,7 +143,11 @@ def _normalise_rollouts(payload: Any) -> list[dict[str, Any]]:
             raise ValueError(f"rollouts[{idx}] is missing persona_id.")
         if "actions" not in row and "action_ids" not in row:
             raise ValueError(f"rollouts[{idx}] must include actions or action_ids.")
-        clean.append(dict(row))
+        out = dict(row)
+        for key, value in meta.items():
+            if value is not None and key not in out:
+                out[key] = value
+        clean.append(out)
     return clean
 
 
@@ -147,15 +164,21 @@ def _trace_text(
     coarse_mode: bool = False,
 ) -> str:
     raw_actions = rollout.get("actions", rollout.get("action_ids", []))
+    env_variant = str(rollout.get("env_variant", "v1"))
+    movement_start = 16 if env_variant == "v3" else 8
     rows: list[str] = []
     for step in raw_actions:
         action_id = _action_id_from_step(step)
-        if not include_movement and action_id >= 8:
+        if not include_movement and action_id >= movement_start:
             continue
         if coarse_mode or not isinstance(step, dict):
-            rows.append(action_label_ko(action_id))
+            label_fn = v3_action_label_ko if env_variant == "v3" else action_label_ko
+            rows.append(label_fn(action_id))
         else:
-            rows.append(describe_action_ko(step, WORLD_OBJECTS))
+            if env_variant == "v3":
+                rows.append(describe_v3_action_ko(step, WORLD_OBJECTS_V3))
+            else:
+                rows.append(describe_action_ko(step, WORLD_OBJECTS))
         if len(rows) >= display_trace_len:
             break
     if not rows:

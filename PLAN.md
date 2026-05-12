@@ -34,6 +34,10 @@
 - [x] Regenerate Korean coarse survey artifacts: `data/human_eval/persona_identification_survey_ko_coarse.*`.
 - [x] Add automated survey baseline and item difficulty buckets.
 - [x] Run designer-authored qualitative case study before human eval: Sims 3 / Animal Crossing personas, v3 PCSP inference, action bars, nearest-neighbor similarity, and t-SNE.
+- [x] Regenerate human-eval rollouts from the v3 PCSP policy, not the legacy v1/12-action exporter.
+- [x] Regenerate matched Korean rich/coarse survey artifacts from the same v3 rollout file.
+- [x] Re-run the automated 2AFC survey baseline on the v3 survey artifacts as a sanity check.
+- [ ] Run a 5-10 person pilot before full collection; drop or rebalance ambiguous/impossible items.
 - [ ] Collect human responses for rich vs coarse survey variants.
 - [ ] Report human 2AFC accuracy with Wilson 95% CI.
 - [ ] Report confidence and response time.
@@ -90,6 +94,18 @@
 - [x] Add `unseen_combo_v3` findings to `DONE.md`.
 - [ ] Cross-check whether the v3 legacy CLI vs compositional-wrapper accuracy discrepancy is reproducible.
 - [ ] Consider a focused follow-up analysis of architecture generalization gaps by split family.
+- [ ] Design and run v3-large: v3 20-action ontology at v2 scale (12x12, 16 agents, 500 personas) before claiming broad environment scaling.
+- [ ] Treat Melting Pot as optional external validation after v3-large, not as a blocker for the immediate human-eval study.
+
+---
+
+## Phase F - Designer Persona Validation
+
+- [ ] Define a validated Designer-300 persona set from the 13 designer-authored examples plus systematic variants.
+- [ ] Keep Designer-300 as external validation unless we intentionally retrain all main tables on a new training distribution.
+- [ ] Add embedding-space coverage checks for Designer-300 against `train_240_v3.json`.
+- [ ] Run PCSP-v3 inference-only qualitative and quantitative validation on Designer-300.
+- [ ] Decide whether Designer-300 warrants a paper table, appendix artifact, or future-work framing.
 
 ---
 

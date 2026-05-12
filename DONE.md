@@ -398,6 +398,26 @@ Interpretation: the case study produces both positive and negative qualitative e
 - Rendered pages 4--5 for visual inspection; Figure 1 spans both columns and Figure 3 is restored.
 - No code, checkpoints, action spaces, or observations changed. No retraining is required.
 
+### v3 Human-Eval Preflight
+
+- Added the pre-human-eval priority plan to `PLAN.md`: v3 rollout regeneration, matched v3 rich/coarse artifacts, v3 automated baseline, pilot study, v3-large scaling, optional Melting Pot validation, and Designer-300 external validation.
+- Updated `scripts/export_persona_identification_rollouts.py` so human-eval rollout export supports `--env_variant v3` with `MiniInzoiV3Env`, obs dim 33, 20 actions, and v3 Korean action rendering.
+- Updated `scripts/generate_persona_identification_survey_ko.py` so rich/coarse survey rendering honors rollout `env_variant`; v3 coarse labels now use the 20-action ontology.
+- Updated `scripts/compute_survey_baseline.py` so the automated 2AFC baseline can load v3 policy and trajectory encoder dimensions from rollout metadata.
+- Exported v3 PCSP human-eval rollouts:
+  - `results/human_eval/pcsp_v3_full_zero_shot_rollouts.json`
+  - Source policy: `results/pcsp_v3/full/policy.pt`
+  - Personas: `data/personas/test_60_v3.json`
+  - Metadata: `env_variant=v3`, `obs_dim=33`, `n_actions=20`, `n_rollouts=30`
+- Regenerated matched Korean human-eval artifacts from the same v3 rollout file:
+  - Rich: `data/human_eval/persona_identification_survey_ko.{json,csv,md}` plus answer key
+  - Coarse: `data/human_eval/persona_identification_survey_ko_coarse.{json,csv,md}` plus answer key
+- Re-ran automated v3 survey baseline:
+  - Output: `results/human_eval/automated_baseline.json`
+  - Accuracy: 30/30 = 100.0%, Wilson 95% CI [0.886, 1.000]
+  - Difficulty buckets: easy 10/10, medium 10/10, hard 10/10
+- No action space, observation schema, or checkpoint format changed. No retraining is required.
+
 ---
 
 ## Stable Decisions
