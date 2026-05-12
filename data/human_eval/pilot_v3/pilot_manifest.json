@@ -1,0 +1,17 @@
+{
+  "study": "pcsp_v3_rich_vs_coarse_pilot",
+  "rich_survey": "/home/swim/Documents/Projects/co-spec/data/human_eval/persona_identification_survey_ko.json",
+  "coarse_survey": "/home/swim/Documents/Projects/co-spec/data/human_eval/persona_identification_survey_ko_coarse.json",
+  "n_participants": 10,
+  "n_items_per_participant": 30,
+  "total_planned_responses": 300,
+  "condition_counts": {
+    "rich": 150,
+    "coarse": 150
+  },
+  "response_template": "/home/swim/Documents/Projects/co-spec/data/human_eval/pilot_v3/pilot_response_template.csv",
+  "answer_key": "/home/swim/Documents/Projects/co-spec/data/human_eval/pilot_v3/pilot_answer_key.csv",
+  "assignment_manifest": "/home/swim/Documents/Projects/co-spec/data/human_eval/pilot_v3/pilot_assignment_manifest.csv",
+  "participant_packets_dir": "/home/swim/Documents/Projects/co-spec/data/human_eval/pilot_v3/participant_packets",
+  "analysis_command": "conda run -n paper python src/eval/human_eval.py --csv data/human_eval/pilot_v3/pilot_response_template.csv --answer_key data/human_eval/pilot_v3/pilot_answer_key.csv --output results/eval/human_eval_pilot_summary.json"
+}

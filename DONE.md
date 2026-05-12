@@ -418,6 +418,28 @@ Interpretation: the case study produces both positive and negative qualitative e
   - Difficulty buckets: easy 10/10, medium 10/10, hard 10/10
 - No action space, observation schema, or checkpoint format changed. No retraining is required.
 
+### v3 Human-Eval Pilot Package
+
+- Added `scripts/prepare_human_eval_pilot.py`.
+- Generated a counterbalanced 10-participant pilot package under `data/human_eval/pilot_v3/`.
+- Design:
+  - 30 trajectory items per participant.
+  - Each participant sees each trajectory once, assigned to either rich or coarse.
+  - Each participant receives 15 rich and 15 coarse items.
+  - Across 10 participants, each item appears 5 times in rich form and 5 times in coarse form.
+- Outputs:
+  - `data/human_eval/pilot_v3/participant_packets/pilot_01.md` ... `pilot_10.md`
+  - `data/human_eval/pilot_v3/pilot_response_template.csv`
+  - `data/human_eval/pilot_v3/pilot_answer_key.csv`
+  - `data/human_eval/pilot_v3/pilot_assignment_manifest.csv`
+  - `data/human_eval/pilot_v3/pilot_manifest.json`
+  - `data/human_eval/pilot_v3/README.md`
+- Updated `src/eval/human_eval.py` to score `item_uid`-based rich/coarse studies and report `by_condition` summaries.
+- Verification:
+  - `py_compile` passed for `scripts/prepare_human_eval_pilot.py` and `src/eval/human_eval.py`.
+  - Blank pilot template scoring produces zero valid responses as expected.
+  - Temporary synthetic responses produce separate rich/coarse summaries with 150 responses per condition.
+
 ---
 
 ## Stable Decisions

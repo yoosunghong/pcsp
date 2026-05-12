@@ -37,6 +37,7 @@
 - [x] Regenerate human-eval rollouts from the v3 PCSP policy, not the legacy v1/12-action exporter.
 - [x] Regenerate matched Korean rich/coarse survey artifacts from the same v3 rollout file.
 - [x] Re-run the automated 2AFC survey baseline on the v3 survey artifacts as a sanity check.
+- [x] Prepare counterbalanced v3 rich/coarse pilot packets and response templates for 10 participants.
 - [ ] Run a 5-10 person pilot before full collection; drop or rebalance ambiguous/impossible items.
 - [ ] Collect human responses for rich vs coarse survey variants.
 - [ ] Report human 2AFC accuracy with Wilson 95% CI.

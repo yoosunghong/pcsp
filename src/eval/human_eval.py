@@ -3,7 +3,8 @@ Human evaluation analysis for PCSP.
 
 Supported study types:
   1. 2AFC persona identification
-     Columns: participant_id, item_id, response, confidence, response_time_sec.
+     Columns: participant_id, item_id or item_uid, response, confidence,
+     response_time_sec. Optional condition column supports rich/coarse studies.
      Join with an answer-key CSV containing item_id and correct_option.
 
   2. Legacy Likert distinctiveness
@@ -116,27 +117,35 @@ def process_2afc_identification(
 ) -> dict[str, Any]:
     responses = _read_csv(Path(csv_path))
     key_rows = _read_csv(Path(answer_key_path))
-    key = {row["item_id"]: row for row in key_rows}
+    key = {
+        (row.get("item_uid") or row["item_id"]): row
+        for row in key_rows
+    }
 
     scored: list[dict[str, Any]] = []
     for row in responses:
         item_id = row.get("item_id", "").strip()
-        if item_id not in key:
+        item_uid = row.get("item_uid", "").strip()
+        key_id = item_uid or item_id
+        if key_id not in key:
             continue
         response = row.get("response", "").strip().upper()
         if response not in {"A", "B"}:
             continue
-        correct_option = key[item_id]["correct_option"].strip().upper()
+        key_row = key[key_id]
+        correct_option = key_row["correct_option"].strip().upper()
         confidence = row.get("confidence", "").strip()
         response_time = row.get("response_time_sec", "").strip()
         scored.append({
             "participant_id": row.get("participant_id", "unknown"),
             "item_id": item_id,
+            "item_uid": key_id,
+            "condition": key_row.get("condition", row.get("condition", "unknown")),
             "response": response,
             "correct_option": correct_option,
             "is_correct": response == correct_option,
-            "model": key[item_id].get("model", row.get("model", "unknown")),
-            "split": key[item_id].get("split", row.get("split", "unknown")),
+            "model": key_row.get("model", row.get("model", "unknown")),
+            "split": key_row.get("split", row.get("split", "unknown")),
             "confidence": float(confidence) if confidence else None,
             "response_time_sec": float(response_time) if response_time else None,
         })
@@ -146,10 +155,10 @@ def process_2afc_identification(
     lo, hi = wilson_ci(k, n)
 
     participant_ids = sorted({row["participant_id"] for row in scored})
-    item_ids = sorted({row["item_id"] for row in scored})
+    item_ids = sorted({row["item_uid"] for row in scored})
     ratings_by_rater: list[list[str | None]] = []
     for pid in participant_ids:
-        by_item = {row["item_id"]: row["response"] for row in scored if row["participant_id"] == pid}
+        by_item = {row["item_uid"]: row["response"] for row in scored if row["participant_id"] == pid}
         ratings_by_rater.append([by_item.get(item_id) for item_id in item_ids])
 
     result: dict[str, Any] = {
@@ -164,6 +173,7 @@ def process_2afc_identification(
         "krippendorff_alpha_nominal": krippendorff_alpha_nominal(ratings_by_rater),
         "mean_confidence": _mean([r["confidence"] for r in scored if r["confidence"] is not None]),
         "mean_response_time_sec": _mean([r["response_time_sec"] for r in scored if r["response_time_sec"] is not None]),
+        "by_condition": _group_accuracy(scored, "condition"),
         "by_model": _group_accuracy(scored, "model"),
         "by_split": _group_accuracy(scored, "split"),
     }
