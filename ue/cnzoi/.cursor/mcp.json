@@ -4,9 +4,9 @@
       "args": [
         "--stdio",
         "--project-path",
-        "D:/Github/pcsp/ue/cnzoi",
+        "D:/Github/pcsp/ue/cnzoi/",
         "--engine-path",
-        "C:/Program Files/Epic Games/UE_5.7"
+        "../../../Engine/"
       ],
       "command": "C:/Program Files/Epic Games/UE_5.7/Engine/Plugins/Marketplace/NarshaADb0a51a29e8f5V1/Source/ThirdParty/bin/narshamcp.exe",
       "env": {

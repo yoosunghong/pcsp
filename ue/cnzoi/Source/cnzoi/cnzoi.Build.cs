@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
+using System.IO;
 
 public class cnzoi : ModuleRules
 {
@@ -28,12 +29,12 @@ public class cnzoi : ModuleRules
 
 		PublicIncludePaths.AddRange(new string[] {
 			"cnzoi",
-			"cnzoi/PCSP",
-			"cnzoi/PCSP/Components",
-			"cnzoi/PCSP/Affordance",
-			"cnzoi/PCSP/Agent",
-			"cnzoi/PCSP/Sim",
-			"cnzoi/PCSP/BT",
+			Path.Combine(ModuleDirectory, "PCSP/Public"),
+			Path.Combine(ModuleDirectory, "PCSP/Public/Components"),
+			Path.Combine(ModuleDirectory, "PCSP/Public/Affordance"),
+			Path.Combine(ModuleDirectory, "PCSP/Public/Agent"),
+			Path.Combine(ModuleDirectory, "PCSP/Public/Sim"),
+			Path.Combine(ModuleDirectory, "PCSP/Public/BT"),
 			"cnzoi/Variant_Platforming",
 			"cnzoi/Variant_Platforming/Animation",
 			"cnzoi/Variant_Combat",
@@ -47,6 +48,15 @@ public class cnzoi : ModuleRules
 			"cnzoi/Variant_SideScrolling/Gameplay",
 			"cnzoi/Variant_SideScrolling/Interfaces",
 			"cnzoi/Variant_SideScrolling/UI"
+		});
+
+		PrivateIncludePaths.AddRange(new string[] {
+			Path.Combine(ModuleDirectory, "PCSP/Private"),
+			Path.Combine(ModuleDirectory, "PCSP/Private/Components"),
+			Path.Combine(ModuleDirectory, "PCSP/Private/Affordance"),
+			Path.Combine(ModuleDirectory, "PCSP/Private/Agent"),
+			Path.Combine(ModuleDirectory, "PCSP/Private/Sim"),
+			Path.Combine(ModuleDirectory, "PCSP/Private/BT")
 		});
 
 		// Uncomment if you are using Slate UI

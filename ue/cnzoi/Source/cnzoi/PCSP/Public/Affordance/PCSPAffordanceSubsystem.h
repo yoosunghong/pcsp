@@ -35,7 +35,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category="PCSP|Affordance")
 	TArray<APCSPAffordanceZone*> GetZonesByCategory(EPCSPAffordanceCategory Category) const;
 
-	UFUNCTION(BlueprintCallable, Category="PCSP|Affordance")
+
 	const TArray<TWeakObjectPtr<APCSPAffordanceZone>>& GetAllZones() const { return Zones; }
 
 protected:

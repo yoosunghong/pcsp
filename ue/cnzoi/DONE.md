@@ -49,6 +49,12 @@ Branch: `ue5/phase1-prototype`. Added the Phase 1 C++ scaffold under `Source/cnz
 | 2026-05-13 | Affordances are exposed via `UWorldSubsystem` rather than `GameInstanceSubsystem`. | Affordance set is per-level; per-world lifetime avoids stale references across map loads. | Confirm before adding cross-map persistence. |
 | 2026-05-13 | Reservation lives on `APCSPInteractionPoint`, not on the zone. | Allows multiple agents in one zone while still serializing interactions at a specific seat / station / station-point. | Add reservation timeout in Phase 2 to avoid deadlock. |
 
+## 2026-05-13 - PCSP Public/Private Layout
+
+- Moved PCSP headers to `Source/cnzoi/PCSP/Public/` and PCSP implementation files to `Source/cnzoi/PCSP/Private/`, preserving the existing `Affordance`, `Agent`, `BT`, `Components`, and `Sim` subdirectories.
+- Updated `Source/cnzoi/cnzoi.Build.cs` with explicit PCSP public and private include paths so short includes such as `#include "PCSPTypes.h"` resolve from nested PCSP headers.
+- Verified with `Build.bat cnzoiEditor Win64 Development -Project=D:\Github\pcsp\ue\cnzoi\cnzoi.uproject -WaitMutex -NoHotReload`; result succeeded.
+
 ## Open Follow-ups
 
 - Define the first UE5 affordance taxonomy.
