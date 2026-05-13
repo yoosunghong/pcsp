@@ -1,0 +1,16 @@
+{
+  "raw": {
+    "designer_nn_to_train_mean": 11.684415328502656,
+    "designer_nn_to_train_median": 12.002820014953613,
+    "train_pairwise_nn_mean": 0.9033358933031559,
+    "ratio": 12.934740460469463
+  },
+  "projected": {
+    "designer_nn_to_train_mean": 1.2988473987579345,
+    "designer_nn_to_train_median": 1.1431461572647095,
+    "train_pairwise_nn_mean": 0.8856117214262486,
+    "ratio": 1.4666104426284958
+  },
+  "n_train": 240,
+  "n_designer": 50
+}

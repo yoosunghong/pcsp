@@ -1,55 +1,56 @@
-# AGENTS.md — co-spec 프로젝트 컨텍스트
+# CLAUDE.md - co-spec Project Context
 
-## 프로젝트 개요
+## Project Overview
 
-**PCSP (Persona-Conditioned Shared Policy)** 연구 프로젝트.
-자연어 persona 텍스트를 조건으로 받는 단일 공유 RL policy를 학습해, 수천 명의 NPC가 각자 다른 성격으로 행동하는 시스템 구현.
-현재 주 논문 방향은 `paper/cog2026_vision/main.tex`의 IEEE CoG 2026 Vision Paper이다.
+This is a **PCSP (Persona-Conditioned Shared Policy)** research project.
+The goal is to train a single shared RL policy conditioned on natural-language persona text, enabling thousands of NPCs to behave according to distinct personalities.
+The current primary paper direction is the IEEE CoG 2026 Vision Paper in `paper/cog2026_vision/main.tex`.
 
-**활성 실행 계획**: `PLAN.md`
+**Active execution plan:** `PLAN.md`
 
-`persona-proposal.md`, `full-proposal.md` 등 과거 제안서는 참고 자료이며, 활성 방향이 아니다. 오래된 계획/제안은 `archive/` 아래에 보존한다.
-
----
-
-## 작업 운영 규칙
-
-모든 에이전트와 자동화 작업은 루트 `PLAN.md`를 기준으로 진행한다.
-
-1. **작업 시작 전**
-   - 먼저 `PLAN.md`를 읽고 현재 active paper direction, immediate problem, active checklist를 확인한다.
-   - 논문 프레이밍은 `paper/cog2026_vision/main.tex`를 source of truth로 삼는다.
-   - `full-proposal.md`의 speculative sLM/RL co-adaptation 방향을 현재 PCSP 논문 방향으로 착각하지 않는다.
-
-2. **작업 중**
-   - 새 코드/실험/문서 변경은 `PLAN.md`의 체크리스트 항목 중 하나에 연결한다.
-   - 기존 v1/v2 결과와 호환성을 깨는 변경(action space, observation dim, model head 변경 등)은 반드시 `PLAN.md`에 retraining 필요성을 기록한다.
-   - 기존 문서를 삭제하지 않는다. 방향이 바뀐 문서는 `archive/YYYY-MM-DD` 또는 `archive/docs_YYYY-MM-DD` 아래로 보존한다.
-
-3. **작업 완료 후**
-   - 비 trivial 작업을 완료했다면 같은 턴에서 `PLAN.md`를 업데이트한다.
-   - 완료한 항목은 `[x]`로 바꾸고, 새로 발견한 TODO는 적절한 Phase에 추가한다.
-   - 중요한 결정, 결과 파일 경로, 실패한 실험, 재학습 필요 여부는 `PLAN.md`의 Decision Log 또는 관련 Phase에 남긴다.
-
-4. **현재 우선순위**
-   - 사람에게 관찰 가능한 persona-conditioned behavior를 강화한다.
-   - coarse action label만 보여주는 human eval을 rich trajectory trace 평가로 확장한다.
-   - 단기적으로는 기존 12-action policy를 유지하고, rollout/event rendering을 풍부하게 만든다.
-   - 중기적으로 Mini-Inzoi v3 action ontology와 environment redesign을 설계한다.
+Older proposal documents such as `persona-proposal.md` and `full-proposal.md` are reference material only; they are not the active direction. Stale plans and proposals should be preserved under `archive/`.
 
 ---
 
-## 개발 환경
+## Working Rules
+
+All agents and automation should work from the root `PLAN.md`.
+
+1. **Before starting work**
+   - Read `PLAN.md` first and check the current active paper direction, immediate problem, and active checklist.
+   - Treat `paper/cog2026_vision/main.tex` as the source of truth for paper framing.
+   - Do not mistake the speculative sLM/RL co-adaptation direction in `full-proposal.md` for the current PCSP paper direction.
+
+2. **During work**
+   - Connect every new code, experiment, or documentation change to one of the checklist items in `PLAN.md`.
+   - Any change that breaks compatibility with existing v1/v2 results, such as action space, observation dimension, or model head changes, must record the retraining requirement in `PLAN.md`.
+   - Do not delete existing documents. If a document's direction has changed, preserve it under `archive/YYYY-MM-DD` or `archive/docs_YYYY-MM-DD`.
+
+3. **After finishing work**
+   - If you completed non-trivial work, update `PLAN.md` in the same turn.
+   - Mark completed items with `[x]`, and add newly discovered TODOs to the appropriate phase.
+   - Record important decisions, result file paths, failed experiments, and retraining requirements in the Decision Log or the relevant phase of `PLAN.md`.
+
+4. **Current priorities**
+   - Strengthen persona-conditioned behavior that is observable to humans.
+   - Expand human evaluation from coarse action labels to rich trajectory traces.
+   - In the short term, keep the existing 12-action policy and enrich rollout/event rendering.
+   - In the medium term, design the Mini-Inzoi v3 action ontology and environment redesign.
+
+---
+
+## Development Environment
 
 ```bash
-# 항상 paper conda 환경 사용
+# Always use the paper conda environment
 conda activate paper
-# 또는 명령 단위 실행 시
+
+# Or, for one-off commands
 conda run -n paper python <script>
 ```
 
-| 항목 | 값 |
-|:-----|:---|
+| Item | Value |
+|:-----|:------|
 | Python | 3.10 (paper env) |
 | PyTorch | 2.5.1 + CUDA 12.8 |
 | GPU | NVIDIA RTX 6000 Ada (49GB VRAM) |
@@ -60,34 +61,35 @@ conda run -n paper python <script>
 
 ---
 
-## 디렉토리 구조
+## Directory Structure
 
 ```
 co-spec/
-├── AGENTS.md                        ← 이 파일
-├── PLAN.md                          ← 활성 연구 실행 계획 (작업 전/후 업데이트 필수)
-├── paper/cog2026_vision/main.tex    ← 현재 주 논문
-├── archive/                         ← 과거 계획/제안서 보관
-├── persona-proposal.md              ← 과거 제안서/참고
-├── full-proposal.md                 ← 별도 co-adaptation 제안서/참고
+├── CLAUDE.md                        ← this file
+├── AGENTS.md                        ← shared agent instructions
+├── PLAN.md                          ← active research execution plan; update before/after work
+├── paper/cog2026_vision/main.tex    ← current primary paper
+├── archive/                         ← archived plans and proposals
+├── persona-proposal.md              ← older proposal / reference
+├── full-proposal.md                 ← separate co-adaptation proposal / reference
 │
 ├── src/
 │   ├── env/
-│   │   ├── mini_inzoi.py            ← PettingZoo AEC 환경 v1 (6×6, 4 agents, 8 needs, 12 actions)
-│   │   ├── mini_inzoi_v2.py         ← scale-up 환경 v2 (12×12, 16 agents)
-│   │   └── action_semantics.py      ← action id와 human-readable event semantics 분리
+│   │   ├── mini_inzoi.py            ← PettingZoo AEC environment v1 (6×6, 4 agents, 8 needs, 12 actions)
+│   │   ├── mini_inzoi_v2.py         ← scale-up environment v2 (12×12, 16 agents)
+│   │   └── action_semantics.py      ← separates action IDs from human-readable event semantics
 │   ├── models/
 │   │   └── film.py                  ← FiLM conditioning: PersonaProjection, Policy, Value
 │   ├── data/
-│   │   └── persona_generator.py     ← 30개 persona 데이터셋 정의 (Big Five × 직업)
-│   ├── training/                    ← PPO/PCSP 학습 루프 및 baselines
-│   └── eval/                        ← consistency/diversity/zeroshot/human eval 지표
+│   │   └── persona_generator.py     ← defines the 30-persona dataset (Big Five × occupation)
+│   ├── training/                    ← PPO/PCSP training loops and baselines
+│   └── eval/                        ← consistency/diversity/zeroshot/human-eval metrics
 │
 ├── scripts/
-│   ├── smoke_test_qwen3_embed.py    ← Qwen3-Embedding 속도 벤치마크
-│   ├── visualize_persona_tsne.py    ← 30개 persona t-SNE 시각화
-│   ├── test_env.py                  ← Mini-Inzoi PettingZoo API 테스트
-│   └── test_film.py                 ← FiLM 모듈 sanity check
+│   ├── smoke_test_qwen3_embed.py    ← Qwen3-Embedding speed benchmark
+│   ├── visualize_persona_tsne.py    ← t-SNE visualization for 30 personas
+│   ├── test_env.py                  ← Mini-Inzoi PettingZoo API test
+│   └── test_film.py                 ← FiLM module sanity check
 │
 ├── data/
 │   └── personas/
@@ -98,22 +100,22 @@ co-spec/
 │       └── test_100.json            ← v2 zero-shot split
 │
 ├── results/
-│   ├── smoke_test_result.json       ← 임베딩 속도 벤치마크 결과
+│   ├── smoke_test_result.json       ← embedding speed benchmark result
 │   ├── embeddings/
-│   │   └── persona_embeddings_30.npy ← Qwen3-Embed 임베딩 벡터 (30, 1024)
+│   │   └── persona_embeddings_30.npy ← Qwen3-Embed embedding vectors (30, 1024)
 │   └── figures/
-│       ├── persona_tsne.png         ← t-SNE 시각화
-│       └── persona_sim_matrix.npy   ← 코사인 유사도 행렬
+│       ├── persona_tsne.png         ← t-SNE visualization
+│       └── persona_sim_matrix.npy   ← cosine similarity matrix
 │
 └── notebooks/
-    └── related_work_survey.md       ← 4축 related work 비교 테이블
+    └── related_work_survey.md       ← four-axis related work comparison table
 ```
 
 ---
 
-## 핵심 모듈 사용법
+## Core Module Usage
 
-### 환경 (`src/env/mini_inzoi.py`)
+### Environment (`src/env/mini_inzoi.py`)
 
 ```python
 from src.env.mini_inzoi import MiniInzoiEnv, PersonaConfig, DEFAULT_PERSONAS
@@ -130,11 +132,11 @@ for agent in env.agent_iter():
         env.step(action)
 ```
 
-- 관측 차원: `(20,)` — 위치(2) + 시간(1) + needs(8) + 타 에이전트(9)
-- 행동 공간: `Discrete(12)` — 8개 activity + 4방향 movement
-- Persona별 needs decay 속도와 선호 행동(+0.5 보너스)이 다름
+- Observation dimension: `(20,)` - position (2) + time (1) + needs (8) + other agents (9)
+- Action space: `Discrete(12)` - 8 activities + 4 movement directions
+- Each persona has different need-decay rates and preferred actions with a `+0.5` bonus.
 
-### FiLM 정책 (`src/models/film.py`)
+### FiLM Policy (`src/models/film.py`)
 
 ```python
 from src.models.film import PersonaConditionedPolicy, PersonaConditionedValue
@@ -142,17 +144,17 @@ from src.models.film import PersonaConditionedPolicy, PersonaConditionedValue
 policy = PersonaConditionedPolicy(obs_dim=20, n_actions=12, persona_dim=64, llm_dim=1024)
 value  = PersonaConditionedValue(obs_dim=20, persona_dim=64, llm_dim=1024)
 
-# e_llm: Qwen3-Embed 출력 (사전 계산, frozen)
+# e_llm: Qwen3-Embed output, precomputed and frozen
 logits = policy(obs, e_llm)       # (B, 12)
 v      = value(obs, e_llm)        # (B,)
 action, log_prob = policy.act(obs, e_llm)
 ```
 
-- `PersonaProjection`: LLM 임베딩(1024) → 학습 가능한 persona embedding(64), LoRA rank-16
-- `FiLMLayer`: `γ(e_p) ⊙ h + β(e_p)` 로 매 hidden layer 조건화
-- 총 파라미터: ~207K
+- `PersonaProjection`: LLM embedding (1024) -> trainable persona embedding (64), LoRA rank 16
+- `FiLMLayer`: conditions each hidden layer with `gamma(e_p) * h + beta(e_p)`
+- Total parameters: approximately 207K
 
-### Persona 임베딩 (Qwen3-Embedding-0.6B)
+### Persona Embeddings (Qwen3-Embedding-0.6B)
 
 ```python
 from transformers import AutoTokenizer, AutoModel
@@ -162,50 +164,51 @@ tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen3-Embedding-0.6B", trust_rem
 model = AutoModel.from_pretrained("Qwen/Qwen3-Embedding-0.6B", dtype=torch.float16).cuda()
 model.eval()
 
-# Persona는 NPC 생성 시 1회만 인코딩 (14.6ms/ea, 배치 100 기준 43.9ms)
+# Encode the persona once when the NPC is created: 14.6 ms each, 43.9 ms for batch size 100
 enc = tokenizer([persona_text], return_tensors="pt", truncation=True, max_length=128).to("cuda")
 with torch.no_grad():
     out = model(**enc)
-# last-token pooling + L2 normalize
+
+# Last-token pooling + L2 normalization
 e_llm = out.last_hidden_state[:, -1]
 e_llm = torch.nn.functional.normalize(e_llm, dim=-1)  # (1, 1024)
 ```
 
 ---
 
-## 자주 쓰는 명령
+## Common Commands
 
 ```bash
-# 환경 테스트
+# Environment test
 conda run -n paper python scripts/test_env.py
 
-# FiLM 모듈 테스트
+# FiLM module test
 conda run -n paper python scripts/test_film.py
 
-# 임베딩 속도 벤치마크 (재실행)
+# Re-run embedding speed benchmark
 conda run -n paper python scripts/smoke_test_qwen3_embed.py
 
-# t-SNE 시각화 재생성
+# Regenerate t-SNE visualization
 conda run -n paper python scripts/visualize_persona_tsne.py
 ```
 
 ---
 
-## 핵심 설계 결정 및 근거
+## Key Design Decisions and Rationale
 
-| 결정 | 이유 |
-|:-----|:-----|
-| Frozen LLM encoder (Qwen3-0.6B-Embed) | 추론 시 1회만 호출, 1.1GB VRAM, 다국어 지원 |
-| FiLM conditioning (vs. concat) | 모든 hidden layer에 persona 정보 전달, mode collapse 방지 |
-| LoRA projection (rank-16) | LLM 임베딩 공간이 성격보다 직업을 더 강하게 포착 → fine-tuning 필요 |
-| PettingZoo AEC (vs. parallel env) | 순차 행동 시뮬레이션이 실제 게임 NPC 턴제 구조에 더 가까움 |
-| Contrastive consistency loss | trajectory로 persona 역추론 가능해야 mode collapse 방지 |
+| Decision | Rationale |
+|:---------|:----------|
+| Frozen LLM encoder (Qwen3-0.6B-Embed) | Called only once at inference, uses 1.1 GB VRAM, supports multilingual text |
+| FiLM conditioning (vs. concat) | Injects persona information into every hidden layer and helps prevent mode collapse |
+| LoRA projection (rank 16) | The LLM embedding space captures occupation more strongly than personality, so fine-tuning is needed |
+| PettingZoo AEC (vs. parallel env) | Sequential action simulation is closer to turn-based NPC structures in real games |
+| Contrastive consistency loss | Persona should be recoverable from trajectories to prevent mode collapse |
 
 ---
 
-## 알려진 이슈 및 주의사항
+## Known Issues and Cautions
 
-- **직업 vs. 성격 임베딩**: Qwen3-Embed가 직업 유사도를 성격 특성보다 강하게 포착함 (영업사원↔임원: 0.61 vs 트레이너↔블로거: 0.33). LoRA projection이 성격 축을 증폭하도록 학습해야 함.
-- **PettingZoo AEC 패턴**: `step()` 시작 시 `_cumulative_rewards[agent] = 0` 후 `_clear_rewards()` 순서 필수. 순서 바뀌면 API 테스트 실패.
-- **sys.path**: `scripts/` 내 스크립트는 `sys.path.insert(0, "/home/swim/Documents/Projects/co-spec")` 필요.
-- **한국어 폰트**: matplotlib 사용 시 `NanumGothic` 또는 `NotoSansCJK` 폰트 수동 등록 필요 (`visualize_persona_tsne.py` 참고).
+- **Occupation vs. personality embeddings:** Qwen3-Embed captures occupational similarity more strongly than personality traits, e.g. salesperson-executive: 0.61 vs. trainer-blogger: 0.33. The LoRA projection should learn to amplify personality axes.
+- **PettingZoo AEC pattern:** At the start of `step()`, `_cumulative_rewards[agent] = 0` must come before `_clear_rewards()`. Changing the order breaks the API test.
+- **`sys.path`:** Scripts under `scripts/` need `sys.path.insert(0, "/home/swim/Documents/Projects/co-spec")`.
+- **Korean fonts:** When using matplotlib, manually register `NanumGothic` or `NotoSansCJK`; see `visualize_persona_tsne.py`.

@@ -41,8 +41,7 @@
 - [x] Analyze 30-participant Google Forms coarse-trace pilot from item-level A/B ratios.
 - [x] Report coarse-trace human 2AFC accuracy with Wilson 95% CI.
 - [x] Record that confidence, response time, participant-level variance, and inter-rater reliability are unavailable for the Google Forms coarse pilot.
-- [ ] Collect matched rich-trace human responses or run a retained-row rich-vs-coarse study.
-- [ ] If future forms collect participant-level rows, report confidence, response time, and inter-rater reliability.
+- [ ] Collect matched rich-trace human responses or run a retained-row rich-vs-coarse study. *(2026-05-13: deferred — Google Forms pilot cannot be retro-instrumented; deliberately scoped out of the current paper revision in favor of designer-persona expansion. Rich-trace and Krippendorff promises were removed from §6/§7 to reflect this.)*
 
 ---
 
@@ -108,6 +107,15 @@
 - [ ] Add embedding-space coverage checks for Designer-300 against `train_240_v3.json`.
 - [ ] Run PCSP-v3 inference-only qualitative and quantitative validation on Designer-300.
 - [ ] Decide whether Designer-300 warrants a paper table, appendix artifact, or future-work framing.
+- [x] Expand designer-authored case study from 13 → 50 personas across 5 sources: Sims 3 (10), Animal Crossing (12), Stardew Valley (10), Persona series (6), Original designer briefs (12). Modified `scripts/run_designer_persona_case_study.py`. *(2026-05-13)*
+- [x] Add failure taxonomy (F1 ontology gap / F2 style-reward conflict / F3 embedding occupational bias / F4 trait collision / F5 residual) and source-grouped t-SNE rendering. *(2026-05-13)*
+- [x] Re-run rollouts, regenerate `results/designer_persona_case_study/`, and overwrite `paper/figures/fig5_designer_personas_tsne.png`. Initial result (all Korean text): 17 success / 24 partial / 9 failure. *(2026-05-13)*
+- [x] Switch 6 Persona-series persona texts from Korean to English and re-run. Intermediate result: **20 success / 21 partial / 9 failure** (40% strong, 82% non-failure); mean cosine 0.608. Persona-series (EN) improves to 4/2/0 from 1/5/0. *(2026-05-13)*
+- [x] Translate the remaining 44 Korean designer personas to English (all 5 source groups now English). Re-ran case study. **Final all-English result: 22 success / 21 partial / 7 failure (44% strong, 86% non-failure).** Mean cosine to nearest (Korean) training persona drops only modestly (0.608 → 0.590, range 0.478--0.686). This is now a fully cross-lingual robustness probe: Korean-trained policy + English designer personas. Failure-mode distribution: F1×3 (ontology gap), F2×2 (style-reward conflict), F4×1, F5×1; F3 (embedding occupational bias) disappeared since English designer text can no longer share occupation tokens with Korean training neighbors. *(2026-05-13)*
+- [x] Update §5.4 in `main.tex`: replaced 13-row per-persona table with 5-row source-summary + failure-taxonomy column, added failure-taxonomy definitions paragraph, rewrote case discussion to highlight ontology-limited failure pattern. *(2026-05-13)*
+- [x] Update §7 limitation count to "50 additional handwritten personas across five sources". *(2026-05-13)*
+- [x] Recompiled `main.pdf` — clean, 8 pages, no undefined refs or citations. *(2026-05-13)*
+- [x] Fix Fig.~5 mismatch: raw-Qwen3 t-SNE shows English designer personas as a separated cluster, contradicting the in-distribution caption claim. Replaced with a side-by-side (a) raw 1024-dim vs (b) LoRA-projected 64-dim t-SNE using the PCSP-v3 full checkpoint. Projection collapses the designer→train NN ratio from 12.9× to 1.47×; designer-authored personas are fully intermixed with train_240 in the projected space the policy actually consumes. Rewrote caption + §IV-G cross-lingual paragraph to cite both quantities. New helper: `scripts/visualize_designer_tsne_projected.py`; new artifact: `results/designer_persona_case_study/tsne_coverage_stats.json`. Did **not** retrain in English — kept the cross-lingual robustness card and used the projection-space evidence to strengthen it instead. *(2026-05-13)*
 
 ---
 

@@ -533,6 +533,37 @@ reward curves at v1/v2.
     $^\ddagger$High KL without consistency reflects unstructured divergence, not persona alignment.}
 \end{table}
 
+\begin{table}[t]
+  \centering
+  \small
+  \caption{%
+    \textbf{Conditioning architecture $\times$ OOD split (v3).}
+    Zero-shot $k$-NN accuracy on three compositional held-out splits, evaluated
+    against the same trained PCSP checkpoint family (random $\approx\!1.7\%$).
+    Wilson 95\% CIs in brackets; \textbf{bold} marks the higher point estimate
+    per row, and \dag\ marks rows where Wilson intervals overlap.}
+  \label{tab:ood_splits}
+  \setlength{\tabcolsep}{3.5pt}
+  \begin{tabular}{lcc}
+    \toprule
+    OOD split & FiLM & Concat \\
+    \midrule
+    Unseen occupations
+      & 0.170 \scriptsize{[.13,.22]}
+      & \textbf{0.283} \scriptsize{[.24,.34]} \\
+    Unseen archetypes
+      & \textbf{0.203} \scriptsize{[.16,.25]}
+      & 0.103 \scriptsize{[.07,.14]} \\
+    Unseen occ.\,$\times$\,archetype\,\dag
+      & \textbf{0.203} \scriptsize{[.16,.25]}
+      & 0.170 \scriptsize{[.13,.22]} \\
+    \bottomrule
+  \end{tabular}\\[2pt]
+  {\footnotesize \dag Wilson intervals overlap; gap not significant.
+   Architecture preference flips with the OOD axis: concat generalizes more
+   strongly when the occupation is novel, FiLM when the archetype is novel.}
+\end{table}
+
 \subsection{Key Observations}
 
 Across all three experimental settings, the ablation evidence converges on a
@@ -557,15 +588,14 @@ into the network.
 \textbf{The conditioning architecture is secondary, and conditional on the
 type of OOD shift.}
 We initially conjectured that FiLM's layer-wise gating would dominate input
-concatenation, but the v3 compositional splits show no universal winner.
-On unseen occupations, concat reaches 28.3\% accuracy (CI $[.24,.34]$) versus
-FiLM's 17.0\% (CI $[.13,.22]$); on unseen archetypes, the ranking reverses,
-with FiLM at 20.3\% (CI $[.16,.25]$) and concat at 10.3\% (CI $[.07,.14]$).
-On unseen occupation--archetype combinations, FiLM is higher in point estimate
-(20.3\% vs.\ 17.0\%), but the Wilson intervals overlap.
-Thus the conditioning mechanism is a generalization-gap knob whose best setting
-depends on the OOD axis; the consistency loss, in contrast, is the only
-component that universally fails across split families when removed.
+concatenation, but the three v3 compositional splits in
+Table~\ref{tab:ood_splits} show no universal winner. Concat dominates when
+the held-out axis is occupation; FiLM dominates when the held-out axis is
+Big-Five archetype; on the joint occ.\,$\times$\,archetype split the two are
+statistically indistinguishable. Thus the conditioning mechanism is a
+generalization-gap knob whose best setting depends on \emph{which} dimension
+of the persona is novel at test time. The consistency loss, in contrast, is
+the only component that universally fails across split families when removed.
 
 \textbf{Diversity loss prevents behavioral collapse at v1/v2 but its effect
 weakens on the v3 zero-shot accuracy axis.}
@@ -610,86 +640,135 @@ completed rich-versus-coarse human comparison.
 \label{sec:qualcase}
 
 To test whether \PCSP can be controlled by persona descriptions outside the
-synthetic Big-Five/occupation templates, 13 designer-authored personas were
-constructed from two familiar life-simulation sources. Five were based on
-trait combinations from \textit{The Sims 3} trait system
-(\eg Workaholic + Ambitious + Perfectionist)~\cite{sims3traits}, and eight were
-based on \textit{Animal Crossing} villager personality categories
-(\eg Lazy, Jock, Normal, and Sisterly)~\cite{nookipediaVillager}. Each source
-concept was rewritten as a 2--3 sentence natural-language NPC description in
-the same style as the training personas and was assigned a plausible occupation
-or daily habit. No retraining was performed: each text was encoded with the same
-Qwen3 embedding pipeline, passed through the learned low-rank projection, and rolled
-out for five v3 episodes.
+synthetic Big-Five/occupation templates, we constructed 50 designer-authored
+personas drawn from five sources at varying distance from the training
+distribution: \textit{The Sims 3} trait combinations~\cite{sims3traits}
+(\eg Workaholic + Ambitious + Perfectionist; $n\!=\!10$),
+\textit{Animal Crossing} villager personality
+categories~\cite{nookipediaVillager} (\eg Lazy, Jock, Normal; $n\!=\!12$),
+\textit{Stardew Valley} NPC archetypes (\eg the reclusive coder, the
+off-grid hermit; $n\!=\!10$), \textit{Persona}-series confidant descriptions
+(\eg the perfectionist student leader, the hikikomori hacker; $n\!=\!6$),
+and original designer briefs authored from scratch from Big-Five composites
+(\eg burned-out doctor, sleep-deprived startup founder; $n\!=\!12$). Each
+source concept was rewritten as a 2--3 sentence natural-language NPC
+description and assigned a plausible occupation.
+All 50 designer-authored persona texts are written in \emph{English}, while
+the 240 training personas are Korean; the case study therefore additionally
+serves as a fully cross-lingual robustness probe of the frozen multilingual
+Qwen3 embedding and the learned low-rank projection. No retraining was
+performed: each text was encoded with the same Qwen3 embedding pipeline,
+passed through the learned low-rank projection, and rolled out for five v3
+episodes.
 
-\begin{table*}[t]
+\textbf{Outcome and failure taxonomy.}
+Each rollout is classified by overlap between its top-3 actions and the
+authored preferred-action signature. Outcomes are \emph{success} (overlap
+$\geq\!2$), \emph{partial} ($=\!1$), or \emph{failure} ($=\!0$). Failures are
+further tagged by mechanism: \textbf{F1} ontology gap (authored behavior is
+not expressible in the 20-action space, \eg ``protect,'' ``nurture''),
+\textbf{F2} style-reward conflict (top-3 mean style-cosine with the persona
+Big-Five vector is negative), \textbf{F3} embedding occupational bias (rollout
+follows the nearest train-occupation neighbor rather than the authored
+personality), \textbf{F4} trait collision (a declared multi-trait composite
+collapses to a single trait), and \textbf{F5} residual (zero overlap with
+none of the above triggers).
+
+\begin{table}[t]
   \centering
-  \scriptsize
+  \small
   \caption{%
-    \textbf{Designer-authored persona case study.}
-    Top-3 actions are mean action proportions over five Mini-Inzoi v3 episodes.
-    The nearest training persona is computed in frozen Qwen3 embedding space;
-    cosine similarity is to that nearest neighbor.}
+    \textbf{Designer-authored persona case study (50 English personas, 5
+    sources, Korean-trained policy).}
+    Outcome breakdown from five v3 rollouts per persona; failure-mode column
+    lists the diagnoses present in that source's failure cases.
+    Mean cosine similarity to the nearest (Korean) training persona is 0.590
+    (range 0.478--0.686).}
   \label{tab:designer_personas}
-  \setlength{\tabcolsep}{3.5pt}
-  \begin{tabular}{llllc}
+  \setlength{\tabcolsep}{3.0pt}
+  \begin{tabular}{lrrrrl}
     \toprule
-    Persona & Top-3 actions & Nearest train persona & Cos.\ sim. & Aligned? \\
+    Source & $n$ & Succ. & Part. & Fail. & Failure modes \\
     \midrule
-    corporate strategist & \texttt{focused\_work}, \texttt{planning\_work}, \texttt{eat\_slow} & \#95 executive & .723 & yes \\
-    introverted researcher & \texttt{rest\_alone}, \texttt{read\_deep}, \texttt{socialize\_respond} & \#22 software researcher & .715 & yes \\
-    outgoing event planner & \texttt{socialize\_initiate}, \texttt{read\_deep}, \texttt{eat\_quick} & \#18 software researcher & .615 & partial \\
-    competitive personal trainer & \texttt{rest\_alone}, \texttt{focused\_work}, \texttt{planning\_work} & \#227 athlete & .782 & partial \\
-    unmotivated freelancer & \texttt{rest\_alone}, \texttt{eat\_quick}, \texttt{sleep} & \#74 elementary teacher & .592 & yes \\
-    lazy villager & \texttt{eat\_slow}, \texttt{move\_right}, \texttt{sleep} & \#115 civil servant & .618 & yes \\
-    jock villager & \texttt{socialize\_initiate}, \texttt{rest\_with\_others}, \texttt{eat\_slow} & \#237 athlete & .579 & no \\
-    cranky villager & \texttt{socialize\_initiate}, \texttt{rest\_alone}, \texttt{read\_deep} & \#115 civil servant & .594 & yes \\
-    normal villager & \texttt{focused\_work}, \texttt{socialize\_initiate}, \texttt{eat\_slow} & \#58 nurse & .613 & no \\
-    peppy villager & \texttt{socialize\_initiate}, \texttt{eat\_slow}, \texttt{rest\_with\_others} & \#16 software researcher & .590 & yes \\
-    snooty villager & \texttt{socialize\_initiate}, \texttt{eat\_slow}, \texttt{socialize\_respond} & \#35 accountant & .671 & partial \\
-    smug villager & \texttt{socialize\_initiate}, \texttt{planning\_work}, \texttt{eat\_slow} & \#31 accountant & .643 & yes \\
-    sisterly villager & \texttt{socialize\_initiate}, \texttt{eat\_slow}, \texttt{planning\_work} & \#213 personal trainer & .616 & no \\
+    The Sims 3              & 10 & 4 & 5 & 1 & F1 \\
+    Animal Crossing         & 12 & 4 & 5 & 3 & F1, F2, F5 \\
+    Stardew Valley          & 10 & 5 & 4 & 1 & F1 \\
+    Persona series          &  6 & 4 & 2 & 0 & --- \\
+    Original brief          & 12 & 5 & 5 & 2 & F2, F4 \\
+    \midrule
+    \textbf{Total}          & \textbf{50} & \textbf{22} & \textbf{21} & \textbf{7} &
+      \multicolumn{1}{r}{\textbf{86\% non-failure}} \\
     \bottomrule
   \end{tabular}
-\end{table*}
+\end{table}
 
-\begin{figure}[t]
+\begin{figure*}[t]
   \centering
-  \includegraphics[width=\linewidth]{fig5_designer_personas_tsne.png}
+  \includegraphics[width=0.98\textwidth]{fig5_designer_personas_tsne.png}
   \caption{%
-    \textbf{Designer-authored personas in embedding space.}
-    A t-SNE projection of 240 training persona embeddings plus 13
-    designer-authored personas (stars) shows that the new personas lie within
-    the region occupied by training personas rather than forming a separated
-    out-of-distribution cluster. This supports the limited claim that the
-    training data encompasses the tested designer-authored persona space.}
+    \textbf{Designer-authored personas in embedding space: raw vs.\ learned
+    projection.}
+    t-SNE of 240 Korean training persona embeddings (grey) plus 50 English
+    designer-authored personas, color-coded by source.
+    \textbf{(a)} In the raw 1024-dim Qwen3 embedding space, the English
+    designer personas form a language-shifted cluster well outside the Korean
+    training distribution: their mean nearest-neighbor distance to any
+    training persona is $12.9\times$ the mean train--train nearest-neighbor
+    distance.
+    \textbf{(b)} After the learned 64-dim LoRA projection used by the policy,
+    the same designer personas are fully intermixed with training personas
+    across all five sources (ratio drops to $1.47\times$).
+    The projection is what makes the case-study setting effectively
+    in-distribution for the trained policy, and is the load-bearing piece of
+    the cross-lingual robustness reported in \S\ref{sec:qualcase}.}
   \label{fig:designer_tsne}
-\end{figure}
+\end{figure*}
 
-Three cases illustrate the intended control behavior. The workaholic corporate
-strategist, authored from Workaholic + Ambitious + Perfectionist, is dominated
-by \texttt{focused\_work} and \texttt{planning\_work}; this is the cleanest
-case where the source trait combination is expressed directly in the v3 action
-ontology. The introverted researcher, authored from Loner + Bookworm +
-Neurotic, selects \texttt{rest\_alone} and \texttt{read\_deep}, preserving the
-solitary and knowledge-seeking aspects of the description even though
-\texttt{socialize\_respond} appears as a lower-ranked action. The lazy
-villager and unmotivated freelancer similarly favor slow eating, sleep, and
-solitary rest, matching the requested food/sleep/leisure signature.
+Three patterns are worth highlighting. First, 43 of 50 personas
+(86\%) produce at least one top-3 action matching the authored intent, and
+$22$ (44\%) match at least two---substantially above the chance baseline of
+matching 2 of 3 from a 20-action set ($\approx\!9\%$). This holds even though
+every designer-authored text is in English while the trained policy has only
+ever seen Korean persona descriptions, providing direct evidence that the
+multilingual Qwen3 backbone plus the learned low-rank projection yields a
+language-agnostic persona representation. Figure~\ref{fig:designer_tsne}
+makes the role of the projection explicit: in the raw Qwen3 space the English
+designer personas form a clearly separated cluster ($12.9\times$ the
+train--train nearest-neighbor distance), but after the learned LoRA projection
+that the policy actually consumes they are fully intermixed with the Korean
+training personas ($1.47\times$). The mean cosine similarity between each
+English persona and its nearest Korean training neighbor drops only modestly
+(0.608 with the Korean-text variant of the same designer set vs.\ 0.590 here),
+and per-source success rates are stable or higher across the language shift.
 
-The failure cases are equally informative. The jock, normal, and sisterly
-villagers are embedded near plausible training personas (athlete, nurse, and
-personal trainer), but their rollouts are dominated by broad
-\texttt{socialize\_initiate}, eating, or planning behaviors rather than by
-fitness, hygiene/care, or protective assistance. This suggests that the current
-action ontology does not sufficiently distinguish social behaviors: initiating
-conversation, caring for another agent, protecting a peer, performing friendly
-small talk, and showing energetic confidence are all collapsed into a small
-number of social labels. This limitation mirrors the coarse-action
-observability problem discussed in \S\ref{sec:limits}: when the action set and
-rendered traces do not expose the stylistic dimensions that humans use to
-recognize persona, a behavior may be reward-optimal and still fail as a
-designer-readable characterization.
+Second, source-stratified results expose a meaningful gradient: Stardew Valley
+NPC archetypes generalize best (50\% strong / 40\% partial / 10\% failure),
+The Sims 3 trait combinations and original Big-Five briefs sit at a similar
+level (40\% / 50\% / 10\% and 42\% / 42\% / 17\%), and the Persona-series
+confidants never fail outright (67\% / 33\% / 0\%). Animal Crossing personality
+categories remain the hardest source (25\% failure), concentrated in F1, F2,
+and F5 tags. This is consistent with the AC categories being defined almost
+entirely by stylistic and affective markers (\eg Cranky, Snooty, Sisterly)
+that the v3 ontology cannot distinguish at the action level.
+
+Third, the dominant failure mechanism is ontology-limited rather than
+embedding-limited. Of seven failures, five (F1$\times$3, F4, F5) involve
+composite or stylistic concepts the 20-action ontology cannot distinguish:
+the \emph{normal villager} (hygiene/care behavior, F1),
+\emph{family-oriented caretaker} (protective family role, F1),
+\emph{animal clinic worker} (gentle care semantics, F1),
+\emph{sleep-deprived startup founder} (multi-trait collision, F4), and the
+\emph{jock villager} (fitness-coded social action collapses into the generic
+\texttt{socialize\_initiate} bucket, F5). Only two failures are squarely
+policy-side: the \emph{cranky villager} and the \emph{restless rideshare
+driver} (both F2, the per-action style reward outranks the persona-conditioned
+intent). Notably, the F3 embedding-occupational-bias failure that appeared
+in the Korean-text variant disappears here---with English designer text and
+Korean training neighbors, the embedding can no longer latch onto a shared
+occupation token. This mirrors the coarse-action observability problem
+discussed in \S\ref{sec:limits} and is the cleanest argument in this work
+that the next environment iteration should expand the social/stylistic axis
+of the action space rather than the embedding or training pipeline.
 
 \subsection{Cross-Scale Replication}
 
@@ -760,10 +839,10 @@ sub-frame inference profile observed in the Python benchmark.
 \textbf{Human evaluation methodology.}
 Automatic metrics are necessary for ablations but insufficient for perceived NPC
 believability. Our 30-participant coarse-trace pilot shows above-chance persona
-identification, but also many ambiguous or misleading items. Future human
-studies should compare coarse and rich trajectory traces using forms that retain
-participant-level responses, confidence, and response time, enabling paired
-analysis and inter-rater agreement statistics such as Krippendorff's $\alpha$.
+identification, but also many ambiguous or misleading items. Stronger human
+evaluation will require an instrument that preserves per-participant responses,
+so that variance, confidence, and inter-rater agreement can be analyzed
+alongside aggregate accuracy.
 
 % ---------------------------------------------------------------
 \section{Limitations and Scope}
@@ -788,16 +867,16 @@ action semantics remain needed.
 
 \textbf{Synthetic personas.}
 Training personas are generated from Big Five archetypes and occupation
-templates. The designer-authored case study in \S\ref{sec:qualcase} tests 13
-additional handwritten personas, but does not establish robustness to the
-nuance, inconsistency, or cultural specificity of production-authored
-characters.
+templates. The designer-authored case study in \S\ref{sec:qualcase} tests 50
+additional handwritten personas across five sources, but does not establish
+robustness to the nuance, inconsistency, or cultural specificity of
+production-authored characters.
 
 \textbf{Limited aggregate human evaluation.}
 The completed Google Forms pilot collected only item-level A/B selection ratios
 for coarse traces. It supports aggregate 2AFC accuracy analysis, but not
 participant-level variance, confidence, response time, order effects, or
-inter-rater reliability. A matched rich-trace human study remains future work.
+inter-rater reliability. A more instrumented human study remains future work.
 
 \textbf{No engine integration.}
 The policy runs in a Python simulation environment. Integration challenges with

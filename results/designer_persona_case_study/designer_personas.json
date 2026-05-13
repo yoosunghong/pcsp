@@ -3,7 +3,7 @@
     "id": 10001,
     "name": "sims_workaholic_strategist",
     "persona_name": "corporate strategist",
-    "text": "성실하고 목표 지향적인 기업 전략가입니다. 완성도 높은 계획을 세우는 것을 중요하게 여기며, 쉬는 시간에도 업무 성과와 다음 학습 목표를 점검합니다.",
+    "text": "A disciplined, goal-oriented corporate strategist. He cares deeply about polished plans, and even during breaks reviews his recent work and the next learning targets he has set for himself.",
     "big_five": {
       "E": "mid",
       "N": "mid",
@@ -37,7 +37,7 @@
     "id": 10002,
     "name": "sims_loner_researcher",
     "persona_name": "introverted researcher",
-    "text": "조용하고 신중한 내성적인 연구원입니다. 사람 많은 장소보다 혼자 책을 읽고 자료를 정리하는 시간을 선호하며, 불안이 올라오면 익숙한 루틴으로 마음을 가라앉힙니다.",
+    "text": "A quiet, careful introverted researcher. She prefers reading and organizing material alone over crowded places, and when anxiety creeps in she settles herself by retreating into familiar routines.",
     "big_five": {
       "E": "low",
       "N": "high",
@@ -71,7 +71,7 @@
     "id": 10003,
     "name": "sims_party_event_planner",
     "persona_name": "outgoing event planner",
-    "text": "사교적이고 붙임성 좋은 이벤트 플래너입니다. 사람들을 한자리에 모으고 분위기를 띄우는 데 에너지를 얻으며, 하루 일과도 대화와 공동 휴식 중심으로 흘러갑니다.",
+    "text": "A sociable, warm event planner. She gets her energy from gathering people together and lifting the mood, and her day naturally flows around conversation and shared downtime.",
     "big_five": {
       "E": "high",
       "N": "low",
@@ -105,7 +105,7 @@
     "id": 10004,
     "name": "sims_athletic_trainer",
     "persona_name": "competitive personal trainer",
-    "text": "용감하고 절제력이 강한 개인 트레이너입니다. 경쟁적인 운동 목표를 세우고 꾸준히 몸을 단련하며, 어려운 상황에서도 먼저 행동하는 편입니다.",
+    "text": "A brave, highly disciplined personal trainer. He sets competitive training goals, keeps a steady conditioning routine, and tends to act first when things get tough.",
     "big_five": {
       "E": "high",
       "N": "low",
@@ -139,7 +139,7 @@
     "id": 10005,
     "name": "sims_couch_potato_freelancer",
     "persona_name": "unmotivated freelancer",
-    "text": "느긋하고 의욕이 낮은 프리랜서입니다. 일을 미루고 소파에서 쉬거나 간단히 먹는 습관이 있으며, 청소나 운동처럼 에너지가 많이 드는 일은 자주 피합니다.",
+    "text": "An easygoing, low-motivation freelancer. He puts off work to lounge on the couch or grab quick meals, and avoids energy-intensive chores like cleaning or exercise.",
     "big_five": {
       "E": "low",
       "N": "mid",
@@ -173,7 +173,7 @@
     "id": 10006,
     "name": "ac_lazy_villager",
     "persona_name": "lazy villager",
-    "text": "음식과 잠을 좋아하는 느긋한 마을 주민입니다. 서두르기보다 천천히 먹고 쉬는 일상을 즐기며, 친근하지만 큰 계획에는 별로 매달리지 않습니다.",
+    "text": "An easygoing villager who loves food and sleep. He prefers a slow-eating, rest-heavy daily rhythm over rushing around, and is friendly without getting attached to big plans.",
     "big_five": {
       "E": "low",
       "N": "low",
@@ -207,7 +207,7 @@
     "id": 10007,
     "name": "ac_jock_villager",
     "persona_name": "jock villager",
-    "text": "운동에 집착하는 활기찬 마을 주민입니다. 하루의 대부분을 체력 단련과 활동적인 놀이로 채우고, 대화에서도 더 강해지는 방법을 자주 이야기합니다.",
+    "text": "An energetic villager who obsesses over fitness. He fills most of the day with conditioning and active games, and even his conversations gravitate toward how to get stronger.",
     "big_five": {
       "E": "high",
       "N": "low",
@@ -241,7 +241,7 @@
     "id": 10008,
     "name": "ac_cranky_villager",
     "persona_name": "cranky villager",
-    "text": "고집 있고 옛 방식을 좋아하는 무뚝뚝한 마을 주민입니다. 처음에는 까칠하게 굴지만 익숙한 사람에게는 조용히 챙겨 주며, 유행보다 혼자 쉬는 시간을 더 편하게 여깁니다.",
+    "text": "A stubborn, old-fashioned villager with a gruff exterior. He comes off prickly at first but quietly looks out for the people he knows, and is more at ease in solitary downtime than in anything fashionable.",
     "big_five": {
       "E": "low",
       "N": "mid",
@@ -275,7 +275,7 @@
     "id": 10009,
     "name": "ac_normal_villager",
     "persona_name": "normal villager",
-    "text": "위생과 정돈을 중시하는 다정하고 보살피는 마을 주민입니다. 차분한 루틴 속에서 청소와 자기관리를 챙기며, 주변 사람이 편안하게 지내도록 조용히 도와줍니다.",
+    "text": "A gentle, attentive villager who cares about hygiene and tidiness. She keeps a calm routine of cleaning and self-care, and quietly helps the people around her feel at ease.",
     "big_five": {
       "E": "mid",
       "N": "low",
@@ -309,7 +309,7 @@
     "id": 10010,
     "name": "ac_peppy_villager",
     "persona_name": "peppy villager",
-    "text": "팝스타를 꿈꾸는 에너지 넘치는 마을 주민입니다. 새로운 사람에게 먼저 말을 걸고 활동적인 놀이를 즐기며, 하루를 공연 연습처럼 밝고 빠르게 움직입니다.",
+    "text": "An upbeat villager who dreams of becoming a pop star. She talks to strangers first, enjoys active play, and moves through the day as if it were a rehearsal — bright and fast-paced.",
     "big_five": {
       "E": "high",
       "N": "low",
@@ -343,7 +343,7 @@
     "id": 10011,
     "name": "ac_snooty_villager",
     "persona_name": "snooty villager",
-    "text": "패션에 집착하고 자기 기준이 뚜렷한 마을 주민입니다. 세련된 모습을 유지하는 데 신경을 쓰며, 남들과 어울릴 때도 자신감 있고 약간 거리를 둔 태도를 보입니다.",
+    "text": "A villager obsessed with fashion who holds firm to her own standards. She works at staying polished, and even in company she carries herself with a confident, slightly distant air.",
     "big_five": {
       "E": "mid",
       "N": "mid",
@@ -377,7 +377,7 @@
     "id": 10012,
     "name": "ac_smug_villager",
     "persona_name": "smug villager",
-    "text": "신사적이지만 스스로에게 꽤 만족하는 마을 주민입니다. 매너 있는 대화를 즐기고 자기 취향을 자주 드러내며, 일과 휴식 모두를 멋지게 보이도록 조율하려 합니다.",
+    "text": "A gentlemanly villager who is rather pleased with himself. He enjoys mannered conversation, shows off his tastes often, and tries to arrange both work and rest so they look impressive.",
     "big_five": {
       "E": "high",
       "N": "low",
@@ -411,7 +411,7 @@
     "id": 10013,
     "name": "ac_sisterly_villager",
     "persona_name": "sisterly villager",
-    "text": "직설적이고 씩씩하며 주변 사람을 보호하려는 마을 주민입니다. 말투는 거칠 수 있지만 도움이 필요한 사람에게 먼저 다가가고, 활동적인 일과 공동 휴식을 모두 중요하게 여깁니다.",
+    "text": "A blunt, spirited villager who instinctively protects the people around her. Her tone can be rough, but she steps in first when someone needs help, and values both active work and shared downtime.",
     "big_five": {
       "E": "high",
       "N": "mid",
@@ -440,5 +440,1263 @@
     "source": "Animal Crossing",
     "source_traits": "Sisterly / Uchi personality",
     "alignment_expectation": "Expected to favor socialize_respond, rest_with_others, and exercise."
+  },
+  {
+    "id": 10014,
+    "name": "sims_genius_librarian",
+    "persona_name": "bookworm librarian",
+    "text": "A librarian devoted to books and research material. Stepping in front of crowds feels heavy, but during solitary deep-study hours she focuses harder than anyone.",
+    "big_five": {
+      "E": "low",
+      "N": "high",
+      "A": "mid",
+      "C": "high",
+      "O": "high"
+    },
+    "occupation": "내성적인 도서관 사서",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      1.0,
+      0.6,
+      0.9,
+      1.0,
+      0.8,
+      1.0,
+      2.0
+    ],
+    "preferred_actions": [
+      10,
+      1,
+      13
+    ],
+    "split": "designer_case_study",
+    "source": "The Sims 3",
+    "source_traits": "Genius + Bookworm + Coward",
+    "alignment_expectation": "Expected to favor read_deep, planning_work, and rest_alone."
+  },
+  {
+    "id": 10015,
+    "name": "sims_charismatic_sales",
+    "persona_name": "charismatic sales manager",
+    "text": "A sales manager skilled at persuading people and steering a room. He enjoys meeting new contacts and is constantly planning and moving in pursuit of the next, bigger deal.",
+    "big_five": {
+      "E": "high",
+      "N": "low",
+      "A": "mid",
+      "C": "high",
+      "O": "mid"
+    },
+    "occupation": "사교적 영업 매니저",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      0.9,
+      1.8,
+      1.0,
+      1.0,
+      1.0,
+      1.4,
+      1.0
+    ],
+    "preferred_actions": [
+      6,
+      1,
+      7
+    ],
+    "split": "designer_case_study",
+    "source": "The Sims 3",
+    "source_traits": "Charismatic + Schmoozer + Ambitious",
+    "alignment_expectation": "Expected to favor socialize_initiate, planning_work, and socialize_respond."
+  },
+  {
+    "id": 10016,
+    "name": "sims_family_caretaker",
+    "persona_name": "family-oriented caretaker",
+    "text": "A warm caretaker who finds meaning in looking after children and family. She enjoys offering kind words and simply spending time alongside the people she cares about.",
+    "big_five": {
+      "E": "mid",
+      "N": "low",
+      "A": "high",
+      "C": "high",
+      "O": "mid"
+    },
+    "occupation": "가정적인 아이돌봄 봉사자",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      0.9,
+      1.6,
+      1.0,
+      1.4,
+      0.9,
+      1.0,
+      0.9
+    ],
+    "preferred_actions": [
+      7,
+      14,
+      12
+    ],
+    "split": "designer_case_study",
+    "source": "The Sims 3",
+    "source_traits": "Family-Oriented + Friendly + Good",
+    "alignment_expectation": "Expected to favor socialize_respond, rest_with_others, and clean."
+  },
+  {
+    "id": 10017,
+    "name": "sims_artistic_illustrator",
+    "persona_name": "bohemian illustrator",
+    "text": "A free-spirited, curious illustrator. She draws when inspiration strikes rather than on a fixed schedule, and loves wandering through cafes and unfamiliar neighborhoods for new material.",
+    "big_five": {
+      "E": "mid",
+      "N": "mid",
+      "A": "mid",
+      "C": "low",
+      "O": "high"
+    },
+    "occupation": "자유로운 일러스트레이터",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      1.0,
+      1.1,
+      1.6,
+      0.9,
+      0.8,
+      0.7,
+      1.3
+    ],
+    "preferred_actions": [
+      15,
+      11,
+      6
+    ],
+    "split": "designer_case_study",
+    "source": "The Sims 3",
+    "source_traits": "Artistic + Bohemian + Eccentric",
+    "alignment_expectation": "Expected to favor explore, read_casual, and socialize_initiate."
+  },
+  {
+    "id": 10018,
+    "name": "sims_daredevil_adventurer",
+    "persona_name": "hot-headed adventurer",
+    "text": "An impulsive adventurer who throws himself into risky situations first. He grows restless without new experiences, and his quick temper comes paired with a matching lack of fear.",
+    "big_five": {
+      "E": "high",
+      "N": "high",
+      "A": "low",
+      "C": "low",
+      "O": "high"
+    },
+    "occupation": "충동적인 모험가",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      0.9,
+      1.2,
+      1.4,
+      0.8,
+      1.4,
+      0.7,
+      1.0
+    ],
+    "preferred_actions": [
+      15,
+      8,
+      6
+    ],
+    "split": "designer_case_study",
+    "source": "The Sims 3",
+    "source_traits": "Hot-Headed + Daredevil + Brave",
+    "alignment_expectation": "Expected to favor explore, exercise_intense, and socialize_initiate."
+  },
+  {
+    "id": 10019,
+    "name": "ac_big_sister_manager",
+    "persona_name": "big sister bar manager",
+    "text": "A solid bar manager who looks after both customers and staff. There is a warmth beneath her rough way of talking, and she approaches anyone who looks like they are struggling without waiting to be asked.",
+    "big_five": {
+      "E": "high",
+      "N": "mid",
+      "A": "high",
+      "C": "mid",
+      "O": "mid"
+    },
+    "occupation": "단단한 술집 매니저",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      1.0,
+      1.7,
+      1.1,
+      1.0,
+      1.0,
+      1.0,
+      0.9
+    ],
+    "preferred_actions": [
+      6,
+      14,
+      7
+    ],
+    "split": "designer_case_study",
+    "source": "Animal Crossing",
+    "source_traits": "Big Sister (uchi variant)",
+    "alignment_expectation": "Expected to favor socialize_initiate, rest_with_others, and socialize_respond."
+  },
+  {
+    "id": 10020,
+    "name": "ac_sleepy_guard",
+    "persona_name": "sleepy night guard",
+    "text": "A perpetually drowsy night guard. During quiet hours he leans back in his chair to rest or takes a short nap, and is happy with a quiet routine as long as nothing serious happens.",
+    "big_five": {
+      "E": "low",
+      "N": "low",
+      "A": "mid",
+      "C": "low",
+      "O": "low"
+    },
+    "occupation": "졸린 야간 경비원",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      1.7,
+      0.6,
+      1.0,
+      0.8,
+      0.5,
+      0.5,
+      0.6
+    ],
+    "preferred_actions": [
+      5,
+      13,
+      4
+    ],
+    "split": "designer_case_study",
+    "source": "Animal Crossing",
+    "source_traits": "Sleepy + Lazy composite",
+    "alignment_expectation": "Expected to favor nap, rest_alone, and sleep."
+  },
+  {
+    "id": 10021,
+    "name": "ac_energetic_kid",
+    "persona_name": "energetic schoolkid",
+    "text": "A curious elementary schooler. She cannot sit still, runs around the playground with her friends, and dives straight into any new game she discovers.",
+    "big_five": {
+      "E": "high",
+      "N": "mid",
+      "A": "high",
+      "C": "low",
+      "O": "high"
+    },
+    "occupation": "호기심 많은 초등학생",
+    "age": 30,
+    "decay_modifiers": [
+      1.1,
+      1.0,
+      1.5,
+      1.5,
+      0.9,
+      1.4,
+      0.6,
+      1.0
+    ],
+    "preferred_actions": [
+      15,
+      9,
+      6
+    ],
+    "split": "designer_case_study",
+    "source": "Animal Crossing",
+    "source_traits": "Energetic Kid (peppy variant)",
+    "alignment_expectation": "Expected to favor explore, exercise_light, and socialize_initiate."
+  },
+  {
+    "id": 10022,
+    "name": "ac_anxious_barista",
+    "persona_name": "anxious cafe worker",
+    "text": "A cafe part-timer who frets over small mistakes. She wants to handle customers well but her mind often races, and during quiet stretches she opens a book by herself.",
+    "big_five": {
+      "E": "mid",
+      "N": "high",
+      "A": "high",
+      "C": "high",
+      "O": "mid"
+    },
+    "occupation": "신경 많은 카페 알바생",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      1.1,
+      1.0,
+      1.1,
+      1.1,
+      0.9,
+      1.0,
+      1.0
+    ],
+    "preferred_actions": [
+      7,
+      11,
+      13
+    ],
+    "split": "designer_case_study",
+    "source": "Animal Crossing",
+    "source_traits": "Anxious (designer composite)",
+    "alignment_expectation": "Expected to favor socialize_respond, read_casual, and rest_alone."
+  },
+  {
+    "id": 10023,
+    "name": "sv_lewis_mayor",
+    "persona_name": "conservative mayor",
+    "text": "A conservative mayor who guards the town's traditions. He prefers to move on a fixed schedule and prioritizes stable administration over sweeping change.",
+    "big_five": {
+      "E": "mid",
+      "N": "low",
+      "A": "mid",
+      "C": "high",
+      "O": "low"
+    },
+    "occupation": "보수적 시장",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      0.9,
+      1.0,
+      0.9,
+      1.2,
+      0.8,
+      1.6,
+      0.9
+    ],
+    "preferred_actions": [
+      0,
+      1,
+      12
+    ],
+    "split": "designer_case_study",
+    "source": "Stardew Valley",
+    "source_traits": "Lewis — conservative mayor",
+    "alignment_expectation": "Expected to favor focused_work, planning_work, and clean."
+  },
+  {
+    "id": 10024,
+    "name": "sv_pierre_shopowner",
+    "persona_name": "shopkeeper",
+    "text": "An energetic, sharp-minded small-shop owner. He chats easily with customers while quietly running sales and inventory numbers in his head.",
+    "big_five": {
+      "E": "high",
+      "N": "mid",
+      "A": "mid",
+      "C": "high",
+      "O": "mid"
+    },
+    "occupation": "자영업 가게 주인",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      0.9,
+      1.4,
+      0.9,
+      1.0,
+      0.9,
+      1.4,
+      1.0
+    ],
+    "preferred_actions": [
+      6,
+      1,
+      7
+    ],
+    "split": "designer_case_study",
+    "source": "Stardew Valley",
+    "source_traits": "Pierre — small shop owner",
+    "alignment_expectation": "Expected to favor socialize_initiate, planning_work, and socialize_respond."
+  },
+  {
+    "id": 10025,
+    "name": "sv_robin_carpenter",
+    "persona_name": "skilled carpenter",
+    "text": "A veteran carpenter with excellent hands. She calmly reviews drawings and plans the next job, and works hard to balance her craft and her family.",
+    "big_five": {
+      "E": "mid",
+      "N": "low",
+      "A": "high",
+      "C": "high",
+      "O": "mid"
+    },
+    "occupation": "손재주 좋은 목수",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      0.9,
+      1.2,
+      1.0,
+      1.0,
+      1.0,
+      1.6,
+      1.0
+    ],
+    "preferred_actions": [
+      0,
+      1,
+      14
+    ],
+    "split": "designer_case_study",
+    "source": "Stardew Valley",
+    "source_traits": "Robin — veteran carpenter",
+    "alignment_expectation": "Expected to favor focused_work, planning_work, and rest_with_others."
+  },
+  {
+    "id": 10026,
+    "name": "sv_demetrius_scientist",
+    "persona_name": "environmental scientist",
+    "text": "An environmental scientist who keeps revisiting data and hypotheses. New data excites him, and he does not stop studying and analyzing until a clear answer emerges.",
+    "big_five": {
+      "E": "low",
+      "N": "low",
+      "A": "mid",
+      "C": "high",
+      "O": "high"
+    },
+    "occupation": "환경 과학자",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      0.9,
+      0.7,
+      0.9,
+      1.0,
+      0.8,
+      1.4,
+      2.0
+    ],
+    "preferred_actions": [
+      10,
+      0,
+      1
+    ],
+    "split": "designer_case_study",
+    "source": "Stardew Valley",
+    "source_traits": "Demetrius — research-driven scientist",
+    "alignment_expectation": "Expected to favor read_deep, focused_work, and planning_work."
+  },
+  {
+    "id": 10027,
+    "name": "sv_sebastian_recluse",
+    "persona_name": "reclusive freelance coder",
+    "text": "A reclusive freelance developer who keeps code and music closer than people. He works quietly in his room during the day and most dislikes anyone intruding on his time.",
+    "big_five": {
+      "E": "low",
+      "N": "high",
+      "A": "mid",
+      "C": "mid",
+      "O": "high"
+    },
+    "occupation": "은둔형 프리랜서 개발자",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      1.0,
+      0.5,
+      1.0,
+      0.9,
+      0.7,
+      1.4,
+      1.4
+    ],
+    "preferred_actions": [
+      0,
+      13,
+      10
+    ],
+    "split": "designer_case_study",
+    "source": "Stardew Valley",
+    "source_traits": "Sebastian — reclusive coder",
+    "alignment_expectation": "Expected to favor focused_work, rest_alone, and read_deep."
+  },
+  {
+    "id": 10028,
+    "name": "sv_abigail_adventurer",
+    "persona_name": "adventurous student",
+    "text": "A student drawn to the unfamiliar. She prefers imagining herself exploring dungeons, ruins, and mysteries over the regular day-to-day, and finds sitting still suffocating.",
+    "big_five": {
+      "E": "mid",
+      "N": "mid",
+      "A": "mid",
+      "C": "mid",
+      "O": "high"
+    },
+    "occupation": "모험가 기질 학생",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      1.0,
+      1.1,
+      1.4,
+      0.9,
+      1.0,
+      0.9,
+      1.2
+    ],
+    "preferred_actions": [
+      15,
+      6,
+      11
+    ],
+    "split": "designer_case_study",
+    "source": "Stardew Valley",
+    "source_traits": "Abigail — adventurous goth student",
+    "alignment_expectation": "Expected to favor explore, socialize_initiate, and read_casual."
+  },
+  {
+    "id": 10029,
+    "name": "sv_penny_tutor",
+    "persona_name": "caring tutor",
+    "text": "A gentle after-school tutor who reads books to children. She likes a calm routine and values doing a little bit each day to help the kids grow.",
+    "big_five": {
+      "E": "mid",
+      "N": "mid",
+      "A": "high",
+      "C": "high",
+      "O": "mid"
+    },
+    "occupation": "동네 학원 교사",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      0.9,
+      1.3,
+      1.0,
+      1.2,
+      0.9,
+      1.1,
+      1.3
+    ],
+    "preferred_actions": [
+      10,
+      7,
+      12
+    ],
+    "split": "designer_case_study",
+    "source": "Stardew Valley",
+    "source_traits": "Penny — caring small-town tutor",
+    "alignment_expectation": "Expected to favor read_deep, socialize_respond, and clean."
+  },
+  {
+    "id": 10030,
+    "name": "sv_linus_hermit",
+    "persona_name": "off-grid hermit",
+    "text": "A hermit living self-sufficiently at the foot of a mountain. He values nature and solitary time over the bustle of society, and lives frugally, working only as much as he needs to.",
+    "big_five": {
+      "E": "low",
+      "N": "low",
+      "A": "mid",
+      "C": "mid",
+      "O": "high"
+    },
+    "occupation": "자급자족 은둔자",
+    "age": 30,
+    "decay_modifiers": [
+      0.8,
+      0.9,
+      0.5,
+      1.2,
+      0.9,
+      0.9,
+      0.7,
+      1.0
+    ],
+    "preferred_actions": [
+      13,
+      15,
+      11
+    ],
+    "split": "designer_case_study",
+    "source": "Stardew Valley",
+    "source_traits": "Linus — off-grid hermit",
+    "alignment_expectation": "Expected to favor rest_alone, explore, and read_casual."
+  },
+  {
+    "id": 10031,
+    "name": "sv_shane_recovering",
+    "persona_name": "recovering retail worker",
+    "text": "A grocery worker easing back into daily life with a heavy heart. Crowded settings still feel like a burden, but he is slowly recovering through brief stretches with coworkers and quietly doing his own work.",
+    "big_five": {
+      "E": "low",
+      "N": "high",
+      "A": "mid",
+      "C": "mid",
+      "O": "low"
+    },
+    "occupation": "회복기 마트 직원",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      1.2,
+      0.8,
+      1.0,
+      1.0,
+      0.8,
+      1.2,
+      0.8
+    ],
+    "preferred_actions": [
+      13,
+      0,
+      7
+    ],
+    "split": "designer_case_study",
+    "source": "Stardew Valley",
+    "source_traits": "Shane — recovering depression arc",
+    "alignment_expectation": "Expected to favor rest_alone, focused_work, and socialize_respond."
+  },
+  {
+    "id": 10032,
+    "name": "sv_marnie_clinic",
+    "persona_name": "animal clinic worker",
+    "text": "An animal clinic worker who looks after both animals and people kindly. She moves through her day with a calm warmth around coworkers and finds meaning in small everyday acts of care.",
+    "big_five": {
+      "E": "mid",
+      "N": "low",
+      "A": "high",
+      "C": "high",
+      "O": "mid"
+    },
+    "occupation": "동물병원 직원",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      0.9,
+      1.3,
+      1.0,
+      1.3,
+      1.0,
+      1.1,
+      0.9
+    ],
+    "preferred_actions": [
+      7,
+      14,
+      12
+    ],
+    "split": "designer_case_study",
+    "source": "Stardew Valley",
+    "source_traits": "Marnie — caring rancher",
+    "alignment_expectation": "Expected to favor socialize_respond, rest_with_others, and clean."
+  },
+  {
+    "id": 10033,
+    "name": "p5_sojiro_cafe",
+    "persona_name": "gruff cafe owner",
+    "text": "A gruff but warm-hearted cafe owner. He keeps a polite distance from customers while quietly looking after the people close to him, and prefers running the shop at his own steady pace.",
+    "big_five": {
+      "E": "mid",
+      "N": "low",
+      "A": "mid",
+      "C": "high",
+      "O": "mid"
+    },
+    "occupation": "무뚝뚝한 카페 사장",
+    "age": 30,
+    "decay_modifiers": [
+      1.4,
+      0.9,
+      1.0,
+      1.0,
+      1.0,
+      0.9,
+      1.2,
+      0.9
+    ],
+    "preferred_actions": [
+      3,
+      0,
+      7
+    ],
+    "split": "designer_case_study",
+    "source": "Persona Series",
+    "source_traits": "Sojiro — gruff but caring guardian",
+    "alignment_expectation": "Expected to favor eat_slow, focused_work, and socialize_respond."
+  },
+  {
+    "id": 10034,
+    "name": "p5_yusuke_artist",
+    "persona_name": "eccentric art student",
+    "text": "An eccentric art student who lives by inspiration. He often skips meals or works until dawn on a piece, and constantly searches even mundane scenes for new motifs.",
+    "big_five": {
+      "E": "mid",
+      "N": "low",
+      "A": "mid",
+      "C": "mid",
+      "O": "high"
+    },
+    "occupation": "미술학도",
+    "age": 30,
+    "decay_modifiers": [
+      0.6,
+      0.7,
+      0.9,
+      1.0,
+      0.8,
+      0.9,
+      1.0,
+      1.6
+    ],
+    "preferred_actions": [
+      10,
+      15,
+      1
+    ],
+    "split": "designer_case_study",
+    "source": "Persona Series",
+    "source_traits": "Yusuke — eccentric art student",
+    "alignment_expectation": "Expected to favor read_deep, explore, and planning_work."
+  },
+  {
+    "id": 10035,
+    "name": "p5_makoto_president",
+    "persona_name": "perfectionist student leader",
+    "text": "A perfectionist student council president with a strong sense of responsibility. She juggles exam prep and council duties without slipping, and disciplines herself to stay steady when others lean on her.",
+    "big_five": {
+      "E": "mid",
+      "N": "mid",
+      "A": "high",
+      "C": "high",
+      "O": "mid"
+    },
+    "occupation": "모범생 학생회장",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      1.0,
+      1.0,
+      0.8,
+      1.1,
+      0.9,
+      1.4,
+      1.8
+    ],
+    "preferred_actions": [
+      10,
+      1,
+      0
+    ],
+    "split": "designer_case_study",
+    "source": "Persona Series",
+    "source_traits": "Makoto — perfectionist student council president",
+    "alignment_expectation": "Expected to favor read_deep, planning_work, and focused_work."
+  },
+  {
+    "id": 10036,
+    "name": "p5_futaba_hikikomori",
+    "persona_name": "hikikomori hacker",
+    "text": "A hikikomori hacker who rarely leaves her room. She is fluent with the world behind a screen but finds face-to-face contact difficult, and feels safest within the familiar routine of her own space.",
+    "big_five": {
+      "E": "low",
+      "N": "high",
+      "A": "mid",
+      "C": "mid",
+      "O": "high"
+    },
+    "occupation": "히키코모리 해커",
+    "age": 30,
+    "decay_modifiers": [
+      0.9,
+      1.0,
+      0.4,
+      1.2,
+      0.7,
+      0.5,
+      1.4,
+      1.4
+    ],
+    "preferred_actions": [
+      0,
+      13,
+      10
+    ],
+    "split": "designer_case_study",
+    "source": "Persona Series",
+    "source_traits": "Futaba — hikikomori hacker",
+    "alignment_expectation": "Expected to favor focused_work, rest_alone, and read_deep."
+  },
+  {
+    "id": 10037,
+    "name": "p5_ann_model",
+    "persona_name": "rising model",
+    "text": "A rising model who pays close attention to her appearance and reputation. She is outgoing and sociable but disciplined about self-care, and shows a surprisingly earnest side around close friends.",
+    "big_five": {
+      "E": "high",
+      "N": "mid",
+      "A": "high",
+      "C": "high",
+      "O": "mid"
+    },
+    "occupation": "신인 모델",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      0.9,
+      1.4,
+      1.0,
+      1.4,
+      1.4,
+      1.0,
+      0.9
+    ],
+    "preferred_actions": [
+      9,
+      6,
+      12
+    ],
+    "split": "designer_case_study",
+    "source": "Persona Series",
+    "source_traits": "Ann — image-conscious rising model",
+    "alignment_expectation": "Expected to favor exercise_light, socialize_initiate, and clean."
+  },
+  {
+    "id": 10038,
+    "name": "p5_ryuji_sprinter",
+    "persona_name": "impulsive sprinter",
+    "text": "An impulsive, fiercely loyal short-distance sprinter. He throws himself into training and is loud and animated around his friends, but quietly carries the frustration of a leg injury that interrupted his career.",
+    "big_five": {
+      "E": "high",
+      "N": "mid",
+      "A": "mid",
+      "C": "mid",
+      "O": "mid"
+    },
+    "occupation": "단거리 선수",
+    "age": 30,
+    "decay_modifiers": [
+      1.1,
+      0.9,
+      1.4,
+      1.0,
+      1.0,
+      1.7,
+      0.8,
+      0.8
+    ],
+    "preferred_actions": [
+      8,
+      6,
+      14
+    ],
+    "split": "designer_case_study",
+    "source": "Persona Series",
+    "source_traits": "Ryuji — impulsive sprinter with injury arc",
+    "alignment_expectation": "Expected to favor exercise_intense, socialize_initiate, and rest_with_others."
+  },
+  {
+    "id": 10039,
+    "name": "orig_burnout_doctor",
+    "persona_name": "burned-out doctor",
+    "text": "A burned-out doctor who has been working overnight shifts for years. She stays composed in front of patients but, once the day ends, desperately needs time alone because of deep fatigue and low mood.",
+    "big_five": {
+      "E": "low",
+      "N": "high",
+      "A": "high",
+      "C": "high",
+      "O": "mid"
+    },
+    "occupation": "번아웃 의사",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      1.8,
+      0.6,
+      1.0,
+      1.0,
+      0.7,
+      1.4,
+      0.8
+    ],
+    "preferred_actions": [
+      4,
+      13,
+      0
+    ],
+    "split": "designer_case_study",
+    "source": "Original Designer Brief",
+    "source_traits": "High C + High N + Low E",
+    "alignment_expectation": "Expected to favor sleep, rest_alone, and focused_work."
+  },
+  {
+    "id": 10040,
+    "name": "orig_cynical_journalist",
+    "persona_name": "cynical journalist",
+    "text": "A cynical journalist skilled at digging out facts and contradictions. He does not take people at their word, verifies sources to the end, and cuts into his sleep to keep investigating when a case is interesting.",
+    "big_five": {
+      "E": "mid",
+      "N": "mid",
+      "A": "low",
+      "C": "high",
+      "O": "high"
+    },
+    "occupation": "냉소적인 기자",
+    "age": 30,
+    "decay_modifiers": [
+      0.9,
+      0.8,
+      0.7,
+      0.9,
+      0.9,
+      0.8,
+      1.5,
+      1.8
+    ],
+    "preferred_actions": [
+      10,
+      1,
+      0
+    ],
+    "split": "designer_case_study",
+    "source": "Original Designer Brief",
+    "source_traits": "High O + High N + Low A",
+    "alignment_expectation": "Expected to favor read_deep, planning_work, and focused_work."
+  },
+  {
+    "id": 10041,
+    "name": "orig_optimistic_parent",
+    "persona_name": "optimistic single parent",
+    "text": "An optimistic single parent who keeps her humor through hard situations. She draws energy from time with her child and brief conversations with neighbors, and shapes her day around her family.",
+    "big_five": {
+      "E": "high",
+      "N": "low",
+      "A": "high",
+      "C": "high",
+      "O": "mid"
+    },
+    "occupation": "낙천적인 한부모",
+    "age": 30,
+    "decay_modifiers": [
+      1.2,
+      0.9,
+      1.5,
+      1.0,
+      1.0,
+      0.9,
+      1.0,
+      0.9
+    ],
+    "preferred_actions": [
+      7,
+      14,
+      3
+    ],
+    "split": "designer_case_study",
+    "source": "Original Designer Brief",
+    "source_traits": "High E + High A + Low N",
+    "alignment_expectation": "Expected to favor socialize_respond, rest_with_others, and eat_slow."
+  },
+  {
+    "id": 10042,
+    "name": "orig_introvert_chef",
+    "persona_name": "introverted gourmet chef",
+    "text": "A quiet but uncompromising chef who is introverted about everything except food. He explores new ingredients, savors meals slowly, and prefers spending most of his time alone refining the menu.",
+    "big_five": {
+      "E": "low",
+      "N": "mid",
+      "A": "mid",
+      "C": "high",
+      "O": "high"
+    },
+    "occupation": "내성적 셰프",
+    "age": 30,
+    "decay_modifiers": [
+      1.6,
+      0.9,
+      0.6,
+      0.9,
+      1.0,
+      0.8,
+      1.4,
+      1.2
+    ],
+    "preferred_actions": [
+      3,
+      0,
+      13
+    ],
+    "split": "designer_case_study",
+    "source": "Original Designer Brief",
+    "source_traits": "Low E + High C + High O",
+    "alignment_expectation": "Expected to favor eat_slow, focused_work, and rest_alone."
+  },
+  {
+    "id": 10043,
+    "name": "orig_anxious_composer",
+    "persona_name": "anxious composer",
+    "text": "An anxious composer fixated on polish. He rewrites every bar again and again, and when his condition wavers he cuts sleep or replays the same piece on loop to soothe the anxiety.",
+    "big_five": {
+      "E": "low",
+      "N": "high",
+      "A": "mid",
+      "C": "high",
+      "O": "high"
+    },
+    "occupation": "신경증적 작곡가",
+    "age": 30,
+    "decay_modifiers": [
+      0.9,
+      1.0,
+      0.6,
+      0.9,
+      0.9,
+      0.8,
+      1.6,
+      1.6
+    ],
+    "preferred_actions": [
+      0,
+      10,
+      13
+    ],
+    "split": "designer_case_study",
+    "source": "Original Designer Brief",
+    "source_traits": "High N + High C + High O",
+    "alignment_expectation": "Expected to favor focused_work, read_deep, and rest_alone."
+  },
+  {
+    "id": 10044,
+    "name": "orig_stoic_engineer",
+    "persona_name": "stoic engineer",
+    "text": "A stoic engineer who keeps his emotions to himself. He prefers fixed schedules and clear rules, and when problems arise he works through them one calm step at a time.",
+    "big_five": {
+      "E": "low",
+      "N": "low",
+      "A": "mid",
+      "C": "high",
+      "O": "mid"
+    },
+    "occupation": "과묵한 엔지니어",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      0.9,
+      0.6,
+      0.9,
+      1.0,
+      0.9,
+      1.6,
+      1.4
+    ],
+    "preferred_actions": [
+      0,
+      1,
+      10
+    ],
+    "split": "designer_case_study",
+    "source": "Original Designer Brief",
+    "source_traits": "Low E + Low N + High C",
+    "alignment_expectation": "Expected to favor focused_work, planning_work, and read_deep."
+  },
+  {
+    "id": 10045,
+    "name": "orig_empathic_counselor",
+    "persona_name": "empathic counselor",
+    "text": "An empathic counselor who listens deeply. She is skilled at slow conversation that helps the other person settle, and deliberately carves out quiet downtime to look after herself.",
+    "big_five": {
+      "E": "mid",
+      "N": "mid",
+      "A": "high",
+      "C": "high",
+      "O": "high"
+    },
+    "occupation": "공감 상담사",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      1.0,
+      1.3,
+      1.1,
+      1.0,
+      0.9,
+      1.1,
+      1.1
+    ],
+    "preferred_actions": [
+      7,
+      13,
+      14
+    ],
+    "split": "designer_case_study",
+    "source": "Original Designer Brief",
+    "source_traits": "High A + High O + Mid N",
+    "alignment_expectation": "Expected to favor socialize_respond, rest_alone, and rest_with_others."
+  },
+  {
+    "id": 10046,
+    "name": "orig_eccentric_professor",
+    "persona_name": "eccentric retired professor",
+    "text": "An eccentric retired professor who cannot put down books and papers even in retirement. He reads articles until early morning, savors a late lunch slowly, and occasionally enjoys long conversations with former students.",
+    "big_five": {
+      "E": "mid",
+      "N": "mid",
+      "A": "mid",
+      "C": "high",
+      "O": "high"
+    },
+    "occupation": "별난 은퇴 교수",
+    "age": 30,
+    "decay_modifiers": [
+      1.2,
+      0.9,
+      1.1,
+      0.9,
+      1.0,
+      0.8,
+      1.0,
+      1.8
+    ],
+    "preferred_actions": [
+      10,
+      3,
+      7
+    ],
+    "split": "designer_case_study",
+    "source": "Original Designer Brief",
+    "source_traits": "High O + Mid N + High C",
+    "alignment_expectation": "Expected to favor read_deep, eat_slow, and socialize_respond."
+  },
+  {
+    "id": 10047,
+    "name": "orig_startup_founder",
+    "persona_name": "sleep-deprived startup founder",
+    "text": "A startup founder polishing the product on too little sleep. He moves quickly between meetings and work, pulls up materials whenever an idea strikes even before dawn, and tends to grab meals quickly without much thought.",
+    "big_five": {
+      "E": "high",
+      "N": "mid",
+      "A": "mid",
+      "C": "high",
+      "O": "high"
+    },
+    "occupation": "잠이 부족한 창업가",
+    "age": 30,
+    "decay_modifiers": [
+      1.4,
+      1.2,
+      1.0,
+      0.7,
+      0.7,
+      0.8,
+      2.0,
+      1.6
+    ],
+    "preferred_actions": [
+      0,
+      1,
+      2
+    ],
+    "split": "designer_case_study",
+    "source": "Original Designer Brief",
+    "source_traits": "High E + High C + High O",
+    "alignment_expectation": "Expected to favor focused_work, planning_work, and eat_quick."
+  },
+  {
+    "id": 10048,
+    "name": "orig_routine_retiree",
+    "persona_name": "routine-driven retiree",
+    "text": "A retiree who walks and eats at the same time every day. He dislikes change and finds his stability in keeping a fixed routine, and treats cleanliness and tidiness as priorities.",
+    "big_five": {
+      "E": "mid",
+      "N": "low",
+      "A": "high",
+      "C": "high",
+      "O": "low"
+    },
+    "occupation": "규칙적인 은퇴자",
+    "age": 30,
+    "decay_modifiers": [
+      1.1,
+      0.9,
+      1.0,
+      1.0,
+      1.7,
+      1.3,
+      0.7,
+      0.7
+    ],
+    "preferred_actions": [
+      12,
+      9,
+      3
+    ],
+    "split": "designer_case_study",
+    "source": "Original Designer Brief",
+    "source_traits": "Mid E + Low N + High C + Low O",
+    "alignment_expectation": "Expected to favor clean, exercise_light, and eat_slow."
+  },
+  {
+    "id": 10049,
+    "name": "orig_caretaker_family",
+    "persona_name": "quiet family caretaker",
+    "text": "A quiet family member who lives alongside her aging parents. She spends more of her day adjusting to their condition and schedule than to her own, and steadies herself with even brief moments of solitary rest.",
+    "big_five": {
+      "E": "low",
+      "N": "mid",
+      "A": "high",
+      "C": "high",
+      "O": "mid"
+    },
+    "occupation": "부모를 돌보는 가족",
+    "age": 30,
+    "decay_modifiers": [
+      1.0,
+      1.0,
+      1.0,
+      0.9,
+      1.4,
+      0.9,
+      1.1,
+      0.9
+    ],
+    "preferred_actions": [
+      12,
+      7,
+      13
+    ],
+    "split": "designer_case_study",
+    "source": "Original Designer Brief",
+    "source_traits": "Low E + High A + High C",
+    "alignment_expectation": "Expected to favor clean, socialize_respond, and rest_alone."
+  },
+  {
+    "id": 10050,
+    "name": "orig_rideshare_driver",
+    "persona_name": "restless rideshare driver",
+    "text": "A rideshare driver with an erratic schedule. He handles customers well but is constantly thinking about the next ride and his earnings, and uses brief naps and quick meals to keep himself going whenever a gap opens up.",
+    "big_five": {
+      "E": "mid",
+      "N": "high",
+      "A": "mid",
+      "C": "mid",
+      "O": "mid"
+    },
+    "occupation": "불안정한 라이드셰어 기사",
+    "age": 30,
+    "decay_modifiers": [
+      1.3,
+      1.2,
+      1.0,
+      0.8,
+      0.8,
+      0.7,
+      1.4,
+      0.8
+    ],
+    "preferred_actions": [
+      2,
+      5,
+      19
+    ],
+    "split": "designer_case_study",
+    "source": "Original Designer Brief",
+    "source_traits": "Mid E + High N + Mid C",
+    "alignment_expectation": "Expected to favor eat_quick, nap, and movement (route-driven)."
   }
 ]
