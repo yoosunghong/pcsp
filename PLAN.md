@@ -62,6 +62,7 @@
 - [x] Restructure `main.tex` from a vision/position-paper framing into a standard experimental-paper framing while preserving existing results.
 - [x] Fix Figure 3 designer-persona t-SNE label overlap and recompile `main.pdf`.
 - [x] Replace Figure 1 with the PSPC pipeline diagram, render it as a two-column figure, restore Figure 3, and recompile `main.pdf`.
+- [x] Replace the synthetic Figure 3 KL scatter with empirical sampled-pair policy KL measurements and align headline/table claims with the strongest defensible results.
 
 ---
 

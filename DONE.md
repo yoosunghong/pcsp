@@ -6,6 +6,24 @@ This file holds completed work details, decisions, result paths, and experiment 
 
 ## 2026-05-13
 
+### Paper Validity Fix: Empirical KL Figure
+
+- Replaced the synthetic/statistically reconstructed Figure 3 KL scatter with empirical sampled-pair policy KL measurements generated from the trained v1/v2 PCSP-full checkpoints.
+- Updated `scripts/generate_cog_figures.py` so `fig3_kl_v1v2` now:
+  - loads the trained policy checkpoints,
+  - samples shared states with the existing v1/v2 diversity-eval procedures,
+  - computes symmetric policy KL for sampled persona pairs,
+  - computes projected persona L2 distance after the trained LoRA projection,
+  - saves plotted point provenance to `results/eval/fig3_kl_v1v2_points.json`.
+- Empirical Figure 3 sampled-pair results:
+  - v1: 100 pairs, 200 states, Spearman rho = 0.755, mean KL = 4.64.
+  - v2: 60 pairs, 100 states, Spearman rho = 0.717, mean KL = 5.46.
+- Updated `paper/cog2026_vision/main.tex` to distinguish aggregate evaluation rho values (0.728 / 0.725) from the independently regenerated plotted sample (0.755 / 0.717).
+- Corrected the headline zero-shot claim from "11x above chance" to "up to 17x above chance" to align with the v3 concat result.
+- Corrected the v2 table emphasis so concat is bolded for the highest zero-shot accuracy while PCSP full remains bolded for rho/KL.
+- Recompiled `paper/cog2026_vision/main.pdf` with system `pdflatex` after conda TeX failed due a missing `pdflatex.fmt`.
+- Build status: PDF compiles; remaining warnings are underfull hboxes and the standard IEEEtran final-column reminder.
+
 ### Coarse Google Forms Human Pilot
 
 - Recorded the completed Google Forms coarse-trace survey as aggregate item-level A/B ratios from 30 participants:

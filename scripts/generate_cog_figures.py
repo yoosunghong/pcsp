@@ -12,11 +12,14 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from pathlib import Path
+import torch
+import torch.nn.functional as F
 
 sys.path.insert(0, "/home/swim/Documents/Projects/co-spec")
 
 ROOT = Path("/home/swim/Documents/Projects/co-spec")
 OUT  = ROOT / "paper" / "figures"
+EVAL_OUT = ROOT / "results" / "eval"
 
 # ── colour palette ────────────────────────────────────────────────────────────
 C_FULL      = "#2271B3"
@@ -97,67 +100,137 @@ def fig2_learning_curves():
 # Fig 3  KL Scatter  (v1 left | v2 right)
 # ─────────────────────────────────────────────────────────────────────────────
 def fig3_kl_scatter():
-    # v1: 300-persona embeddings (train 240)
-    emb_v1 = np.load(ROOT / "results" / "embeddings" / "persona_embeddings_300.npy")[:240]
-    # v2: 500-persona embeddings (train 400)
-    emb_v2 = np.load(ROOT / "results" / "embeddings" / "persona_embeddings_500.npy")[:400]
+    from scipy.stats import spearmanr
+    from src.eval.diversity import _sample_random_states
+    from src.training.pcsp_trainer import PCSPActorCritic
+    from scripts.run_eval_v2 import _sample_states_v2
+    from scripts.run_pcsp_v2 import PCSPActorCriticV2
 
-    rng = np.random.default_rng(42)
+    def _load_json(path):
+        return json.loads((ROOT / path).read_text())
 
-    def sample_pairs(emb, n=120):
-        N = len(emb)
-        idx_a = rng.integers(0, N, n)
-        idx_b = rng.integers(0, N, n)
-        same  = idx_a == idx_b
-        idx_b[same] = (idx_b[same] + 1) % N
-        a, b = emb[idx_a], emb[idx_b]
-        cos_sim  = np.sum(a * b, axis=1) / (
-            np.linalg.norm(a, axis=1) * np.linalg.norm(b, axis=1) + 1e-9)
-        return 1 - cos_sim  # cosine distance
+    def empirical_pairs(
+        *,
+        label,
+        policy,
+        policy_path,
+        embeddings_path,
+        personas_path,
+        states_np,
+        n_pairs,
+        seed,
+        device,
+    ):
+        policy.load_state_dict(torch.load(ROOT / policy_path, map_location="cpu", weights_only=True))
+        policy.to(device).eval()
+        all_emb = np.load(ROOT / embeddings_path)
+        personas = _load_json(personas_path)
 
-    def sim_kl(cos_dist, mean_kl, std_kl, rho):
-        """Generate KL values with given Spearman ρ against cos_dist."""
-        n = len(cos_dist)
-        rank_d  = np.argsort(np.argsort(cos_dist)).astype(float)
-        noise   = rng.normal(0, 1, n)
-        rank_kl = rho * rank_d + np.sqrt(max(1 - rho**2, 0)) * noise * (n / 3)
-        rank_kl = np.clip(rank_kl, 0, n - 1).astype(int)
-        kl_raw  = np.clip(rng.normal(mean_kl, std_kl, n), 0.01, None)
-        return kl_raw[np.argsort(np.argsort(rank_kl))]
+        rng = np.random.default_rng(seed)
+        pairs = []
+        while len(pairs) < min(n_pairs, len(personas) * (len(personas) - 1) // 2):
+            i, j = rng.choice(len(personas), size=2, replace=False)
+            pair = (int(i), int(j))
+            if pair not in pairs and (pair[1], pair[0]) not in pairs:
+                pairs.append(pair)
 
-    # Stats from eval results
-    configs = [
-        # (label, emb, mean_kl, std_kl, rho, env_label)
-        ("PCSP (full)",
-         emb_v1, 5.869, 4.122, 0.728,
-         "v1: 6×6 / 300 personas"),
-        ("PCSP (full)",
-         emb_v2, 5.398, 4.0,   0.725,
-         "v2: 12×12 / 500 personas"),
+        states = torch.FloatTensor(states_np).to(device)
+        kl_values, dist_values = [], []
+        rows = []
+        for i, j in pairs:
+            p_i, p_j = personas[i], personas[j]
+            e_i = torch.FloatTensor(all_emb[p_i["id"] - 1].astype(np.float32)).unsqueeze(0).to(device)
+            e_j = torch.FloatTensor(all_emb[p_j["id"] - 1].astype(np.float32)).unsqueeze(0).to(device)
+
+            with torch.no_grad():
+                logits_i = policy.action_logits(states, e_i.expand(len(states_np), -1))
+                logits_j = policy.action_logits(states, e_j.expand(len(states_np), -1))
+                pe_i = policy.persona_proj(e_i)
+                pe_j = policy.persona_proj(e_j)
+
+            log_p_i = F.log_softmax(logits_i, dim=-1)
+            log_p_j = F.log_softmax(logits_j, dim=-1)
+            sym_kl = (
+                F.kl_div(log_p_j, log_p_i.exp(), reduction="batchmean").item()
+                + F.kl_div(log_p_i, log_p_j.exp(), reduction="batchmean").item()
+            ) / 2.0
+            dist = float(torch.norm(pe_i - pe_j, dim=-1).item())
+
+            kl_values.append(sym_kl)
+            dist_values.append(dist)
+            rows.append({
+                "persona_i": int(p_i["id"]),
+                "persona_j": int(p_j["id"]),
+                "projected_l2_distance": dist,
+                "symmetric_policy_kl": sym_kl,
+            })
+
+        kl_arr = np.array(kl_values, dtype=float)
+        dist_arr = np.array(dist_values, dtype=float)
+        rho, p_val = spearmanr(kl_arr, dist_arr)
+        return {
+            "label": label,
+            "n_pairs": len(rows),
+            "n_states": int(len(states_np)),
+            "spearman_rho": float(rho),
+            "spearman_p": float(p_val),
+            "mean_kl": float(kl_arr.mean()),
+            "std_kl": float(kl_arr.std()),
+            "points": rows,
+        }
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    data = [
+        empirical_pairs(
+            label="v1: 6×6 / 300 personas",
+            policy=PCSPActorCritic(),
+            policy_path="results/pcsp/full/policy.pt",
+            embeddings_path="results/embeddings/persona_embeddings_300.npy",
+            personas_path="data/personas/train_240.json",
+            states_np=_sample_random_states(200, seed=0),
+            n_pairs=100,
+            seed=0,
+            device=device,
+        ),
+        empirical_pairs(
+            label="v2: 12×12 / 500 personas",
+            policy=PCSPActorCriticV2(),
+            policy_path="results/v2/pcsp/full/policy.pt",
+            embeddings_path="results/embeddings/persona_embeddings_500.npy",
+            personas_path="data/personas/train_400.json",
+            states_np=_sample_states_v2(100, seed=0),
+            n_pairs=60,
+            seed=0,
+            device=device,
+        ),
     ]
+    EVAL_OUT.mkdir(parents=True, exist_ok=True)
+    (EVAL_OUT / "fig3_kl_v1v2_points.json").write_text(
+        json.dumps({"source": "empirical_policy_kl", "panels": data}, indent=2)
+    )
 
     fig, axes = plt.subplots(1, 2, figsize=(6.5, 2.8))
 
-    for ax, (label, emb, mean_kl, std_kl, rho, env_label) in zip(axes, configs):
-        cos_dist = sample_pairs(emb)
-        kl_vals  = sim_kl(cos_dist, mean_kl, std_kl, rho)
+    for ax, panel in zip(axes, data):
+        dist_vals = np.array([p["projected_l2_distance"] for p in panel["points"]])
+        kl_vals = np.array([p["symmetric_policy_kl"] for p in panel["points"]])
 
-        ax.scatter(cos_dist, kl_vals, s=14, alpha=0.5,
+        ax.scatter(dist_vals, kl_vals, s=14, alpha=0.5,
                    color=C_FULL, lw=0)
-        z    = np.polyfit(cos_dist, kl_vals, 1)
-        xfit = np.linspace(cos_dist.min(), cos_dist.max(), 80)
+        z    = np.polyfit(dist_vals, kl_vals, 1)
+        xfit = np.linspace(dist_vals.min(), dist_vals.max(), 80)
         ax.plot(xfit, np.polyval(z, xfit), color=C_FULL, lw=2.0, alpha=0.9)
 
-        ax.set_title(env_label, fontsize=8.5)
-        ax.set_xlabel("Persona Embedding Distance", fontsize=8)
+        ax.set_title(panel["label"], fontsize=8.5)
+        ax.set_xlabel("Projected Persona Distance", fontsize=8)
         if ax is axes[0]:
             ax.set_ylabel("Behavioral KL Divergence", fontsize=8)
-        ax.text(0.97, 0.05, f"ρ = {rho:.3f}",
+        ax.text(0.97, 0.05, f"ρ = {panel['spearman_rho']:.3f}",
                 transform=ax.transAxes, ha="right", va="bottom", fontsize=9,
                 bbox=dict(boxstyle="round,pad=0.25", fc="white", ec="#BBBBBB"))
         ax.grid(True, alpha=0.25, lw=0.5)
 
-    fig.suptitle("Persona Embedding Distance vs. Behavioral KL — scale comparison",
+    fig.suptitle("Empirical Persona Distance vs. Behavioral KL — scale comparison",
                  fontsize=9, y=1.01)
     fig.tight_layout(pad=0.8)
     for ext in ("pdf", "png"):

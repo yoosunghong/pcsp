@@ -1,0 +1,987 @@
+{
+  "source": "empirical_policy_kl",
+  "panels": [
+    {
+      "label": "v1: 6\u00d76 / 300 personas",
+      "n_pairs": 100,
+      "n_states": 200,
+      "spearman_rho": 0.7309210921092109,
+      "spearman_p": 5.988655307454704e-18,
+      "mean_kl": 5.646164758754894,
+      "std_kl": 4.066757301455264,
+      "points": [
+        {
+          "persona_i": 204,
+          "persona_j": 153,
+          "projected_l2_distance": 1.664156436920166,
+          "symmetric_policy_kl": 10.009129285812378
+        },
+        {
+          "persona_i": 74,
+          "persona_j": 65,
+          "projected_l2_distance": 1.7514456510543823,
+          "symmetric_policy_kl": 5.549945116043091
+        },
+        {
+          "persona_i": 4,
+          "persona_j": 18,
+          "projected_l2_distance": 1.0714404582977295,
+          "symmetric_policy_kl": 6.728815317153931
+        },
+        {
+          "persona_i": 195,
+          "persona_j": 156,
+          "projected_l2_distance": 1.6333421468734741,
+          "symmetric_policy_kl": 14.179941177368164
+        },
+        {
+          "persona_i": 121,
+          "persona_j": 146,
+          "projected_l2_distance": 0.4036043882369995,
+          "symmetric_policy_kl": 0.2913663238286972
+        },
+        {
+          "persona_i": 175,
+          "persona_j": 152,
+          "projected_l2_distance": 1.8420311212539673,
+          "symmetric_policy_kl": 6.91789436340332
+        },
+        {
+          "persona_i": 225,
+          "persona_j": 134,
+          "projected_l2_distance": 1.1041680574417114,
+          "symmetric_policy_kl": 0.8801548779010773
+        },
+        {
+          "persona_i": 162,
+          "persona_j": 195,
+          "projected_l2_distance": 1.0914621353149414,
+          "symmetric_policy_kl": 2.4047839641571045
+        },
+        {
+          "persona_i": 95,
+          "persona_j": 206,
+          "projected_l2_distance": 1.0333939790725708,
+          "symmetric_policy_kl": 2.769028067588806
+        },
+        {
+          "persona_i": 9,
+          "persona_j": 184,
+          "projected_l2_distance": 1.288700819015503,
+          "symmetric_policy_kl": 4.737482905387878
+        },
+        {
+          "persona_i": 43,
+          "persona_j": 203,
+          "projected_l2_distance": 0.808789849281311,
+          "symmetric_policy_kl": 2.5540093183517456
+        },
+        {
+          "persona_i": 207,
+          "persona_j": 6,
+          "projected_l2_distance": 0.5701010227203369,
+          "symmetric_policy_kl": 1.8720498085021973
+        },
+        {
+          "persona_i": 72,
+          "persona_j": 20,
+          "projected_l2_distance": 0.7144686579704285,
+          "symmetric_policy_kl": 1.0849594175815582
+        },
+        {
+          "persona_i": 97,
+          "persona_j": 102,
+          "projected_l2_distance": 1.1696363687515259,
+          "symmetric_policy_kl": 7.815725564956665
+        },
+        {
+          "persona_i": 30,
+          "persona_j": 2,
+          "projected_l2_distance": 1.8035978078842163,
+          "symmetric_policy_kl": 6.40884804725647
+        },
+        {
+          "persona_i": 161,
+          "persona_j": 127,
+          "projected_l2_distance": 1.0734004974365234,
+          "symmetric_policy_kl": 2.6988608837127686
+        },
+        {
+          "persona_i": 62,
+          "persona_j": 148,
+          "projected_l2_distance": 1.33278226852417,
+          "symmetric_policy_kl": 9.796336889266968
+        },
+        {
+          "persona_i": 92,
+          "persona_j": 111,
+          "projected_l2_distance": 0.6438306570053101,
+          "symmetric_policy_kl": 1.4865023493766785
+        },
+        {
+          "persona_i": 236,
+          "persona_j": 193,
+          "projected_l2_distance": 1.2366082668304443,
+          "symmetric_policy_kl": 3.810893416404724
+        },
+        {
+          "persona_i": 164,
+          "persona_j": 229,
+          "projected_l2_distance": 0.6335367560386658,
+          "symmetric_policy_kl": 1.2218864560127258
+        },
+        {
+          "persona_i": 201,
+          "persona_j": 166,
+          "projected_l2_distance": 1.6728789806365967,
+          "symmetric_policy_kl": 14.417221069335938
+        },
+        {
+          "persona_i": 211,
+          "persona_j": 93,
+          "projected_l2_distance": 0.4580917954444885,
+          "symmetric_policy_kl": 0.20497934520244598
+        },
+        {
+          "persona_i": 139,
+          "persona_j": 174,
+          "projected_l2_distance": 1.044803261756897,
+          "symmetric_policy_kl": 6.63879656791687
+        },
+        {
+          "persona_i": 91,
+          "persona_j": 126,
+          "projected_l2_distance": 1.3877081871032715,
+          "symmetric_policy_kl": 11.88545846939087
+        },
+        {
+          "persona_i": 102,
+          "persona_j": 117,
+          "projected_l2_distance": 0.3937811255455017,
+          "symmetric_policy_kl": 0.20773130655288696
+        },
+        {
+          "persona_i": 213,
+          "persona_j": 18,
+          "projected_l2_distance": 0.11517482250928879,
+          "symmetric_policy_kl": 0.007611979730427265
+        },
+        {
+          "persona_i": 127,
+          "persona_j": 86,
+          "projected_l2_distance": 1.309963345527649,
+          "symmetric_policy_kl": 3.3216902017593384
+        },
+        {
+          "persona_i": 62,
+          "persona_j": 137,
+          "projected_l2_distance": 0.4210766851902008,
+          "symmetric_policy_kl": 0.0639590248465538
+        },
+        {
+          "persona_i": 172,
+          "persona_j": 143,
+          "projected_l2_distance": 1.2258400917053223,
+          "symmetric_policy_kl": 7.668885707855225
+        },
+        {
+          "persona_i": 183,
+          "persona_j": 81,
+          "projected_l2_distance": 1.3582843542099,
+          "symmetric_policy_kl": 13.343106269836426
+        },
+        {
+          "persona_i": 214,
+          "persona_j": 79,
+          "projected_l2_distance": 0.44935840368270874,
+          "symmetric_policy_kl": 2.0754858255386353
+        },
+        {
+          "persona_i": 55,
+          "persona_j": 172,
+          "projected_l2_distance": 1.4120820760726929,
+          "symmetric_policy_kl": 3.2675682306289673
+        },
+        {
+          "persona_i": 21,
+          "persona_j": 12,
+          "projected_l2_distance": 0.5437537431716919,
+          "symmetric_policy_kl": 0.3101034015417099
+        },
+        {
+          "persona_i": 200,
+          "persona_j": 97,
+          "projected_l2_distance": 1.2019636631011963,
+          "symmetric_policy_kl": 8.077156782150269
+        },
+        {
+          "persona_i": 76,
+          "persona_j": 58,
+          "projected_l2_distance": 1.2024474143981934,
+          "symmetric_policy_kl": 6.090379953384399
+        },
+        {
+          "persona_i": 20,
+          "persona_j": 210,
+          "projected_l2_distance": 1.1980561017990112,
+          "symmetric_policy_kl": 3.651378035545349
+        },
+        {
+          "persona_i": 161,
+          "persona_j": 81,
+          "projected_l2_distance": 1.238861322402954,
+          "symmetric_policy_kl": 7.529574394226074
+        },
+        {
+          "persona_i": 207,
+          "persona_j": 36,
+          "projected_l2_distance": 1.2636725902557373,
+          "symmetric_policy_kl": 8.36532735824585
+        },
+        {
+          "persona_i": 214,
+          "persona_j": 192,
+          "projected_l2_distance": 1.7548195123672485,
+          "symmetric_policy_kl": 5.463745594024658
+        },
+        {
+          "persona_i": 185,
+          "persona_j": 56,
+          "projected_l2_distance": 1.2202386856079102,
+          "symmetric_policy_kl": 3.382724165916443
+        },
+        {
+          "persona_i": 137,
+          "persona_j": 98,
+          "projected_l2_distance": 1.554404377937317,
+          "symmetric_policy_kl": 9.47162938117981
+        },
+        {
+          "persona_i": 228,
+          "persona_j": 48,
+          "projected_l2_distance": 1.0292221307754517,
+          "symmetric_policy_kl": 3.5615450143814087
+        },
+        {
+          "persona_i": 149,
+          "persona_j": 140,
+          "projected_l2_distance": 1.7129243612289429,
+          "symmetric_policy_kl": 11.194604873657227
+        },
+        {
+          "persona_i": 72,
+          "persona_j": 217,
+          "projected_l2_distance": 1.0629247426986694,
+          "symmetric_policy_kl": 5.110426187515259
+        },
+        {
+          "persona_i": 213,
+          "persona_j": 48,
+          "projected_l2_distance": 0.20019756257534027,
+          "symmetric_policy_kl": 0.03880233317613602
+        },
+        {
+          "persona_i": 12,
+          "persona_j": 226,
+          "projected_l2_distance": 1.2268664836883545,
+          "symmetric_policy_kl": 4.067648768424988
+        },
+        {
+          "persona_i": 153,
+          "persona_j": 26,
+          "projected_l2_distance": 0.9005370736122131,
+          "symmetric_policy_kl": 0.9208540916442871
+        },
+        {
+          "persona_i": 151,
+          "persona_j": 184,
+          "projected_l2_distance": 0.5052092671394348,
+          "symmetric_policy_kl": 3.3295093774795532
+        },
+        {
+          "persona_i": 106,
+          "persona_j": 98,
+          "projected_l2_distance": 1.1492538452148438,
+          "symmetric_policy_kl": 8.250785827636719
+        },
+        {
+          "persona_i": 47,
+          "persona_j": 229,
+          "projected_l2_distance": 1.3474023342132568,
+          "symmetric_policy_kl": 6.020236015319824
+        },
+        {
+          "persona_i": 12,
+          "persona_j": 103,
+          "projected_l2_distance": 0.39608997106552124,
+          "symmetric_policy_kl": 0.20535259693861008
+        },
+        {
+          "persona_i": 149,
+          "persona_j": 84,
+          "projected_l2_distance": 0.49088606238365173,
+          "symmetric_policy_kl": 0.06930575519800186
+        },
+        {
+          "persona_i": 228,
+          "persona_j": 145,
+          "projected_l2_distance": 1.9030109643936157,
+          "symmetric_policy_kl": 10.89151906967163
+        },
+        {
+          "persona_i": 110,
+          "persona_j": 201,
+          "projected_l2_distance": 1.5347390174865723,
+          "symmetric_policy_kl": 9.718017339706421
+        },
+        {
+          "persona_i": 120,
+          "persona_j": 98,
+          "projected_l2_distance": 1.2970293760299683,
+          "symmetric_policy_kl": 9.221283197402954
+        },
+        {
+          "persona_i": 127,
+          "persona_j": 56,
+          "projected_l2_distance": 1.6275535821914673,
+          "symmetric_policy_kl": 6.286102771759033
+        },
+        {
+          "persona_i": 100,
+          "persona_j": 19,
+          "projected_l2_distance": 0.7284390330314636,
+          "symmetric_policy_kl": 0.4686518609523773
+        },
+        {
+          "persona_i": 176,
+          "persona_j": 180,
+          "projected_l2_distance": 0.8274837136268616,
+          "symmetric_policy_kl": 1.4346032440662384
+        },
+        {
+          "persona_i": 224,
+          "persona_j": 221,
+          "projected_l2_distance": 1.3188221454620361,
+          "symmetric_policy_kl": 4.317490935325623
+        },
+        {
+          "persona_i": 28,
+          "persona_j": 32,
+          "projected_l2_distance": 1.0720711946487427,
+          "symmetric_policy_kl": 1.416824221611023
+        },
+        {
+          "persona_i": 232,
+          "persona_j": 223,
+          "projected_l2_distance": 0.25410741567611694,
+          "symmetric_policy_kl": 0.5571766495704651
+        },
+        {
+          "persona_i": 210,
+          "persona_j": 232,
+          "projected_l2_distance": 1.7821487188339233,
+          "symmetric_policy_kl": 5.209377765655518
+        },
+        {
+          "persona_i": 208,
+          "persona_j": 29,
+          "projected_l2_distance": 1.7625408172607422,
+          "symmetric_policy_kl": 8.732696056365967
+        },
+        {
+          "persona_i": 235,
+          "persona_j": 199,
+          "projected_l2_distance": 1.7717175483703613,
+          "symmetric_policy_kl": 3.798292875289917
+        },
+        {
+          "persona_i": 87,
+          "persona_j": 36,
+          "projected_l2_distance": 1.3926887512207031,
+          "symmetric_policy_kl": 10.01014232635498
+        },
+        {
+          "persona_i": 233,
+          "persona_j": 89,
+          "projected_l2_distance": 1.4524484872817993,
+          "symmetric_policy_kl": 1.3210379481315613
+        },
+        {
+          "persona_i": 198,
+          "persona_j": 92,
+          "projected_l2_distance": 1.4669545888900757,
+          "symmetric_policy_kl": 5.554998397827148
+        },
+        {
+          "persona_i": 79,
+          "persona_j": 115,
+          "projected_l2_distance": 1.202685832977295,
+          "symmetric_policy_kl": 7.084118127822876
+        },
+        {
+          "persona_i": 193,
+          "persona_j": 214,
+          "projected_l2_distance": 0.9211196899414062,
+          "symmetric_policy_kl": 6.308979511260986
+        },
+        {
+          "persona_i": 234,
+          "persona_j": 221,
+          "projected_l2_distance": 1.541278600692749,
+          "symmetric_policy_kl": 7.942226886749268
+        },
+        {
+          "persona_i": 102,
+          "persona_j": 130,
+          "projected_l2_distance": 1.1644614934921265,
+          "symmetric_policy_kl": 3.9401001930236816
+        },
+        {
+          "persona_i": 106,
+          "persona_j": 36,
+          "projected_l2_distance": 1.3412965536117554,
+          "symmetric_policy_kl": 11.162530660629272
+        },
+        {
+          "persona_i": 166,
+          "persona_j": 10,
+          "projected_l2_distance": 1.3398910760879517,
+          "symmetric_policy_kl": 13.493593215942383
+        },
+        {
+          "persona_i": 175,
+          "persona_j": 44,
+          "projected_l2_distance": 1.2234359979629517,
+          "symmetric_policy_kl": 6.915756464004517
+        },
+        {
+          "persona_i": 120,
+          "persona_j": 7,
+          "projected_l2_distance": 1.703527569770813,
+          "symmetric_policy_kl": 10.347310543060303
+        },
+        {
+          "persona_i": 75,
+          "persona_j": 172,
+          "projected_l2_distance": 1.0455262660980225,
+          "symmetric_policy_kl": 4.142473459243774
+        },
+        {
+          "persona_i": 182,
+          "persona_j": 22,
+          "projected_l2_distance": 1.070163369178772,
+          "symmetric_policy_kl": 2.1439115405082703
+        },
+        {
+          "persona_i": 123,
+          "persona_j": 216,
+          "projected_l2_distance": 1.7066123485565186,
+          "symmetric_policy_kl": 9.595499992370605
+        },
+        {
+          "persona_i": 16,
+          "persona_j": 65,
+          "projected_l2_distance": 1.5437593460083008,
+          "symmetric_policy_kl": 4.216160178184509
+        },
+        {
+          "persona_i": 150,
+          "persona_j": 202,
+          "projected_l2_distance": 1.668211579322815,
+          "symmetric_policy_kl": 10.662731647491455
+        },
+        {
+          "persona_i": 83,
+          "persona_j": 156,
+          "projected_l2_distance": 0.23968610167503357,
+          "symmetric_policy_kl": 0.009393151849508286
+        },
+        {
+          "persona_i": 103,
+          "persona_j": 210,
+          "projected_l2_distance": 1.5232490301132202,
+          "symmetric_policy_kl": 5.3300042152404785
+        },
+        {
+          "persona_i": 34,
+          "persona_j": 135,
+          "projected_l2_distance": 0.9297547936439514,
+          "symmetric_policy_kl": 10.061160564422607
+        },
+        {
+          "persona_i": 66,
+          "persona_j": 62,
+          "projected_l2_distance": 1.164832353591919,
+          "symmetric_policy_kl": 5.835673093795776
+        },
+        {
+          "persona_i": 214,
+          "persona_j": 51,
+          "projected_l2_distance": 1.590358853340149,
+          "symmetric_policy_kl": 12.971165180206299
+        },
+        {
+          "persona_i": 31,
+          "persona_j": 54,
+          "projected_l2_distance": 1.7040164470672607,
+          "symmetric_policy_kl": 14.00770616531372
+        },
+        {
+          "persona_i": 187,
+          "persona_j": 70,
+          "projected_l2_distance": 1.3838587999343872,
+          "symmetric_policy_kl": 6.422216534614563
+        },
+        {
+          "persona_i": 141,
+          "persona_j": 207,
+          "projected_l2_distance": 1.4566116333007812,
+          "symmetric_policy_kl": 9.65988302230835
+        },
+        {
+          "persona_i": 195,
+          "persona_j": 183,
+          "projected_l2_distance": 0.4124862253665924,
+          "symmetric_policy_kl": 0.07865702547132969
+        },
+        {
+          "persona_i": 110,
+          "persona_j": 134,
+          "projected_l2_distance": 1.2787284851074219,
+          "symmetric_policy_kl": 2.8348860144615173
+        },
+        {
+          "persona_i": 100,
+          "persona_j": 109,
+          "projected_l2_distance": 0.6367063522338867,
+          "symmetric_policy_kl": 1.1777092814445496
+        },
+        {
+          "persona_i": 196,
+          "persona_j": 199,
+          "projected_l2_distance": 0.775885283946991,
+          "symmetric_policy_kl": 5.656891822814941
+        },
+        {
+          "persona_i": 170,
+          "persona_j": 231,
+          "projected_l2_distance": 1.2914073467254639,
+          "symmetric_policy_kl": 3.2915561199188232
+        },
+        {
+          "persona_i": 89,
+          "persona_j": 20,
+          "projected_l2_distance": 0.9924339056015015,
+          "symmetric_policy_kl": 1.9878997206687927
+        },
+        {
+          "persona_i": 143,
+          "persona_j": 56,
+          "projected_l2_distance": 1.6257381439208984,
+          "symmetric_policy_kl": 14.044883728027344
+        },
+        {
+          "persona_i": 227,
+          "persona_j": 203,
+          "projected_l2_distance": 1.5327798128128052,
+          "symmetric_policy_kl": 11.470388650894165
+        },
+        {
+          "persona_i": 98,
+          "persona_j": 196,
+          "projected_l2_distance": 1.0583728551864624,
+          "symmetric_policy_kl": 6.820255279541016
+        },
+        {
+          "persona_i": 226,
+          "persona_j": 218,
+          "projected_l2_distance": 1.543129324913025,
+          "symmetric_policy_kl": 8.602527141571045
+        },
+        {
+          "persona_i": 142,
+          "persona_j": 198,
+          "projected_l2_distance": 1.4519309997558594,
+          "symmetric_policy_kl": 12.182463645935059
+        },
+        {
+          "persona_i": 100,
+          "persona_j": 207,
+          "projected_l2_distance": 1.4675583839416504,
+          "symmetric_policy_kl": 3.845350980758667
+        }
+      ]
+    },
+    {
+      "label": "v2: 12\u00d712 / 500 personas",
+      "n_pairs": 60,
+      "n_states": 100,
+      "spearman_rho": 0.694859683245346,
+      "spearman_p": 7.317775115380337e-10,
+      "mean_kl": 5.753411538846558,
+      "std_kl": 5.0655997549429195,
+      "points": [
+        {
+          "persona_i": 340,
+          "persona_j": 255,
+          "projected_l2_distance": 1.6484671831130981,
+          "symmetric_policy_kl": 4.04053521156311
+        },
+        {
+          "persona_i": 124,
+          "persona_j": 108,
+          "projected_l2_distance": 0.2656462490558624,
+          "symmetric_policy_kl": 0.009241399355232716
+        },
+        {
+          "persona_i": 7,
+          "persona_j": 31,
+          "projected_l2_distance": 0.42974382638931274,
+          "symmetric_policy_kl": 2.485564649105072
+        },
+        {
+          "persona_i": 325,
+          "persona_j": 260,
+          "projected_l2_distance": 1.423022747039795,
+          "symmetric_policy_kl": 13.778299331665039
+        },
+        {
+          "persona_i": 201,
+          "persona_j": 243,
+          "projected_l2_distance": 1.3720835447311401,
+          "symmetric_policy_kl": 9.402237057685852
+        },
+        {
+          "persona_i": 292,
+          "persona_j": 253,
+          "projected_l2_distance": 1.0343623161315918,
+          "symmetric_policy_kl": 5.689004182815552
+        },
+        {
+          "persona_i": 375,
+          "persona_j": 224,
+          "projected_l2_distance": 0.4094485342502594,
+          "symmetric_policy_kl": 0.025022524408996105
+        },
+        {
+          "persona_i": 269,
+          "persona_j": 326,
+          "projected_l2_distance": 1.5619378089904785,
+          "symmetric_policy_kl": 4.4344892501831055
+        },
+        {
+          "persona_i": 158,
+          "persona_j": 343,
+          "projected_l2_distance": 1.723163366317749,
+          "symmetric_policy_kl": 9.480952024459839
+        },
+        {
+          "persona_i": 14,
+          "persona_j": 306,
+          "projected_l2_distance": 0.90913987159729,
+          "symmetric_policy_kl": 3.152408003807068
+        },
+        {
+          "persona_i": 71,
+          "persona_j": 338,
+          "projected_l2_distance": 0.6019291877746582,
+          "symmetric_policy_kl": 1.0821166038513184
+        },
+        {
+          "persona_i": 345,
+          "persona_j": 9,
+          "projected_l2_distance": 1.8460030555725098,
+          "symmetric_policy_kl": 11.302876472473145
+        },
+        {
+          "persona_i": 120,
+          "persona_j": 33,
+          "projected_l2_distance": 1.4739022254943848,
+          "symmetric_policy_kl": 5.116985559463501
+        },
+        {
+          "persona_i": 162,
+          "persona_j": 169,
+          "projected_l2_distance": 0.8223103880882263,
+          "symmetric_policy_kl": 7.88047456741333
+        },
+        {
+          "persona_i": 50,
+          "persona_j": 3,
+          "projected_l2_distance": 0.4369649589061737,
+          "symmetric_policy_kl": 0.7368849664926529
+        },
+        {
+          "persona_i": 268,
+          "persona_j": 211,
+          "projected_l2_distance": 0.32267382740974426,
+          "symmetric_policy_kl": 0.5161915272474289
+        },
+        {
+          "persona_i": 103,
+          "persona_j": 247,
+          "projected_l2_distance": 1.1342198848724365,
+          "symmetric_policy_kl": 9.648263931274414
+        },
+        {
+          "persona_i": 154,
+          "persona_j": 185,
+          "projected_l2_distance": 0.12828834354877472,
+          "symmetric_policy_kl": 0.0025283124996349216
+        },
+        {
+          "persona_i": 393,
+          "persona_j": 322,
+          "projected_l2_distance": 0.37305760383605957,
+          "symmetric_policy_kl": 0.008544771233573556
+        },
+        {
+          "persona_i": 274,
+          "persona_j": 381,
+          "projected_l2_distance": 1.1787437200546265,
+          "symmetric_policy_kl": 3.2233150005340576
+        },
+        {
+          "persona_i": 336,
+          "persona_j": 276,
+          "projected_l2_distance": 1.075321912765503,
+          "symmetric_policy_kl": 3.103023648262024
+        },
+        {
+          "persona_i": 351,
+          "persona_j": 156,
+          "projected_l2_distance": 1.4222254753112793,
+          "symmetric_policy_kl": 10.147273182868958
+        },
+        {
+          "persona_i": 231,
+          "persona_j": 289,
+          "projected_l2_distance": 0.7704693078994751,
+          "symmetric_policy_kl": 4.022249221801758
+        },
+        {
+          "persona_i": 151,
+          "persona_j": 210,
+          "projected_l2_distance": 0.41664475202560425,
+          "symmetric_policy_kl": 0.18461811542510986
+        },
+        {
+          "persona_i": 169,
+          "persona_j": 195,
+          "projected_l2_distance": 0.7535321712493896,
+          "symmetric_policy_kl": 8.70585298538208
+        },
+        {
+          "persona_i": 355,
+          "persona_j": 30,
+          "projected_l2_distance": 1.4948045015335083,
+          "symmetric_policy_kl": 6.352733135223389
+        },
+        {
+          "persona_i": 213,
+          "persona_j": 144,
+          "projected_l2_distance": 0.536056399345398,
+          "symmetric_policy_kl": 0.22058026492595673
+        },
+        {
+          "persona_i": 102,
+          "persona_j": 229,
+          "projected_l2_distance": 1.35232675075531,
+          "symmetric_policy_kl": 16.309381008148193
+        },
+        {
+          "persona_i": 288,
+          "persona_j": 238,
+          "projected_l2_distance": 1.3569440841674805,
+          "symmetric_policy_kl": 4.830688774585724
+        },
+        {
+          "persona_i": 305,
+          "persona_j": 135,
+          "projected_l2_distance": 0.253010630607605,
+          "symmetric_policy_kl": 0.02510969713330269
+        },
+        {
+          "persona_i": 357,
+          "persona_j": 131,
+          "projected_l2_distance": 1.0802171230316162,
+          "symmetric_policy_kl": 18.70382261276245
+        },
+        {
+          "persona_i": 91,
+          "persona_j": 286,
+          "projected_l2_distance": 1.3990217447280884,
+          "symmetric_policy_kl": 1.5817182064056396
+        },
+        {
+          "persona_i": 34,
+          "persona_j": 20,
+          "projected_l2_distance": 0.3797748386859894,
+          "symmetric_policy_kl": 0.0460849292576313
+        },
+        {
+          "persona_i": 333,
+          "persona_j": 161,
+          "projected_l2_distance": 0.933269202709198,
+          "symmetric_policy_kl": 2.685014843940735
+        },
+        {
+          "persona_i": 127,
+          "persona_j": 96,
+          "projected_l2_distance": 0.5844487547874451,
+          "symmetric_policy_kl": 0.9439437985420227
+        },
+        {
+          "persona_i": 32,
+          "persona_j": 350,
+          "projected_l2_distance": 1.4355651140213013,
+          "symmetric_policy_kl": 10.443216323852539
+        },
+        {
+          "persona_i": 268,
+          "persona_j": 135,
+          "projected_l2_distance": 1.3461817502975464,
+          "symmetric_policy_kl": 9.49068820476532
+        },
+        {
+          "persona_i": 345,
+          "persona_j": 60,
+          "projected_l2_distance": 1.4597783088684082,
+          "symmetric_policy_kl": 5.104156970977783
+        },
+        {
+          "persona_i": 358,
+          "persona_j": 319,
+          "projected_l2_distance": 0.953548014163971,
+          "symmetric_policy_kl": 14.409778594970703
+        },
+        {
+          "persona_i": 307,
+          "persona_j": 93,
+          "projected_l2_distance": 0.962367832660675,
+          "symmetric_policy_kl": 2.570536255836487
+        },
+        {
+          "persona_i": 228,
+          "persona_j": 162,
+          "projected_l2_distance": 1.0126537084579468,
+          "symmetric_policy_kl": 15.335331916809082
+        },
+        {
+          "persona_i": 379,
+          "persona_j": 80,
+          "projected_l2_distance": 1.1612117290496826,
+          "symmetric_policy_kl": 2.6765023469924927
+        },
+        {
+          "persona_i": 249,
+          "persona_j": 233,
+          "projected_l2_distance": 0.6906176805496216,
+          "symmetric_policy_kl": 3.0989112854003906
+        },
+        {
+          "persona_i": 120,
+          "persona_j": 361,
+          "projected_l2_distance": 0.24197272956371307,
+          "symmetric_policy_kl": 0.008460401091724634
+        },
+        {
+          "persona_i": 356,
+          "persona_j": 80,
+          "projected_l2_distance": 1.5951374769210815,
+          "symmetric_policy_kl": 14.938139915466309
+        },
+        {
+          "persona_i": 20,
+          "persona_j": 376,
+          "projected_l2_distance": 1.4282383918762207,
+          "symmetric_policy_kl": 5.132904767990112
+        },
+        {
+          "persona_i": 254,
+          "persona_j": 43,
+          "projected_l2_distance": 1.7073900699615479,
+          "symmetric_policy_kl": 9.858556509017944
+        },
+        {
+          "persona_i": 252,
+          "persona_j": 306,
+          "projected_l2_distance": 1.76598060131073,
+          "symmetric_policy_kl": 8.788950800895691
+        },
+        {
+          "persona_i": 177,
+          "persona_j": 164,
+          "projected_l2_distance": 0.4718409478664398,
+          "symmetric_policy_kl": 0.14377819746732712
+        },
+        {
+          "persona_i": 79,
+          "persona_j": 381,
+          "projected_l2_distance": 1.1009159088134766,
+          "symmetric_policy_kl": 0.4746065139770508
+        },
+        {
+          "persona_i": 20,
+          "persona_j": 171,
+          "projected_l2_distance": 1.3432209491729736,
+          "symmetric_policy_kl": 4.502887725830078
+        },
+        {
+          "persona_i": 248,
+          "persona_j": 140,
+          "projected_l2_distance": 1.5796343088150024,
+          "symmetric_policy_kl": 7.958277404308319
+        },
+        {
+          "persona_i": 380,
+          "persona_j": 241,
+          "projected_l2_distance": 1.1916648149490356,
+          "symmetric_policy_kl": 14.395244598388672
+        },
+        {
+          "persona_i": 184,
+          "persona_j": 334,
+          "projected_l2_distance": 0.7645816206932068,
+          "symmetric_policy_kl": 1.841103196144104
+        },
+        {
+          "persona_i": 199,
+          "persona_j": 163,
+          "projected_l2_distance": 0.9663354158401489,
+          "symmetric_policy_kl": 14.597837924957275
+        },
+        {
+          "persona_i": 212,
+          "persona_j": 93,
+          "projected_l2_distance": 1.5707664489746094,
+          "symmetric_policy_kl": 7.421853065490723
+        },
+        {
+          "persona_i": 166,
+          "persona_j": 32,
+          "projected_l2_distance": 1.8467544317245483,
+          "symmetric_policy_kl": 10.631193399429321
+        },
+        {
+          "persona_i": 294,
+          "persona_j": 300,
+          "projected_l2_distance": 0.9701056480407715,
+          "symmetric_policy_kl": 5.943867802619934
+        },
+        {
+          "persona_i": 373,
+          "persona_j": 369,
+          "projected_l2_distance": 0.24478502571582794,
+          "symmetric_policy_kl": 0.034092274494469166
+        },
+        {
+          "persona_i": 46,
+          "persona_j": 53,
+          "projected_l2_distance": 0.28603237867355347,
+          "symmetric_policy_kl": 5.5257861614227295
+        }
+      ]
+    }
+  ]
+}

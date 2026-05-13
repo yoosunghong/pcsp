@@ -38,7 +38,7 @@ via Shared Reinforcement Learning Policies}
 % ---------------------------------------------------------------
 \begin{abstract}
 On a 300-persona life-simulation benchmark, \PCSP achieves zero-shot persona
-identification 11$\times$ above chance, Spearman $\rho\!=\!0.73$
+identification up to 17$\times$ above chance, Spearman $\rho\!\approx\!0.73$
 semantic-behavioral alignment, and 22$\times$ faster inference than an
 LLM-as-policy baseline. Life simulation games require hundreds to thousands of
 non-player characters (NPCs) that behave consistently with distinct personalities
@@ -141,9 +141,9 @@ alignment, and real-time deployment.
     PPO + InfoNCE consistency + KL diversity co-training objective
     (\S\ref{sec:method}).
   \item \textbf{Empirical results}: On a 300-persona life-simulation benchmark,
-    \PCSP achieves zero-shot persona identification 11$\times$ above chance,
-    Spearman $\rho\!=\!0.73$ semantic-behavioral alignment, and 22$\times$
-    faster inference than LLM-as-policy (\S\ref{sec:evidence}).
+    \PCSP achieves zero-shot persona identification up to 17$\times$ above
+    chance, Spearman $\rho\!\approx\!0.73$ semantic-behavioral alignment, and
+    22$\times$ faster inference than LLM-as-policy (\S\ref{sec:evidence}).
   \item \textbf{Ablation finding}: Across v1, v2, and v3 environments, removing
     the InfoNCE trajectory-consistency loss collapses zero-shot persona
     identification to chance, while the best conditioning architecture depends
@@ -277,8 +277,9 @@ $\text{lr}\!=\!10^{-4}$) maps $\hat{e}_p \to e_p \in \mathbb{R}^{64}$:
 The projection is necessary: raw Qwen3 embeddings over-represent occupational
 similarity relative to personality similarity (salesperson$\leftrightarrow$executive:
 0.61 vs.\ trainer$\leftrightarrow$blogger: 0.33).
-After low-rank projection training, Spearman $\rho$ between embedding distance and behavioral KL
-increases from 0.384 to 0.728 (\S\ref{sec:evidence}).
+After low-rank projection training, Spearman $\rho$ between projected persona
+distance and behavioral KL increases from 0.384 to 0.728
+(\S\ref{sec:evidence}).
 
 \subsection{Persona-Conditioned Shared Policy}
 
@@ -416,11 +417,12 @@ persona embeddings measures whether policies collapse to persona-agnostic
 behavior despite high task reward.
 
 \paragraph{Semantic-behavioral alignment.}
-Spearman $\rho$ between persona embedding cosine distances and pairwise
-behavioral KL divergences measures whether semantic distances in persona space
-are reflected in behavior space. High $\rho$ with low KL variance can indicate
-alignment without meaningful diversity, so both quantities are reported where
-available.
+Spearman $\rho$ between projected persona distances and pairwise behavioral KL
+divergences measures whether semantic distances in persona space are reflected
+in behavior space. The projected embeddings are L2-normalized, so Euclidean
+distance is monotonic with cosine distance. High $\rho$ with low KL variance can
+indicate alignment without meaningful diversity, so both quantities are reported
+where available.
 
 \paragraph{Inference latency.}
 We report GPU ms/step at batch size 1. Real-time game integration typically
@@ -489,7 +491,7 @@ reward curves at v1/v2.
   \caption{%
     \textbf{v1 results} (6$\times$6, 4 agents, 300 personas).
     ZS Acc: zero-shot $k$-NN accuracy on 60 unseen personas
-    (random $\approx\!1.7\%$). $\rho$: Spearman (embedding dist.\ vs.\ KL).}
+    (random $\approx\!1.7\%$). $\rho$: Spearman (projected persona dist.\ vs.\ KL).}
   \label{tab:results_v1}
   \setlength{\tabcolsep}{3pt}
   \begin{tabular}{lrrrr}
@@ -521,10 +523,10 @@ reward curves at v1/v2.
     \toprule
     Model & Reward $\uparrow$ & ZS Acc $\uparrow$ & $\rho$ $\uparrow$ & KL $\uparrow$ \\
     \midrule
-    \textbf{\PCSP (full)}  & 64.2 & \textbf{0.023} & \textbf{0.725} & \textbf{5.40} \\
+    \textbf{\PCSP (full)}  & 64.2 & 0.023 & \textbf{0.725} & \textbf{5.40} \\
     PCSP (no\_consist)     & 50.1 & 0.000*  & 0.253 & 16.47$^\ddagger$ \\
     PCSP (no\_diverse)     & 71.6 & 0.013   & ---$^\dagger$ & 0.48 \\
-    PCSP (concat)          & \textbf{74.8} & 0.027 & ---$^\dagger$ & 1.34 \\
+    PCSP (concat)          & \textbf{74.8} & \textbf{0.027} & ---$^\dagger$ & 1.34 \\
     \bottomrule
   \end{tabular}\\[2pt]
   {\footnotesize * Exactly 0 (total failure). $^\dagger$KL too low; $\rho$ not meaningful.
@@ -698,10 +700,10 @@ consistency objective is required for zero-shot persona traceability, and the
 semantic-behavioral alignment property ($\rho \approx 0.73$) is preserved.
 Figure~\ref{fig:zeroshot} shows the zero-shot distribution for v1;
 the v2 pattern is qualitatively similar with narrower per-persona bars.
-Figure~\ref{fig:kl} shows that the monotone relationship between persona
-embedding distance and behavioral KL is virtually unchanged across the two
-environments ($\rho\!=\!0.728$ vs.\ $0.725$), providing the clearest evidence
-that semantic-behavioral alignment is a stable property of the architecture.
+The aggregate evaluation gives nearly identical semantic-behavioral alignment
+across environments ($\rho\!=\!0.728$ vs.\ $0.725$). Figure~\ref{fig:kl}
+visualizes an independent empirical sample of persona pairs from the same
+checkpoints, again showing strong monotone alignment at both scales.
 
 \begin{figure}[t]
   \centering
@@ -720,12 +722,14 @@ that semantic-behavioral alignment is a stable property of the architecture.
   \centering
   \includegraphics[width=\linewidth]{fig3_kl_v1v2.png}
   \caption{%
-    \textbf{Persona embedding distance vs.\ behavioral KL divergence
+    \textbf{Empirical projected persona distance vs.\ behavioral KL divergence
     at two scales (PCSP full).}
-    Left: v1 ($\rho\!=\!0.728$). Right: v2 ($\rho\!=\!0.725$).
-    The monotone alignment between LLM semantic space and behavior space
-    is preserved when moving to a 4$\times$ larger grid with 4$\times$
-    more agents and 67\% more personas.
+    Each point is a recomputed persona pair from the trained policy checkpoints
+    rather than a synthetic reconstruction from summary statistics. Left: v1
+    sampled-pair $\rho\!=\!0.755$ (100 pairs, 200 states). Right: v2
+    sampled-pair $\rho\!=\!0.717$ (60 pairs, 100 states). The monotone
+    alignment between persona space and behavior space is preserved when moving
+    to a 4$\times$ larger grid with 4$\times$ more agents and 67\% more personas.
   }
   \label{fig:kl}
 \end{figure}
@@ -812,8 +816,8 @@ embeddings---can satisfy the four axes that matter for practical deployment:
 persona consistency, natural-language controllability, zero-shot
 generalization, and real-time inference.
 
-Across three Mini-Inzoi settings, \PCSP achieves 11$\times$ above-chance
-zero-shot persona identification, $\rho\!=\!0.73$ semantic-behavioral
+Across three Mini-Inzoi settings, \PCSP achieves up to 17$\times$ above-chance
+zero-shot persona identification, $\rho\!\approx\!0.73$ semantic-behavioral
 alignment, and 22$\times$ faster inference than an LLM-as-policy baseline.
 The main empirical finding is that the InfoNCE trajectory-consistency objective
 is load-bearing: removing it collapses zero-shot persona traceability to chance
