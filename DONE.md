@@ -4,6 +4,27 @@ This file holds completed work details, decisions, result paths, and experiment 
 
 ---
 
+## 2026-05-13
+
+### Coarse Google Forms Human Pilot
+
+- Recorded the completed Google Forms coarse-trace survey as aggregate item-level A/B ratios from 30 participants:
+  - Raw ratio artifact: `results/human_eval/coarse_google_forms_counts.csv`
+  - Analysis script: `scripts/analyze_coarse_google_forms_pilot.py`
+  - Summary JSON: `results/human_eval/coarse_google_forms_summary.json`
+  - Scored item CSV: `results/human_eval/coarse_google_forms_scored_items.csv`
+- Result: 612/900 aggregate judgments correct = 68.0% accuracy.
+- Pooled Wilson 95% CI: [0.649, 0.710].
+- Item difficulty buckets:
+  - strongly readable: 15/30
+  - moderately readable: 2/30
+  - ambiguous: 8/30
+  - misleading: 5/30
+- Important caveat: Google Forms preserved only item-level A/B selection ratios. Participant-level variance, confidence, response time, order effects, and inter-rater reliability are unavailable.
+- Updated `paper/cog2026_vision/main.tex` with a scoped "Coarse-Trace Human Pilot" subsection and revised the human-evaluation limitation from "No completed human evaluation" to "Limited aggregate human evaluation."
+
+---
+
 ## 2026-05-11
 
 ### Experimental Paper Restructure

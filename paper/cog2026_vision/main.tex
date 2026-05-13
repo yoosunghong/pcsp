@@ -583,6 +583,27 @@ agents, and $67\%$ more personas. This suggests that semantic-behavioral
 alignment is a stable property of the design, not an artefact of the
 minimal environment.
 
+\subsection{Coarse-Trace Human Pilot}
+\label{sec:humanpilot}
+
+To test whether the policy's persona signal is visible to human readers, we ran
+a 30-participant Google Forms pilot using the coarse Korean 2AFC survey. Each
+item showed a PCSP-v3 trajectory as a sequence of coarse action labels and asked
+participants to choose which of two persona descriptions generated it. Because
+the form preserved only item-level A/B selection ratios, we report aggregate
+forced-choice accuracy rather than participant-level variance, confidence, or
+response-time analyses.
+
+Participants selected the correct persona in 612 of 900 aggregate judgments
+($68.0\%$; pooled Wilson 95\% CI $[64.9, 71.0]$), above the 50\% chance
+baseline. Item-level results were mixed: 15 of 30 items were strongly readable
+($\geq 80\%$ correct), 2 were moderately readable ($70$--$79\%$), 8 were
+ambiguous ($40$--$69\%$), and 5 were misleading ($<40\%$). Thus coarse traces
+do expose some persona-conditioned behavior, but they leave a substantial
+minority of items ambiguous or inverted. We interpret this as evidence for the
+observability bottleneck motivating richer trajectory rendering, not as a
+completed rich-versus-coarse human comparison.
+
 \subsection{Qualitative Case Study: Designer-Authored Personas}
 \label{sec:qualcase}
 
@@ -734,12 +755,11 @@ sub-frame inference profile observed in the Python benchmark.
 
 \textbf{Human evaluation methodology.}
 Automatic metrics are necessary for ablations but insufficient for perceived NPC
-believability. The coarse-action pilot results indicate that evaluation traces
-must expose the temporal, spatial, social, and stylistic details through which
-humans recognize persona. Human studies should therefore compare coarse and rich
-trajectory traces, report confidence and response time in addition to forced
-choice accuracy, and track inter-rater agreement using established reliability
-statistics such as Krippendorff's $\alpha$.
+believability. Our 30-participant coarse-trace pilot shows above-chance persona
+identification, but also many ambiguous or misleading items. Future human
+studies should compare coarse and rich trajectory traces using forms that retain
+participant-level responses, confidence, and response time, enabling paired
+analysis and inter-rater agreement statistics such as Krippendorff's $\alpha$.
 
 % ---------------------------------------------------------------
 \section{Limitations and Scope}
@@ -755,11 +775,12 @@ untested.
 
 \textbf{Action observability.}
 The original 12-action space exposes only a thin slice of persona-relevant
-behavior. Pilot human-evaluation surveys showed that coarse labels such as
-\texttt{read}, \texttt{rest}, and \texttt{eat} are difficult to interpret
-without temporal, spatial, and social context. Mini-Inzoi v3 and the rich
-rollout renderer address this partly, but finer social and stylistic action
-semantics remain needed.
+behavior. In the 30-participant coarse-trace pilot, aggregate 2AFC accuracy was
+above chance, but 13 of 30 items were ambiguous or misleading. Coarse labels
+such as \texttt{read}, \texttt{rest}, and \texttt{eat} are difficult to
+interpret without temporal, spatial, and social context. Mini-Inzoi v3 and the
+rich rollout renderer address this partly, but finer social and stylistic
+action semantics remain needed.
 
 \textbf{Synthetic personas.}
 Training personas are generated from Big Five archetypes and occupation
@@ -768,10 +789,11 @@ additional handwritten personas, but does not establish robustness to the
 nuance, inconsistency, or cultural specificity of production-authored
 characters.
 
-\textbf{No completed human evaluation.}
-Zero-shot identification accuracy and Spearman $\rho$ are automated proxies.
-Player judgments of persona fidelity and believability have not yet been
-collected.
+\textbf{Limited aggregate human evaluation.}
+The completed Google Forms pilot collected only item-level A/B selection ratios
+for coarse traces. It supports aggregate 2AFC accuracy analysis, but not
+participant-level variance, confidence, response time, order effects, or
+inter-rater reliability. A matched rich-trace human study remains future work.
 
 \textbf{No engine integration.}
 The policy runs in a Python simulation environment. Integration challenges with

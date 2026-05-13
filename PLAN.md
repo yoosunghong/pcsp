@@ -38,11 +38,11 @@
 - [x] Regenerate matched Korean rich/coarse survey artifacts from the same v3 rollout file.
 - [x] Re-run the automated 2AFC survey baseline on the v3 survey artifacts as a sanity check.
 - [x] Prepare counterbalanced v3 rich/coarse pilot packets and response templates for 10 participants.
-- [ ] Run a 5-10 person pilot before full collection; drop or rebalance ambiguous/impossible items.
-- [ ] Collect human responses for rich vs coarse survey variants.
-- [ ] Report human 2AFC accuracy with Wilson 95% CI.
-- [ ] Report confidence and response time.
-- [ ] Track inter-rater reliability if multiple raters are used.
+- [x] Analyze 30-participant Google Forms coarse-trace pilot from item-level A/B ratios.
+- [x] Report coarse-trace human 2AFC accuracy with Wilson 95% CI.
+- [x] Record that confidence, response time, participant-level variance, and inter-rater reliability are unavailable for the Google Forms coarse pilot.
+- [ ] Collect matched rich-trace human responses or run a retained-row rich-vs-coarse study.
+- [ ] If future forms collect participant-level rows, report confidence, response time, and inter-rater reliability.
 
 ---
 
