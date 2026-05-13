@@ -24,9 +24,24 @@ venv/
 *.safetensors
 
 # Large binary data
-results/embeddings/
-results/figures/*.npy
-results/v2/figures/*.npy
+research/results/embeddings/
+research/results/figures/*.npy
+research/results/v2/figures/*.npy
+
+# Unreal Engine generated files
+ue/Binaries/
+ue/Build/
+ue/DerivedDataCache/
+ue/Intermediate/
+ue/Saved/
+ue/.vs/
+ue/*.sln
+ue/**/Binaries/
+ue/**/DerivedDataCache/
+ue/**/Intermediate/
+ue/**/Saved/
+ue/**/.vs/
+ue/**/*.sln
 
 # Wandb / tensorboard
 wandb/
@@ -55,3 +70,9 @@ Thumbs.db
 
 # Claude Code
 .claude/
+
+# Assets
+ue/cnzoi/Content/SkyTown/
+
+# mcp
+/ue/cnzoi/.narshamcp
