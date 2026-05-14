@@ -1,0 +1,62 @@
+{
+  "name": "qwen_emb",
+  "model": "Qwen/Qwen3-Embedding-0.6B",
+  "dim": 1024,
+  "mean_pairwise_cos": 0.3435317873954773,
+  "min_pairwise_cos": 0.1345667690038681,
+  "max_pairwise_cos": 0.5538774728775024,
+  "top5_closest_pairs": [
+    {
+      "a": "territorial_defender",
+      "b": "spinner",
+      "cos": 0.5538774728775024
+    },
+    {
+      "a": "territorial_defender",
+      "b": "cleaner_helper",
+      "cos": 0.5502960085868835
+    },
+    {
+      "a": "cleaner_helper",
+      "b": "spinner",
+      "cos": 0.5276873707771301
+    },
+    {
+      "a": "explorer",
+      "b": "territorial_defender",
+      "cos": 0.5039677023887634
+    },
+    {
+      "a": "selfish_harvester",
+      "b": "territorial_defender",
+      "cos": 0.5024389028549194
+    }
+  ],
+  "top5_furthest_pairs": [
+    {
+      "a": "selfish_harvester",
+      "b": "reciprocator",
+      "cos": 0.15044400095939636
+    },
+    {
+      "a": "cooperative_sustainer",
+      "b": "fast_mover",
+      "cos": 0.14328229427337646
+    },
+    {
+      "a": "reciprocator",
+      "b": "territorial_defender",
+      "cos": 0.13913485407829285
+    },
+    {
+      "a": "reciprocator",
+      "b": "spinner",
+      "cos": 0.1364106684923172
+    },
+    {
+      "a": "reciprocator",
+      "b": "explorer",
+      "cos": 0.1345667690038681
+    }
+  ]
+}

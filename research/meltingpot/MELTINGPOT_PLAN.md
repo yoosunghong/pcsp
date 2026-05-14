@@ -3,6 +3,7 @@
 **Implementation Checklist: PCSP × Melting Pot 2.0**
 
 **Status:** Planning artifact. Treat each unchecked box as work to be scheduled, scoped, or rejected — not as a commitment.
+**Training stack:** In-house CleanRL-style PPO (PyTorch, single-file, PettingZoo Parallel boundary). No Ray, no RLLib — see Phase 1 §"In-house PPO trainer" and Anti-Goals. The upstream RLLib reference (`examples/rllib/self_play_train.py`) is **rejected** for the reasons documented in `BUDGET.md` §5.
 **Operating rule:** Update this checklist after non-trivial work; record decisions and results in `research/DONE.md` under a `MeltingPot` heading.
 **Cross-references:** `MELTINGPOT_PROPOSAL.md` (motivation, hypotheses), `MELTINGPOT_FEAT.md` (architecture), `MELTINGPOT_RESEARCH_QUESTIONS.md` (paper-level claims).
 **Branch convention:** All work for this program lands on `research/meltingpot-*` branches with PRs into `main`.
@@ -22,14 +23,15 @@ Confirm engineering feasibility, compute budget, and substrate selection before 
 
 ### Tasks
 
-- [ ] Inventory available compute: GPU count, GPU class, memory, wall-clock budget for the program.
-- [ ] Pin Melting Pot version (target: 2.x latest stable) and DM-Env / DMLab2D versions; record in `research/meltingpot/REQUIREMENTS.lock`.
-- [ ] Install Melting Pot on the target training node; verify a reference PPO run on `commons_harvest__simple` completes a 1M-step shakedown without engineering changes.
-- [ ] Time the reference run; extrapolate to per-substrate full-run cost and program-total compute cost; document in `research/meltingpot/BUDGET.md`.
-- [ ] Read each candidate substrate's source, action set, observation spec, and intended evaluation populations.
-- [ ] Classify substrates by social-dilemma category (collective action, coordination, territorial, exploitation, mixed-motive).
-- [ ] Select 4–6 substrates for the program covering ≥3 categories.
-- [ ] Decision review: proceed to Phase 1, or defer. Record in `research/DONE.md` either way.
+- [x] Inventory available compute: GPU count, GPU class, memory, wall-clock budget for the program. *(2026-05-14)*
+- [x] Pin Melting Pot version (target: 2.x latest stable) and DM-Env / DMLab2D versions; record in `research/meltingpot/REQUIREMENTS.lock`. *(2026-05-14: dm-meltingpot 2.4.0, dmlab2d 1.0.0, dm-env 1.6, Python 3.11.15.)*
+- [x] Install Melting Pot on the target training node and verify substrate instantiation. *(2026-05-14: 49 substrates load; `commons_harvest__simple` does not exist in 2.x — substituted `commons_harvest__open`. Single-process random-action throughput 1,574 env-steps/s.)*
+- [ ] **REPLACED:** Reference RLLib PPO shakedown is rejected — `ray==2.5.0` is incompatible with `numpy>=1.24` (which `dm-meltingpot==2.4.0` requires). See `BUDGET.md` §5. New gate: in-house CleanRL-style PPO (Phase 1) completes a 1M-step shakedown on `commons_harvest__open`.
+- [x] Time env throughput; extrapolate to per-substrate full-run cost and program-total compute cost; document in `research/meltingpot/BUDGET.md`. *(2026-05-14: 750–1,050 GPU-hours for Phase 3–5.)*
+- [x] Read each candidate substrate's source, action set, observation spec, and intended evaluation populations. *(2026-05-14: 49 substrates enumerated with player counts, roles, held-out scenario counts.)*
+- [x] Classify substrates by social-dilemma category (collective action, coordination, territorial, exploitation, mixed-motive). *(2026-05-14: see `SUBSTRATES.md` §2 — 7 categories.)*
+- [x] Select 4–6 substrates for the program covering ≥3 categories. *(2026-05-14: 5 substrates across 4 categories — `commons_harvest__open`, `clean_up`, `prisoners_dilemma_in_the_matrix__arena`, `stag_hunt_in_the_matrix__repeated`, `territory__rooms`.)*
+- [x] Decision review: proceed to Phase 1, or defer. *(2026-05-14: **PROCEED with amendments** — substitute `commons_harvest__open` for `__simple` everywhere; replace RLLib with in-house CleanRL-style PPO; see `research/DONE.md`.)*
 
 ### Outputs
 
@@ -90,6 +92,25 @@ Provide a clean `gym.Env`-shaped, vectorizable, persona-aware wrapper around Mel
 - [ ] Add a `scripts/replay_meltingpot.py` that loads a trajectory and renders RGB frames into mp4.
 - [ ] Add a `scripts/inspect_meltingpot_run.py` that loads a run's trajectories and emits a per-persona summary: return distribution, action histogram, social-event counts.
 
+#### In-house PPO trainer (CleanRL-style)
+
+Phase 0 ruled out the upstream RLLib reference trainer (`ray==2.5.0` × `numpy>=1.24` conflict; see `BUDGET.md` §5). Phase 1 owns the replacement.
+
+- [ ] Create `src/training/cleanrl_ppo/` with a single-file PPO implementation modeled on CleanRL's `ppo_atari_envpool.py`: clipped objective, GAE, value clipping, entropy bonus, orthogonal init, learning-rate annealing.
+- [ ] Boundary: PettingZoo Parallel API. The trainer must not import Ray, RLLib, or Tianshou; it consumes the Phase 1 wrapper directly.
+- [ ] Vectorization: `gymnasium.vector.AsyncVectorEnv` (subprocess) over substrate replicas; per-agent observations stacked into a single `(num_envs × num_players, *obs)` batch for the policy forward pass.
+- [ ] Architecture: IMPALA-CNN torso (3 blocks, channel widths [16, 32, 32]) → `(features + persona_embedding)` concat or FiLM → LSTM (cell size 256) → policy head (Categorical) + value head. Match the action-space-mask path from the wrapper layer.
+- [ ] Multi-agent policy sharing: one shared policy parameterized by persona embedding (PCSP). For ablation `B3: independent-per-persona-PPO`, the same trainer instantiates a dict of per-persona policy heads keyed by `persona_id`.
+- [ ] Mixed-precision toggle (bf16 forward, fp32 grads) for the RTX 6000 Ada path.
+- [ ] Resumable training: checkpoint every `N` updates with full optimizer + LSTM state + RNG state.
+- [ ] Logging: scalar metrics to `runs/.../logs.jsonl` (substrate-defined return, ep length, policy entropy, KL approx, value loss, frames/s); also mirror to W&B or TensorBoard (Phase 6 picks one).
+- [ ] Smoke target (closes the Phase 0 reference-shakedown gate): 1M env-steps on `commons_harvest__open`, single GPU, no LoRA/persona conditioning, batch size 256, num_envs 8, must reach a non-trivial mean episode return (> random baseline) and complete without crashes.
+
+### Trainer outputs
+
+- `src/training/cleanrl_ppo/{trainer.py,ppo.py,model.py,buffer.py,config.py}`
+- `scripts/run_cleanrl_ppo_smoke.py` (Phase 0 closeout shakedown)
+
 ### Outputs
 
 - `src/env/meltingpot/`
@@ -147,9 +168,9 @@ Reproduce the v3 PCSP architecture on one substrate (`commons_harvest__open` rec
 
 ### Tasks
 
-- [ ] Port the v3 PCSP policy module to consume RGB observations: replace the symbolic state encoder with a small CNN (IMPALA-style or NatureCNN), keep FiLM/concat conditioning blocks unchanged.
-- [ ] Implement a Melting Pot-compatible training script `scripts/run_pcsp_meltingpot.py` mirroring `scripts/run_pcsp_v3.py`.
-- [ ] Implement vectorized rollouts (subprocess vector env over substrates; population composed of PCSP agents with mixed personas).
+- [ ] Port the v3 PCSP policy module to consume RGB observations: replace the symbolic state encoder with the IMPALA-CNN torso defined in the Phase 1 CleanRL trainer (`src/training/cleanrl_ppo/model.py`); keep FiLM/concat conditioning blocks unchanged.
+- [ ] Implement a Melting Pot-compatible training script `scripts/run_pcsp_meltingpot.py` that drives the CleanRL trainer (`src/training/cleanrl_ppo`) — no RLLib, no Ray. Mirror the CLI surface of `scripts/run_pcsp_v3.py`.
+- [ ] Reuse the Phase 1 `AsyncVectorEnv` rollout path; do not re-implement vectorization here. Confirm population composition (mixed personas across env replicas) is plumbed through the Phase 1 persona-injection hook.
 - [ ] Re-implement the InfoNCE consistency loss against trajectory embeddings drawn from this substrate; recompute negative-sample pools per episode.
 - [ ] Add the diversity regularizer with substrate-appropriate scaling.
 - [ ] Run baselines: `PCSP-full`, `PCSP-no-consist`, `PCSP-no-diverse`, `PCSP-concat`, `B1: persona-only-prompt-no-RL`, `B3: independent-per-persona-PPO`.
@@ -264,7 +285,8 @@ Make the program reproducible by external readers and robust to operational fail
 
 #### Scalable rollout pipeline
 
-- [ ] Replace subprocess vector env with a Ray-based actor pool if scaling demands it; benchmark first.
+- [ ] Stay on `gymnasium.vector.AsyncVectorEnv` until measured throughput becomes the bottleneck. Do not adopt Ray, RLLib, or any heavyweight orchestrator preemptively — Phase 0 documented why.
+- [ ] If scaling becomes necessary, prefer (a) `torch.multiprocessing` actor pool over the existing CleanRL trainer, or (b) `EnvPool` if a Melting Pot adapter exists, before reaching for Ray. Benchmark the marginal SPS gain against engineering cost.
 - [ ] Add rollout-worker checkpointing so multi-day runs survive node failure.
 - [ ] Add GPU/CPU resource caps per worker and document them in `research/meltingpot/COMPUTE.md`.
 
@@ -430,6 +452,7 @@ The following are *not* tasks in this plan and must be rejected if proposed:
 
 - LLM-in-the-loop policy inference.
 - Joint training of the persona encoder during PPO.
+- Ray / RLLib / Tianshou or any other heavyweight RL framework as the training backbone. The training stack is the in-house CleanRL-style PPO defined in Phase 1. Phase 0 documented the cost of taking on Ray's dep graph; the program does not pay it.
 - Communication-channel learning between agents.
 - General-purpose MARL exploration improvements.
 - Curriculum learning across substrates (each substrate is trained independently).

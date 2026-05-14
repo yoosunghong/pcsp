@@ -1,0 +1,31 @@
+// For format details, see https://aka.ms/devcontainer.json
+{
+  "name": "Melting Pot",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "..",
+    "args": {
+      "PYTHON_VERSION": "3.11"
+    }
+  },
+  "runArgs": [
+    // Increase SHM sufficiently for RLlib. Note you can increase this
+    // further for performance gains (recommended to be at least 30% of RAM
+    // on large machines).
+    "--shm-size=6gb"
+  ],
+  "postCreateCommand": "bin/install.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "donjayamanne.githistory",
+        "ms-azuretools.vscode-docker",
+        "ms-python.black-formatter",
+        "ms-python.isort",
+        "ms-python.pylint",
+        "ms-python.python",
+        "ms-python.vscode-pylance"
+      ]
+    }
+  }
+}

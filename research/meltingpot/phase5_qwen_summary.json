@@ -1,0 +1,204 @@
+{
+  "summaries": [
+    {
+      "run": "phase5_qwen_anchor_full_seed1_1000k",
+      "mode": "full",
+      "seed": 1,
+      "global_step": 996352,
+      "episode_return_mean": 10.75,
+      "entropy": 1.907773807644844,
+      "approx_kl": 2.1239997324729032e-05,
+      "infonce_top1": 0.0892857164144516,
+      "traj_top1": 0.0892857164144516,
+      "mean_pair_kl": 0.0016046861995101512,
+      "ood": [
+        {
+          "tag": "all/population/heldout_only",
+          "full_top1": 0.0,
+          "train_top1": null,
+          "heldout_top1": 0.392857164144516,
+          "mean_pair_kl": 0.0002673475652397578,
+          "train_vs_heldout_kl": NaN,
+          "rho_emb_vs_kl": NaN
+        },
+        {
+          "tag": "all/population/mixed",
+          "full_top1": 0.0714285746216774,
+          "train_top1": 0.125,
+          "heldout_top1": 0.2916666865348816,
+          "mean_pair_kl": 0.002694160153937212,
+          "train_vs_heldout_kl": 0.0017957464571622711,
+          "rho_emb_vs_kl": 0.163997113997114
+        },
+        {
+          "tag": "heldout/random/None",
+          "full_top1": 0.0,
+          "train_top1": null,
+          "heldout_top1": 0.4464285969734192,
+          "mean_pair_kl": 0.00028133597657059584,
+          "train_vs_heldout_kl": NaN,
+          "rho_emb_vs_kl": NaN
+        },
+        {
+          "tag": "train/random/None",
+          "full_top1": 0.0714285746216774,
+          "train_top1": 0.0714285746216774,
+          "heldout_top1": null,
+          "mean_pair_kl": 0.0015422442798048836,
+          "train_vs_heldout_kl": NaN,
+          "rho_emb_vs_kl": -0.2932806324110672
+        }
+      ]
+    },
+    {
+      "run": "phase5_qwen_anchor_full_seed2_1000k",
+      "mode": "full",
+      "seed": 2,
+      "global_step": 996352,
+      "episode_return_mean": 13.035714285714286,
+      "entropy": 1.8997598141431808,
+      "approx_kl": 3.856101600963058e-05,
+      "infonce_top1": 0.0892857164144516,
+      "traj_top1": 0.0892857164144516,
+      "mean_pair_kl": 0.0010201801968975314,
+      "ood": [
+        {
+          "tag": "all/population/heldout_only",
+          "full_top1": 0.0,
+          "train_top1": null,
+          "heldout_top1": 0.4285714626312256,
+          "mean_pair_kl": 0.00012627167468067706,
+          "train_vs_heldout_kl": NaN,
+          "rho_emb_vs_kl": NaN
+        },
+        {
+          "tag": "all/population/mixed",
+          "full_top1": 0.0357142873108387,
+          "train_top1": 0.0625,
+          "heldout_top1": 0.2916666865348816,
+          "mean_pair_kl": 0.002216697043118384,
+          "train_vs_heldout_kl": 0.0012836153023967538,
+          "rho_emb_vs_kl": 0.21392496392496393
+        },
+        {
+          "tag": "heldout/random/None",
+          "full_top1": 0.0,
+          "train_top1": null,
+          "heldout_top1": 0.4642857313156128,
+          "mean_pair_kl": 0.00016104540180215563,
+          "train_vs_heldout_kl": NaN,
+          "rho_emb_vs_kl": NaN
+        },
+        {
+          "tag": "train/random/None",
+          "full_top1": 0.1071428656578064,
+          "train_top1": 0.1071428656578064,
+          "heldout_top1": null,
+          "mean_pair_kl": 0.001646938644498537,
+          "train_vs_heldout_kl": NaN,
+          "rho_emb_vs_kl": -0.043478260869565216
+        }
+      ]
+    },
+    {
+      "run": "phase5_qwen_anchor_infonce_seed1_1000k",
+      "mode": "infonce",
+      "seed": 1,
+      "global_step": 996352,
+      "episode_return_mean": 11.410714285714286,
+      "entropy": 1.8142342269420624,
+      "approx_kl": 2.767583545537633e-05,
+      "infonce_top1": 0.1785714328289032,
+      "traj_top1": 0.1785714328289032,
+      "mean_pair_kl": 0.0015721695606398418,
+      "ood": [
+        {
+          "tag": "all/population/heldout_only",
+          "full_top1": 0.0,
+          "train_top1": null,
+          "heldout_top1": 0.392857164144516,
+          "mean_pair_kl": 0.00026605755537579255,
+          "train_vs_heldout_kl": NaN,
+          "rho_emb_vs_kl": NaN
+        },
+        {
+          "tag": "all/population/mixed",
+          "full_top1": 0.0714285746216774,
+          "train_top1": 0.125,
+          "heldout_top1": 0.2916666865348816,
+          "mean_pair_kl": 0.003389501642880087,
+          "train_vs_heldout_kl": 0.002261836268141748,
+          "rho_emb_vs_kl": 0.1821067821067821
+        },
+        {
+          "tag": "heldout/random/None",
+          "full_top1": 0.0,
+          "train_top1": null,
+          "heldout_top1": 0.4464285969734192,
+          "mean_pair_kl": 0.00042214081991367026,
+          "train_vs_heldout_kl": NaN,
+          "rho_emb_vs_kl": NaN
+        },
+        {
+          "tag": "train/random/None",
+          "full_top1": 0.0714285746216774,
+          "train_top1": 0.0714285746216774,
+          "heldout_top1": null,
+          "mean_pair_kl": 0.0014802882964560257,
+          "train_vs_heldout_kl": NaN,
+          "rho_emb_vs_kl": -0.11159420289855072
+        }
+      ]
+    },
+    {
+      "run": "phase5_qwen_anchor_infonce_seed2_1000k",
+      "mode": "infonce",
+      "seed": 2,
+      "global_step": 996352,
+      "episode_return_mean": 11.607142857142858,
+      "entropy": 1.9386504739522934,
+      "approx_kl": 1.9039938848885996e-05,
+      "infonce_top1": 0.1071428656578064,
+      "traj_top1": 0.1071428656578064,
+      "mean_pair_kl": 0.0010696206311587122,
+      "ood": [
+        {
+          "tag": "all/population/heldout_only",
+          "full_top1": 0.0,
+          "train_top1": null,
+          "heldout_top1": 0.392857164144516,
+          "mean_pair_kl": 0.0001362063070549813,
+          "train_vs_heldout_kl": NaN,
+          "rho_emb_vs_kl": NaN
+        },
+        {
+          "tag": "all/population/mixed",
+          "full_top1": 0.0535714328289032,
+          "train_top1": 0.09375,
+          "heldout_top1": 0.3333333432674408,
+          "mean_pair_kl": 0.00292108287221407,
+          "train_vs_heldout_kl": 0.0019891682589186794,
+          "rho_emb_vs_kl": 0.09292929292929293
+        },
+        {
+          "tag": "heldout/random/None",
+          "full_top1": 0.0,
+          "train_top1": null,
+          "heldout_top1": 0.4821428656578064,
+          "mean_pair_kl": 0.00017650081301756647,
+          "train_vs_heldout_kl": NaN,
+          "rho_emb_vs_kl": NaN
+        },
+        {
+          "tag": "train/random/None",
+          "full_top1": 0.1071428656578064,
+          "train_top1": 0.1071428656578064,
+          "heldout_top1": null,
+          "mean_pair_kl": 0.001955776385439261,
+          "train_vs_heldout_kl": NaN,
+          "rho_emb_vs_kl": 0.14558629776021081
+        }
+      ]
+    }
+  ]
+}

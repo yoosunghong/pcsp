@@ -4,6 +4,50 @@ This file holds completed work details, decisions, result paths, and experiment 
 
 ---
 
+## 2026-05-14
+
+### MeltingPot — Phase 0 (Scoping and Decision Gate)
+
+Per `research/meltingpot/MELTINGPOT_PLAN.md` Phase 0. Goal: feasibility, compute budget, substrate selection; deliberate proceed/defer decision.
+
+**Compute inventory:** Single workstation, 1× RTX 6000 Ada (48 GB), 32 cores, 125 GiB RAM, 697 GiB free disk, CUDA 12.8. Recorded in `research/meltingpot/BUDGET.md` §1.
+
+**Library install:** Created conda env `meltingpot` (Python 3.11.15). Installed `dm-meltingpot==2.4.0` (49 substrates), `dmlab2d==1.0.0`, `dm-env==1.6`, plus reference-trainer deps `ray[rllib]==2.5.0`, `supersuit==3.8.1`, `torch==2.12.0`, `gymnasium==0.26.3`. Full freeze in `research/meltingpot/REQUIREMENTS.lock` (100 packages).
+
+**Env throughput measurement:** Single-process random-action rollout on `commons_harvest__open` (7 players, RGB 88×88×3, 8 discrete actions): **1,574 env-steps/s ≈ 11,017 agent-steps/s**.
+
+**Reference PPO trainer — Phase 0 gate FAILED.** The plan asked for a 1M-step PPO shakedown on `commons_harvest__simple` "without engineering changes". Two issues:
+1. `commons_harvest__simple` does not exist in Melting Pot 2.x — substituted `commons_harvest__open`.
+2. Upstream `examples/rllib/self_play_train.py` fails at import: `ray==2.5.0` references `np.bool8`, removed in numpy ≥ 1.24; `dm-meltingpot==2.4.0` pulls `numpy==2.4.4`. Downgrading numpy breaks `dm-meltingpot`. The reference trainer cannot run on a clean install.
+
+**Decision:** Tentative **PROCEED with two amendments**, pending user sign-off:
+- Substitute the Phase 0 reference run target: `commons_harvest__open` replaces `commons_harvest__simple` throughout the plan.
+- Reject the upstream RLLib trainer as the training backbone. Phase 1 will provide a CleanRL-style PPO on the PettingZoo Parallel API boundary (already required by Phase 1 wrapper work). This removes Ray as an ongoing dependency. Rationale and alternatives in `BUDGET.md` §5.
+
+**Substrate selection (recommended, 4 categories, 5 substrates):**
+- `commons_harvest__open` (collective action, 7 players, 2 held-out scenarios — H3 risk noted)
+- `clean_up` (collective action / public good, 7, 23)
+- `prisoners_dilemma_in_the_matrix__arena` (mixed-motive PD, 8, 22)
+- `stag_hunt_in_the_matrix__repeated` (coordination, 2, 10)
+- `territory__rooms` (territorial, 9, 14)
+
+Held-out persona-edit and asymmetric-role substrates (`predator_prey__*`, `hidden_agenda`, `daycare`, `collaborative_cooking__*`) explicitly de-scoped from headline metrics. Full rationale in `research/meltingpot/SUBSTRATES.md`.
+
+**Program compute estimate:** 750–1,050 GPU-hours for Phase 3–5 across the 5 substrates at 50M env-steps × 5 seeds × 6 cells. Fits in ~3 weeks single-GPU serial; ~1.5 weeks with two concurrent runs per GPU. Trajectory storage: retain ~150 GB curated subset; full raw dumps would be ~3 TB compressed and need external storage.
+
+**Outputs:**
+- `research/meltingpot/REQUIREMENTS.lock`
+- `research/meltingpot/BUDGET.md`
+- `research/meltingpot/SUBSTRATES.md`
+- Upstream meltingpot repo cloned to `research/meltingpot/upstream/` for reference (not a build dependency).
+
+**Validation against plan's Phase 0 criteria:**
+- Reference PPO shakedown completes without code modifications — **FAILED** (trainer broken). Documented and replaced with a Phase 1 work item.
+- Wall-clock extrapolation fits inside committed compute — **PENDING USER COMMIT** (no compute budget has been committed yet; estimate provided).
+- Substrate selection has documented per-category rationale — **PASSED** (4 categories, 5 substrates, individual rationale).
+
+---
+
 ## 2026-05-13
 
 ### Workspace Restructure for Unreal Integration

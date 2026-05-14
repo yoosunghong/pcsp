@@ -1,0 +1,102 @@
+{
+  "schema_version": "v0",
+  "description": "Phase 2 controlled persona dataset for Melting Pot social-dilemma substrates. Each persona expresses a behavioral tendency relevant to commons-harvest-style environments. The optional action_prior is a hand-authored bias over the commons_harvest__open action ontology (NOOP=0, FORWARD=1, BACKWARD=2, STEP_LEFT=3, STEP_RIGHT=4, TURN_LEFT=5, TURN_RIGHT=6, FIRE_ZAP=7).",
+  "action_space": {
+    "substrate": "commons_harvest__open",
+    "labels": ["NOOP", "FORWARD", "BACKWARD", "STEP_LEFT", "STEP_RIGHT", "TURN_LEFT", "TURN_RIGHT", "FIRE_ZAP"]
+  },
+  "personas": [
+    {
+      "id": "cooperative_sustainer",
+      "description": "A patient agent who harvests only mature apples and avoids depleting the commons. Prefers movement over zapping; willing to share territory.",
+      "tags": ["cooperative", "patient", "non-aggressive", "sustainer"],
+      "tendencies": {
+        "harvest_rate": "low-medium",
+        "aggression": "low",
+        "movement": "exploratory"
+      },
+      "action_prior": [0.05, 0.20, 0.10, 0.15, 0.15, 0.15, 0.15, 0.05]
+    },
+    {
+      "id": "selfish_harvester",
+      "description": "An agent who grabs every apple in sight, regardless of regrowth dynamics. Indifferent to long-term commons health.",
+      "tags": ["selfish", "free-rider", "myopic"],
+      "tendencies": {"harvest_rate": "high", "aggression": "medium", "movement": "directed"},
+      "action_prior": [0.02, 0.40, 0.05, 0.15, 0.15, 0.10, 0.10, 0.03]
+    },
+    {
+      "id": "cautious_observer",
+      "description": "A risk-averse agent who waits and watches. Avoids dense groups and conflict.",
+      "tags": ["cautious", "risk-averse", "passive"],
+      "tendencies": {"harvest_rate": "low", "aggression": "very-low", "movement": "slow"},
+      "action_prior": [0.30, 0.08, 0.08, 0.12, 0.12, 0.15, 0.14, 0.01]
+    },
+    {
+      "id": "aggressive_zapper",
+      "description": "An agent who frequently zaps competitors to clear territory. High aggression bias.",
+      "tags": ["aggressive", "territorial", "punisher"],
+      "tendencies": {"harvest_rate": "medium", "aggression": "high", "movement": "directed"},
+      "action_prior": [0.03, 0.20, 0.05, 0.10, 0.10, 0.12, 0.12, 0.28]
+    },
+    {
+      "id": "reciprocator",
+      "description": "A conditionally-cooperative agent who matches the behavior of nearby agents. Cooperates by default but punishes defectors.",
+      "tags": ["reciprocator", "conditional", "tit-for-tat"],
+      "tendencies": {"harvest_rate": "medium", "aggression": "conditional", "movement": "responsive"},
+      "action_prior": [0.08, 0.22, 0.08, 0.13, 0.13, 0.13, 0.13, 0.10]
+    },
+    {
+      "id": "explorer",
+      "description": "A curious agent who prioritises map coverage over harvest. Constantly moving.",
+      "tags": ["explorer", "curious", "high-movement"],
+      "tendencies": {"harvest_rate": "low", "aggression": "low", "movement": "very-high"},
+      "action_prior": [0.02, 0.30, 0.10, 0.20, 0.20, 0.09, 0.07, 0.02]
+    },
+    {
+      "id": "territorial_defender",
+      "description": "An agent who claims a small region and defends it with occasional zaps, but rarely strays.",
+      "tags": ["territorial", "defensive", "stationary"],
+      "tendencies": {"harvest_rate": "medium", "aggression": "medium", "movement": "low"},
+      "action_prior": [0.15, 0.10, 0.05, 0.08, 0.08, 0.20, 0.20, 0.14]
+    },
+    {
+      "id": "risk_seeking_raider",
+      "description": "A bold agent who pushes into contested zones to grab high-yield clusters. High variance in outcomes.",
+      "tags": ["risk-seeking", "raider", "opportunistic"],
+      "tendencies": {"harvest_rate": "high", "aggression": "medium-high", "movement": "directed"},
+      "action_prior": [0.02, 0.35, 0.05, 0.12, 0.12, 0.10, 0.10, 0.14]
+    },
+    {
+      "id": "cleaner_helper",
+      "description": "A pro-social agent biased toward facing neighbours and supporting them; rarely zaps.",
+      "tags": ["pro-social", "cleaner", "helper"],
+      "tendencies": {"harvest_rate": "low-medium", "aggression": "very-low", "movement": "responsive"},
+      "action_prior": [0.10, 0.15, 0.10, 0.12, 0.12, 0.20, 0.20, 0.01]
+    },
+    {
+      "id": "free_rider",
+      "description": "Lets others maintain the commons; eats whatever is available with minimal effort.",
+      "tags": ["free-rider", "lazy", "selfish"],
+      "tendencies": {"harvest_rate": "medium", "aggression": "very-low", "movement": "low"},
+      "action_prior": [0.30, 0.20, 0.05, 0.10, 0.10, 0.10, 0.10, 0.05]
+    },
+    {
+      "id": "fast_mover",
+      "description": "Always moves forward at maximum speed, rarely turning. Tries to cover territory quickly.",
+      "tags": ["high-velocity", "directed"],
+      "tendencies": {"harvest_rate": "medium", "aggression": "low", "movement": "very-high-forward"},
+      "action_prior": [0.02, 0.55, 0.03, 0.10, 0.10, 0.08, 0.08, 0.04]
+    },
+    {
+      "id": "spinner",
+      "description": "Stays in place and constantly rotates to survey surroundings before acting.",
+      "tags": ["surveillant", "stationary", "rotational"],
+      "tendencies": {"harvest_rate": "low", "aggression": "low", "movement": "rotational"},
+      "action_prior": [0.10, 0.05, 0.05, 0.05, 0.05, 0.30, 0.30, 0.10]
+    }
+  ],
+  "splits": {
+    "train": ["cooperative_sustainer", "selfish_harvester", "cautious_observer", "aggressive_zapper", "reciprocator", "explorer", "territorial_defender", "risk_seeking_raider", "cleaner_helper", "free_rider"],
+    "heldout": ["fast_mover", "spinner"]
+  }
+}
