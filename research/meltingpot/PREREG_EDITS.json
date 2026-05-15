@@ -1,0 +1,87 @@
+{
+  "schema_version": "v1",
+  "prereg_date": "2026-05-15",
+  "primary_substrate": "commons_harvest__open",
+  "primary_metric": "unripe_harvest_rate",
+  "primary_metric_direction": "lower_is_more_sustainable",
+  "cross_substrate_replication": {
+    "prisoners_dilemma_in_the_matrix__repeated": {
+      "primary_metric": "cooperate_action_freq",
+      "primary_metric_direction": "higher_is_more_cooperative"
+    },
+    "stag_hunt_in_the_matrix__repeated": {
+      "primary_metric": "stag_action_freq",
+      "primary_metric_direction": "higher_is_more_risky_payoff_seeking"
+    }
+  },
+  "edit_phrases": {
+    "A1+": "Also: shares resources with strangers.",
+    "A1-": "Also: refuses to share with strangers.",
+    "A2+": "Also: frequently zaps competitors.",
+    "A2-": "Also: avoids zapping under any circumstance.",
+    "A3+": "Also: enters contested high-yield zones without hesitation.",
+    "A3-": "Also: stays away from contested zones.",
+    "A4+": "Also: waits for apples to mature before harvesting.",
+    "A4-": "Also: harvests apples regardless of maturity.",
+    "A5+": "Also: stays close to other agents.",
+    "A5-": "Also: keeps maximum distance from other agents."
+  },
+  "pairs": [
+    {"id": "P01", "persona": "cooperative_sustainer", "axis": "A1", "polarity": "-", "predicted_sign_cH": "+"},
+    {"id": "P02", "persona": "cooperative_sustainer", "axis": "A2", "polarity": "+", "predicted_sign_cH": "+"},
+    {"id": "P03", "persona": "cooperative_sustainer", "axis": "A3", "polarity": "+", "predicted_sign_cH": "+"},
+    {"id": "P04", "persona": "cooperative_sustainer", "axis": "A4", "polarity": "-", "predicted_sign_cH": "+"},
+    {"id": "P05", "persona": "cooperative_sustainer", "axis": "A5", "polarity": "-", "predicted_sign_cH": "-"},
+
+    {"id": "P06", "persona": "selfish_harvester", "axis": "A1", "polarity": "+", "predicted_sign_cH": "-"},
+    {"id": "P07", "persona": "selfish_harvester", "axis": "A2", "polarity": "-", "predicted_sign_cH": "-"},
+    {"id": "P08", "persona": "selfish_harvester", "axis": "A3", "polarity": "-", "predicted_sign_cH": "-"},
+    {"id": "P09", "persona": "selfish_harvester", "axis": "A4", "polarity": "+", "predicted_sign_cH": "-"},
+    {"id": "P10", "persona": "selfish_harvester", "axis": "A5", "polarity": "+", "predicted_sign_cH": "+"},
+
+    {"id": "P11", "persona": "aggressive_zapper", "axis": "A1", "polarity": "+", "predicted_sign_cH": "-"},
+    {"id": "P12", "persona": "aggressive_zapper", "axis": "A2", "polarity": "-", "predicted_sign_cH": "-"},
+    {"id": "P13", "persona": "aggressive_zapper", "axis": "A3", "polarity": "-", "predicted_sign_cH": "-"},
+    {"id": "P14", "persona": "aggressive_zapper", "axis": "A4", "polarity": "+", "predicted_sign_cH": "-"},
+    {"id": "P15", "persona": "aggressive_zapper", "axis": "A5", "polarity": "+", "predicted_sign_cH": "+"},
+
+    {"id": "P16", "persona": "cautious_observer", "axis": "A1", "polarity": "-", "predicted_sign_cH": "+"},
+    {"id": "P17", "persona": "cautious_observer", "axis": "A2", "polarity": "+", "predicted_sign_cH": "+"},
+    {"id": "P18", "persona": "cautious_observer", "axis": "A3", "polarity": "+", "predicted_sign_cH": "+"},
+    {"id": "P19", "persona": "cautious_observer", "axis": "A4", "polarity": "-", "predicted_sign_cH": "+"},
+    {"id": "P20", "persona": "cautious_observer", "axis": "A5", "polarity": "+", "predicted_sign_cH": "+"},
+
+    {"id": "P21", "persona": "reciprocator", "axis": "A1", "polarity": "-", "predicted_sign_cH": "+"},
+    {"id": "P22", "persona": "reciprocator", "axis": "A2", "polarity": "+", "predicted_sign_cH": "+"},
+    {"id": "P23", "persona": "reciprocator", "axis": "A3", "polarity": "+", "predicted_sign_cH": "+"},
+    {"id": "P24", "persona": "reciprocator", "axis": "A4", "polarity": "-", "predicted_sign_cH": "+"},
+    {"id": "P25", "persona": "reciprocator", "axis": "A5", "polarity": "-", "predicted_sign_cH": "-"},
+
+    {"id": "P26", "persona": "territorial_defender", "axis": "A1", "polarity": "+", "predicted_sign_cH": "-"},
+    {"id": "P27", "persona": "territorial_defender", "axis": "A2", "polarity": "-", "predicted_sign_cH": "-"},
+    {"id": "P28", "persona": "territorial_defender", "axis": "A3", "polarity": "+", "predicted_sign_cH": "+"},
+    {"id": "P29", "persona": "territorial_defender", "axis": "A4", "polarity": "+", "predicted_sign_cH": "-"},
+    {"id": "P30", "persona": "territorial_defender", "axis": "A5", "polarity": "+", "predicted_sign_cH": "+"}
+  ],
+  "cross_substrate_pairs": [
+    {"id": "P01", "predicted_sign_PD": "+", "predicted_sign_stag": "+"},
+    {"id": "P06", "predicted_sign_PD": "+", "predicted_sign_stag": "+"},
+    {"id": "P08", "predicted_sign_PD": "-", "predicted_sign_stag": "-"},
+    {"id": "P11", "predicted_sign_PD": "+", "predicted_sign_stag": "+"},
+    {"id": "P13", "predicted_sign_PD": "-", "predicted_sign_stag": "-"},
+    {"id": "P16", "predicted_sign_PD": "-", "predicted_sign_stag": "-"},
+    {"id": "P18", "predicted_sign_PD": "+", "predicted_sign_stag": "+"},
+    {"id": "P21", "predicted_sign_PD": "-", "predicted_sign_stag": "-"},
+    {"id": "P23", "predicted_sign_PD": "+", "predicted_sign_stag": "+"},
+    {"id": "P26", "predicted_sign_PD": "+", "predicted_sign_stag": "+"}
+  ],
+  "sign_convention": {
+    "+": "edited > base (metric increases)",
+    "-": "edited < base (metric decreases)"
+  },
+  "notes": [
+    "Predicted sign per (persona, axis, polarity) is fixed at this commit. Rationale: each persona's edit polarity contradicts its dominant tag, so the predicted sign is the direction of the edit phrase, modulated by the metric's directional convention.",
+    "cH metric (unripe_harvest_rate) is lower-is-better, so prosocial edits predict negative sign and antisocial edits predict positive sign.",
+    "PD metric (cooperate_action_freq) and stag metric (stag_action_freq) are higher-is-cooperative; prosocial edits predict positive sign."
+  ]
+}
