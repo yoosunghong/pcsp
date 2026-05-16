@@ -34,6 +34,10 @@
 		{
 			"Name": "NarshaMCP",
 			"Enabled": true
+		},
+		{
+			"Name": "NNERuntimeORT",
+			"Enabled": true
 		}
 	]
 }

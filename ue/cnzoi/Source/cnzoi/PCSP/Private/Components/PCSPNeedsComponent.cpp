@@ -17,6 +17,26 @@ void UPCSPNeedsComponent::BeginPlay()
 	const int32 N = static_cast<int32>(EPCSPNeed::Count);
 	if (Values.Num() != N) { Values.Init(0.8f, N); }
 	if (Configs.Num() != N) { Configs.Init(FPCSPNeedConfig(), N); }
+
+	// Per-need decay so the eight needs don't cross the urgency threshold in
+	// lockstep. Uniform decay leaves UrgencyScore latched at ~1.0 because
+	// satisfying one need leaves all the others at the floor.
+	auto ApplyIfDefault = [&](EPCSPNeed Need, float DecayPerSecond)
+	{
+		const int32 Idx = static_cast<int32>(Need);
+		if (Configs.IsValidIndex(Idx) && FMath::IsNearlyEqual(Configs[Idx].DecayPerSecond, 0.01f))
+		{
+			Configs[Idx].DecayPerSecond = DecayPerSecond;
+		}
+	};
+	ApplyIfDefault(EPCSPNeed::Hunger,   0.012f);
+	ApplyIfDefault(EPCSPNeed::Sleep,    0.004f);
+	ApplyIfDefault(EPCSPNeed::Social,   0.007f);
+	ApplyIfDefault(EPCSPNeed::Leisure,  0.006f);
+	ApplyIfDefault(EPCSPNeed::Hygiene,  0.008f);
+	ApplyIfDefault(EPCSPNeed::Fitness,  0.003f);
+	ApplyIfDefault(EPCSPNeed::Work,     0.009f);
+	ApplyIfDefault(EPCSPNeed::Learning, 0.005f);
 }
 
 void UPCSPNeedsComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

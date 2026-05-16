@@ -4,6 +4,9 @@
 #include "PCSPTypes.h"
 #include "PCSPNeedsComponent.h"
 #include "PCSPAgentCharacter.h"
+#include "PCSPPersonaComponent.h"
+#include "PCSPObservationComponent.h"
+#include "PCSPPolicySubsystem.h"
 
 UBTTask_PCSPDecision::UBTTask_PCSPDecision()
 {
@@ -16,25 +19,40 @@ EBTNodeResult::Type UBTTask_PCSPDecision::ExecuteTask(UBehaviorTreeComponent& Ow
 	if (!AI) { return EBTNodeResult::Failed; }
 
 	APCSPAgentCharacter* Agent = Cast<APCSPAgentCharacter>(AI->GetPawn());
-	UBlackboardComponent* BB = OwnerComp.GetBlackboardComponent();
+	UBlackboardComponent* BB   = OwnerComp.GetBlackboardComponent();
 	if (!Agent || !BB || !Agent->Needs) { return EBTNodeResult::Failed; }
 
-	const EPCSPNeed Urgent = Agent->Needs->GetMostUrgentNeed();
-	EPCSPActionType Action = EPCSPActionType::IdleReflect;
-	switch (Urgent)
+	// ONNX-only: this task drives decisions entirely from the PCSP policy.
+	// If the model is not loaded, fail the task so the agent does not move
+	// rather than fall back to a heuristic surrogate.
+	UPCSPPolicySubsystem* Policy = AI->GetWorld()->GetSubsystem<UPCSPPolicySubsystem>();
+	if (!Policy || !Policy->IsReady())
 	{
-	case EPCSPNeed::Hunger:   Action = EPCSPActionType::EatQuick; break;
-	case EPCSPNeed::Sleep:    Action = EPCSPActionType::RestAlone; break;
-	case EPCSPNeed::Social:   Action = EPCSPActionType::SocializeInitiate; break;
-	case EPCSPNeed::Leisure:  Action = EPCSPActionType::LeisureIndoor; break;
-	case EPCSPNeed::Hygiene:  Action = EPCSPActionType::HygieneQuick; break;
-	case EPCSPNeed::Fitness:  Action = EPCSPActionType::ExerciseSolo; break;
-	case EPCSPNeed::Work:     Action = EPCSPActionType::FocusedWork; break;
-	case EPCSPNeed::Learning: Action = EPCSPActionType::CasualLearning; break;
-	default: break;
+		UE_LOG(LogTemp, Error,
+			TEXT("BTTask_PCSPDecision: PCSPPolicySubsystem is not ready (ONNX model missing or load failed). "
+			     "Agent will not act until pcsp_actor.onnx + persona_embeddings.json are available."));
+		return EBTNodeResult::Failed;
+	}
+	if (!Agent->Observation)
+	{
+		UE_LOG(LogTemp, Error, TEXT("BTTask_PCSPDecision: agent has no ObservationComponent"));
+		return EBTNodeResult::Failed;
 	}
 
+	const TArray<float>& Obs = Agent->Observation->BuildObservation();
+	const int32 PersonaId = Agent->Persona ? Agent->Persona->GetPersonaId() : 1;
+	const EPCSPActionType Action = Policy->RunInference(Obs, PersonaId);
+	if (Action == EPCSPActionType::None)
+	{
+		UE_LOG(LogTemp, Error, TEXT("BTTask_PCSPDecision: ONNX inference failed"));
+		return EBTNodeResult::Failed;
+	}
+
+	// UrgencyScore: how depleted is the most-urgent need (drives emergency branch)
+	const EPCSPNeed Urgent = Agent->Needs->GetMostUrgentNeed();
+	const float UrgencyScore = 1.f - Agent->Needs->GetNeed(Urgent);
+
 	BB->SetValueAsEnum(PCSPBlackboard::DesiredActionType, static_cast<uint8>(Action));
-	BB->SetValueAsFloat(PCSPBlackboard::UrgencyScore, 1.f - Agent->Needs->GetNeed(Urgent));
+	BB->SetValueAsFloat(PCSPBlackboard::UrgencyScore, UrgencyScore);
 	return EBTNodeResult::Succeeded;
 }

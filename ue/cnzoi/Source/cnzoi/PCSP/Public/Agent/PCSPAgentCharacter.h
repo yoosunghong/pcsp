@@ -9,6 +9,7 @@ class UPCSPSocialContextComponent;
 class UPCSPObservationComponent;
 class UPCSPPersonaComponent;
 class UPCSPTrajectoryLogComponent;
+class UPCSPPolicySubsystem;
 
 UCLASS()
 class CNZOI_API APCSPAgentCharacter : public ACharacter
@@ -24,6 +25,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="PCSP")
 	TObjectPtr<UPCSPSocialContextComponent> Social;
 
+	// v3 obs component — builds the 33-dim vector consumed by PCSPPolicySubsystem
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="PCSP")
 	TObjectPtr<UPCSPObservationComponent> Observation;
 

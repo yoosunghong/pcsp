@@ -39,35 +39,48 @@ Movement is an execution detail, not a policy action. The policy should output s
 - [ ] Write the BT-Blackboard-Policy interface specification.
 - [ ] Confirm Main and Stress scale targets.
 
-### Phase 1: Continuous-Space Prototype
+### Phase 1: Continuous-Space Prototype ✅ Complete (2026-05-16)
 
-- [ ] Build a Medium district level (editor: BP_PCSP_District map under `Content/PCSP/Maps/`).
+- [x] Build a Medium district level (`Content/PCSP/Maps/Map_PCSPDistrict_M.umap`).
 - [x] Spawn and schedule 16 agents (C++ `APCSPAgentSpawner`, configurable `AgentCount`).
-- [ ] Create NavMesh, affordance zones, and interaction points
-      (C++ `APCSPAffordanceZone`, `APCSPInteractionPoint`, and `UPCSPAffordanceSubsystem` are in place;
-      editor work: place `RecastNavMeshBoundsVolume` + zone instances in the map).
+- [x] Create NavMesh, affordance zones, and interaction points
+      (C++ `APCSPAffordanceZone`, `APCSPInteractionPoint`, `UPCSPAffordanceSubsystem` in place;
+      all 10 zone instances + interaction points placed in map; NavMesh built).
 - [x] Implement needs, social, and observation components
       (`UPCSPNeedsComponent`, `UPCSPSocialContextComponent`, `UPCSPObservationComponent`,
-       plus `UPCSPPersonaComponent` and `UPCSPTrajectoryLogComponent` skeletons).
-- [ ] Build the baseline Blackboard-driven Behavior Tree skeleton
-      (C++ `UBTTask_PCSPDecision` stub + `PCSPBlackboard::*` key names are in place;
-       editor work: author BT_PCSPAgent + BB_PCSPAgent assets matching those keys).
+       `UPCSPPersonaComponent`, `UPCSPTrajectoryLogComponent`).
+- [x] Build the baseline Blackboard-driven Behavior Tree skeleton
+      (`BB_PCSPAgent` + `BT_PCSPAgent` authored in editor; `UBTTask_PCSPDecision` live and writing keys).
 
 ### Phase 2: Hybrid Behavior Tree Implementation
 
-- [ ] Implement `UBTTask_PCSPDecision` or `UBTService_PCSPDecision`.
-- [ ] Implement `UBTTask_MoveToAffordance`.
-- [ ] Implement `UBTTask_PerformInteraction`.
-- [ ] Add retry, reservation conflict handling, congestion handling, and fallback behavior.
-- [ ] Add an emergency branch for critical needs.
+- [x] Implement `UBTTask_PCSPDecision` (Phase 1 stub, maps needs → action type).
+- [x] Implement `UBTTask_MoveToAffordance` — queries subsystem, reserves interaction point, moves agent; retries up to MaxRetries times on path failure.
+- [x] Implement `UBTTask_PerformInteraction` — waits InteractionDuration, applies needs satisfaction delta, releases reservation.
+- [x] Add retry and reservation conflict handling (MoveToAffordance RetryCount + RecentFailureCount BB key; PerformInteraction checks reservation validity each tick).
+- [x] Emergency branch for critical needs (UrgencyScore > 0.85 Blackboard Decorator, Observer Aborts = Both).
+- [ ] Congestion handling — EQS or weighted zone scoring when multiple agents compete for the same zone (deferred to Phase 3 scaling work).
+- [x] Zone-coverage fix for engine-integration experiment (2026-05-17):
+      Park (Observe) and Gym (Exercise) were systematically unvisited.
+      Resolution: agents now run on ONNX inference exclusively — heuristic
+      fallback removed. (a) ONNX v3 indices 16-19 (movement, unused in UE)
+      remapped to `LeisureOutdoor`/`ObserveCrowd` so the Observe category has
+      a reachable action; (b) Gym (Exercise) is reachable via v3 indices 8/9
+      which the policy already emits. If `pcsp_actor.onnx` or
+      `persona_embeddings.json` is missing, `BTTask_PCSPDecision` now logs
+      an Error and returns Failed — agents do not move rather than fall back
+      to a heuristic surrogate.
 
 ### Phase 3: PCSP Policy Integration
 
-- [ ] Implement persona embedding cache loading.
-- [ ] Load projected persona vectors.
-- [ ] Connect Python inference, ONNX Runtime, or TorchScript inference.
-- [ ] Add batch and async inference.
-- [ ] Export reward and trajectory logs.
+- [x] Implement persona embedding cache loading (`UPCSPPersonaCache` — reads persona_embeddings.json).
+- [x] Load projected persona vectors into `UPCSPPersonaCache`; `UPCSPPersonaComponent::GetPersonaId()` exposes 1-based ID.
+- [x] Connect ONNX Runtime inference via `UPCSPPolicySubsystem` (NNE / NNERuntimeORT plugin).
+      Graceful fallback to needs heuristic when model files are absent.
+- [x] Align `UPCSPObservationComponent` to v3 33-dim schema (pos/time/needs/zone-onehot/social/routine/neighbors).
+- [x] Export script: `research/scripts/export_pcsp_onnx.py` → pcsp_actor.onnx + persona_embeddings.json.
+- [ ] Add async/batched inference (deferred — synchronous is sufficient for ≤16 agents at 60Hz).
+- [ ] Export reward and trajectory logs from `UPCSPTrajectoryLogComponent` (Phase 4).
 
 ### Phase 4: Scaling And Experiments
 

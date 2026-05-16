@@ -1,6 +1,7 @@
 #include "PCSPAgentSpawner.h"
 #include "PCSPAgentCharacter.h"
 #include "PCSPAIController.h"
+#include "PCSPPersonaComponent.h"
 #include "Engine/World.h"
 #include "NavigationSystem.h"
 
@@ -58,6 +59,13 @@ int32 APCSPAgentSpawner::SpawnAgents()
 		{
 			Agent->AIControllerClass = AIControllerClass;
 			Agent->SpawnDefaultController();
+		}
+
+		// Assign a unique 1-based persona ID so each agent uses a different embedding.
+		// IDs cycle through 1..300 (the full persona set).
+		if (Agent->Persona)
+		{
+			Agent->Persona->PersonaId = FString::FromInt((i % 300) + 1);
 		}
 
 		SpawnedAgents.Add(Agent);

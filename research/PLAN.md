@@ -127,3 +127,4 @@
 - [ ] If factorized actions are introduced, redesign the actor as multiple heads: intent, target/place, style/duration.
 - [ ] Re-measure latency before claiming final real-time speedups in the paper.
 - [ ] Decide whether the frozen projection ablation is worth running for v3.
+- [x] UE5-side v3 action remap: movement indices 16-19 (`move_up/down/left/right`) carry no semantic meaning in UE (engine handles pathing), so the UE bridge now maps 16/18 → `LeisureOutdoor` and 17/19 → `ObserveCrowd` in `PCSPPolicySubsystem.cpp`. Python training/eval are unaffected — the remap lives in the engine bridge only, but recorded here so the v3 action-table interpretation stays consistent across research and UE. UE decisions are now ONNX-only: if `pcsp_actor.onnx` or `persona_embeddings.json` is missing, agents return Failed rather than fall back to a heuristic. *(2026-05-17)*

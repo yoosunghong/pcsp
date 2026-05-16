@@ -220,17 +220,27 @@ ROOT
      │   └─ [Task: BTTask_PCSPDecision]
      │
      ├─ [Sequence]  "Persona Decision Branch"
-     │   ├─ [Task: BTTask_PCSPDecision]    ← writes DesiredActionType + UrgencyScore
-     │   ├─ [Task: Wait]  0.1 s            ← placeholder: MoveToAffordance (Phase 2)
-     │   └─ [Task: Wait]  1.0 s            ← placeholder: PerformInteraction (Phase 2)
+     │   ├─ [Task: BTTask_PCSPDecision]       ← writes DesiredActionType + UrgencyScore
+     │   ├─ [Task: BTTask_MoveToAffordance]   ← queries subsystem, reserves point, moves agent
+     │   └─ [Task: BTTask_PerformInteraction] ← waits InteractionDuration, satisfies needs
      │
      └─ [Sequence]  "Idle / Fallback Branch"
          └─ [Task: Wait]  2.0 s
 ```
 
-**Root Selector re-evaluation settings:**
-- Observer Aborts: `Self`
-- Notify Observer: `On Value Change`
+**Blackboard Decorator settings** (on the `UrgencyScore > 0.85` decorator of the Emergency Branch):
+
+| Property | Value |
+|---|---|
+| Key Query | `Is Greater Than` |
+| Key Value | `0.85` |
+| Observer Aborts | `Both` |
+| Notify Observer | `On Value Change` |
+
+> "Observer Aborts" and "Notify Observer" are properties of the **Decorator node**, not of the Selector.
+> Select the decorator (the small blue chip on the Emergency Branch Sequence) to see these fields in Details.
+> `Both` means: abort the running lower-priority branch when urgency rises above 0.85,
+> and abort the Emergency Branch itself when urgency drops back below 0.85.
 
 > Phase 2 replaces the `Wait` placeholders with
 > `UBTTask_MoveToAffordance` and `UBTTask_PerformInteraction`.
@@ -327,7 +337,7 @@ Run **PIE in Simulate mode** (no human player needed):
 - [ ] All 10 `APCSPAffordanceZone` instances placed and tagged
 - [ ] Interaction points placed and assigned to zone arrays
 - [ ] `BB_PCSPAgent` has all 10 keys matching `PCSPBlackboard::` names
-- [ ] `BT_PCSPAgent` skeleton built with `BTTask_PCSPDecision`
+- [ ] `BT_PCSPAgent` skeleton built with `BTTask_PCSPDecision` (Decorator: Observer Aborts=Both, Notify=On Value Change)
 - [ ] `BP_PCSPAgentCharacter` has mesh and `AIControllerClass` set
 - [ ] `BP_PCSPAIController` has `BT_PCSPAgent` assigned
 - [ ] `BP_PCSPAgentSpawner` spawns 16 agents in PIE
