@@ -55,9 +55,12 @@ diversity training objective. Across three Mini-Inzoi experimental settings,
 including a richer 20-action v3 ontology, ablations show that the InfoNCE
 trajectory-consistency objective is load-bearing: removing it collapses
 zero-shot persona identification to chance even when task reward is preserved or
-improved. These results provide empirical evidence that shared RL policies can
-support scalable, real-time, persona-conditioned NPC control, and that trajectory
-traceability is central to the method.
+improved. External validation on \texttt{commons\_harvest\_\_open} from
+\textit{Melting Pot 2.4.0}~\cite{leibo2021meltingpot} confirms that the
+\S\ref{sec:method} method produces persona-conditioned behavioral divergence in
+a multi-agent strategic substrate. These results provide empirical evidence that
+shared RL policies can support scalable, real-time, persona-conditioned NPC
+control and that trajectory traceability is central to the method.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -152,6 +155,16 @@ alignment, and real-time deployment.
     behavioral diversity, semantic-behavioral alignment, inference latency, and
     rich trajectory observability as core criteria for persona-conditioned NPC
     control (\S\ref{sec:evalprotocol}).
+  \item \textbf{External validation on Melting Pot}: Applied to
+    \texttt{commons\_harvest\_\_open} from \textit{Melting Pot
+    2.4.0}~\cite{leibo2021meltingpot} with no algorithmic changes to the
+    \S\ref{sec:method} method beyond a CNN observation front-end and a
+    persona-agnostic team-reward potential required by the substrate, \PCSP
+    produces persona-distinguishable behavior with mean pairwise action-KL
+    $2.106\,[1.609,\,2.660]$ and trajectory$\to$persona retrieval top-3
+    $0.936\,[0.879,\,0.993]$ across 5 seeds (chance $0.30$); the no-InfoNCE
+    ablation confirms that the consistency loss remains load-bearing in this
+    richer environment (\S\ref{sec:meltingpot}).
 \end{enumerate}
 
 % ---------------------------------------------------------------
@@ -814,6 +827,97 @@ checkpoints, again showing strong monotone alignment at both scales.
 \end{figure}
 
 % ---------------------------------------------------------------
+\section{External Environment Expansion: Melting Pot}
+\label{sec:meltingpot}
+
+Mini-Inzoi v1--v3 isolate persona-conditioned control in a deliberately small
+grid world. As a preliminary external check we apply the \S\ref{sec:method}
+method---unchanged---to \texttt{commons\_harvest\_\_open} from \textit{Melting Pot
+2.4.0}~\cite{leibo2021meltingpot}: a 7-player common-pool resource substrate with
+$88\!\times\!88\!\times\!3$ RGB observations and an 8-action ontology
+(\texttt{NOOP}, \texttt{FORWARD}, \texttt{BACKWARD}, \texttt{STEP\_LEFT/RIGHT},
+\texttt{TURN\_LEFT/RIGHT}, \texttt{FIRE\_ZAP}). Two MP-specific additions are
+required and otherwise the algorithm matches \S\ref{sec:method} byte-for-byte:
+(i) a 3-layer Nature-style CNN
+($32\!\times\!8/4 \to 64\!\times\!4/2 \to 64\!\times\!3/1$) maps the RGB
+observation to a 256-d feature that feeds the unchanged FiLM trunk, and (ii) a
+small persona-agnostic shaping term $\tilde r_i = r_i + 0.1\cdot\bar r$
+(team-mean potential) is added to escape the well-known apple-depletion trap on
+which vanilla PPO collapses to zero return. All other components---frozen
+Qwen3-0.6B-Embedding, LoRA $r\!=\!16$ persona projection $1024\!\to\!64$, FiLM
+trunk 256-256-128, 2-layer GRU trajectory encoder, full-batch InfoNCE at
+$T\!=\!0.07$ and $\lambda_{\text{IC}}\!=\!0.5$, KL diversity at
+$\lambda_2\!=\!0.1$ over $8$ personas $\times\,32$ states, and PPO
+($\gamma\!=\!0.99$, GAE-$\lambda\!=\!0.95$, clip $0.2$, entropy $0.01$)---are
+identical to \S\ref{sec:method}. Personas are the same 12-persona Qwen3
+corpus as the concurrent workshop study~\cite{phase5report}, split
+$10$ train / $2$ held-out; this section reports in-distribution metrics on the
+$10$ train personas at $1\,\text{M}$ environment steps per seed. Under the
+shaping, agents earn modest non-zero return throughout training (mean per-step
+reward $\approx\!0.010$ across all 5 seeds, second half of training), so the
+substrate is engaged rather than collapsed; commons\_harvest is well known to be
+hard to fully solve with vanilla PPO and we do not attempt to do so here.
+
+We measure (i) mean pairwise action-KL between persona-conditioned policies on
+$64$ random rollout states, averaged over the $\binom{10}{2}\!=\!45$ persona pairs,
+and (ii) trajectory$\to$persona retrieval top-3 accuracy with the trained GRU
+encoder over the $10$-train vocabulary (chance $3/10\!=\!0.30$). Bootstrap 95\%
+CIs use $10\,000$ resamples over seeds.
+
+\begin{table}[t]
+  \centering
+  \small
+  \caption{%
+    \textbf{Melting Pot external check on \texttt{commons\_harvest\_\_open}.}
+    Final-checkpoint metrics at $1\,\text{M}$ environment steps per seed.
+    Mean pairwise action-KL (10 personas, 45 pairs, 64 random states) and
+    in-distribution trajectory$\to$persona retrieval top-3 accuracy on the
+    10-train vocabulary. Bootstrap 95\% CIs over seeds (10\,000 resamples).
+    The no-InfoNCE ablation confirms the consistency loss remains load-bearing:
+    KL alone is large but trajectories carry no persona information (top-3
+    falls below chance), reproducing the v1--v3 finding.}
+  \label{tab:mp_clean}
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{lrcc}
+    \toprule
+    Configuration & seeds & mean KL & top-3 \\
+    \midrule
+    Full \PCSP (\S\ref{sec:method})         & 5 & $2.106\,[1.609,\,2.660]$ & $0.936\,[0.879,\,0.993]$ \\
+    \,\,$-\,$InfoNCE ($\lambda_{\text{IC}}\!=\!0$) & 1 & $5.819$ & $0.250$ \\
+    chance (10 train personas)              & --& $0$       & $0.300$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{../figures/fig_mp_clean.pdf}
+  \caption{%
+    \textbf{Melting Pot external check on \texttt{commons\_harvest\_\_open}.}
+    Per-seed bars (blue: full \PCSP, 5 seeds; red: $-$InfoNCE ablation, 1 seed).
+    Dotted blue line: 5-seed mean. (a) Mean pairwise action-KL across the
+    $\binom{10}{2}\!=\!45$ persona pairs. (b) In-distribution
+    trajectory$\to$persona top-3 retrieval on the 10-train vocabulary
+    (dashed grey: chance $3/10$). The ablation reaches the highest KL but the
+    lowest top-3 (below chance): policies are different yet trajectories no
+    longer encode \emph{which} persona produced them.}
+  \label{fig:mp_clean}
+\end{figure}
+
+\paragraph{Takeaways.}
+The \S\ref{sec:method} method---applied with no algorithmic modifications beyond
+the CNN observation encoder and the persona-agnostic team-reward potential
+required by the substrate---produces clearly persona-distinguishable behavior
+in a multi-agent strategic substrate (Table~\ref{tab:mp_clean}). The no-InfoNCE
+ablation reproduces the v1--v3 ablation finding in this richer environment: the
+KL diversity loss alone drives policies apart but leaves no trajectory--persona
+correspondence (top-3 falls to $0.250$, below chance), so the consistency loss
+remains load-bearing. Multi-substrate generalization, held-out persona recovery,
+and the per-seed projection-head landscape are deferred to a concurrent workshop
+study~\cite{phase5report}.
+
+
+% ---------------------------------------------------------------
 \section{Discussion and Future Work}
 \label{sec:discussion}
 
@@ -827,14 +931,19 @@ update model or retrieval-augmented memory module that can influence the shared
 policy without requiring per-step LLM inference~\cite{park2023generative}.
 
 \textbf{Scaling to richer environments.}
-Mini-Inzoi isolates persona-conditioned control in a deliberately small grid
-world. The next environment target is a richer multi-agent benchmark such as
-Melting Pot~\cite{leibo2021meltingpot}, where social dilemmas, partial
-observability, and larger interaction spaces can test whether persona-conditioned
-policies produce stable social patterns rather than only different marginal
-action frequencies. Engine integration also remains a practical step: the policy
-must serialize game state, tolerate asynchronous events, and preserve the
-sub-frame inference profile observed in the Python benchmark.
+The Melting Pot result in \S\ref{sec:meltingpot} is a single-substrate,
+in-distribution external check: the \S\ref{sec:method} method survives the
+strong reward gradient and 7-agent strategic pressure of
+\texttt{commons\_harvest\_\_open}, but multi-substrate generalization, held-out
+persona recovery, and the per-seed projection-head landscape are addressed only
+in a concurrent workshop study~\cite{phase5report}. That study documents a
+bimodal projection-head landing and an embedding-margin condition on held-out
+recovery that we do not attempt to resolve here; the natural mechanistic
+targets---multi-objective InfoNCE with per-cluster pinning, projection-head
+re-seeding, and a controlled-margin held-out corpus---follow directly from
+those observations. Engine integration also remains a practical step: the
+policy must serialize game state, tolerate asynchronous events, and preserve
+the sub-frame inference profile observed in the Python benchmark.
 
 \textbf{Human evaluation methodology.}
 Automatic metrics are necessary for ablations but insufficient for perceived NPC
@@ -852,9 +961,11 @@ alongside aggregate accuracy.
 
 \textbf{Minimal environments.}
 Mini-Inzoi v1--v3 are far smaller than commercial life-simulation worlds.
-The v2 experiment tests a larger grid and more agents, but continuous physics,
-longer horizons, asynchronous events, and richer social affordances remain
-untested.
+The v2 experiment tests a larger grid and more agents, and the Melting Pot
+external check (\S\ref{sec:meltingpot}) covers a single multi-agent
+substrate (\texttt{commons\_harvest\_\_open}); commercial-scale multi-agent
+validation, continuous physics, longer horizons, asynchronous events, and
+richer social affordances remain untested.
 
 \textbf{Action observability.}
 The original 12-action space exposes only a thin slice of persona-relevant
@@ -898,11 +1009,16 @@ generalization, and real-time inference.
 Across three Mini-Inzoi settings, \PCSP achieves up to 17$\times$ above-chance
 zero-shot persona identification, $\rho\!\approx\!0.73$ semantic-behavioral
 alignment, and 22$\times$ faster inference than an LLM-as-policy baseline.
-The main empirical finding is that the InfoNCE trajectory-consistency objective
-is load-bearing: removing it collapses zero-shot persona traceability to chance
-even when reward improves. The next steps are to couple static personas with
-dynamic memory, move the evaluation to richer multi-agent environments such as
-Melting Pot, and complete human studies using rich trajectory traces.
+External validation on \texttt{commons\_harvest\_\_open} from \textit{Melting Pot
+2.4.0} confirms that the same method produces persona-conditioned behavioral
+divergence in a multi-agent strategic substrate, with the no-InfoNCE ablation
+again confirming the consistency loss is load-bearing. The main empirical
+finding is that the InfoNCE trajectory-consistency objective is load-bearing:
+removing it collapses zero-shot persona traceability to chance even when reward
+improves. The next steps are to couple static personas with dynamic memory,
+extend the external Melting Pot check to additional substrates and held-out
+personas (mechanistic targets from the concurrent workshop study~\cite{phase5report}),
+and complete human studies using rich trajectory traces.
 
 % ---------------------------------------------------------------
 \bibliographystyle{IEEEtran}

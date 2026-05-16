@@ -1,0 +1,39 @@
+{
+  "manifest": {
+    "random32": {
+      "path": "results/embeddings/persona_emb_random32.pt",
+      "shape": [
+        12,
+        32
+      ],
+      "dim": 32
+    },
+    "charhash64": {
+      "path": "results/embeddings/persona_emb_charhash64.pt",
+      "shape": [
+        12,
+        64
+      ],
+      "dim": 64
+    },
+    "descbow128": {
+      "path": "results/embeddings/persona_emb_descbow128.pt",
+      "shape": [
+        12,
+        128
+      ],
+      "dim": 128
+    }
+  },
+  "diagnostics": {
+    "random32": {
+      "mean_pairwise_cos": -0.026253685355186462
+    },
+    "charhash64": {
+      "mean_pairwise_cos": 0.15968790650367737
+    },
+    "descbow128": {
+      "mean_pairwise_cos": 0.1279991716146469
+    }
+  }
+}
