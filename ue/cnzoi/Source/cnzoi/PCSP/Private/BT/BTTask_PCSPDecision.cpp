@@ -1,20 +1,42 @@
 #include "BTTask_PCSPDecision.h"
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
+#include "Engine/World.h"
 #include "PCSPTypes.h"
 #include "PCSPNeedsComponent.h"
 #include "PCSPAgentCharacter.h"
 #include "PCSPPersonaComponent.h"
 #include "PCSPObservationComponent.h"
 #include "PCSPPolicySubsystem.h"
+#include "PCSPTrajectoryLogComponent.h"
 
 UBTTask_PCSPDecision::UBTTask_PCSPDecision()
 {
 	NodeName = TEXT("PCSP Decision");
 }
 
+uint16 UBTTask_PCSPDecision::GetInstanceMemorySize() const
+{
+	return sizeof(FBTPCSPDecisionMemory);
+}
+
+void UBTTask_PCSPDecision::InitializeMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
+	EBTMemoryInit::Type InitType) const
+{
+	new (NodeMemory) FBTPCSPDecisionMemory();
+}
+
+void UBTTask_PCSPDecision::CleanupMemory(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
+	EBTMemoryClear::Type CleanupType) const
+{
+	reinterpret_cast<FBTPCSPDecisionMemory*>(NodeMemory)->~FBTPCSPDecisionMemory();
+}
+
 EBTNodeResult::Type UBTTask_PCSPDecision::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
+	FBTPCSPDecisionMemory* Mem = reinterpret_cast<FBTPCSPDecisionMemory*>(NodeMemory);
+
 	AAIController* AI = OwnerComp.GetAIOwner();
 	if (!AI) { return EBTNodeResult::Failed; }
 
@@ -22,10 +44,32 @@ EBTNodeResult::Type UBTTask_PCSPDecision::ExecuteTask(UBehaviorTreeComponent& Ow
 	UBlackboardComponent* BB   = OwnerComp.GetBlackboardComponent();
 	if (!Agent || !BB || !Agent->Needs) { return EBTNodeResult::Failed; }
 
-	// ONNX-only: this task drives decisions entirely from the PCSP policy.
-	// If the model is not loaded, fail the task so the agent does not move
-	// rather than fall back to a heuristic surrogate.
-	UPCSPPolicySubsystem* Policy = AI->GetWorld()->GetSubsystem<UPCSPPolicySubsystem>();
+	const UWorld* World = AI->GetWorld();
+	const float Now = World ? World->GetTimeSeconds() : 0.f;
+
+	// Compute urgency once — cheap, and we need it for the emergency bypass.
+	const EPCSPNeed Urgent = Agent->Needs->GetMostUrgentNeed();
+	const float UrgencyScore = 1.f - Agent->Needs->GetNeed(Urgent);
+
+	// Failure backoff: extend the throttle interval when the move branch has been
+	// failing — the policy is deterministic for a given (obs, persona), so retrying
+	// immediately just hot-loops. Waiting lets needs decay enough to shift argmax.
+	const int32 FailureCount = BB->GetValueAsInt(PCSPBlackboard::RecentFailureCount);
+	const float EffectiveInterval = MinDecisionInterval * (1.f + FMath::Min(FailureCount, 8));
+
+	const bool bEmergency  = UrgencyScore >= EmergencyUrgencyThreshold;
+	const bool bThrottled  = (Now - Mem->LastDecisionTime) < EffectiveInterval;
+
+	// Throttle: reuse the last action so the BT can keep running the move/interaction
+	// branch without thrashing the ONNX model. Skipped when an emergency hits.
+	if (bThrottled && !bEmergency && Mem->LastAction != EPCSPActionType::None)
+	{
+		BB->SetValueAsEnum (PCSPBlackboard::DesiredActionType, static_cast<uint8>(Mem->LastAction));
+		BB->SetValueAsFloat(PCSPBlackboard::UrgencyScore,      UrgencyScore);
+		return EBTNodeResult::Succeeded;
+	}
+
+	UPCSPPolicySubsystem* Policy = World ? World->GetSubsystem<UPCSPPolicySubsystem>() : nullptr;
 	if (!Policy || !Policy->IsReady())
 	{
 		UE_LOG(LogTemp, Error,
@@ -48,11 +92,16 @@ EBTNodeResult::Type UBTTask_PCSPDecision::ExecuteTask(UBehaviorTreeComponent& Ow
 		return EBTNodeResult::Failed;
 	}
 
-	// UrgencyScore: how depleted is the most-urgent need (drives emergency branch)
-	const EPCSPNeed Urgent = Agent->Needs->GetMostUrgentNeed();
-	const float UrgencyScore = 1.f - Agent->Needs->GetNeed(Urgent);
+	BB->SetValueAsEnum (PCSPBlackboard::DesiredActionType, static_cast<uint8>(Action));
+	BB->SetValueAsFloat(PCSPBlackboard::UrgencyScore,      UrgencyScore);
 
-	BB->SetValueAsEnum(PCSPBlackboard::DesiredActionType, static_cast<uint8>(Action));
-	BB->SetValueAsFloat(PCSPBlackboard::UrgencyScore, UrgencyScore);
+	Mem->LastDecisionTime = Now;
+	Mem->LastAction       = Action;
+	Mem->LastUrgency      = UrgencyScore;
+
+	if (Agent->TrajectoryLog)
+	{
+		Agent->TrajectoryLog->RecordDecision(Action, UrgencyScore);
+	}
 	return EBTNodeResult::Succeeded;
 }

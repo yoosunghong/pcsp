@@ -84,7 +84,7 @@ bool UPCSPPolicySubsystem::LoadModel()
 		return false;
 	}
 
-	UNNEModelData* ModelData = NewObject<UNNEModelData>(GetTransientPackage(), NAME_None, RF_Transient);
+	UNNEModelData* ModelData = NewObject<UNNEModelData>(GetTransientPackage(), NAME_None, RF_Transient); 
 	ModelData->Init(TEXT("onnx"), TConstArrayView64<uint8>(ModelBytes.GetData(), ModelBytes.Num()));
 	Model = NNERuntime->CreateModelCPU(ModelData);
 	if (!Model.IsValid())

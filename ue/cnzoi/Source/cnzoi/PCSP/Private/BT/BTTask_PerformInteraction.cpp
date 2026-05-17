@@ -7,6 +7,7 @@
 #include "PCSPInteractionPoint.h"
 #include "PCSPAgentCharacter.h"
 #include "PCSPNeedsComponent.h"
+#include "PCSPTrajectoryLogComponent.h"
 
 UBTTask_PerformInteraction::UBTTask_PerformInteraction()
 {
@@ -30,6 +31,16 @@ EBTNodeResult::Type UBTTask_PerformInteraction::ExecuteTask(UBehaviorTreeCompone
 	if (!Point || !Point->IsReserved() || Point->GetReserver() != AI->GetPawn())
 	{
 		// Reservation was lost or never set (e.g., BT was interrupted and restarted)
+		if (APCSPAgentCharacter* Character = Cast<APCSPAgentCharacter>(AI->GetPawn()))
+		{
+			if (Character->TrajectoryLog)
+			{
+				const EPCSPActionType Action =
+					static_cast<EPCSPActionType>(BB->GetValueAsEnum(PCSPBlackboard::DesiredActionType));
+				Character->TrajectoryLog->RecordInteractionFailed(Action, FGameplayTag(),
+					TEXT("reservation_lost_on_entry"));
+			}
+		}
 		return EBTNodeResult::Failed;
 	}
 
@@ -66,6 +77,18 @@ void UBTTask_PerformInteraction::TickTask(UBehaviorTreeComponent& OwnerComp, uin
 		if (Memory->Zone.IsValid() && Agent) { Memory->Zone->UnregisterOccupant(Agent); }
 		UBlackboardComponent* BB = OwnerComp.GetBlackboardComponent();
 		if (BB) { BB->SetValueAsBool(PCSPBlackboard::AffordanceReserved, false); }
+		if (APCSPAgentCharacter* Character = Cast<APCSPAgentCharacter>(Agent))
+		{
+			if (Character->TrajectoryLog)
+			{
+				const EPCSPActionType Action = BB
+					? static_cast<EPCSPActionType>(BB->GetValueAsEnum(PCSPBlackboard::DesiredActionType))
+					: EPCSPActionType::IdleReflect;
+				const FGameplayTag ZoneTag = Memory->Zone.IsValid() ? Memory->Zone->ZoneTag : FGameplayTag();
+				Character->TrajectoryLog->RecordInteractionFailed(Action, ZoneTag,
+					TEXT("reservation_stolen_mid_interaction"));
+			}
+		}
 		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
 		return;
 	}
@@ -74,15 +97,27 @@ void UBTTask_PerformInteraction::TickTask(UBehaviorTreeComponent& OwnerComp, uin
 	if (Memory->TimeRemaining > 0.f) { return; }
 
 	// Interaction complete
+	UBlackboardComponent* BB = OwnerComp.GetBlackboardComponent();
 	if (Agent)
 	{
 		EPCSPAffordanceCategory Category = Memory->Zone.IsValid()
 			? Memory->Zone->Category
 			: EPCSPAffordanceCategory::None;
-		ApplyNeedsSatisfaction(Agent, Category);
+		const float Reward = ApplyNeedsSatisfaction(Agent, Category);
+
+		if (APCSPAgentCharacter* Character = Cast<APCSPAgentCharacter>(Agent))
+		{
+			if (Character->TrajectoryLog)
+			{
+				const EPCSPActionType Action = BB
+					? static_cast<EPCSPActionType>(BB->GetValueAsEnum(PCSPBlackboard::DesiredActionType))
+					: EPCSPActionType::IdleReflect;
+				const FGameplayTag ZoneTag = Memory->Zone.IsValid() ? Memory->Zone->ZoneTag : FGameplayTag();
+				Character->TrajectoryLog->RecordInteractionComplete(Action, ZoneTag, Category, Reward);
+			}
+		}
 	}
 
-	UBlackboardComponent* BB = OwnerComp.GetBlackboardComponent();
 	CleanupReservation(NodeMemory, Agent, BB);
 	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 }
@@ -121,10 +156,10 @@ APCSPAffordanceZone* UBTTask_PerformInteraction::FindZoneForPoint(UWorld* World,
 	return nullptr;
 }
 
-void UBTTask_PerformInteraction::ApplyNeedsSatisfaction(AActor* Agent, EPCSPAffordanceCategory Category)
+float UBTTask_PerformInteraction::ApplyNeedsSatisfaction(AActor* Agent, EPCSPAffordanceCategory Category)
 {
 	APCSPAgentCharacter* Character = Cast<APCSPAgentCharacter>(Agent);
-	if (!Character || !Character->Needs) { return; }
+	if (!Character || !Character->Needs) { return 0.f; }
 
 	// (Need, RestoreDelta) pairs per affordance category
 	EPCSPNeed Need  = EPCSPNeed::Leisure;
@@ -146,6 +181,7 @@ void UBTTask_PerformInteraction::ApplyNeedsSatisfaction(AActor* Agent, EPCSPAffo
 	}
 
 	if (Delta > 0.f) { Character->Needs->AdjustNeed(Need, Delta); }
+	return Delta;
 }
 
 void UBTTask_PerformInteraction::CleanupReservation(uint8* NodeMemory, AActor* Agent, UBlackboardComponent* BB)

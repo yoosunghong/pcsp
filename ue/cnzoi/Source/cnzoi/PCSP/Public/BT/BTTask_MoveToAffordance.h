@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
+#include "GameplayTagContainer.h"
 #include "PCSPTypes.h"
 #include "BTTask_MoveToAffordance.generated.h"
 
@@ -12,6 +13,9 @@ struct FBTMoveToAffordanceMemory
 {
 	TWeakObjectPtr<APCSPAffordanceZone>    Zone;
 	TWeakObjectPtr<APCSPInteractionPoint>  Point;
+	FGameplayTag                           LastIntendedZoneTag;
+	FString                                LastFailureReason;
+	float                                  LastDistanceToTarget = -1.f;
 	int32  RetryCount    = 0;
 	bool   bMoveStarted  = false;
 };
@@ -44,6 +48,7 @@ public:
 private:
 	EBTNodeResult::Type TryBeginMove(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory);
 	void                ReleaseReservation(uint8* NodeMemory, AActor* Agent) const;
+	void                EmitFinalFailure(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const;
 
 	static EPCSPAffordanceCategory ActionToCategory(EPCSPActionType Action);
 };

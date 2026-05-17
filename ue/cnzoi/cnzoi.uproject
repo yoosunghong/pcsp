@@ -38,6 +38,10 @@
 		{
 			"Name": "NNERuntimeORT",
 			"Enabled": true
+		},
+		{
+			"Name": "RemoteControlComponents",
+			"Enabled": true
 		}
 	]
 }

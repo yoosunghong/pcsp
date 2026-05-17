@@ -35,6 +35,7 @@ public:
 
 private:
 	static APCSPAffordanceZone* FindZoneForPoint(UWorld* World, APCSPInteractionPoint* Point);
-	static void ApplyNeedsSatisfaction(AActor* Agent, EPCSPAffordanceCategory Category);
+	// Returns the actual needs-satisfaction delta applied (0 if category had no mapping).
+	static float ApplyNeedsSatisfaction(AActor* Agent, EPCSPAffordanceCategory Category);
 	static void CleanupReservation(uint8* NodeMemory, AActor* Agent, UBlackboardComponent* BB);
 };
