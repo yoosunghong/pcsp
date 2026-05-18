@@ -1,6 +1,7 @@
 #include "PCSPTrajectoryLogComponent.h"
 #include "PCSPNeedsComponent.h"
 #include "PCSPPersonaComponent.h"
+#include "PCSPPolicySubsystem.h"
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
@@ -67,10 +68,13 @@ void UPCSPTrajectoryLogComponent::BeginPlay()
 
 	// Header line — one per file. PersonaText is intentionally omitted to avoid
 	// JSON-escaping complexity; downstream tooling can join on persona_id.
+	const FString ModeName = UPCSPPolicySubsystem::PolicyModeName(
+		UPCSPPolicySubsystem::GetPolicyMode());
 	const FString Header = FString::Printf(
-		TEXT("{\"event\":\"session_start\",\"persona_id\":%d,\"actor\":\"%s\",\"t\":%.3f}"),
+		TEXT("{\"event\":\"session_start\",\"persona_id\":%d,\"actor\":\"%s\",\"t\":%.3f,\"policy_mode\":\"%s\"}"),
 		PersonaId, *ActorName,
-		GetWorld() ? GetWorld()->GetTimeSeconds() : 0.f);
+		GetWorld() ? GetWorld()->GetTimeSeconds() : 0.f,
+		*ModeName);
 	AppendLine(Header);
 
 	if (UWorld* World = GetWorld())
@@ -176,6 +180,23 @@ void UPCSPTrajectoryLogComponent::RecordDecision(EPCSPActionType Action, float U
 {
 	EmitEvent(EPCSPTrajectoryEvent::Decision, Action, FGameplayTag(), 0.f,
 	          EPCSPAffordanceCategory::None, UrgencyScore, FString());
+}
+
+void UPCSPTrajectoryLogComponent::RecordDecisionWithLogits(EPCSPActionType Action,
+	float UrgencyScore, TArrayView<const float> Logits)
+{
+	FString Extra;
+	if (Logits.Num() > 0)
+	{
+		Extra = TEXT("\"logits\":[");
+		for (int32 i = 0; i < Logits.Num(); ++i)
+		{
+			Extra += FString::Printf(TEXT("%s%.4f"), i == 0 ? TEXT("") : TEXT(","), Logits[i]);
+		}
+		Extra += TEXT("]");
+	}
+	EmitEvent(EPCSPTrajectoryEvent::Decision, Action, FGameplayTag(), 0.f,
+	          EPCSPAffordanceCategory::None, UrgencyScore, Extra);
 }
 
 void UPCSPTrajectoryLogComponent::RecordInteractionComplete(EPCSPActionType Action,

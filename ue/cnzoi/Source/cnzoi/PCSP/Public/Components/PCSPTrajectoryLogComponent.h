@@ -56,6 +56,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category="PCSP|Trajectory")
 	void RecordDecision(EPCSPActionType Action, float UrgencyScore);
 
+	/** Decision variant that also records raw policy logits for offline KL computation. */
+	void RecordDecisionWithLogits(EPCSPActionType Action, float UrgencyScore,
+	                              TArrayView<const float> Logits);
+
 	UFUNCTION(BlueprintCallable, Category="PCSP|Trajectory")
 	void RecordInteractionComplete(EPCSPActionType Action, FGameplayTag Affordance,
 	                               EPCSPAffordanceCategory Category, float Reward);

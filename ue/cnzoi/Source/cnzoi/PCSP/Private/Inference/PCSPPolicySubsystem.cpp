@@ -5,6 +5,35 @@
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "HAL/PlatformFileManager.h"
+#include "HAL/IConsoleManager.h"
+
+// `pcsp.PolicyMode` selects the Phase 4 runtime ablation at inference time.
+// 0=HybridPCSP (default), 1=BTOnly, 2=HybridNoPersona.
+// Switch between runs from PIE console (`pcsp.PolicyMode 1`) — no rebuild needed.
+static TAutoConsoleVariable<int32> CVarPCSPPolicyMode(
+	TEXT("pcsp.PolicyMode"),
+	0,
+	TEXT("PCSP policy ablation mode: 0=HybridPCSP, 1=BTOnly, 2=HybridNoPersona"),
+	ECVF_Default);
+
+EPCSPPolicyMode UPCSPPolicySubsystem::GetPolicyMode()
+{
+	const int32 V = CVarPCSPPolicyMode.GetValueOnAnyThread();
+	if (V == 1) return EPCSPPolicyMode::BTOnly;
+	if (V == 2) return EPCSPPolicyMode::HybridNoPersona;
+	return EPCSPPolicyMode::HybridPCSP;
+}
+
+FString UPCSPPolicySubsystem::PolicyModeName(EPCSPPolicyMode Mode)
+{
+	switch (Mode)
+	{
+	case EPCSPPolicyMode::BTOnly:          return TEXT("BTOnly");
+	case EPCSPPolicyMode::HybridNoPersona: return TEXT("HybridNoPersona");
+	case EPCSPPolicyMode::HybridPCSP:
+	default:                                return TEXT("HybridPCSP");
+	}
+}
 
 // ---------------------------------------------------------------------------
 // Initialize / Deinitialize
@@ -122,8 +151,36 @@ bool UPCSPPolicySubsystem::LoadModel()
 // RunInference
 // ---------------------------------------------------------------------------
 
+EPCSPActionType UPCSPPolicySubsystem::RunInferenceWithLogits(const TArray<float>& Observation,
+	int32 PersonaId, TArray<float>& OutLogits)
+{
+	const EPCSPActionType Action = RunInference(Observation, PersonaId);
+
+	// In BTOnly the ONNX path is skipped; emit a zeroed logit vector so the
+	// trajectory schema stays uniform and analyzer KL math doesn't NaN out.
+	OutLogits.SetNumUninitialized(NActions);
+	if (GetPolicyMode() == EPCSPPolicyMode::BTOnly)
+	{
+		FMemory::Memzero(OutLogits.GetData(), NActions * sizeof(float));
+	}
+	else
+	{
+		FMemory::Memcpy(OutLogits.GetData(), LogitsBuffer.GetData(), NActions * sizeof(float));
+	}
+	return Action;
+}
+
 EPCSPActionType UPCSPPolicySubsystem::RunInference(const TArray<float>& Observation, int32 PersonaId)
 {
+	const EPCSPPolicyMode Mode = GetPolicyMode();
+
+	// BTOnly bypasses ONNX entirely — uses the static needs heuristic so this
+	// branch works even if pcsp_actor.onnx never loaded.
+	if (Mode == EPCSPPolicyMode::BTOnly)
+	{
+		return NeedsHeuristic(Observation);
+	}
+
 	if (!bReady)
 	{
 		UE_LOG(LogTemp, Error, TEXT("PCSPPolicySubsystem::RunInference called before model is ready"));
@@ -144,7 +201,17 @@ EPCSPActionType UPCSPPolicySubsystem::RunInference(const TArray<float>& Observat
 			PersonaId, Emb.Num(), PersonaDim);
 		return EPCSPActionType::None;
 	}
-	FMemory::Memcpy(PersonaBuffer.GetData(), Emb.GetData(), PersonaDim * sizeof(float));
+	if (Mode == EPCSPPolicyMode::HybridNoPersona)
+	{
+		// Ablation: same architecture, but the persona slot is zeroed. Any
+		// persona-specific behavior the model expresses now must be coming
+		// from observation features, not the embedding.
+		FMemory::Memzero(PersonaBuffer.GetData(), PersonaDim * sizeof(float));
+	}
+	else
+	{
+		FMemory::Memcpy(PersonaBuffer.GetData(), Emb.GetData(), PersonaDim * sizeof(float));
+	}
 
 	// Bind and run
 	TArray<UE::NNE::FTensorBindingCPU> Inputs, Outputs;

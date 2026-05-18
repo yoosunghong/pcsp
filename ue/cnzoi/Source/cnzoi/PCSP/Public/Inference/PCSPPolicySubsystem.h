@@ -37,8 +37,24 @@ public:
 	UFUNCTION(BlueprintCallable, Category="PCSP|Policy")
 	EPCSPActionType RunInference(const TArray<float>& Observation, int32 PersonaId);
 
+	/**
+	 * Run actor inference and also return the raw logits.
+	 * OutLogits is resized to NActions; identical action selection as RunInference.
+	 * Used for trajectory-log policy-KL export.
+	 */
+	EPCSPActionType RunInferenceWithLogits(const TArray<float>& Observation, int32 PersonaId,
+	                                       TArray<float>& OutLogits);
+
+	int32 GetNumActions() const { return NActions; }
+
 	/** Fallback heuristic used when the model is not loaded. */
 	static EPCSPActionType NeedsHeuristic(const TArray<float>& NeedsValues);
+
+	/** Current ablation mode (read from `pcsp.PolicyMode` CVar at each inference). */
+	static EPCSPPolicyMode GetPolicyMode();
+
+	/** Stable string used in trajectory `session_start` rows + analyzer summaries. */
+	static FString PolicyModeName(EPCSPPolicyMode Mode);
 
 private:
 	bool LoadModel();

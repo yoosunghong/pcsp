@@ -4,6 +4,43 @@ This file holds completed work details, decisions, result paths, and experiment 
 
 ---
 
+## 2026-05-18
+
+### UE5 Zero-Shot Persona Generalization — Validated on Held-Out IDs 241..300
+
+**Goal.** End-to-end check that the v3 PCSP policy, trained on personas 1..240, produces persona-distinct behavior in the UE5 sandbox when fed the held-out 60-persona test split (`research/data/personas/test_60_v3.json`, IDs 241..300).
+
+**Tooling added.**
+- `research/scripts/analyze_ue_session.py` — aggregates UE PIE-session JSONL logs into per-persona action histograms (20 v3 actions), category coverage, interaction/failure counts, reward sums, decision-latency stats, failure-reason breakdown, and inter-persona pairwise Spearman ρ on action distributions. `--compare <other-session>` produces matched-persona ρ.
+- `research/scripts/run_zeroshot_eval.py` — `prepare` repacks `ue/cnzoi/Content/PCSP/Data/persona_embeddings.json` so UE slots 1..N hold test embeddings (the spawner picks `persona_id = (i % 300) + 1`, so no C++ change is needed); writes a slot→real-id manifest and backs up the train file. `finish` auto-detects the newest session, runs the analyzer, relabels per-persona output via the manifest, compares aggregate metrics vs the train baseline, and restores the train file.
+
+**Capacity-fix progression (all 64-agent PIE).**
+
+| Session | Personas | Duration | Interactions | Failure rate | Inter-persona ρ | Notes |
+|---|---|---:|---:|---:|---:|---|
+| `20260518_104056` | train 1..64 | 7.2 min | 2,145 | 2.0% | 0.383 | Train baseline. |
+| `20260518_112540` | **test 241..300** | 7.4 min | 2,180 | **12.5%** | 0.358 | 99.4% of failures = `FindBestZone:AllOverCapacity` on `FocusedWork`/`PlanningWork` (310 of 312). Held-out demand profile saturated the single Office zone. |
+| `20260518_114841` | train 1..64 | 17.1 min | 4,630 | 3.2% | 0.425 | After Work expansion. Work failures collapsed 302→1. New bottleneck: Hygiene (134 `HygieneQuick` AllOverCapacity). |
+| `20260518_133852` | train 1..64 | 5.3 min | 1,474 | **0.0%** | 0.405 | After Hygiene expansion. Zero failures. 9 of 10 categories. |
+| `20260518_140432` | **test 241..300** | 9.75 min | 2,792 | **0.04%** | **0.368** | **Clean zero-shot validation.** 1 single `path_follow_idle_short` failure. 43.6 interactions/agent, reward 960.4, 9 of 10 categories. |
+
+**Headline.** With Work and Hygiene capacity matched to the held-out demand profile, the policy generalizes cleanly: on personas it never saw during training, failure rate collapses from 12.5% to 0.04%, while inter-persona action ρ stays at 0.368 — slightly *more* persona-distinct than train (0.383). This is the load-bearing engine-integration evidence that PCSP's persona conditioning survives the train→test split in a real BT/affordance-driven runtime, not just in MiniInzoiV3 simulator rollouts.
+
+**Demand-profile observation.** Held-out category demand is flatter than train (Rest 59/Social 40/Work 38/Hygiene 36/Study 33 on test vs Rest 57/Social 50/Hygiene 34/Work 30 on train). The pre-fix 12.5% failure rate was not a policy failure — the environment's static capacity allocation had been tuned for the train demand profile.
+
+**Artifacts.**
+- `research/results/ue_sessions/20260518_104056/summary.json` — train baseline
+- `research/results/ue_sessions/zeroshot_20260518_112540/{summary,compare_vs_train}.json` — pre-fix zero-shot
+- `research/results/ue_sessions/20260518_114841/summary.json` — Work-fix train
+- `research/results/ue_sessions/20260518_133852/summary.json` — Work+Hygiene-fix train
+- `research/results/ue_sessions/zeroshot_20260518_140432/{summary,compare_vs_train}.json` — clean zero-shot
+
+**Open follow-ups** (`ue/cnzoi/PLAN.md` Phase 4):
+- Policy KL between paired sessions still requires logit export from `UPCSPPolicySubsystem` — not yet implemented.
+- Compare BT-only, RL-only, Hybrid-NoConsist, Hybrid-NoPersona variants on the same map at 64 agents.
+
+---
+
 ## 2026-05-14
 
 ### MeltingPot — Phase 0 (Scoping and Decision Gate)

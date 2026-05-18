@@ -34,10 +34,16 @@ Movement is an execution detail, not a policy action. The policy should output s
 
 ### Phase 0: Environment Redesign Documentation
 
-- [ ] Summarize the Python Mini-Inzoi reward, observation, and action logic.
-- [ ] Define the UE5 affordance taxonomy.
-- [ ] Write the BT-Blackboard-Policy interface specification.
-- [ ] Confirm Main and Stress scale targets.
+- [x] Summarize the Python Mini-Inzoi reward, observation, and action logic
+      ([docs/phase0/research-environment-summary.md](docs/phase0/research-environment-summary.md)).
+- [x] Define the UE5 affordance taxonomy
+      ([docs/phase0/affordance-taxonomy.md](docs/phase0/affordance-taxonomy.md);
+       three-layer architecture in [docs/affordance-system.md](docs/affordance-system.md)).
+- [x] Write the BT-Blackboard-Policy interface specification
+      ([docs/phase0/bt-blackboard-policy-contract.md](docs/phase0/bt-blackboard-policy-contract.md)).
+- [x] Confirm Main and Stress scale targets
+      ([docs/phase0/scale-targets.md](docs/phase0/scale-targets.md);
+       16/32/64 all empirically verified, 64 stress at 1.7% failure rate).
 
 ### Phase 1: Continuous-Space Prototype
 
@@ -173,16 +179,94 @@ Movement is an execution detail, not a policy action. The policy should output s
       Category coverage: Social 876, Rest 856, Work 403, Hygiene 121, Study 62,
       Observe 52, Eat 47, Exercise 15, Shop 6 (Leisure enum has no zone — folded
       into Observe; see 16-agent note). 64-agent stress target validated.
-- [ ] Automate zero-shot persona evaluation.
-- [ ] Collect Spearman rho, policy KL, latency, path failure, and congestion metrics.
-- [ ] Compare BT-only, RL-only, Hybrid-PCSP, Hybrid-NoConsist, and Hybrid-NoPersona settings.
+- [x] Automate zero-shot persona evaluation (2026-05-18):
+      `research/scripts/analyze_ue_session.py` ingests
+      `Saved/PCSP/Logs/<stamp>/agent_p*.jsonl`, aggregates per-persona
+      action histograms (20 v3 actions), category coverage,
+      interaction/failure counts, reward sums, decision-latency stats,
+      and failure-reason breakdown. Supports `--compare <other-session>`
+      to compute matched-persona Spearman ρ between two PIE runs.
+      `research/scripts/run_zeroshot_eval.py` orchestrates the held-out
+      run end-to-end: `prepare` swaps `persona_embeddings.json` so UE
+      slots 1..N hold `test_60_v3.json` personas (IDs 241..300) and
+      writes a slot→real-id manifest; user runs PIE; `finish`
+      auto-detects the new session, relabels per-persona output via
+      the manifest, compares aggregates vs the train baseline, then
+      restores the train embeddings.
+- [x] Validate zero-shot persona generalization on held-out IDs 241..300
+      (2026-05-18, capacity-fix progression):
+      **Pre-fix** session `20260518_112540` (64 held-out personas, 7.4min):
+      2,180 interactions, **12.5% failure rate** (vs 2.0% train baseline);
+      99.4% of failures were `FindBestZone:AllOverCapacity` on
+      `FocusedWork`/`PlanningWork` (310 of 312). Held-out persona demand
+      profile differed from train and saturated the single Office zone.
+      **Mid-fix** session `20260518_114841` (train personas, Work expanded):
+      Work failures collapsed 302→1; new dominant bottleneck was Hygiene
+      (134 `HygieneQuick` `AllOverCapacity` failures).
+      **Post-fix** session `20260518_133852` (train personas, +Hygiene
+      expanded): **0 failures** across 1,474 interactions in 5min.
+      **Clean zero-shot** session `20260518_140432` (held-out personas,
+      both fixes, 9.75min): 2,792 interactions, **0.04% failure rate
+      (1 `path_follow_idle_short`)**, 43.6 interactions/agent (vs 33.5
+      train), reward 960.4 (vs 730.6 train), inter-persona action
+      ρ = **0.368** (vs 0.383 train — actually *more* persona-distinct
+      on unseen personas). Category coverage 9/10 in both. Headline:
+      policy preserves persona-distinct behavior on personas it has
+      never seen during training, once environment capacity matches
+      the held-out demand profile.
+- [x] Collect policy KL and richer path-failure/congestion deltas
+      across paired sessions (2026-05-18): `UPCSPPolicySubsystem`
+      gained `RunInferenceWithLogits`; `BTTask_PCSPDecision` now calls it
+      and forwards the 20-dim logit vector to
+      `UPCSPTrajectoryLogComponent::RecordDecisionWithLogits`, which
+      appends `"logits":[...]` to each `decision` JSONL row.
+      `analyze_ue_session.py` softmaxes per-decision logits into a
+      per-persona mean policy distribution; `--compare` now emits
+      symmetric KL (mean of `KL(p_a||p_b)` and `KL(p_b||p_a)`) per
+      matched persona alongside the existing Spearman ρ. Re-run any
+      paired PIE sessions after rebuilding to populate `kl_*` fields
+      in `compare.json`.
+- [/] Compare BT-only, RL-only, Hybrid-PCSP, Hybrid-NoConsist, and Hybrid-NoPersona settings.
+      **Runtime ablations done (2026-05-18):** `pcsp.PolicyMode` CVar
+      switches between `HybridPCSP` (0, default), `BTOnly` (1, uses
+      `NeedsHeuristic`, skips ONNX) and `HybridNoPersona` (2, ONNX with
+      zeroed persona vector). Mode tagged on each agent's
+      `session_start` JSONL row. Three paired 64-agent / ~5min PIE runs
+      aggregated into a single table via
+      `research/scripts/compare_ablations.py`:
+      HybridPCSP 2,077 int / 0.0% fail / reward 708.9 / dispersion 0.368;
+      BTOnly 1,152 int / 87.6% fail / 395.2 / 0.989; HybridNoPersona
+      1,752 int / 13.3% fail / 573.9 / 0.990 (sym KL vs PCSP = 1.05).
+      Persona embedding is load-bearing (dispersion 0.37→0.99 when
+      zeroed); ONNX strictly dominates needs heuristic (BTOnly collapses
+      under capacity contention). Full results:
+      `research/results/ue_sessions/ablation_20260518_154827/ablation.json`,
+      writeup in DONE.md.
+      **Training-side ablations still pending:** `Hybrid-NoConsist` and
+      `RL-only` require ONNX models trained without the consistency loss
+      and without persona conditioning respectively — must keep the same
+      ONNX I/O contract as `UPCSPPolicySubsystem` (inputs `obs`[1,33]
+      and `persona_proj`[1,64], output `logits`[1,20]). RL-only would
+      bind a constant zero persona vector, identical to HybridNoPersona
+      at inference, so the meaningful delta is training-time only.
 
 ### Phase 5: Paper And Portfolio Artifacts
 
-- [ ] Prepare implementation diagrams.
-- [ ] Capture rich trajectory clips.
-- [ ] Prepare UE5 screenshots, performance tables, and architecture figures.
-- [ ] Draft the paper extension section: "Engine-Integrated Hybrid Persona Control".
+- [x] Prepare implementation diagrams
+      ([docs/phase5/diagrams.md](docs/phase5/diagrams.md) — 5 Mermaid figures:
+      system overview, per-decision sequence, BT subtree, three-layer
+      affordance, ablation mode switch).
+- [ ] Capture rich trajectory clips (requires PIE — `[NEEDS CAPTURE]` slot
+      X.7 in paper extension).
+- [/] Prepare UE5 screenshots, performance tables, and architecture figures.
+      Architecture figures done (Mermaid); performance/ablation tables
+      drafted from `ablation.json`; PIE screenshots
+      (`[NEEDS CAPTURE]` slots X.5, X.6) deferred to next editor session.
+- [x] Draft the paper extension section: "Engine-Integrated Hybrid Persona Control"
+      ([docs/phase5/paper_extension.md](docs/phase5/paper_extension.md) —
+      7-section draft covering hybrid stack, why-hybrid, trajectory
+      logging, Phase 4 results, implementation cost, limitations,
+      reproducibility, plus figure/table inventory).
 
 ## Debug Log Map
 
@@ -230,7 +314,7 @@ One file per spawned agent. Each line is a JSON object. Use these to answer Phas
 
 Aggregate across many PIE sessions for the metrics named in [PLAN.md:90](PLAN.md):
 - Spearman ρ — load all `decision` rows, group by `persona_id`, compare action histograms vs the research baseline.
-- Policy KL — compute per-step softmax KL between this run and a reference run (requires logit export, not yet implemented).
+- Policy KL — `decision` rows include `logits` (20-dim); `analyze_ue_session.py --compare` produces per-persona symmetric KL between paired sessions.
 - Latency — derive from `t` deltas on consecutive `decision` events per agent.
 
 ## Working Rules
