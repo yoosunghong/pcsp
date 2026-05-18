@@ -164,9 +164,13 @@ alignment, and real-time deployment.
     a hybrid Behavior-Tree/ONNX stack reproduces the persona-conditioning
     ablation at 64 agents (1.7\% failure rate, $9$ active action categories),
     achieves $0.04\%$ failure rate zero-shot on held-out personas with
-    inter-persona action dispersion $\rho = 0.368$ (vs.\ $0.383$ on train), and
-    confirms persona conditioning remains load-bearing in-engine
-    (\S\ref{sec:ue5}).
+    inter-persona action dispersion $\rho = 0.368$ (vs.\ $0.383$ on train),
+    \emph{and additionally reproduces the consistency-loss finding in-engine}:
+    swapping the full checkpoint for the \texttt{no\_consist} checkpoint at
+    fixed map and persona set leaves task throughput and reward higher
+    ($4{,}005$ vs.\ $3{,}110$ interactions; reward $1{,}423.5$ vs.\ $1{,}079.8$)
+    while matched-persona symmetric KL diverges to $1.79$\,nats, mirroring the
+    Mini-Inzoi ``reward hides the failure'' pattern (\S\ref{sec:ue5}).
   \item \textbf{External validation on Melting Pot}: Applied to
     \texttt{commons\_harvest\_\_open} from \textit{Melting Pot
     2.4.0}~\cite{leibo2021meltingpot} with no algorithmic changes to the
@@ -977,7 +981,38 @@ of $1.05$ against the full-PCSP policy distribution; bypassing ONNX entirely
 failure / dispersion $0.989$. Persona conditioning is load-bearing in the engine
 under the same metric---action dispersion collapses by $2.7\times$ when the
 persona signal is removed---reproducing the \S\ref{sec:evidence} pattern with no
-algorithmic change.
+algorithmic change. To calibrate the KL axis, two back-to-back PCSP runs on the
+same map and persona set yielded a per-persona symmetric KL of $0.71$\,nats
+(median $0.48$, Spearman $\rho = 0.65$), so the HybridNoPersona KL of $1.05$ is
+already $1.5\times$ this paired-run noise floor.
+
+\textbf{Consistency-loss replication in-engine.}
+We additionally exported the v3 \texttt{no\_consist} checkpoint to ONNX and ran
+paired 64-agent PIE sessions under identical \texttt{HybridPCSP} mode but with
+the two different weight files. Full reached $3{,}110$ interactions in
+$658$\,s with reward $1{,}079.8$ and inter-persona action $\rho = 0.379$;
+\texttt{no\_consist} reached $4{,}005$ interactions in $681$\,s with reward
+$1{,}423.5$ and $\rho = 0.312$. The two checkpoints choose meaningfully
+different actions per persona at matched conditioning---mean Spearman
+$\rho_{\text{match}} = 0.348$ and mean symmetric KL of $1.79$\,nats across the
+$64$ personas---yet aggregate task reward is \emph{higher} for the checkpoint
+without the consistency loss. This is the in-engine replication of the
+\S\ref{sec:evidence} ``reward hides the failure'' result.
+
+\textbf{Engine-side persona--action alignment.}
+We additionally test the Mini-Inzoi alignment metric inside the engine: for
+each session we compute pairwise cosine distance over the $64$-d projected
+persona embedding and pairwise symmetric KL over the per-persona mean
+softmax(logits), and report Spearman $\rho$ across the $\binom{64}{2}\!=\!2{,}016$
+persona pairs. Full PCSP yields engine-side $\rho \in [0.236, 0.257]$ across
+two paired sessions, the \texttt{no\_consist} checkpoint yields $\rho = 0.569$,
+and \texttt{BTOnly} yields $\rho \approx 0$ (the policy emits zero logits by
+construction). All four values are well below the Mini-Inzoi research-side
+$\rho \approx 0.73$. The hybrid stack itself imposes a ceiling: capacity
+contention and the BT's failure-recovery decorators push agents toward what is
+reachable, not what their embedding most prefers, compressing the persona
+signal at execution time. We treat this gap as a quantified engine--research
+mismatch, not a refutation of the in-research result.
 
 \textbf{Observability.}
 Every agent emits a per-decision JSONL trace (action, $20$-d softmax logits,
@@ -986,6 +1021,18 @@ reason). The same \texttt{analyze\_ue\_session.py} pipeline that aggregates thes
 traces also computes per-persona symmetric KL between paired PIE sessions, so
 the consistency-loss ablation that defines the paper's central finding can be
 re-run inside the engine without re-instrumenting.
+
+\textbf{Implementation cost.}
+The engine integration is deliberately lightweight: $\sim\!2{,}000$ lines of
+C++ across \texttt{Source/cnzoi/PCSP/} (one world subsystem, five agent
+components, three BT tasks, an agent character), one $\sim\!4$\,MB ONNX file
+plus a $\sim\!150$\,KB persona-embedding JSON, and zero engine-side training.
+The Python pipeline remains the single source of truth for both the policy and
+the persona embeddings. The 64-agent stress test runs at $\geq\!60$\,FPS in PIE
+on a single consumer GPU/CPU; inference is synchronous on the BT tick with a
+$0.5$\,s decision throttle and exponential backoff on repeated move failures,
+capping ONNX calls at $\leq\!128/\text{s}$ at this scale---comfortably within
+the NNERuntimeORT CPU path's headroom without async batching.
 
 % ---------------------------------------------------------------
 \section{Discussion and Future Work}
@@ -1059,6 +1106,18 @@ The completed Google Forms pilot collected only item-level A/B selection ratios
 for coarse traces. It supports aggregate 2AFC accuracy analysis, but not
 participant-level variance, confidence, response time, order effects, or
 inter-rater reliability. A more instrumented human study remains future work.
+
+\textbf{Engine--research alignment gap.}
+The Mini-Inzoi persona--behavior alignment ($\rho \approx 0.73$) does
+\emph{not} transfer to the engine directly. In the UE5 deployment the same
+metric drops to $\rho \in [0.236, 0.257]$ on the full PCSP checkpoint
+(\S\ref{sec:ue5}). The cause is structural: zone capacity contention and the
+BT's failure-recovery decorators push agents toward what is reachable rather
+than what their embedding most prefers. The persona-conditioning ablation
+($\rho_{\text{intra}}$ collapse from $0.368$ to $0.990$) and the
+consistency-loss replication remain visible inside the engine, but the
+\emph{absolute} alignment number does not, and we have not yet tested whether
+a less congested map narrows the gap.
 
 % ---------------------------------------------------------------
 \section{Conclusion}

@@ -226,8 +226,8 @@ Movement is an execution detail, not a policy action. The policy should output s
       matched persona alongside the existing Spearman ρ. Re-run any
       paired PIE sessions after rebuilding to populate `kl_*` fields
       in `compare.json`.
-- [/] Compare BT-only, RL-only, Hybrid-PCSP, Hybrid-NoConsist, and Hybrid-NoPersona settings.
-      **Runtime ablations done (2026-05-18):** `pcsp.PolicyMode` CVar
+- [x] Compare BT-only, RL-only, Hybrid-PCSP, Hybrid-NoConsist, and Hybrid-NoPersona settings.
+      **Runtime ablations (2026-05-18):** `pcsp.PolicyMode` CVar
       switches between `HybridPCSP` (0, default), `BTOnly` (1, uses
       `NeedsHeuristic`, skips ONNX) and `HybridNoPersona` (2, ONNX with
       zeroed persona vector). Mode tagged on each agent's
@@ -242,13 +242,29 @@ Movement is an execution detail, not a policy action. The policy should output s
       under capacity contention). Full results:
       `research/results/ue_sessions/ablation_20260518_154827/ablation.json`,
       writeup in DONE.md.
-      **Training-side ablations still pending:** `Hybrid-NoConsist` and
-      `RL-only` require ONNX models trained without the consistency loss
-      and without persona conditioning respectively — must keep the same
-      ONNX I/O contract as `UPCSPPolicySubsystem` (inputs `obs`[1,33]
-      and `persona_proj`[1,64], output `logits`[1,20]). RL-only would
-      bind a constant zero persona vector, identical to HybridNoPersona
-      at inference, so the meaningful delta is training-time only.
+      **Hybrid-NoConsist training-side ablation (2026-05-18):**
+      `research/scripts/export_pcsp_onnx_ablations.py` exports both `full`
+      and `no_consist` v3 checkpoints to ONNX side-by-side; the
+      `research/scripts/swap_ue5_onnx.py <tag>` utility copies the
+      selected pair into `Content/PCSP/Models/pcsp_actor.onnx` and
+      `Content/PCSP/Data/persona_embeddings.json` and writes
+      `active_ablation.txt` for session tagging. Paired 64-agent PIE runs
+      under identical `HybridPCSP` CVar mode but different ONNX weights:
+      Full (session `20260518_171226`, 658s) 3,110 int / 0.32% fail /
+      reward 1,079.8 / inter-persona ρ 0.379; NoConsist (session
+      `20260518_172443`, 681s) 4,005 int / 0.05% fail / reward 1,423.5 /
+      inter-persona ρ 0.312. Matched-persona pairing
+      (`research/results/ue_sessions/noconsist_ablation_20260518/compare.json`):
+      mean Spearman ρ 0.348, mean symmetric KL 1.79 across 64 personas.
+      The two checkpoints diverge meaningfully per persona in-engine;
+      NoConsist preserves task reward (mirrors v1/v3 "reward hides the
+      failure" pattern). Intra-session persona-distance vs action-KL
+      Spearman now computed by
+      `research/scripts/analyze_persona_distance_vs_kl.py` — see
+      Phase 5 entry below.
+      **RL-only:** identical to HybridNoPersona at inference (zero
+      persona vector); the meaningful RL-only delta is training-time only
+      and is covered by the research-side ablation tables.
 
 ### Phase 5: Paper And Portfolio Artifacts
 
@@ -267,6 +283,23 @@ Movement is an execution detail, not a policy action. The policy should output s
       7-section draft covering hybrid stack, why-hybrid, trajectory
       logging, Phase 4 results, implementation cost, limitations,
       reproducibility, plus figure/table inventory).
+- [x] Intra-session persona-distance vs action-KL Spearman
+      (2026-05-18): `research/scripts/analyze_persona_distance_vs_kl.py`
+      reads `summary.json` (per-persona `policy_probs` from logits, with
+      fallback to the 20-bin action histogram) plus the active
+      `persona_embeddings.json`, and for every persona pair computes
+      cosine distance over the 64-d embedding vs symmetric KL over the
+      policy distribution. Output: `persona_distance_vs_kl.json` next
+      to each session summary (n_pairs, spearman_rho, pearson_r,
+      full scatter rows). Results across 64-agent logit-bearing
+      sessions: Full PCSP ρ = 0.236 (`noconsist_ablation_20260518`) /
+      0.257 (`kl_20260518_151255`); NoConsist ρ = 0.569
+      (`noconsist_only_20260518`); BTOnly ρ = 0.007 (sanity — zero
+      logits). In-engine ρ is well below the research-side ρ ≈ 0.73
+      headline, indicating BT + capacity contention compress the
+      persona signal at execution time; NoConsist scoring *higher*
+      than Full PCSP here echoes the v1/v3 "reward hides the failure"
+      pattern and is worth a limitations-section note.
 
 ## Debug Log Map
 

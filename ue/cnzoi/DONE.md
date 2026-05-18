@@ -193,3 +193,33 @@ doc links.
   inter-persona dispersion, ρ + symmetric KL vs reference). BTOnly
   KL vs reference is reported as `null` because its logits are zero
   by construction.
+
+## 2026-05-18 - Intra-Session Persona-Distance vs Action-KL
+
+- Added `research/scripts/analyze_persona_distance_vs_kl.py`. Reads a
+  session `summary.json` (per-persona `policy_probs` from logits, with
+  fallback to the 20-bin action histogram) and the active
+  `persona_embeddings.json`, then for every persona pair computes
+  cosine distance over the 64-d embedding vs symmetric KL over the
+  policy distribution and reports the Spearman ρ between the two
+  pairwise vectors. Optional `--manifest` arg handles held-out slot
+  remapping. Output written next to the session summary as
+  `persona_distance_vs_kl.json` with `n_pairs`, `spearman_rho`,
+  `pearson_r`, plus the full scatter table for follow-up plotting.
+- Results across the four logit-bearing 64-agent sessions:
+  - `noconsist_ablation_20260518` (Full PCSP, 2,016 pairs):
+    ρ = 0.236, mean cos-dist 0.532, mean KL 1.78.
+  - `noconsist_only_20260518` (NoConsist checkpoint, same map): ρ = 0.569.
+  - `kl_20260518_151255` (Full PCSP): ρ = 0.257.
+  - `btonly_detail` (BTOnly, sanity check): ρ = 0.007 with KL ≡ 0 —
+    expected, since BTOnly emits zero logits and bypasses the persona
+    vector entirely.
+- Headline: in-engine ρ ≈ 0.24-0.26 for the consistency-trained
+  checkpoint, well below the paper's research-side ρ ≈ 0.73 — the BT
+  + capacity contention layer compresses the persona signal at
+  execution time. Interestingly the NoConsist checkpoint scores
+  *higher* (0.57) here, mirroring the v1/v3 "reward hides the
+  failure" pattern: removing the consistency loss does not collapse
+  the engine-level persona separability metric, even though
+  research-side analysis flags it. Worth noting in the paper
+  extension's limitations section.
