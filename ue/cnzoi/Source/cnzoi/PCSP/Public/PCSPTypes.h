@@ -47,6 +47,27 @@ enum class EPCSPAffordanceCategory : uint8
 	None UMETA(Hidden)
 };
 
+/**
+ * Phase 4 ablation modes — selected at runtime via the `pcsp.PolicyMode` CVar.
+ * Logged in the trajectory `session_start` row so analysis tooling can label runs.
+ *
+ * HybridPCSP    : full PCSP policy (ONNX + projected persona embedding). Default.
+ * BTOnly        : skip ONNX entirely, use UPCSPPolicySubsystem::NeedsHeuristic.
+ *                  Tests the BT scaffold without persona conditioning.
+ * HybridNoPersona: run ONNX with a zeroed persona vector. Tests how much of
+ *                  per-persona behavior comes from the embedding vs. the obs.
+ *
+ * (HybridNoConsist and RLOnly are training-side ablations and require
+ *  separately-exported ONNX models — not selectable at runtime.)
+ */
+UENUM(BlueprintType)
+enum class EPCSPPolicyMode : uint8
+{
+	HybridPCSP     = 0,
+	BTOnly         = 1,
+	HybridNoPersona = 2,
+};
+
 UENUM(BlueprintType)
 enum class EPCSPNeed : uint8
 {

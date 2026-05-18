@@ -1,0 +1,34 @@
+{
+  "reference": "ue\\cnzoi\\Saved\\PCSP\\Logs\\20260518_145353",
+  "reference_mode": "Unknown",
+  "modes": [
+    {
+      "session_dir": "ue\\cnzoi\\Saved\\PCSP\\Logs\\20260518_145353",
+      "policy_mode": "Unknown",
+      "is_reference": true,
+      "n_personas": 64,
+      "n_interactions": 1590,
+      "failure_rate": 0.0,
+      "reward_sum": 544.5500000000001,
+      "interactions_per_agent": 24.84375,
+      "inter_persona_rho_mean": 0.40273506513590257,
+      "vs_ref_action_rho_mean": null,
+      "vs_ref_kl_symmetric_mean": null,
+      "n_personas_with_kl": 0
+    },
+    {
+      "session_dir": "ue\\cnzoi\\Saved\\PCSP\\Logs\\20260518_151255",
+      "policy_mode": "Unknown",
+      "is_reference": false,
+      "n_personas": 64,
+      "n_interactions": 1996,
+      "failure_rate": 0.0024987506246876563,
+      "reward_sum": 686.5000000000001,
+      "interactions_per_agent": 31.1875,
+      "inter_persona_rho_mean": 0.35882809238174734,
+      "vs_ref_action_rho_mean": 0.6479838586873329,
+      "vs_ref_kl_symmetric_mean": 0.7115163362303211,
+      "n_personas_with_kl": 64
+    }
+  ]
+}

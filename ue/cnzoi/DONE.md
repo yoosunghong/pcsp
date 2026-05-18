@@ -55,9 +55,141 @@ Branch: `ue5/phase1-prototype`. Added the Phase 1 C++ scaffold under `Source/cnz
 - Updated `Source/cnzoi/cnzoi.Build.cs` with explicit PCSP public and private include paths so short includes such as `#include "PCSPTypes.h"` resolve from nested PCSP headers.
 - Verified with `Build.bat cnzoiEditor Win64 Development -Project=D:\Github\pcsp\ue\cnzoi\cnzoi.uproject -WaitMutex -NoHotReload`; result succeeded.
 
+## 2026-05-18 - Policy Logit Export + KL Compare
+
+Closed the last open analytics item in Phase 4.
+
+- `UPCSPPolicySubsystem::RunInferenceWithLogits` returns the raw 20-dim
+  logit vector alongside the argmax action; the original `RunInference`
+  path is unchanged.
+- `BTTask_PCSPDecision` calls the new entry point and forwards logits to
+  `UPCSPTrajectoryLogComponent::RecordDecisionWithLogits`. Throttled
+  "reuse last action" hits do not call inference and therefore do not
+  emit logits — only fresh decisions produce a `logits` field.
+- `decision` JSONL rows now carry `"logits":[20 floats]` (spot-checked
+  on `agent_p001_*.jsonl` in `Saved/PCSP/Logs/20260518_151255/`).
+- `research/scripts/analyze_ue_session.py` softmaxes each row's logits
+  into a running per-agent mean; `analyze_session()` aggregates that
+  into a decision-weighted per-persona policy distribution.
+  `--compare` adds `kl_ab`, `kl_ba`, and `kl_symmetric` per matched
+  persona plus `per_persona_kl_mean/median`.
+- **Verification** — paired PIE runs `20260518_145353` vs `20260518_151255`
+  (64 agents, ~5.7min each, same train personas):
+  matched personas = 64, mean Spearman ρ = 0.648, mean symmetric KL =
+  0.712 nats (median 0.475). Per-persona spread is wide
+  (pid=1 KL = 0.086, pid=2 KL = 2.726) — driven by short-window
+  need-trajectory variance, as expected. Wrote
+  `research/results/ue_sessions/kl_20260518_151255/{summary,compare}.json`.
+
 ## Open Follow-ups
 
 - Define the first UE5 affordance taxonomy.
 - Write the BT-Blackboard-Policy interface contract.
 - Decide the initial inference bridge: Python service, ONNX Runtime, or TorchScript.
 - Confirm which Python artifacts are required for UE5 runtime loading.
+- Phase 4 ablations: BT-only, RL-only, Hybrid-PCSP, Hybrid-NoConsist,
+  Hybrid-NoPersona comparison runs (last remaining Phase 4 item).
+  Runtime ablations (HybridPCSP / BTOnly / HybridNoPersona) are wired
+  via the `pcsp.PolicyMode` CVar — see Phase 4 entry in PLAN.md.
+  Hybrid-NoConsist and RL-only still need new ONNX exports from
+  `research/`.
+
+## 2026-05-18 - Runtime Ablation Results
+
+Three back-to-back 64-agent PIE runs, identical map/persona set,
+`pcsp.PolicyMode` cycled between modes. Sessions:
+`20260518_153310` (HybridPCSP), `20260518_154015` (BTOnly),
+`20260518_154827` (HybridNoPersona). Aggregate:
+`research/results/ue_sessions/ablation_20260518_154827/ablation.json`.
+
+| mode             | n_int | fail% | reward | rho_ref | KL_ref | rho_intra |
+| ---------------- | ----: | ----: | -----: | ------: | -----: | --------: |
+| HybridPCSP       |  2077 |  0.0% |  708.9 |     ref |      - |     0.368 |
+| BTOnly           |  1152 | 87.6% |  395.2 |   0.319 |      - |     0.989 |
+| HybridNoPersona  |  1752 | 13.3% |  573.9 |   0.539 |  1.049 |     0.990 |
+
+Findings:
+- Persona embedding is load-bearing — inter-persona action dispersion
+  collapses from 0.368 → 0.990 the moment the embedding is zeroed.
+  Throughput -16%, reward -19%. The policy is genuinely conditioning
+  on the embedding, not on needs alone.
+- BTOnly's 87.6% failure rate is 8,062 / 8,148 `FindBestZone` failures
+  — 64 agents synchronize on the single most-urgent need each tick,
+  so they pile into the same zone and bounce off `AllOverCapacity`.
+  Category coverage drops to 6 of 10 (Exercise/Study/Shop/Observe
+  never reached). Throughput -45%, reward -44%.
+- BTOnly KL vs reference is suppressed because its logits are zero
+  by construction — KL would just measure distance from uniform.
+- HybridNoPersona vs HybridPCSP symmetric KL = 1.05 nats; for context,
+  self-vs-self KL on two HybridPCSP runs was 0.71 nats (Phase 4 KL
+  verification entry above).
+
+## 2026-05-18 - Phase 0 Documentation + Phase 5 Artifacts
+
+Cleared the remaining Phase 0 docs and the doc-only portion of Phase 5 in
+one pass.
+
+**Phase 0:**
+- [docs/phase0/research-environment-summary.md](docs/phase0/research-environment-summary.md)
+  — UE-facing summary of v3 action ontology, 33-d observation schema, reward
+  function (training-only), persona splits, and the ONNX I/O contract. Pins
+  the four things UE must keep stable across research updates: I/O shapes,
+  action ID ordering, need ordering, persona-slot ordering.
+- [docs/phase0/affordance-taxonomy.md](docs/phase0/affordance-taxonomy.md)
+  — Canonical 10-category roster with per-zone capacity targets and the
+  empirical provenance (Phase 4 stress-run progressions) for those numbers.
+  Documents the `Leisure`-folded-into-`Observe` quirk and the
+  `Is Spatially Loaded = false` World Partition rule.
+- [docs/phase0/bt-blackboard-policy-contract.md](docs/phase0/bt-blackboard-policy-contract.md)
+  — Wire format between policy / blackboard / BT. Every blackboard key
+  (type, writers, readers, lifecycle), the policy interface
+  (`RunInference` + `RunInferenceWithLogits` + `pcsp.PolicyMode` CVar),
+  the three-branch BT structure, and per-task contracts for
+  `BTTask_PCSPDecision` / `MoveToAffordance` / `PerformInteraction`.
+- [docs/phase0/scale-targets.md](docs/phase0/scale-targets.md)
+  — Confirms Debug/Main/Stress targets with reference runs: 16 verified
+  in 2026-05-17 baseline, 32 at 5.4% failure, 64 at 1.7% failure (Run 3),
+  held-out 64 at 0.04% (`20260518_140432`). Also enumerates what 128+
+  would need (async batched inference, more zones, WP streaming sources).
+
+**Phase 5:**
+- [docs/phase5/diagrams.md](docs/phase5/diagrams.md) — 5 Mermaid diagrams:
+  system overview (research→UE→analysis), per-decision sequence diagram,
+  BT subtree with failure branches, three-layer affordance system,
+  ablation runtime switch. Render via mermaid-cli for paper inclusion.
+- [docs/phase5/paper_extension.md](docs/phase5/paper_extension.md) — draft
+  of the paper extension section ("Engine-Integrated Hybrid Persona
+  Control"). 7 sub-sections plus figure/table inventory marking which
+  artifacts still need PIE capture (X.5/X.6/X.7 — screenshots and video).
+
+**Training-side ablation spec** added to `research/PLAN.md` Phase E. Lists
+the two ONNX exports still needed for the full ablation table
+(`Hybrid-NoConsist` and `RL-only`) with concrete recipes — `no_consist`
+reuses `export_pcsp_onnx.py` as-is; `RL-only` (baseline B1) needs a
+new wrapper because B1 has no persona-conditioning layer.
+
+**Docs index** ([docs/index.md](docs/index.md)) updated with all six new
+doc links.
+
+## 2026-05-18 - Runtime Ablation Switch
+
+- Added `EPCSPPolicyMode { HybridPCSP, BTOnly, HybridNoPersona }` to
+  `PCSPTypes.h`. Selected at inference time via console variable
+  `pcsp.PolicyMode` (0/1/2). Switch from PIE console between runs —
+  no rebuild needed.
+- `UPCSPPolicySubsystem::RunInference` branches on the mode:
+  - `BTOnly` skips ONNX entirely and returns `NeedsHeuristic(Obs)`;
+    logits are emitted as a zero vector so the JSONL schema stays
+    uniform.
+  - `HybridNoPersona` zeroes `PersonaBuffer` before the NNE bind.
+    Same architecture and model, just an empty persona slot.
+  - `HybridPCSP` is unchanged (default).
+- `UPCSPTrajectoryLogComponent::BeginPlay` writes
+  `"policy_mode":"<name>"` into each agent's `session_start` row so
+  analysis tooling can label runs.
+- `research/scripts/analyze_ue_session.py` surfaces `policy_mode` in
+  the per-session summary; `compare_ablations.py` aggregates N
+  sessions into one table (interactions, failure rate, reward,
+  inter-persona dispersion, ρ + symmetric KL vs reference). BTOnly
+  KL vs reference is reported as `null` because its logits are zero
+  by construction.

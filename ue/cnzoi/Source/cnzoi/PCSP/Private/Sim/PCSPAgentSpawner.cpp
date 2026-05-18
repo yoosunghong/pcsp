@@ -1,6 +1,7 @@
 #include "PCSPAgentSpawner.h"
 #include "PCSPAgentCharacter.h"
 #include "PCSPAIController.h"
+#include "PCSPPersonaComponent.h"
 #include "Engine/World.h"
 #include "NavigationSystem.h"
 
@@ -43,22 +44,37 @@ int32 APCSPAgentSpawner::SpawnAgents()
 	if (!World) { return 0; }
 
 	int32 Spawned = 0;
-	FActorSpawnParameters Params;
-	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 	for (int32 i = 0; i < AgentCount; ++i)
 	{
 		FVector Location;
 		if (!FindSpawnLocation(Location)) { continue; }
 
-		APCSPAgentCharacter* Agent = World->SpawnActor<APCSPAgentCharacter>(AgentClass, Location, FRotator::ZeroRotator, Params);
+		// Deferred spawn so PersonaId is set BEFORE BeginPlay fires.
+		// The world has already begun play (we're in our own BeginPlay), which means
+		// SpawnActor would dispatch BeginPlay synchronously — components reading
+		// PersonaId at that point would see an empty string (parses to default 1)
+		// and would name their log files incorrectly.
+		const FTransform SpawnXform(FRotator::ZeroRotator, Location);
+		APCSPAgentCharacter* Agent = World->SpawnActorDeferred<APCSPAgentCharacter>(
+			AgentClass, SpawnXform, /*Owner=*/nullptr, /*Instigator=*/nullptr,
+			ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
 		if (!Agent) { continue; }
 
-		if (AIControllerClass)
+		if (AIControllerClass) { Agent->AIControllerClass = AIControllerClass; }
+
+		// Assign a unique 1-based persona ID so each agent uses a different embedding.
+		// IDs cycle through 1..300 (the full persona set).
+		if (Agent->Persona)
 		{
-			Agent->AIControllerClass = AIControllerClass;
-			Agent->SpawnDefaultController();
+			Agent->Persona->PersonaId = FString::FromInt((i % 300) + 1);
 		}
+
+		Agent->FinishSpawning(SpawnXform);
+
+		// SpawnDefaultController must run after FinishSpawning so the pawn is fully
+		// initialized when the AI controller possesses it.
+		if (AIControllerClass) { Agent->SpawnDefaultController(); }
 
 		SpawnedAgents.Add(Agent);
 		++Spawned;

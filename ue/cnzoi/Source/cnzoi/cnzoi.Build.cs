@@ -22,7 +22,10 @@ public class cnzoi : ModuleRules
 			"StateTreeModule",
 			"GameplayStateTreeModule",
 			"UMG",
-			"Slate"
+			"Slate",
+			"NNE",
+			"Json",
+			"JsonUtilities"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });
@@ -35,6 +38,7 @@ public class cnzoi : ModuleRules
 			Path.Combine(ModuleDirectory, "PCSP/Public/Agent"),
 			Path.Combine(ModuleDirectory, "PCSP/Public/Sim"),
 			Path.Combine(ModuleDirectory, "PCSP/Public/BT"),
+			Path.Combine(ModuleDirectory, "PCSP/Public/Inference"),
 			"cnzoi/Variant_Platforming",
 			"cnzoi/Variant_Platforming/Animation",
 			"cnzoi/Variant_Combat",
@@ -56,7 +60,8 @@ public class cnzoi : ModuleRules
 			Path.Combine(ModuleDirectory, "PCSP/Private/Affordance"),
 			Path.Combine(ModuleDirectory, "PCSP/Private/Agent"),
 			Path.Combine(ModuleDirectory, "PCSP/Private/Sim"),
-			Path.Combine(ModuleDirectory, "PCSP/Private/BT")
+			Path.Combine(ModuleDirectory, "PCSP/Private/BT"),
+			Path.Combine(ModuleDirectory, "PCSP/Private/Inference")
 		});
 
 		// Uncomment if you are using Slate UI

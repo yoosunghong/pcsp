@@ -4,7 +4,7 @@
       "args": [
         "connect",
         "--project-path",
-        "D:/Github/pcsp/ue/cnzoi/",
+        "../../../../../../Users/PC/Documents/GitHub/pcsp/ue/cnzoi/",
         "--engine-path",
         "../../../Engine/"
       ],

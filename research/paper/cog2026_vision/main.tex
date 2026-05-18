@@ -58,9 +58,14 @@ zero-shot persona identification to chance even when task reward is preserved or
 improved. External validation on \texttt{commons\_harvest\_\_open} from
 \textit{Melting Pot 2.4.0}~\cite{leibo2021meltingpot} confirms that the
 \S\ref{sec:method} method produces persona-conditioned behavioral divergence in
-a multi-agent strategic substrate. These results provide empirical evidence that
-shared RL policies can support scalable, real-time, persona-conditioned NPC
-control and that trajectory traceability is central to the method.
+a multi-agent strategic substrate. A UE5
+deployment reproduces the in-engine persona-conditioning ablation at 64 agents
+with a 1.7\% failure rate and held-out zero-shot generalization at 0.04\%
+failure, showing that the sub-frame inference profile and ablation structure
+survive the move into a commercial game engine. These results provide empirical
+evidence that shared RL policies can support scalable, real-time,
+persona-conditioned NPC control and that trajectory traceability is central to
+the method.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -155,6 +160,13 @@ alignment, and real-time deployment.
     behavioral diversity, semantic-behavioral alignment, inference latency, and
     rich trajectory observability as core criteria for persona-conditioned NPC
     control (\S\ref{sec:evalprotocol}).
+  \item \textbf{Engine integration}: A UE5.5 deployment of the trained policy as
+    a hybrid Behavior-Tree/ONNX stack reproduces the persona-conditioning
+    ablation at 64 agents (1.7\% failure rate, $9$ active action categories),
+    achieves $0.04\%$ failure rate zero-shot on held-out personas with
+    inter-persona action dispersion $\rho = 0.368$ (vs.\ $0.383$ on train), and
+    confirms persona conditioning remains load-bearing in-engine
+    (\S\ref{sec:ue5}).
   \item \textbf{External validation on Melting Pot}: Applied to
     \texttt{commons\_harvest\_\_open} from \textit{Melting Pot
     2.4.0}~\cite{leibo2021meltingpot} with no algorithmic changes to the
@@ -918,6 +930,64 @@ study~\cite{phase5report}.
 
 
 % ---------------------------------------------------------------
+\section{Engine Integration: UE5 Deployment}
+\label{sec:ue5}
+
+To test whether the \S\ref{sec:method} method survives the engineering pressure of
+a commercial game engine, we ported a v3 checkpoint into Unreal Engine 5.5 as a
+hybrid behaviour stack: \PCSP chooses semantic intents (e.g.\ \texttt{EatQuick},
+\texttt{FocusedWork}, \texttt{LeisureOutdoor}), and Behaviour Tree, Blackboard,
+EQS, AIController, and NavMesh execute them. The policy is exported to ONNX
+(20-action head, $33$-d obs, $64$-d persona projection) and run through Epic's
+NNE/NNERuntimeORT plugin from a custom \texttt{UPCSPPolicySubsystem}. Persona
+embeddings are loaded once at level start from the same
+\texttt{persona\_embeddings.json} produced by the research pipeline; the policy
+network itself is the unmodified PCSP checkpoint.
+
+\textbf{Scale and real-time behaviour.}
+We validated three target scales in PIE on a single workstation: 16 agents
+(baseline, 690 interactions over 10\,min), 32 agents (1{,}049 interactions over
+343\,s, 5.4\% failure rate after raising bottleneck zone capacity), and a
+64-agent stress test (2{,}438 interactions over 483\,s at \textbf{1.7\% failure
+rate}, $38.1$ interactions per agent, $9$ of $10$ active action categories
+exercised). All 64-agent inference is real-time inside the game loop with a
+$0.5$\,s decision throttle and urgency-driven preemption; the ONNX policy itself
+remains the sub-frame component observed in the Python benchmark.
+
+\textbf{Held-out persona generalization in-engine.}
+We ran a clean zero-shot evaluation with the $60$ held-out personas
+(IDs 241--300) inside UE5 after matching environment capacity to the held-out
+demand profile (Office, Hygiene). Result: $2{,}792$ interactions in $9.75$\,min,
+\textbf{0.04\% failure rate} ($1$ path-follow event of $2{,}792$),
+$43.6$ interactions per agent (vs.\ $33.5$ on train personas), reward $960.4$
+(vs.\ $730.6$), category coverage $9/10$ in both. The inter-persona action
+dispersion is $\rho = 0.368$ on held-out personas vs.\ $0.383$ on train---the
+engine-integrated policy is \emph{slightly more} persona-distinct on personas it
+has never seen, matching the Mini-Inzoi v3 zero-shot finding qualitatively.
+
+\textbf{In-engine ablation.}
+We re-ran the persona-conditioning ablation through a runtime CVar
+(\texttt{pcsp.PolicyMode}) at 64-agent scale (5\,min each):
+full \PCSP achieved $2{,}077$ interactions / $0.0\%$ failure / reward $708.9$ /
+action dispersion $\rho = 0.368$; zeroing the persona vector
+(\texttt{HybridNoPersona}, the inference-time analogue of RL-only) raised
+dispersion to $0.990$, increased failure to $13.3\%$, and yielded a symmetric KL
+of $1.05$ against the full-PCSP policy distribution; bypassing ONNX entirely
+(\texttt{BTOnly}, needs heuristic) collapsed to $1{,}152$ interactions / $87.6\%$
+failure / dispersion $0.989$. Persona conditioning is load-bearing in the engine
+under the same metric---action dispersion collapses by $2.7\times$ when the
+persona signal is removed---reproducing the \S\ref{sec:evidence} pattern with no
+algorithmic change.
+
+\textbf{Observability.}
+Every agent emits a per-decision JSONL trace (action, $20$-d softmax logits,
+$8$-d needs snapshot, urgency, reward, zone selection diagnostic, failure
+reason). The same \texttt{analyze\_ue\_session.py} pipeline that aggregates these
+traces also computes per-persona symmetric KL between paired PIE sessions, so
+the consistency-loss ablation that defines the paper's central finding can be
+re-run inside the engine without re-instrumenting.
+
+% ---------------------------------------------------------------
 \section{Discussion and Future Work}
 \label{sec:discussion}
 
@@ -941,9 +1011,10 @@ bimodal projection-head landing and an embedding-margin condition on held-out
 recovery that we do not attempt to resolve here; the natural mechanistic
 targets---multi-objective InfoNCE with per-cluster pinning, projection-head
 re-seeding, and a controlled-margin held-out corpus---follow directly from
-those observations. Engine integration also remains a practical step: the
-policy must serialize game state, tolerate asynchronous events, and preserve
-the sub-frame inference profile observed in the Python benchmark.
+those observations. The UE5 deployment in \S\ref{sec:ue5} shows that the
+sub-frame inference profile and the persona-conditioning ablation both survive
+the move out of the Python benchmark; what remains is commercial-scale
+multi-agent validation in worlds substantially richer than a single district.
 
 \textbf{Human evaluation methodology.}
 Automatic metrics are necessary for ablations but insufficient for perceived NPC
@@ -988,10 +1059,6 @@ The completed Google Forms pilot collected only item-level A/B selection ratios
 for coarse traces. It supports aggregate 2AFC accuracy analysis, but not
 participant-level variance, confidence, response time, order effects, or
 inter-rater reliability. A more instrumented human study remains future work.
-
-\textbf{No engine integration.}
-The policy runs in a Python simulation environment. Integration challenges with
-commercial game engines remain unknown.
 
 % ---------------------------------------------------------------
 \section{Conclusion}
