@@ -8,6 +8,33 @@
 
 class APCSPAffordanceZone;
 
+UENUM(BlueprintType)
+enum class EPCSPZoneRejection : uint8
+{
+	Selected             UMETA(DisplayName="Selected"),
+	NoZonesRegistered    UMETA(DisplayName="NoZonesRegistered"),
+	AllInvalidWeakPtr    UMETA(DisplayName="AllInvalidWeakPtr"),
+	AllCategoryMismatch  UMETA(DisplayName="AllCategoryMismatch"),
+	AllOverCapacity      UMETA(DisplayName="AllOverCapacity"),
+	AllTooFar            UMETA(DisplayName="AllTooFar"),
+};
+
+USTRUCT(BlueprintType)
+struct FPCSPZoneSelectionDebug
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly) EPCSPZoneRejection Reason = EPCSPZoneRejection::NoZonesRegistered;
+	UPROPERTY(BlueprintReadOnly) int32 RegisteredCount   = 0;  // entries in Zones[]
+	UPROPERTY(BlueprintReadOnly) int32 ValidCount        = 0;  // weak-ptr resolved
+	UPROPERTY(BlueprintReadOnly) int32 CategoryMatchCount= 0;
+	UPROPERTY(BlueprintReadOnly) int32 CapacityOkCount   = 0;
+	UPROPERTY(BlueprintReadOnly) int32 InRangeCount      = 0;
+	UPROPERTY(BlueprintReadOnly) float NearestDistance   = -1.f;  // among category matches; -1 if none
+
+	FString ToCompactString() const;
+};
+
 USTRUCT(BlueprintType)
 struct FPCSPAffordanceQuery
 {
@@ -31,6 +58,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="PCSP|Affordance")
 	APCSPAffordanceZone* FindBestZone(const FPCSPAffordanceQuery& Query) const;
+
+	/** Diagnostic overload — populates OutDebug with rejection reason + counts. */
+	APCSPAffordanceZone* FindBestZone(const FPCSPAffordanceQuery& Query,
+	                                  FPCSPZoneSelectionDebug& OutDebug) const;
 
 	UFUNCTION(BlueprintCallable, Category="PCSP|Affordance")
 	TArray<APCSPAffordanceZone*> GetZonesByCategory(EPCSPAffordanceCategory Category) const;

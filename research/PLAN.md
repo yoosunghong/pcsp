@@ -98,6 +98,18 @@
 - [ ] Consider a focused follow-up analysis of architecture generalization gaps by split family.
 - [ ] Design and run v3-large: v3 20-action ontology at v2 scale (12x12, 16 agents, 500 personas) before claiming broad environment scaling.
 - [ ] Treat Melting Pot as optional external validation after v3-large, not as a blocker for the immediate human-eval study.
+- [x] UE5 zero-shot persona validation on held-out IDs 241..300 (2026-05-18):
+      With Work + Hygiene zone capacities matched to the held-out demand
+      profile, the v3 policy runs on personas 241..300 in UE5 with
+      0.04% failure rate (1 path_follow_idle_short across 2,792
+      interactions, 9.75 min, 64 agents) and inter-persona action
+      ρ = 0.368 (vs 0.383 on train 1..64) — i.e. *more* persona-distinct
+      on unseen personas. Pre-fix held-out run had 12.5% failure rate
+      driven by `FocusedWork`/`PlanningWork` `AllOverCapacity` (single
+      Office zone saturated by the test demand profile, not a policy
+      failure). Tooling: `research/scripts/run_zeroshot_eval.py` +
+      `research/scripts/analyze_ue_session.py`. Full progression and
+      artifacts in `DONE.md`.
 
 ---
 
@@ -127,3 +139,33 @@
 - [ ] If factorized actions are introduced, redesign the actor as multiple heads: intent, target/place, style/duration.
 - [ ] Re-measure latency before claiming final real-time speedups in the paper.
 - [ ] Decide whether the frozen projection ablation is worth running for v3.
+- [x] UE5-side v3 action remap: movement indices 16-19 (`move_up/down/left/right`) carry no semantic meaning in UE (engine handles pathing), so the UE bridge now maps 16/18 → `LeisureOutdoor` and 17/19 → `ObserveCrowd` in `PCSPPolicySubsystem.cpp`. Python training/eval are unaffected — the remap lives in the engine bridge only, but recorded here so the v3 action-table interpretation stays consistent across research and UE. UE decisions are now ONNX-only: if `pcsp_actor.onnx` or `persona_embeddings.json` is missing, agents return Failed rather than fall back to a heuristic. *(2026-05-17)*
+- [ ] **UE5 training-side ablation exports (`Hybrid-NoConsist`, `RL-only`).**
+      The UE side already supports three *runtime* ablations via
+      `pcsp.PolicyMode` (HybridPCSP / BTOnly / HybridNoPersona — see
+      `ue/cnzoi/PLAN.md` Phase 4). Completing the Phase 4 ablation table
+      requires two additional ONNX exports of *already-trained* v3 models:
+      1. **Hybrid-NoConsist** — checkpoint `results/pcsp_v3/no_consist/policy.pt`.
+         Same `PCSPActorCritic` architecture as `full`, so
+         `scripts/export_pcsp_onnx.py --checkpoint results/pcsp_v3/no_consist/policy.pt --output_dir results/export_ue5/no_consist`
+         produces a drop-in `pcsp_actor.onnx` with identical I/O shapes
+         (`obs[1,33]`, `persona_proj[1,64]`, `logits[1,20]`). UE switches
+         models by swapping the file under `Content/PCSP/Models/` and
+         relaunching PIE; persona embeddings reuse the `full` export since
+         the `PersonaProjection` LoRA layer is included in both checkpoints
+         and is trained jointly.
+      2. **RL-only** — corresponds to baseline B1 (`baselines/no_persona_ppo.py`,
+         checkpoint `results/baselines_v3/b1_no_persona/policy.pt`). The
+         architecture has no persona conditioning at all (no `PersonaProjection`,
+         no FiLM), so `export_pcsp_onnx.py` cannot be reused as-is. Needs a
+         new `export_b1_onnx.py` wrapper that builds an ONNX with
+         `obs[1,33] -> logits[1,20]` only, *plus* a dummy
+         `persona_embeddings.json` of zero vectors so `UPCSPPolicySubsystem`'s
+         existing two-input binding still validates. Alternative: wrap the B1
+         actor as a two-input ONNX where `persona_proj` is unused (passed
+         through and discarded), keeping the UE bridge identical. The
+         dummy-embedding approach is simpler — recommend that.
+      Both exports must keep the existing action-ID ordering
+      (`research/docs/mini_inzoi_v3_design.md` §3); the UE bridge's V3→UE
+      remap table is keyed on those indices and would silently misroute if
+      ordering changed.

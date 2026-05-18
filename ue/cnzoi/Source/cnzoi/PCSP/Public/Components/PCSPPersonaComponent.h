@@ -27,4 +27,13 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="PCSP|Persona")
 	bool HasEmbedding() const { return ProjectedVector.Num() > 0; }
+
+	// Returns PersonaId as an integer (1-based, as expected by PCSPPersonaCache).
+	// Parses PersonaId FString; returns 1 on parse failure.
+	UFUNCTION(BlueprintCallable, Category="PCSP|Persona")
+	int32 GetPersonaId() const
+	{
+		int32 Id = FCString::Atoi(*PersonaId);
+		return Id > 0 ? Id : 1;
+	}
 };

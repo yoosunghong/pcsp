@@ -1,0 +1,48 @@
+{
+  "reference": "ue\\cnzoi\\Saved\\PCSP\\Logs\\20260518_153310",
+  "reference_mode": "HybridPCSP",
+  "modes": [
+    {
+      "session_dir": "ue\\cnzoi\\Saved\\PCSP\\Logs\\20260518_153310",
+      "policy_mode": "HybridPCSP",
+      "is_reference": true,
+      "n_personas": 64,
+      "n_interactions": 2077,
+      "failure_rate": 0.00048123195380173246,
+      "reward_sum": 708.9000000000001,
+      "interactions_per_agent": 32.453125,
+      "inter_persona_rho_mean": 0.3684834971250481,
+      "vs_ref_action_rho_mean": null,
+      "vs_ref_kl_symmetric_mean": null,
+      "n_personas_with_kl": 0
+    },
+    {
+      "session_dir": "ue\\cnzoi\\Saved\\PCSP\\Logs\\20260518_154015",
+      "policy_mode": "BTOnly",
+      "is_reference": false,
+      "n_personas": 64,
+      "n_interactions": 1152,
+      "failure_rate": 0.8761290322580645,
+      "reward_sum": 395.24999999999994,
+      "interactions_per_agent": 18.0,
+      "inter_persona_rho_mean": 0.9889384961170083,
+      "vs_ref_action_rho_mean": 0.31865281354853625,
+      "vs_ref_kl_symmetric_mean": null,
+      "n_personas_with_kl": 0
+    },
+    {
+      "session_dir": "ue\\cnzoi\\Saved\\PCSP\\Logs\\20260518_154827",
+      "policy_mode": "HybridNoPersona",
+      "is_reference": false,
+      "n_personas": 64,
+      "n_interactions": 1752,
+      "failure_rate": 0.13310242454230578,
+      "reward_sum": 573.9,
+      "interactions_per_agent": 27.375,
+      "inter_persona_rho_mean": 0.9899048461655534,
+      "vs_ref_action_rho_mean": 0.5388279500659333,
+      "vs_ref_kl_symmetric_mean": 1.0489078497931064,
+      "n_personas_with_kl": 64
+    }
+  ]
+}

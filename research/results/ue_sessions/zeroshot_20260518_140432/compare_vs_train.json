@@ -1,0 +1,40 @@
+{
+  "train_session": "20260518_104056",
+  "zeroshot_session": "20260518_140432",
+  "n_personas_train": 64,
+  "n_personas_zeroshot": 64,
+  "failure_rate_train": 0.019652650822669104,
+  "failure_rate_zeroshot": 0.00035803795202291446,
+  "interactions_per_agent_train": 33.515625,
+  "interactions_per_agent_zeroshot": 43.625,
+  "inter_persona_rho_train": 0.38291899381156674,
+  "inter_persona_rho_zeroshot": 0.3678608500405351,
+  "category_coverage_train": {
+    "Social": 50,
+    "Rest": 57,
+    "Work": 30,
+    "Exercise": 11,
+    "Eat": 21,
+    "Hygiene": 34,
+    "Observe": 6,
+    "Study": 19,
+    "Shop": 4
+  },
+  "category_coverage_zeroshot": {
+    "Social": 40,
+    "Rest": 59,
+    "Work": 38,
+    "Hygiene": 36,
+    "Eat": 18,
+    "Exercise": 10,
+    "Study": 33,
+    "Observe": 7,
+    "Shop": 3
+  },
+  "matched_persona_compare": {
+    "n_common_personas": 0,
+    "per_persona_rho_mean": null,
+    "per_persona_rho_median": null,
+    "per_persona": []
+  }
+}
