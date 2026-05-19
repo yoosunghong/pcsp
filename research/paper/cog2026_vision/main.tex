@@ -937,19 +937,67 @@ study~\cite{phase5report}.
 \section{Engine Integration: UE5 Deployment}
 \label{sec:ue5}
 
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig_ue5_system.pdf}
+  \caption{%
+    \textbf{Research--UE5 split.} The Python pipeline (left) trains
+    \PCSP and exports a single ONNX actor plus a JSON of L2-normalised
+    persona projections. Unreal (centre) loads both into
+    \texttt{UPCSPPolicySubsystem} and runs synchronous inference inside a
+    Blackboard-driven Behaviour Tree; per-decision JSONL traces feed the
+    offline analysis scripts (right). No engine-side training.
+  }
+  \label{fig:ue5_system}
+\end{figure}
+
 To test whether the \S\ref{sec:method} method survives the engineering pressure of
 a commercial game engine, we ported a v3 checkpoint into Unreal Engine 5.5 as a
-hybrid behaviour stack: \PCSP chooses semantic intents (e.g.\ \texttt{EatQuick},
-\texttt{FocusedWork}, \texttt{LeisureOutdoor}), and Behaviour Tree, Blackboard,
-EQS, AIController, and NavMesh execute them. The policy is exported to ONNX
+hybrid behaviour stack (Fig.~\ref{fig:ue5_system}): \PCSP chooses semantic
+intents (e.g.\ \texttt{EatQuick}, \texttt{FocusedWork},
+\texttt{LeisureOutdoor}), and Behaviour Tree, Blackboard, EQS,
+AIController, and NavMesh execute them. The policy is exported to ONNX
 (20-action head, $33$-d obs, $64$-d persona projection) and run through Epic's
 NNE/NNERuntimeORT plugin from a custom \texttt{UPCSPPolicySubsystem}. Persona
 embeddings are loaded once at level start from the same
 \texttt{persona\_embeddings.json} produced by the research pipeline; the policy
 network itself is the unmodified PCSP checkpoint.
 
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{ue5-topdown.png}
+  \caption{%
+    \textbf{\texttt{Map\_PCSPDistrict\_M} in PIE.} Top-down view with
+    affordance-zone labels (SocialHub, Library/Study, Office/Work,
+    Bedroom/Rest, \ldots); each green sphere is an
+    \texttt{APCSPAgentCharacter} executing the hybrid PCSP/BT stack. The
+    map has $10$ zones spanning the v3 affordance taxonomy (Kitchen,
+    Bedroom, Office, Library, Gym, Bathroom, SocialHub, Park, Shop;
+    Leisure folded into Observe).
+  }
+  \label{fig:ue5_screenshot}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{ue5-x6.png}
+  \caption{%
+    \textbf{Gameplay Debugger overlay on a single agent.}
+    Yellow text (right) is the live Blackboard / BT snapshot for the
+    selected \texttt{APCSPAgentCharacter}: current
+    \texttt{DesiredActionType}, \texttt{UrgencyScore},
+    \texttt{bAffordanceReserved}, and the active BT node. This view
+    confirms that the persona branch is routing decisions through
+    \texttt{BTTask\_PCSPDecision} $\to$ \texttt{MoveToAffordance} $\to$
+    \texttt{PerformInteraction} and that the emergency decorator fires
+    only when \texttt{UrgencyScore}~$\geq\!0.85$.
+  }
+  \label{fig:ue5_debugger}
+\end{figure}
+
 \textbf{Scale and real-time behaviour.}
-We validated three target scales in PIE on a single workstation: 16 agents
+We validated three target scales in PIE (Fig.~\ref{fig:ue5_screenshot})
+on a single workstation: 16 agents
 (baseline, 690 interactions over 10\,min), 32 agents (1{,}049 interactions over
 343\,s, 5.4\% failure rate after raising bottleneck zone capacity), and a
 64-agent stress test (2{,}438 interactions over 483\,s at \textbf{1.7\% failure
@@ -958,10 +1006,30 @@ exercised). All 64-agent inference is real-time inside the game loop with a
 $0.5$\,s decision throttle and urgency-driven preemption; the ONNX policy itself
 remains the sub-frame component observed in the Python benchmark.
 
+\begin{table}[t]
+  \centering
+  \small
+  \caption{%
+    \textbf{Held-out persona transfer (UE5, 64 agents, identical map).}
+    Train: personas $1$--$240$; Held-out: $60$ test personas (IDs
+    $241$--$300$) covering four occupations absent from training.
+    $\rho_{\text{intra}}$ is inter-persona action-histogram Spearman.}
+  \label{tab:ue5_heldout}
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{lrrrrr}
+    \toprule
+    Personas & Min.\ & $n_{\text{int}}$ & Int/agent & Fail \% & $\rho_{\text{intra}}$ \\
+    \midrule
+    Train (1--240)   & 5.0  & 1{,}474 & 33.5 & 0.00 & 0.383 \\
+    \textbf{Held-out (241--300)} & 9.75 & \textbf{2{,}792} & \textbf{43.6} & \textbf{0.04} & \textbf{0.368} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 \textbf{Held-out persona generalization in-engine.}
 We ran a clean zero-shot evaluation with the $60$ held-out personas
 (IDs 241--300) inside UE5 after matching environment capacity to the held-out
-demand profile (Office, Hygiene). Result: $2{,}792$ interactions in $9.75$\,min,
+demand profile (Office, Hygiene; Table~\ref{tab:ue5_heldout}). Result: $2{,}792$ interactions in $9.75$\,min,
 \textbf{0.04\% failure rate} ($1$ path-follow event of $2{,}792$),
 $43.6$ interactions per agent (vs.\ $33.5$ on train personas), reward $960.4$
 (vs.\ $730.6$), category coverage $9/10$ in both. The inter-persona action
@@ -969,9 +1037,51 @@ dispersion is $\rho = 0.368$ on held-out personas vs.\ $0.383$ on train---the
 engine-integrated policy is \emph{slightly more} persona-distinct on personas it
 has never seen, matching the Mini-Inzoi v3 zero-shot finding qualitatively.
 
+\begin{table}[t]
+  \centering
+  \small
+  \caption{%
+    \textbf{In-engine ablation at 64 agents, $\sim$5\,min per run}
+    (\texttt{pcsp.PolicyMode} CVar, identical map and persona set).
+    $n_{\text{int}}$: \texttt{interaction\_complete} events.
+    Fail: \texttt{move\_failed} / total decisions.
+    $\rho_{\text{intra}}$: mean Spearman over $\binom{64}{2}$ persona pairs
+    on action histograms. Sym.\ KL is against the reference
+    \texttt{HybridPCSP} run.}
+  \label{tab:ue5_ablation}
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{lrrrrr}
+    \toprule
+    Mode & $n_{\text{int}}$ & Fail \% & Reward & $\rho_{\text{intra}}$ & Sym.\ KL \\
+    \midrule
+    \textbf{HybridPCSP}    & \textbf{2{,}077} & \textbf{0.0}  & \textbf{708.9} & \textbf{0.368} & --- \\
+    BTOnly                 & 1{,}152 & 87.6 & 395.2 & 0.989 & ---$^\dagger$ \\
+    HybridNoPersona        & 1{,}752 & 13.3 & 573.9 & 0.990 & 1.05 \\
+    \bottomrule
+  \end{tabular}\\[2pt]
+  \raggedright\footnotesize
+  $^\dagger$BTOnly emits zero logits by construction; KL against
+  HybridPCSP would just measure distance from uniform.
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig_ue5_ablation.pdf}
+  \caption{%
+    \textbf{Phase 4 runtime ablation, 64 agents.} Zeroing the persona
+    embedding (HybridNoPersona) collapses inter-persona action
+    dispersion from $\rho\!=\!0.37$ to $\rho\!=\!0.99$. Replacing the
+    ONNX policy with the BT-only needs heuristic (BTOnly) further
+    halves throughput and reward as 64 agents synchronise on the
+    single most-urgent need each tick.
+  }
+  \label{fig:ue5_ablation}
+\end{figure}
+
 \textbf{In-engine ablation.}
 We re-ran the persona-conditioning ablation through a runtime CVar
-(\texttt{pcsp.PolicyMode}) at 64-agent scale (5\,min each):
+(\texttt{pcsp.PolicyMode}) at 64-agent scale (5\,min each,
+Table~\ref{tab:ue5_ablation}, Fig.~\ref{fig:ue5_ablation}):
 full \PCSP achieved $2{,}077$ interactions / $0.0\%$ failure / reward $708.9$ /
 action dispersion $\rho = 0.368$; zeroing the persona vector
 (\texttt{HybridNoPersona}, the inference-time analogue of RL-only) raised
@@ -1015,7 +1125,9 @@ signal at execution time. We treat this gap as a quantified engine--research
 mismatch, not a refutation of the in-research result.
 
 \textbf{Observability.}
-Every agent emits a per-decision JSONL trace (action, $20$-d softmax logits,
+In addition to the offline JSONL traces, the live Gameplay Debugger
+(Fig.~\ref{fig:ue5_debugger}) exposes per-agent Blackboard and BT state
+at runtime. Every agent emits a per-decision JSONL trace (action, $20$-d softmax logits,
 $8$-d needs snapshot, urgency, reward, zone selection diagnostic, failure
 reason). The same \texttt{analyze\_ue\_session.py} pipeline that aggregates these
 traces also computes per-persona symmetric KL between paired PIE sessions, so
