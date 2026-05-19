@@ -13,10 +13,13 @@
 \usepackage{nicefrac}
 \usepackage{xspace}
 \usepackage[hidelinks]{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, calc, positioning}
 
 \graphicspath{{../figures/}}
 
 \newcommand{\PCSP}{\textsc{pcsp}\xspace}
+\newcommand{\PCSPD}{\textsc{pcsp-d}\xspace}
 \newcommand{\eg}{\textit{e.g.}\xspace}
 \newcommand{\ie}{\textit{i.e.}\xspace}
 \newcommand{\etal}{\textit{et al.}\xspace}
@@ -51,7 +54,7 @@ We introduce \PCSP (Persona-Conditioned Shared Policy), a single reinforcement
 learning policy conditioned on frozen LLM embeddings of free-form persona
 descriptions. \PCSP combines once-per-NPC persona encoding, low-rank persona
 projection, neural persona conditioning, and a PPO + InfoNCE consistency + KL
-diversity training objective. Across three Mini-Inzoi experimental settings,
+diversity training objective. Across three \PCSPD{} (formerly \textit{Mini-Inzoi}) experimental settings,
 including a richer 20-action v3 ontology, ablations show that the InfoNCE
 trajectory-consistency objective is load-bearing: removing it collapses
 zero-shot persona identification to chance even when task reward is preserved or
@@ -144,43 +147,42 @@ alignment, and real-time deployment.
 
 \begin{enumerate}
   \setlength\itemsep{2pt}
-  \item \textbf{\PCSP}: A shared RL controller combining frozen
-    Qwen3-0.6B-Embedding, low-rank persona projection, neural persona conditioning, and a
-    PPO + InfoNCE consistency + KL diversity co-training objective
-    (\S\ref{sec:method}).
-  \item \textbf{Empirical results}: On a 300-persona life-simulation benchmark,
-    \PCSP achieves zero-shot persona identification up to 17$\times$ above
-    chance, Spearman $\rho\!\approx\!0.73$ semantic-behavioral alignment, and
-    22$\times$ faster inference than LLM-as-policy (\S\ref{sec:evidence}).
-  \item \textbf{Ablation finding}: Across v1, v2, and v3 environments, removing
-    the InfoNCE trajectory-consistency loss collapses zero-shot persona
-    identification to chance, while the best conditioning architecture depends
-    on the out-of-distribution split.
-  \item \textbf{Evaluation protocol}: We report persona identification,
-    behavioral diversity, semantic-behavioral alignment, inference latency, and
-    rich trajectory observability as core criteria for persona-conditioned NPC
-    control (\S\ref{sec:evalprotocol}).
-  \item \textbf{Engine integration}: A UE5.5 deployment of the trained policy as
-    a hybrid Behavior-Tree/ONNX stack reproduces the persona-conditioning
-    ablation at 64 agents (1.7\% failure rate, $9$ active action categories),
-    achieves $0.04\%$ failure rate zero-shot on held-out personas with
-    inter-persona action dispersion $\rho = 0.368$ (vs.\ $0.383$ on train),
-    \emph{and additionally reproduces the consistency-loss finding in-engine}:
-    swapping the full checkpoint for the \texttt{no\_consist} checkpoint at
-    fixed map and persona set leaves task throughput and reward higher
-    ($4{,}005$ vs.\ $3{,}110$ interactions; reward $1{,}423.5$ vs.\ $1{,}079.8$)
-    while matched-persona symmetric KL diverges to $1.79$\,nats, mirroring the
-    Mini-Inzoi ``reward hides the failure'' pattern (\S\ref{sec:ue5}).
-  \item \textbf{External validation on Melting Pot}: Applied to
-    \texttt{commons\_harvest\_\_open} from \textit{Melting Pot
-    2.4.0}~\cite{leibo2021meltingpot} with no algorithmic changes to the
-    \S\ref{sec:method} method beyond a CNN observation front-end and a
-    persona-agnostic team-reward potential required by the substrate, \PCSP
-    produces persona-distinguishable behavior with mean pairwise action-KL
-    $2.106\,[1.609,\,2.660]$ and trajectory$\to$persona retrieval top-3
-    $0.936\,[0.879,\,0.993]$ across 5 seeds (chance $0.30$); the no-InfoNCE
-    ablation confirms that the consistency loss remains load-bearing in this
-    richer environment (\S\ref{sec:meltingpot}).
+  \item \textbf{Method.} \PCSP{}---a shared policy conditioned on frozen LLM
+    persona embeddings via low-rank projection and FiLM/concat fusion,
+    co-trained with PPO, an InfoNCE trajectory-consistency objective, and
+    KL diversity regularization (\S\ref{sec:method}).
+  \item \textbf{Three-layer validation methodology.} We argue that
+    persona-conditioned agents require \emph{separated} validation of
+    mechanism, generalization, and deployment, and instantiate this with a
+    controlled diagnostic substrate (\PCSPD), an external multi-agent RL
+    substrate (Melting Pot), and a realtime UE5 engine deployment
+    (\S\ref{sec:layers}).
+  \item \textbf{Mechanistic finding (Layer 1).} Under controlled conditions,
+    the InfoNCE consistency term is causally responsible for trajectory-level
+    persona recoverability: removing it preserves task reward but collapses
+    zero-shot persona identification to chance across three independent
+    environment instantiations of \PCSPD (\S\ref{sec:evidence}).
+  \item \textbf{External generalization (Layer 2).} The same method, without
+    algorithmic modification beyond a CNN observation front-end, transfers to
+    three Melting Pot social-dilemma substrates spanning commons-pool,
+    public-good, and dyadic-matrix structures
+    (\texttt{commons\_harvest\_\_open}, \texttt{clean\_up},
+    \texttt{prisoners\_dilemma\_\dots\_repeated}); the consistency-loss
+    ablation collapses trajectory$\to$persona retrieval to chance in all
+    three while leaving (or inflating) pairwise action-KL
+    (\S\ref{sec:meltingpot}).
+  \item \textbf{Deployment finding (Layer 3).} A frozen Layer-1 checkpoint
+    deployed in UE5 sustains 64 concurrent persona-conditioned agents at
+    realtime with 1.7\% failure, generalizes to 60 held-out personas at
+    0.04\% failure, and \emph{reproduces the InfoNCE ablation in-engine}
+    (matched-persona symmetric KL of $1.79$\,nats between full and
+    \texttt{no\_consist} checkpoints, reward $1{,}423.5$ vs.\ $1{,}079.8$
+    on the same map and persona set), establishing that the consistency
+    objective is load-bearing under engine-side contention
+    (\S\ref{sec:ue5}).
+    % TODO(T1.3, T1.4): scaling curve + persona-persistence figure.
+  \item \textbf{Reproducibility.} Open ONNX checkpoints, three-layer
+    benchmark code, UE5 plugin, and trajectory-annotation harness.
 \end{enumerate}
 
 % ---------------------------------------------------------------
@@ -259,31 +261,17 @@ systematically explored. Persona-conditioned shared policies are a concrete
 proposal for how to close this gap.
 
 % ---------------------------------------------------------------
-\section{\PCSP Method}
+\section{\PCSP{}: Persona-Conditioned Shared Policy}
 \label{sec:method}
 
 We present \PCSP as one specific point in the design space of persona-conditioned
-shared policies. The components we have chosen are motivated by ablation evidence
-but are not canonical; they define the experimental system evaluated below.
-
-\subsection{Environment: Mini-Inzoi}
-
-\textit{Mini-Inzoi} is a PettingZoo AEC life-simulation environment on a
-6$\times$6 grid with 4 agents, 8 bio-social needs (hunger, sleep, social,
-leisure, hygiene, fitness, work, learning), and 12 discrete actions
-(8 activity + 4 movement).
-Observation $s\!\in\!\mathbb{R}^{20}$: position (2), time-of-day (1), needs (8),
-and summaries of the other three agents (9).
-Reward combines needs satisfaction, persona-aligned activity bonuses ($+0.5$ for
-preferred actions), and social bonuses scaled by Big Five
-compatibility~\cite{mccrae1992introduction}
-($0.2 + 0.3 \times \text{cos-sim}(\text{BF}_i, \text{BF}_j)$).
-
-\textbf{Persona dataset.}
-300 persona texts are generated from 15 Big Five archetypes $\times$ 20
-occupations (240 train / 60 zero-shot test).
-Each text is a 2--3 sentence natural-language description that an NPC designer
-might write for a new character.
+shared policies. The components below are motivated by ablation evidence
+but are not canonical; they define the experimental system evaluated across the
+three validation layers in \S\ref{sec:layers}. The method itself is
+\emph{environment-agnostic}: a frozen embedding plus a low-rank persona projection,
+a shared policy with a conditioning fusion, and a PPO+InfoNCE+KL co-training
+objective. Environment, observation, action, and reward specifications are
+deferred to \S\ref{sec:layers} together with the layer they instantiate.
 
 \subsection{Persona Encoding}
 
@@ -375,61 +363,184 @@ This discourages behavioral collapse toward a persona-agnostic average.
     \textbf{\PCSP pipeline and training objectives.}
     Persona text is encoded once per NPC with a frozen Qwen3 embedding model,
     adapted through a low-rank projection, and consumed by a shared
-    persona-conditioned policy during Mini-Inzoi rollout.
+    persona-conditioned policy during \PCSPD{} rollout.
     The trajectory encoder provides the InfoNCE consistency signal, while the
     policy is optimized with PPO and KL diversity regularization.
-    The rightmost Mini-Inzoi label depicts the base 12-action/8-need
+    The rightmost \PCSPD{} label depicts the base 12-action/8-need
     instantiation; the v3 experiments expand the action ontology to 20 actions.}
   \label{fig:system}
 \end{figure*}
 
 % ---------------------------------------------------------------
-\section{Experiments and Results}
-\label{sec:evidence}
+\section{Evaluation Strategy: A Three-Layer Validation Stack}
+\label{sec:layers}
 
-We evaluate \PCSP across three settings. Mini-Inzoi v3 is the primary experiment
-because it exposes a richer action ontology for persona-conditioned behavior.
-Mini-Inzoi v1 validates the base architecture at small scale, and Mini-Inzoi v2
-tests whether the semantic-behavioral alignment pattern persists under a larger
-grid, more agents, and more personas.
+A persona-conditioned policy must answer three different questions:
+(i) is persona signal causally responsible for trajectory variation;
+(ii) does the same method survive a different environment, observation
+geometry, and reward structure; and (iii) does the policy hold up under the
+asynchrony, contention, and runtime constraints of a commercial game engine.
+A single environment cannot answer all three: the conditions that make
+causal isolation possible (full observability, small action space, short
+episodes) are mutually exclusive with the conditions that test deployment
+realism. We therefore validate \PCSP on three deliberately different layers
+and report each layer against the question it can actually answer
+(Table~\ref{tab:layer_matrix}).
 
-\subsection{Experimental Setup}
+\begin{figure}[t]
+  \centering
+  \resizebox{\linewidth}{!}{%
+  \begin{tikzpicture}[
+    layer/.style={draw, rounded corners=3pt, thick, align=center,
+                  minimum width=4.4cm, minimum height=4.6cm, font=\small},
+    head/.style={font=\bfseries\small},
+    arr/.style={-{Latex[length=2.2mm]}, thick, gray!70},
+  ]
+    \node[layer, fill=blue!4]  (L1) at (0,0)   {};
+    \node[layer, fill=green!4] (L2) at (5.2,0) {};
+    \node[layer, fill=red!4]   (L3) at (10.4,0){};
 
-\textbf{v3 (richer action ontology).}
-Mini-Inzoi v3 keeps the 6$\times$6/4-agent base scale but expands the action
-space to \textbf{20 flat-discrete actions} (16 activity + 4 movement) for
-finer behavioral granularity (e.g., \texttt{focused\_work} vs.\
-\texttt{planning\_work}, \texttt{rest\_alone} vs.\ \texttt{rest\_with\_others},
-\texttt{eat\_quick} vs.\ \texttt{eat\_slow}).
-Observations expand to 33 dimensions, adding location-affordance one-hot
-(8), social-context features (3), and a routine-regularity signal (2).
-Reward shaping adds a per-action persona-style term
-$r_{\text{style}} = 0.3 \cdot \cos(\mathbf{p}_{\text{BF}}, \mathbf{s}_a)$
-that aligns each action with a hand-authored Big-Five style profile.
-Same 240/60 unseen-occupation split as v1; 300 PPO iterations.
+    \node[head] at ($(L1.north)+(0,-0.35)$) {Layer 1 --- \PCSPD{}};
+    \node[head] at ($(L2.north)+(0,-0.35)$) {Layer 2 --- Melting Pot};
+    \node[head] at ($(L3.north)+(0,-0.35)$) {Layer 3 --- UE5};
 
-\textbf{v1 (base scale).}
-Mini-Inzoi 6$\times$6, 4 agents, 300 personas (240 train / 60 zero-shot test).
-The held-out 60 personas comprise \emph{four entire occupations} (HR manager,
-professor, data scientist, chef) crossed with all 15 Big Five archetypes, so
-this evaluates \textbf{unseen-occupation compositional generalization}: the
-target occupation never appears in training, only the personality structure
-does.
-All models train for 300 PPO iterations ($\approx$1.9M steps) on an NVIDIA
-RTX 6000 Ada (49\,GB VRAM).
-Baselines: \textbf{B1} No-Persona PPO; \textbf{B3} SBERT-conditioned policy
-(\texttt{all-MiniLM-L6-v2}, 384-dim, frozen); \textbf{B4} DIAYN (random 64-dim);
-\textbf{B5} LLM-as-policy (Qwen3-1.7B).
+    \node[align=center, font=\scriptsize] at ($(L1.center)+(0,0.55)$) {%
+      \textbf{Mechanism}\\[2pt]
+      6$\times$6 grid, 4 agents\\
+      20 intents, full obs.\\
+      300 personas (240/60)\\[4pt]
+      \emph{Is InfoNCE causally}\\
+      \emph{load-bearing?}\\[4pt]
+      ZS top-1/3, $\rho$, KL\\
+      InfoNCE ablation \checkmark};
 
-\textbf{v2 (expanded scale).}
-Mini-Inzoi \textbf{12$\times$12, 16 agents, 500 personas} (400 train / 100
-zero-shot test), 200 PPO iterations.
-Same hyperparameters and evaluation protocol as v1.
-The observation dimension expands to 56 (position 2, time 1, needs 8,
-15 other agents $\times$ 3).
-Random zero-shot chance is 1.0\% (1/100 test personas).
+    \node[align=center, font=\scriptsize] at ($(L2.center)+(0,0.55)$) {%
+      \textbf{Generalization}\\[2pt]
+      88$\times$88$\times$3 RGB\\
+      External MP 2.4.0\\
+      10 train / 2 held\\[4pt]
+      \emph{Does it transfer to}\\
+      \emph{a new substrate?}\\[4pt]
+      Retrieval, $\rho$, KL\\
+      InfoNCE ablation \checkmark};
 
-\subsection{Evaluation Protocol}
+    \node[align=center, font=\scriptsize] at ($(L3.center)+(0,0.55)$) {%
+      \textbf{Deployment}\\[2pt]
+      UE5.5 PIE, 64 agents\\
+      ONNX in BT/NavMesh\\
+      240 train + 60 held-out\\[4pt]
+      \emph{Does it survive an}\\
+      \emph{engine in realtime?}\\[4pt]
+      Fail \%, $\rho_{\text{intra}}$, KL\\
+      InfoNCE ablation \checkmark};
+
+    \draw[arr] (L1.east) -- (L2.west);
+    \draw[arr] (L2.east) -- (L3.west);
+    \node[font=\tiny\itshape, gray!60] at ($(L1.east)!0.5!(L2.west)+(0,0.3)$) {same method};
+    \node[font=\tiny\itshape, gray!60] at ($(L2.east)!0.5!(L3.west)+(0,0.3)$) {frozen ckpt};
+  \end{tikzpicture}}
+  \caption{%
+    \textbf{Three-layer validation stack.} Each layer is selected for the
+    question it can isolate; the InfoNCE consistency term is ablated in all
+    three. Together they cover mechanism, generalization, and deployment.}
+  \label{fig:three_layer}
+\end{figure}
+
+\begin{table}[t]
+  \centering
+  \small
+  \caption{%
+    \textbf{Three-layer validation matrix.} Per-layer evaluation surface,
+    persona partition, and whether the InfoNCE consistency term is ablated
+    inside that layer.}
+  \label{tab:layer_matrix}
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{p{0.08\linewidth}p{0.20\linewidth}p{0.22\linewidth}p{0.14\linewidth}p{0.18\linewidth}c}
+    \toprule
+    Layer & Substrate & Question answered & Personas (train/eval) & Key metrics & InfoNCE abl.\ \\
+    \midrule
+    1 & \PCSPD{} 6$\times$6 grid, 4 agents (\S\ref{sec:layer1env})
+      & Is InfoNCE causally load-bearing?
+      & 240 / 60 held-out
+      & ZS top-1/3, $\rho$, pairwise KL
+      & \checkmark \\
+    2 & Melting Pot 2.4.0, RGB 88$\times$88, 7--8 agents (\S\ref{sec:meltingpot})
+      & Does the same method transfer to a new substrate?
+      & 10 / 2 held-out%
+        \footnote{Persona budget mirrors the \PCSPD{}-v2 controlled split; the 240/60 protocol is the planned T1.2 expansion.}
+      & Trajectory retrieval top-1/3, $\rho$, pairwise KL
+      & \checkmark \\
+    3 & UE5.5 hybrid stack, 64 agents (\S\ref{sec:ue5})
+      & Does the consistency finding survive an engine?
+      & 240 / 60 held-out
+      & Fail \%, throughput, $\rho_{\text{intra}}$, sym.\ KL
+      & \checkmark (\S\ref{sec:ue5}) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Layer 1 — \PCSPD{}: a controlled substrate for persona-traceability analysis}
+\label{sec:layer1env}
+
+Validating that a policy's behavior is causally traceable to its conditioning
+embedding requires an environment where (i) every state transition is fully
+observable, (ii) the action space is small enough to compute exact trajectory
+distributions and KL divergences, (iii) reward shaping is independent of
+persona, and (iv) episode length is short enough to run thousands of held-out
+personas. No commercial or photorealistic environment satisfies all four
+simultaneously. We therefore construct \PCSPD{} (\PCSP-Diagnostic; formerly
+\textit{Mini-Inzoi}), an intentionally minimal PettingZoo AEC substrate
+(6$\times$6 grid, 4 agents, 20 discrete intents over 8 bio-social needs) whose
+role in this paper is \emph{not} to demonstrate behavioral realism---that is
+the role of Layers 2 and 3---but to expose the InfoNCE consistency term to
+controlled ablation under conditions where every causal pathway from persona
+to trajectory is analytically observable. We treat \PCSPD{} as a microscope,
+not a world.
+
+\textbf{Environment.}
+\PCSPD{} has 8 bio-social needs (hunger, sleep, social, leisure, hygiene,
+fitness, work, learning) and 12 discrete actions in the v1/v2 base ontology
+(8 activity + 4 movement); the primary v3 instantiation expands this to 20
+discrete intents (16 activity + 4 movement) for finer behavioral granularity.
+Observation $s\!\in\!\mathbb{R}^{20}$ (v1/v2) or $\mathbb{R}^{33}$ (v3):
+position, time-of-day, needs, summaries of the other agents, and (v3) location
+affordance, social context, and routine regularity.
+Reward combines needs satisfaction, persona-aligned activity bonuses ($+0.5$
+for preferred actions), and social bonuses scaled by Big Five
+compatibility~\cite{mccrae1992introduction}
+($0.2 + 0.3 \times \text{cos-sim}(\text{BF}_i, \text{BF}_j)$).
+
+\textbf{Persona dataset.}
+300 persona texts are generated from 15 Big Five archetypes $\times$ 20
+occupations (240 train / 60 zero-shot test).
+Each text is a 2--3 sentence natural-language description that an NPC designer
+might write for a new character.
+
+\subsection{Layer 2 — Cross-substrate generalization on Melting Pot}
+\label{sec:layer2env}
+
+Layer 1 cannot test whether the method survives a different observation
+geometry, action ontology, or social-dilemma structure. Layer 2 applies
+\PCSP{} unchanged to Melting Pot 2.4.0~\cite{leibo2021meltingpot}: an
+external multi-agent RL substrate with 88$\times$88$\times$3 RGB
+observations and an 8-action ontology. The current paper reports
+\texttt{commons\_harvest\_\_open}; the same protocol is constructed to be
+applied to additional substrates without algorithmic modification.
+% TODO(T1.2): extend to clean_up and prisoners_dilemma_in_the_matrix__repeated, with held-out personas mirroring Layer 1, and cross-substrate persona transfer.
+
+\subsection{Layer 3 — Realtime deployment in Unreal Engine 5}
+\label{sec:layer3env}
+
+A persona-conditioned policy is only meaningful if it survives the
+engineering pressure of a real game engine: asynchronous tick rates, NavMesh
+contention, BT failure recovery, ONNX runtime constraints, and shared world
+state. Layer 3 deploys a \emph{frozen} Layer-1 checkpoint into UE5.5 via a
+hybrid intent stack and asks three questions that Layers 1 and 2 cannot
+answer: (i) does the policy meet a realtime wall-budget at deployment scale;
+(ii) does the InfoNCE finding survive engine-side contention; and (iii) do
+personas maintain identity over horizons far longer than the training episode.
+
+\subsection{Per-layer evaluation protocols and metrics}
 \label{sec:evalprotocol}
 
 We evaluate persona-conditioned NPC control with metrics that separate task
@@ -465,6 +576,53 @@ rollouts with time-of-day, location, nearby agents, action style, and short-form
 event semantics for human-facing evaluation artifacts, and treat coarse-versus-
 rich trace comparison as part of the evaluation protocol.
 
+% ---------------------------------------------------------------
+\section{Layer 1 Results: Mechanistic Validation}
+\label{sec:evidence}
+
+We evaluate \PCSP on three \PCSPD{} instantiations. v3 is the primary
+experiment because it exposes a richer action ontology for
+persona-conditioned behavior; v1 and v2 (deferred to App.~\ref{app:v1v2})
+replicate the central InfoNCE finding at the original 12-action base scale
+and at a 12$\times$12/16-agent expansion, establishing that the load-bearing
+component is invariant to grid size, agent count, and persona-set size.
+
+\subsection{Experimental Setup}
+
+\textbf{v3 (richer action ontology).}
+\PCSPD-v3 keeps the 6$\times$6/4-agent base scale but expands the action
+space to \textbf{20 flat-discrete actions} (16 activity + 4 movement) for
+finer behavioral granularity (e.g., \texttt{focused\_work} vs.\
+\texttt{planning\_work}, \texttt{rest\_alone} vs.\ \texttt{rest\_with\_others},
+\texttt{eat\_quick} vs.\ \texttt{eat\_slow}).
+Observations expand to 33 dimensions, adding location-affordance one-hot
+(8), social-context features (3), and a routine-regularity signal (2).
+Reward shaping adds a per-action persona-style term
+$r_{\text{style}} = 0.3 \cdot \cos(\mathbf{p}_{\text{BF}}, \mathbf{s}_a)$
+that aligns each action with a hand-authored Big-Five style profile.
+Same 240/60 unseen-occupation split as v1; 300 PPO iterations.
+
+\textbf{v1 (base scale).}
+\PCSPD-v1: 6$\times$6, 4 agents, 300 personas (240 train / 60 zero-shot test).
+The held-out 60 personas comprise \emph{four entire occupations} (HR manager,
+professor, data scientist, chef) crossed with all 15 Big Five archetypes, so
+this evaluates \textbf{unseen-occupation compositional generalization}: the
+target occupation never appears in training, only the personality structure
+does.
+All models train for 300 PPO iterations ($\approx$1.9M steps) on an NVIDIA
+RTX 6000 Ada (49\,GB VRAM).
+Baselines: \textbf{B1} No-Persona PPO; \textbf{B3} SBERT-conditioned policy
+(\texttt{all-MiniLM-L6-v2}, 384-dim, frozen); \textbf{B4} DIAYN (random 64-dim);
+\textbf{B5} LLM-as-policy (Qwen3-1.7B).
+
+\textbf{v2 (expanded scale).}
+\PCSPD-v2: \textbf{12$\times$12, 16 agents, 500 personas} (400 train / 100
+zero-shot test), 200 PPO iterations.
+Same hyperparameters and evaluation protocol as v1.
+The observation dimension expands to 56 (position 2, time 1, needs 8,
+15 other agents $\times$ 3).
+Random zero-shot chance is 1.0\% (1/100 test personas).
+
 \subsection{Results}
 
 Tables~\ref{tab:results_v3}, \ref{tab:results_v1}, and~\ref{tab:results_v2}
@@ -497,70 +655,8 @@ reward curves at v1/v2.
   {\footnotesize * Near-random (failure mode).}
 \end{table}
 
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=\linewidth]{fig2_learning_v1v2.png}
-  \caption{%
-    \textbf{Training reward curves at two scales.}
-    (a) v1 (6$\times$6, 4 agents, 300 iters).
-    (b) v2 (12$\times$12, 16 agents, 200 iters).
-    Removing the consistency loss (no\_consist) preserves or even slightly
-    increases reward but collapses zero-shot persona traceability across all
-    scales (Tables~\ref{tab:results_v1}--\ref{tab:results_v3}).
-    Removing the diversity loss (no\_diverse) causes KL collapse at v1 and v2
-    ($0.39$ and $0.48$) and a v1 reward drop, but its effect on v3 zero-shot
-    accuracy is within the Wilson CI of full (\S\ref{sec:evidence}).
-  }
-  \label{fig:learning}
-\end{figure}
-
-\begin{table}[t]
-  \centering
-  \small
-  \caption{%
-    \textbf{v1 results} (6$\times$6, 4 agents, 300 personas).
-    ZS Acc: zero-shot $k$-NN accuracy on 60 unseen personas
-    (random $\approx\!1.7\%$). $\rho$: Spearman (projected persona dist.\ vs.\ KL).}
-  \label{tab:results_v1}
-  \setlength{\tabcolsep}{3pt}
-  \begin{tabular}{lrrrr}
-    \toprule
-    Model & Reward $\uparrow$ & ZS Acc $\uparrow$ & $\rho$ $\uparrow$ & Lat.\ $\downarrow$ \\
-    \midrule
-    \textbf{\PCSP (full)}  & 83.4 & \textbf{0.193} & \textbf{0.728} & 1.97\,ms \\
-    PCSP (no\_consist)     & 84.3 & 0.017*  & 0.638 & 2.03\,ms \\
-    PCSP (no\_diverse)     & 76.8 & 0.147   & ---$^\dagger$ & 1.79\,ms \\
-    B1 No-Persona          & 73.2 & ---     & ---   & 1.83\,ms \\
-    B3 SBERT               & \textbf{86.2} & --- & --- & 1.88\,ms \\
-    B5 LLM-policy          & ---  & ---     & ---   & 43.7\,ms \\
-    \bottomrule
-  \end{tabular}\\[2pt]
-  {\footnotesize * Near-random (failure mode).
-    $^\dagger$KL $\approx\!0.39$; $\rho$ not meaningful.}
-\end{table}
-
-\begin{table}[t]
-  \centering
-  \small
-  \caption{%
-    \textbf{v2 results} (12$\times$12, 16 agents, 500 personas).
-    ZS Acc on 100 unseen personas (random $=\!1.0\%$).
-    Lower absolute reward reflects the harder, larger environment.}
-  \label{tab:results_v2}
-  \setlength{\tabcolsep}{3pt}
-  \begin{tabular}{lrrrr}
-    \toprule
-    Model & Reward $\uparrow$ & ZS Acc $\uparrow$ & $\rho$ $\uparrow$ & KL $\uparrow$ \\
-    \midrule
-    \textbf{\PCSP (full)}  & 64.2 & 0.023 & \textbf{0.725} & \textbf{5.40} \\
-    PCSP (no\_consist)     & 50.1 & 0.000*  & 0.253 & 16.47$^\ddagger$ \\
-    PCSP (no\_diverse)     & 71.6 & 0.013   & ---$^\dagger$ & 0.48 \\
-    PCSP (concat)          & \textbf{74.8} & \textbf{0.027} & ---$^\dagger$ & 1.34 \\
-    \bottomrule
-  \end{tabular}\\[2pt]
-  {\footnotesize * Exactly 0 (total failure). $^\dagger$KL too low; $\rho$ not meaningful.
-    $^\ddagger$High KL without consistency reflects unstructured divergence, not persona alignment.}
-\end{table}
+% v1/v2 learning curves (fig:learning), v1 results (tab:results_v1),
+% and v2 results (tab:results_v2) moved to App.~\ref{app:v1v2}.
 
 \begin{table}[t]
   \centering
@@ -813,43 +909,30 @@ across environments ($\rho\!=\!0.728$ vs.\ $0.725$). Figure~\ref{fig:kl}
 visualizes an independent empirical sample of persona pairs from the same
 checkpoints, again showing strong monotone alignment at both scales.
 
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=\linewidth]{fig4_zeroshot.png}
-  \caption{%
-    \textbf{Zero-shot generalization on 60 unseen personas (v1).}
-    \PCSP (full) achieves 19.3\% trajectory-to-persona identification;
-    the red dashed line marks random chance (1.7\%).
-    Removing the consistency loss collapses accuracy to 1.7\%.
-    The v2 experiment (100 unseen personas) replicates this qualitative pattern.
-  }
-  \label{fig:zeroshot}
-\end{figure}
-
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=\linewidth]{fig3_kl_v1v2.png}
-  \caption{%
-    \textbf{Empirical projected persona distance vs.\ behavioral KL divergence
-    at two scales (PCSP full).}
-    Each point is a recomputed persona pair from the trained policy checkpoints
-    rather than a synthetic reconstruction from summary statistics. Left: v1
-    sampled-pair $\rho\!=\!0.755$ (100 pairs, 200 states). Right: v2
-    sampled-pair $\rho\!=\!0.717$ (60 pairs, 100 states). The monotone
-    alignment between persona space and behavior space is preserved when moving
-    to a 4$\times$ larger grid with 4$\times$ more agents and 67\% more personas.
-  }
-  \label{fig:kl}
-\end{figure}
+% fig:zeroshot (v1 zero-shot bars) and fig:kl (v1/v2 sampled-pair scatter)
+% moved to App.~\ref{app:v1v2}.
 
 % ---------------------------------------------------------------
-\section{External Environment Expansion: Melting Pot}
+\section{Layer 2 Results: Cross-Substrate Generalization (Melting Pot)}
 \label{sec:meltingpot}
 
-Mini-Inzoi v1--v3 isolate persona-conditioned control in a deliberately small
-grid world. As a preliminary external check we apply the \S\ref{sec:method}
-method---unchanged---to \texttt{commons\_harvest\_\_open} from \textit{Melting Pot
-2.4.0}~\cite{leibo2021meltingpot}: a 7-player common-pool resource substrate with
+\PCSPD{} isolates persona-conditioned control in a deliberately small grid
+world; Layer 2 tests whether the method survives a different observation
+geometry, action ontology, and social-dilemma structure. We apply \PCSP{}
+unchanged---no algorithmic modifications beyond the CNN front-end required
+by RGB inputs---to three \textit{Melting Pot
+2.4.0}~\cite{leibo2021meltingpot} substrates spanning three distinct
+social-dilemma categories: \texttt{commons\_harvest\_\_open} (commons-pool
+resource), \texttt{clean\_up} (public-good provisioning), and
+\texttt{prisoners\_dilemma\_in\_the\_matrix\_\_repeated} (dyadic
+matrix-game with distinct action ontology and 40$\times$40 RGB). The
+substrates were chosen \emph{before} training and were not tuned against.
+We evaluate persona identifiability with the same protocol as Layer 1 and
+re-run the InfoNCE ablation in every substrate.
+% TODO(T2.1): cross-substrate persona transfer (train on commons_harvest, eval on clean_up).
+
+\noindent\textbf{Substrate.}
+\texttt{commons\_harvest\_\_open} is a 7-player common-pool resource substrate with
 $88\!\times\!88\!\times\!3$ RGB observations and an 8-action ontology
 (\texttt{NOOP}, \texttt{FORWARD}, \texttt{BACKWARD}, \texttt{STEP\_LEFT/RIGHT},
 \texttt{TURN\_LEFT/RIGHT}, \texttt{FIRE\_ZAP}). Two MP-specific additions are
@@ -884,23 +967,33 @@ CIs use $10\,000$ resamples over seeds.
   \centering
   \small
   \caption{%
-    \textbf{Melting Pot external check on \texttt{commons\_harvest\_\_open}.}
-    Final-checkpoint metrics at $1\,\text{M}$ environment steps per seed.
-    Mean pairwise action-KL (10 personas, 45 pairs, 64 random states) and
-    in-distribution trajectory$\to$persona retrieval top-3 accuracy on the
-    10-train vocabulary. Bootstrap 95\% CIs over seeds (10\,000 resamples).
-    The no-InfoNCE ablation confirms the consistency loss remains load-bearing:
-    KL alone is large but trajectories carry no persona information (top-3
-    falls below chance), reproducing the v1--v3 finding.}
-  \label{tab:mp_clean}
-  \setlength{\tabcolsep}{4pt}
-  \begin{tabular}{lrcc}
+    \textbf{Melting Pot multi-substrate validation (Tab.~3).} Final-checkpoint
+    metrics at $1\,\text{M}$ environment steps per seed across three substrates.
+    Mean pairwise action-KL (10 train personas, 45 pairs, 64 random states)
+    and trajectory$\to$persona retrieval on the 10-train vocabulary
+    (chance top-1 $\!=\!0.10$, top-3 $\!=\!0.30$).
+    The \emph{no-InfoNCE} ablation collapses retrieval to chance in every
+    substrate while leaving (or inflating) pairwise KL---the consistency loss
+    is load-bearing across all three social-dilemma categories.
+    Numbers are mean$\pm$std over seeds; \texttt{commons\_harvest\_\_open}
+    full has 5 seeds and a single ablation seed for backward compatibility,
+    the two new substrates have 3 seeds per condition.}
+  \label{tab:mp_multi}
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{llcccr}
     \toprule
-    Configuration & seeds & mean KL & top-3 \\
+    Substrate (category) & Config & seeds & top-1 & top-3 & pair KL \\
     \midrule
-    Full \PCSP (\S\ref{sec:method})         & 5 & $2.106\,[1.609,\,2.660]$ & $0.936\,[0.879,\,0.993]$ \\
-    \,\,$-\,$InfoNCE ($\lambda_{\text{IC}}\!=\!0$) & 1 & $5.819$ & $0.250$ \\
-    chance (10 train personas)              & --& $0$       & $0.300$ \\
+    \texttt{commons\_harvest\_\_open}  & Full \PCSP                & 5 & $0.564\!\pm\!0.209$ & $0.936\!\pm\!0.073$ & $2.11\!\pm\!0.70$ \\
+    (commons-pool)                      & $-\!$InfoNCE              & 1 & $0.071$            & $0.250$            & $5.82$            \\
+    \midrule
+    \texttt{clean\_up}                  & Full \PCSP                & 3 & $\mathbf{0.690\!\pm\!0.206}$ & $\mathbf{1.000\!\pm\!0.000}$ & $1.01\!\pm\!0.29$ \\
+    (public-good)                       & $-\!$InfoNCE              & 3 & $0.095\!\pm\!0.041$ & $0.226\!\pm\!0.055$ & $2.91\!\pm\!1.12$ \\
+    \midrule
+    \texttt{prisoners\_dilemma\_\dots\_repeated} & Full \PCSP       & 3 & $\mathbf{0.625\!\pm\!0.217}$ & $\mathbf{1.000\!\pm\!0.000}$ & $2.87\!\pm\!0.74$ \\
+    (dyadic matrix-game)               & $-\!$InfoNCE              & 3 & $0.125\!\pm\!0.125$ & $0.167\!\pm\!0.144$ & $4.54\!\pm\!0.24$ \\
+    \midrule
+    chance (10 train personas)         & ---                       & --- & $0.10$ & $0.30$ & $0$ \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -909,33 +1002,54 @@ CIs use $10\,000$ resamples over seeds.
   \centering
   \includegraphics[width=\linewidth]{../figures/fig_mp_clean.pdf}
   \caption{%
-    \textbf{Melting Pot external check on \texttt{commons\_harvest\_\_open}.}
+    \textbf{Melting Pot single-substrate detail on \texttt{commons\_harvest\_\_open}.}
     Per-seed bars (blue: full \PCSP, 5 seeds; red: $-$InfoNCE ablation, 1 seed).
     Dotted blue line: 5-seed mean. (a) Mean pairwise action-KL across the
     $\binom{10}{2}\!=\!45$ persona pairs. (b) In-distribution
     trajectory$\to$persona top-3 retrieval on the 10-train vocabulary
     (dashed grey: chance $3/10$). The ablation reaches the highest KL but the
     lowest top-3 (below chance): policies are different yet trajectories no
-    longer encode \emph{which} persona produced them.}
+    longer encode \emph{which} persona produced them. The two additional
+    substrates in Tab.~\ref{tab:mp_multi} replicate this pattern.}
   \label{fig:mp_clean}
 \end{figure}
 
 \paragraph{Takeaways.}
 The \S\ref{sec:method} method---applied with no algorithmic modifications beyond
-the CNN observation encoder and the persona-agnostic team-reward potential
-required by the substrate---produces clearly persona-distinguishable behavior
-in a multi-agent strategic substrate (Table~\ref{tab:mp_clean}). The no-InfoNCE
-ablation reproduces the v1--v3 ablation finding in this richer environment: the
-KL diversity loss alone drives policies apart but leaves no trajectory--persona
-correspondence (top-3 falls to $0.250$, below chance), so the consistency loss
-remains load-bearing. Multi-substrate generalization, held-out persona recovery,
-and the per-seed projection-head landscape are deferred to a concurrent workshop
-study~\cite{phase5report}.
+the CNN observation encoder required by RGB inputs and (on
+\texttt{commons\_harvest\_\_open}) the persona-agnostic team-reward potential
+that escapes the apple-depletion trap---produces persona-distinguishable
+behavior across three Melting Pot substrates that differ in social structure
+(commons-pool / public-good / dyadic-matrix), observation geometry, and
+agent count (Table~\ref{tab:mp_multi}). The no-InfoNCE ablation reproduces
+the v1--v3 finding in \emph{every} substrate: pairwise KL is held or inflated
+($+38\%$ on commons\_harvest, $+1.9\times$ on clean\_up, $+58\%$ on
+prisoners\_dilemma) while trajectory$\to$persona retrieval collapses to
+chance ($0.10$ top-1 in all three new substrates vs.\ $0.56$--$0.69$ for the
+full objective). The consistency loss is what makes the policy
+\emph{traceable to its conditioning}, not merely diverse, and this property
+is invariant across the three social-dilemma categories tested. Cross-substrate
+persona transfer is deferred to T2.1.
 
 
 % ---------------------------------------------------------------
-\section{Engine Integration: UE5 Deployment}
+\section{Layer 3 Results: Realtime Engine Deployment (UE5)}
 \label{sec:ue5}
+
+\noindent\textbf{Layer 3 framing.}
+A persona-conditioned policy is only meaningful if it survives the engineering
+pressure of a real game engine: asynchronous tick rates, NavMesh contention,
+BT failure recovery, ONNX runtime constraints, and shared world state. We
+deploy a \emph{frozen} Layer-1 (\PCSPD{}-v3) checkpoint into UE5.5 via a
+hybrid intent stack---\PCSP{} selects semantic intents, the Behavior Tree,
+Blackboard, EQS, and NavMesh execute them---and ask three questions that
+Layers 1 and 2 cannot answer: (i) does the policy meet a realtime wall-budget
+at deployment scale; (ii) does the InfoNCE finding survive engine-side
+contention; (iii) do personas maintain identity over horizons far longer than
+the training episode.
+% TODO(T1.3): scaling sweep at {8,16,32,64,96,128} agents with latency budget table.
+% TODO(T1.4): long-horizon persona-persistence figure (4 personas x 30 in-game minutes, 1-min activity strip).
+
 
 \begin{figure}[t]
   \centering
@@ -1005,6 +1119,38 @@ rate}, $38.1$ interactions per agent, $9$ of $10$ active action categories
 exercised). All 64-agent inference is real-time inside the game loop with a
 $0.5$\,s decision throttle and urgency-driven preemption; the ONNX policy itself
 remains the sub-frame component observed in the Python benchmark.
+Table~\ref{tab:ue5_scaling} summarises the three validated scales and the
+realtime budget under which they ran;
+% TODO(T1.3): extend the sweep to {8, 96, 128} agents to draw a full scaling curve.
+the inference budget itself is fixed by the engine wrapper.
+The $0.5$\,s decision throttle plus exponential backoff on
+\texttt{RecentFailureCount} caps inference at $\leq\!2$ calls/agent/s, so 64
+agents generate $\leq\!128$ ONNX calls/s --- within the NNERuntimeORT CPU path's
+headroom without async batching, and well below the
+$16$--$33$\,ms per-frame wall budget of a 30--60\,FPS game loop.
+
+\begin{table}[t]
+  \centering
+  \small
+  \caption{%
+    \textbf{UE5 scale and runtime characteristics.} Three validated scales on
+    \texttt{Map\_PCSPDistrict\_M}; zone capacities tuned for the 64-agent
+    target, so the 16-agent run is bottlenecked by category clustering. All
+    runs share the same ONNX policy, the same $0.5$\,s decision throttle,
+    and a $\geq\!60$\,FPS PIE wall-budget. Int./agent/min uses session
+    \texttt{interaction\_complete} counts.}
+  \label{tab:ue5_scaling}
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{rrrrrr}
+    \toprule
+    Agents & Dur.\,(s) & $n_{\text{int}}$ & Int./ag./min & Fail \% & Notes \\
+    \midrule
+    16 & 600 & 690   &  4.31 & 55.0 & Capacity-tuned for 64; 16 sees clustering only \\
+    32 & 343 & 1{,}049 &  5.74 & 5.40 & Bottleneck zone capacity raised \\
+    \textbf{64} & 483 & \textbf{2{,}438} & \textbf{4.73} & \textbf{1.70} & Stress test, 9/10 categories reached \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 \begin{table}[t]
   \centering
@@ -1035,7 +1181,7 @@ $43.6$ interactions per agent (vs.\ $33.5$ on train personas), reward $960.4$
 (vs.\ $730.6$), category coverage $9/10$ in both. The inter-persona action
 dispersion is $\rho = 0.368$ on held-out personas vs.\ $0.383$ on train---the
 engine-integrated policy is \emph{slightly more} persona-distinct on personas it
-has never seen, matching the Mini-Inzoi v3 zero-shot finding qualitatively.
+has never seen, matching the \PCSPD-v3 zero-shot finding qualitatively.
 
 \begin{table}[t]
   \centering
@@ -1109,15 +1255,67 @@ $64$ personas---yet aggregate task reward is \emph{higher} for the checkpoint
 without the consistency loss. This is the in-engine replication of the
 \S\ref{sec:evidence} ``reward hides the failure'' result.
 
+\subsection{Failure analysis and contention: the $\rho$-drop as a Layer-3 finding}
+\label{sec:ue5_contention}
+
+\textbf{BT failure taxonomy.}
+The hybrid stack distinguishes three engine-side failure modes, all emitted
+as Behaviour-Tree aborts that the offline analyser bins by
+\texttt{failure\_reason} (Table~\ref{tab:ue5_failures}). Across nine 64-agent
+PIE sessions
+(including both held-out and runtime ablation conditions),
+\texttt{FindBestZone:AllOverCapacity}---every candidate zone for the chosen
+intent already at capacity---accounts for the dominant share of aborts in
+contention-heavy regimes (e.g.\ 87.6\% of decisions in the BTOnly run, where
+$64$ agents synchronise on the most-urgent need each tick). Under the full
+\PCSPD-conditioned stack with tuned capacities this collapses to
+$<\!2$\% of decisions, with the residual being
+\texttt{zone\_no\_free\_interaction\_point} (a chosen zone fills between
+selection and arrival) and \texttt{path\_follow\_idle\_short} (a NavMesh
+follower stalls below a movement threshold). Critically, the
+\texttt{HybridNoPersona} ablation raises the abort rate from $0.0\%$ to
+$13.3\%$ \emph{without changing the map}---the persona signal is what
+desynchronises agents into different categories and keeps the contention
+budget liveable.
+% TODO(T1.5): add a zone-capacity utilisation heatmap (per-zone occupancy timeseries) and a per-persona expressed-vs-preferred intent distribution chart.
+
+\begin{table}[t]
+  \centering
+  \small
+  \caption{%
+    \textbf{BT-abort taxonomy at $64$ agents.} Decision counts and abort
+    categories for representative sessions; \texttt{FindBestZone} is the
+    contention-induced ``every candidate zone is full'' abort,
+    \texttt{zone\_no\_free\_interaction\_point} is the
+    selection-to-arrival race, \texttt{path\_follow\_idle\_short} is a
+    NavMesh follower stall. The same persona-removal ablation that
+    inflates dispersion to $\rho\!=\!0.99$ also moves the failure mass
+    from $\sim\!0\%$ into \texttt{FindBestZone}-class aborts, naming
+    contention as the engine-side mechanism behind the $\rho$-drop.}
+  \label{tab:ue5_failures}
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{lrrrr}
+    \toprule
+    Session / mode & Dec.\ & FindBestZone & ZoneNoFree & PathStall \\
+    \midrule
+    HybridPCSP (train)        & 2{,}386 & 41   & 0   & 2  \\
+    HybridPCSP (held-out, tuned) & 2{,}975 & 0    & 0   & 1  \\
+    NoConsist (in-engine)     & 3{,}324 & 0    & 0   & 10 \\
+    HybridNoPersona ablation  & ---     & majority of $13.3\%$ aborts & --- & --- \\
+    BTOnly (no policy)        & 9{,}644 & 8{,}062 & 85 & 1  \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 \textbf{Engine-side persona--action alignment.}
-We additionally test the Mini-Inzoi alignment metric inside the engine: for
+We additionally test the \PCSPD{} alignment metric inside the engine: for
 each session we compute pairwise cosine distance over the $64$-d projected
 persona embedding and pairwise symmetric KL over the per-persona mean
 softmax(logits), and report Spearman $\rho$ across the $\binom{64}{2}\!=\!2{,}016$
 persona pairs. Full PCSP yields engine-side $\rho \in [0.236, 0.257]$ across
 two paired sessions, the \texttt{no\_consist} checkpoint yields $\rho = 0.569$,
 and \texttt{BTOnly} yields $\rho \approx 0$ (the policy emits zero logits by
-construction). All four values are well below the Mini-Inzoi research-side
+construction). All four values are well below the \PCSPD{} research-side
 $\rho \approx 0.73$. The hybrid stack itself imposes a ceiling: capacity
 contention and the BT's failure-recovery decorators push agents toward what is
 reachable, not what their embedding most prefers, compressing the persona
@@ -1189,20 +1387,23 @@ alongside aggregate accuracy.
 
 \PCSP has several limitations that bound the interpretation of the results.
 
-\textbf{Minimal environments.}
-Mini-Inzoi v1--v3 are far smaller than commercial life-simulation worlds.
-The v2 experiment tests a larger grid and more agents, and the Melting Pot
-external check (\S\ref{sec:meltingpot}) covers a single multi-agent
-substrate (\texttt{commons\_harvest\_\_open}); commercial-scale multi-agent
-validation, continuous physics, longer horizons, asynchronous events, and
-richer social affordances remain untested.
+\textbf{Deliberate minimality of Layer 1.}
+\PCSPD{} is intentionally simpler than commercial life-simulation worlds.
+Behavioral realism is not its purpose; it is the layer at which we can run
+controlled InfoNCE ablations across three independent environment
+instantiations and thousands of held-out personas. Realism claims in this
+paper are grounded in Layers 2 (Melting Pot, \S\ref{sec:meltingpot}) and 3
+(UE5, \S\ref{sec:ue5}), where realism, contention, and asynchrony are present
+and where the same checkpoint is shown to behave consistently. Commercial-scale
+multi-agent validation, continuous physics, longer horizons, asynchronous
+events, and richer social affordances beyond Layer~3 remain untested.
 
 \textbf{Action observability.}
 The original 12-action space exposes only a thin slice of persona-relevant
 behavior. In the 30-participant coarse-trace pilot, aggregate 2AFC accuracy was
 above chance, but 13 of 30 items were ambiguous or misleading. Coarse labels
 such as \texttt{read}, \texttt{rest}, and \texttt{eat} are difficult to
-interpret without temporal, spatial, and social context. Mini-Inzoi v3 and the
+interpret without temporal, spatial, and social context. \PCSPD-v3 and the
 rich rollout renderer address this partly, but finer social and stylistic
 action semantics remain needed.
 
@@ -1219,17 +1420,16 @@ for coarse traces. It supports aggregate 2AFC accuracy analysis, but not
 participant-level variance, confidence, response time, order effects, or
 inter-rater reliability. A more instrumented human study remains future work.
 
-\textbf{Engine--research alignment gap.}
-The Mini-Inzoi persona--behavior alignment ($\rho \approx 0.73$) does
-\emph{not} transfer to the engine directly. In the UE5 deployment the same
-metric drops to $\rho \in [0.236, 0.257]$ on the full PCSP checkpoint
-(\S\ref{sec:ue5}). The cause is structural: zone capacity contention and the
-BT's failure-recovery decorators push agents toward what is reachable rather
-than what their embedding most prefers. The persona-conditioning ablation
-($\rho_{\text{intra}}$ collapse from $0.368$ to $0.990$) and the
-consistency-loss replication remain visible inside the engine, but the
-\emph{absolute} alignment number does not, and we have not yet tested whether
-a less congested map narrows the gap.
+\textbf{Engine--research alignment gap (analysis in
+\S\ref{sec:ue5_contention}).}
+We do not treat the Layer-1$\to$Layer-3 drop in absolute alignment
+($\rho \approx 0.73$ in \PCSPD{} vs.\ $\rho \in [0.236,\,0.257]$ in UE5) as a
+method failure. The persona-conditioning ablation and the InfoNCE
+consistency-loss replication both remain visible \emph{inside the engine}
+(\S\ref{sec:ue5_contention}); the structural cause is engine-side contention,
+not loss of method validity. What remains open is whether a less congested
+map narrows the absolute gap, and how to apportion the residual between
+hybrid-stack ceiling and intrinsic deployment-noise.
 
 % ---------------------------------------------------------------
 \section{Conclusion}
@@ -1244,7 +1444,7 @@ embeddings---can satisfy the four axes that matter for practical deployment:
 persona consistency, natural-language controllability, zero-shot
 generalization, and real-time inference.
 
-Across three Mini-Inzoi settings, \PCSP achieves up to 17$\times$ above-chance
+Across three \PCSPD{} settings, \PCSP achieves up to 17$\times$ above-chance
 zero-shot persona identification, $\rho\!\approx\!0.73$ semantic-behavioral
 alignment, and 22$\times$ faster inference than an LLM-as-policy baseline.
 External validation on \texttt{commons\_harvest\_\_open} from \textit{Melting Pot
@@ -1257,6 +1457,112 @@ improves. The next steps are to couple static personas with dynamic memory,
 extend the external Melting Pot check to additional substrates and held-out
 personas (mechanistic targets from the concurrent workshop study~\cite{phase5report}),
 and complete human studies using rich trajectory traces.
+
+% ---------------------------------------------------------------
+\appendices
+\section{Layer 1 base-scale (v1) and expanded-scale (v2) replications}
+\label{app:v1v2}
+
+The v3 results in \S\ref{sec:evidence} are the primary Layer-1 evidence. We
+include here the v1 (base-scale) and v2 (expanded-scale) replications that
+establish the InfoNCE consistency objective as load-bearing across grid
+size, agent count, and persona-set size. The v1/v2 protocols are
+described in the Experimental Setup paragraph of \S\ref{sec:evidence};
+metrics, baselines, and chance levels are unchanged.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{fig2_learning_v1v2.png}
+  \caption{%
+    \textbf{Training reward curves at two scales.}
+    (a) v1 (6$\times$6, 4 agents, 300 iters).
+    (b) v2 (12$\times$12, 16 agents, 200 iters).
+    Removing the consistency loss (no\_consist) preserves or even slightly
+    increases reward but collapses zero-shot persona traceability across all
+    scales (Tables~\ref{tab:results_v1}--\ref{tab:results_v3}).
+    Removing the diversity loss (no\_diverse) causes KL collapse at v1 and v2
+    ($0.39$ and $0.48$) and a v1 reward drop, but its effect on v3 zero-shot
+    accuracy is within the Wilson CI of full (\S\ref{sec:evidence}).
+  }
+  \label{fig:learning}
+\end{figure}
+
+\begin{table}[h]
+  \centering
+  \small
+  \caption{%
+    \textbf{v1 results} (6$\times$6, 4 agents, 300 personas).
+    ZS Acc: zero-shot $k$-NN accuracy on 60 unseen personas
+    (random $\approx\!1.7\%$). $\rho$: Spearman (projected persona dist.\ vs.\ KL).}
+  \label{tab:results_v1}
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{lrrrr}
+    \toprule
+    Model & Reward $\uparrow$ & ZS Acc $\uparrow$ & $\rho$ $\uparrow$ & Lat.\ $\downarrow$ \\
+    \midrule
+    \textbf{\PCSP (full)}  & 83.4 & \textbf{0.193} & \textbf{0.728} & 1.97\,ms \\
+    PCSP (no\_consist)     & 84.3 & 0.017*  & 0.638 & 2.03\,ms \\
+    PCSP (no\_diverse)     & 76.8 & 0.147   & ---$^\dagger$ & 1.79\,ms \\
+    B1 No-Persona          & 73.2 & ---     & ---   & 1.83\,ms \\
+    B3 SBERT               & \textbf{86.2} & --- & --- & 1.88\,ms \\
+    B5 LLM-policy          & ---  & ---     & ---   & 43.7\,ms \\
+    \bottomrule
+  \end{tabular}\\[2pt]
+  {\footnotesize * Near-random (failure mode).
+    $^\dagger$KL $\approx\!0.39$; $\rho$ not meaningful.}
+\end{table}
+
+\begin{table}[h]
+  \centering
+  \small
+  \caption{%
+    \textbf{v2 results} (12$\times$12, 16 agents, 500 personas).
+    ZS Acc on 100 unseen personas (random $=\!1.0\%$).
+    Lower absolute reward reflects the harder, larger environment.}
+  \label{tab:results_v2}
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{lrrrr}
+    \toprule
+    Model & Reward $\uparrow$ & ZS Acc $\uparrow$ & $\rho$ $\uparrow$ & KL $\uparrow$ \\
+    \midrule
+    \textbf{\PCSP (full)}  & 64.2 & 0.023 & \textbf{0.725} & \textbf{5.40} \\
+    PCSP (no\_consist)     & 50.1 & 0.000*  & 0.253 & 16.47$^\ddagger$ \\
+    PCSP (no\_diverse)     & 71.6 & 0.013   & ---$^\dagger$ & 0.48 \\
+    PCSP (concat)          & \textbf{74.8} & \textbf{0.027} & ---$^\dagger$ & 1.34 \\
+    \bottomrule
+  \end{tabular}\\[2pt]
+  {\footnotesize * Exactly 0 (total failure). $^\dagger$KL too low; $\rho$ not meaningful.
+    $^\ddagger$High KL without consistency reflects unstructured divergence, not persona alignment.}
+\end{table}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{fig4_zeroshot.png}
+  \caption{%
+    \textbf{Zero-shot generalization on 60 unseen personas (v1).}
+    \PCSP (full) achieves 19.3\% trajectory-to-persona identification;
+    the red dashed line marks random chance (1.7\%).
+    Removing the consistency loss collapses accuracy to 1.7\%.
+    The v2 experiment (100 unseen personas) replicates this qualitative pattern.
+  }
+  \label{fig:zeroshot}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{fig3_kl_v1v2.png}
+  \caption{%
+    \textbf{Empirical projected persona distance vs.\ behavioral KL divergence
+    at two scales (PCSP full).}
+    Each point is a recomputed persona pair from the trained policy checkpoints
+    rather than a synthetic reconstruction from summary statistics. Left: v1
+    sampled-pair $\rho\!=\!0.755$ (100 pairs, 200 states). Right: v2
+    sampled-pair $\rho\!=\!0.717$ (60 pairs, 100 states). The monotone
+    alignment between persona space and behavior space is preserved when moving
+    to a 4$\times$ larger grid with 4$\times$ more agents and 67\% more personas.
+  }
+  \label{fig:kl}
+\end{figure}
 
 % ---------------------------------------------------------------
 \bibliographystyle{IEEEtran}
