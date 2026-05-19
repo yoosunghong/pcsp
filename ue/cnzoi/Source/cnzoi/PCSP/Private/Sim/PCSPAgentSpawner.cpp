@@ -2,8 +2,27 @@
 #include "PCSPAgentCharacter.h"
 #include "PCSPAIController.h"
 #include "PCSPPersonaComponent.h"
+#include "PCSPTrajectoryLogComponent.h"
 #include "Engine/World.h"
 #include "NavigationSystem.h"
+#include "HAL/IConsoleManager.h"
+#include "Misc/CommandLine.h"
+#include "Misc/Parse.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
+#include "HAL/FileManager.h"
+
+// T1.3 sweep overrides — set from PIE/cmdline to vary per-run config without
+// touching the placed spawner actor. Both default to -1 ("ignore, use UPROPERTY").
+static TAutoConsoleVariable<int32> CVarPCSPSpawnSeed(
+	TEXT("pcsp.SpawnSeed"), -1,
+	TEXT("Override APCSPAgentSpawner::RandomSeed for this run (-1 = use actor value)."),
+	ECVF_Default);
+
+static TAutoConsoleVariable<int32> CVarPCSPAgentCount(
+	TEXT("pcsp.AgentCount"), -1,
+	TEXT("Override APCSPAgentSpawner::AgentCount for this run (-1 = use actor value)."),
+	ECVF_Default);
 
 APCSPAgentSpawner::APCSPAgentSpawner()
 {
@@ -13,6 +32,41 @@ APCSPAgentSpawner::APCSPAgentSpawner()
 void APCSPAgentSpawner::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Apply overrides. Prefer cmdline switches (-PCSP_AgentCount=N / -PCSP_SpawnSeed=N)
+	// because -ExecCmds CVars often run AFTER BeginPlay for the first map and would
+	// be ignored here. Fall back to CVars for interactive PIE use.
+	int32 SeedOverride  = CVarPCSPSpawnSeed.GetValueOnGameThread();
+	int32 CountOverride = CVarPCSPAgentCount.GetValueOnGameThread();
+	int32 CmdSeed = -1, CmdCount = -1;
+	if (FParse::Value(FCommandLine::Get(), TEXT("PCSP_SpawnSeed="),  CmdSeed))  { SeedOverride  = CmdSeed; }
+	if (FParse::Value(FCommandLine::Get(), TEXT("PCSP_AgentCount="), CmdCount)) { CountOverride = CmdCount; }
+	if (SeedOverride  >= 0) { RandomSeed = SeedOverride; }
+	if (CountOverride >= 1) { AgentCount = CountOverride; }
+
+	// Seed the global FMath random stream once before any FMath::VRand /
+	// GetRandomReachablePointInRadius call so the spawn pattern is reproducible.
+	// Skipped when RandomSeed < 0 to preserve historical non-deterministic behavior.
+	if (RandomSeed >= 0)
+	{
+		FMath::RandInit(RandomSeed);
+	}
+
+	UE_LOG(LogTemp, Log,
+		TEXT("PCSPAgentSpawner: agents=%d seed=%d (CVars: spawn_seed=%d agent_count=%d)"),
+		AgentCount, RandomSeed, SeedOverride, CountOverride);
+
+	// One-shot run_config.json next to the per-agent jsonl files so the analyzer
+	// can label each session by (agents, seed) without parsing PIE logs.
+	const FString ConfigPath = UPCSPTrajectoryLogComponent::GetSessionDir() / TEXT("run_config.json");
+	const FString ConfigBlob = FString::Printf(
+		TEXT("{\"n_agents\":%d,\"seed\":%d,\"spawn_radius\":%.1f,\"spawn_on_navmesh\":%s}\n"),
+		AgentCount, RandomSeed, SpawnRadius,
+		bSpawnOnNavMesh ? TEXT("true") : TEXT("false"));
+	FFileHelper::SaveStringToFile(ConfigBlob, *ConfigPath,
+		FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM,
+		&IFileManager::Get(), FILEWRITE_None);
+
 	SpawnAgents();
 }
 

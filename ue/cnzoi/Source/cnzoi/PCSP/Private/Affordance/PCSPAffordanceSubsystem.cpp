@@ -1,5 +1,65 @@
 #include "PCSPAffordanceSubsystem.h"
 #include "PCSPAffordanceZone.h"
+#include "PCSPTrajectoryLogComponent.h"
+#include "Engine/World.h"
+#include "TimerManager.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
+#include "HAL/FileManager.h"
+#include "UObject/Class.h"
+
+void UPCSPAffordanceSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+{
+	Super::Initialize(Collection);
+}
+
+void UPCSPAffordanceSubsystem::OnWorldBeginPlay(UWorld& InWorld)
+{
+	Super::OnWorldBeginPlay(InWorld);
+
+	OccupancyLogPath = UPCSPTrajectoryLogComponent::GetSessionDir() / TEXT("zone_occupancy.jsonl");
+
+	InWorld.GetTimerManager().SetTimer(OccupancySampleTimerHandle, this,
+		&UPCSPAffordanceSubsystem::SampleOccupancy,
+		/*InRate=*/1.0f, /*InbLoop=*/true, /*InFirstDelay=*/1.0f);
+}
+
+void UPCSPAffordanceSubsystem::Deinitialize()
+{
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(OccupancySampleTimerHandle);
+	}
+	Super::Deinitialize();
+}
+
+void UPCSPAffordanceSubsystem::SampleOccupancy()
+{
+	if (OccupancyLogPath.IsEmpty() || Zones.Num() == 0) { return; }
+
+	const float T = GetWorld() ? GetWorld()->GetTimeSeconds() : 0.f;
+	const UEnum* CategoryEnum = StaticEnum<EPCSPAffordanceCategory>();
+
+	FString Blob;
+	for (const TWeakObjectPtr<APCSPAffordanceZone>& W : Zones)
+	{
+		const APCSPAffordanceZone* Z = W.Get();
+		if (!Z) { continue; }
+		const FString CategoryStr = CategoryEnum
+			? CategoryEnum->GetNameStringByValue(static_cast<int64>(Z->Category))
+			: FString::FromInt(static_cast<int32>(Z->Category));
+		Blob += FString::Printf(
+			TEXT("{\"t\":%.3f,\"zone_tag\":\"%s\",\"category\":\"%s\",\"occupants\":%d,\"capacity\":%d}\n"),
+			T, *Z->ZoneTag.ToString(), *CategoryStr,
+			Z->GetCurrentOccupancy(), Z->Capacity);
+	}
+	if (Blob.IsEmpty()) { return; }
+
+	const uint32 Flags = FILEWRITE_Append | FILEWRITE_AllowRead;
+	FFileHelper::SaveStringToFile(Blob, *OccupancyLogPath,
+		FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM,
+		&IFileManager::Get(), Flags);
+}
 
 FString FPCSPZoneSelectionDebug::ToCompactString() const
 {

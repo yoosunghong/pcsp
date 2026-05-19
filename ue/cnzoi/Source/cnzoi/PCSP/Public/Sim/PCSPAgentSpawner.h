@@ -26,6 +26,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PCSP|Spawn", meta=(ClampMin="1", ClampMax="128"))
 	int32 AgentCount = 16;
 
+	/** Per-run RNG seed for reproducible spawn placement (T1.3 sweep).
+	 *  -1 = non-deterministic (use ambient global stream).
+	 *  Overridden by CVar `pcsp.SpawnSeed` when that CVar is >= 0. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PCSP|Spawn")
+	int32 RandomSeed = -1;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PCSP|Spawn")
 	float SpawnRadius = 1500.f;
 

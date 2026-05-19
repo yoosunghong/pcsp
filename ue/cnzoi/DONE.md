@@ -223,3 +223,190 @@ doc links.
   the engine-level persona separability metric, even though
   research-side analysis flags it. Worth noting in the paper
   extension's limitations section.
+
+## 2026-05-19 - T1 telemetry prep (scaling-curve / persistence / contention)
+
+Three additive telemetry hooks landed ahead of the T1.3 scaling sweep
+([research/revised/260519/REVISE_PLAN.md](../../research/revised/260519/REVISE_PLAN.md)).
+All emit to the existing `Saved/PCSP/Logs/<stamp>/` session dir; no schema
+break — existing `analyze_ue_session.py` aggregations continue to work.
+
+- **ONNX inference latency (Gap 1, T1.3).**
+  `UPCSPPolicySubsystem::RunInferenceWithLogits` now returns wall-time in
+  microseconds via a `double& OutInferenceMicros` out-parameter (timed with
+  `FPlatformTime::Seconds()` around the existing `RunInference` body).
+  `BTTask_PCSPDecision::ExecuteTask` plumbs the value through to
+  `UPCSPTrajectoryLogComponent::RecordDecisionWithLogits(..., double InferenceMicros = -1.0)`,
+  which appends `"infer_us":<f>` to each `decision` JSONL row alongside the
+  existing `logits` array. Direct measurement was required because the
+  pre-existing throttle (`MinDecisionInterval`, `BTTask_PCSPDecision.cpp:58`)
+  makes per-decision `t` deltas useless as a latency proxy.
+
+- **Zone occupancy sampler (Gap 3, T1.5).**
+  `UPCSPAffordanceSubsystem` now overrides `OnWorldBeginPlay` to start a
+  1 Hz timer (`SampleOccupancy`) that iterates `Zones[]` and appends one row
+  per zone per second to `<session>/zone_occupancy.jsonl`:
+  `{t, zone_tag, category, occupants, capacity}`. Drives the §7.6
+  contention heatmap. `APCSPAffordanceZone::GetCurrentOccupancy()` already
+  existed but was never emitted.
+
+- **Frame-time sampler (Gap 2, T1.3).**
+  New `UPCSPPerfSamplerSubsystem` (`PCSP/Sim/PCSPPerfSamplerSubsystem.{h,cpp}`)
+  — a `UTickableWorldSubsystem` that captures DeltaTime each frame into a
+  rolling buffer and on a 1 Hz timer dumps
+  `{t, n_samples, mean_ms, p50_ms, p95_ms, p99_ms}` to
+  `<session>/frame_stats.jsonl`. Gated to `PIE` / `Game` world types; no-op
+  in editor preview. Single writer, zero per-agent overhead.
+
+All additions are local — no changes to `cnzoi.Build.cs` (Sim/Public &
+Sim/Private already in PublicIncludePaths/PrivateIncludePaths). Next step
+is an editor rebuild + 16-agent / 60-s PIE smoke run to verify the three
+new JSONL files populate, then the T1.3 sweep `{8, 16, 32, 64, 96, 128}`
+× 3 seeds × 10 min.
+
+### 16-agent / 60 s smoke verification (session `20260519_121204`)
+
+All three telemetry streams populate cleanly:
+
+- `frame_stats.jsonl` (84 rows, 1 Hz): warm steady-state mean 10.0 ms /
+  p95 12.9 ms / p99 18.9 ms (≈100 FPS). First-row p99 = 400 ms is the PIE
+  startup hitch — the sweep analyzer trims the first 5 s.
+- `zone_occupancy.jsonl` (840 rows = 10 zones × 84 s): all zone tags +
+  capacities emitted at 1 Hz.
+- `decision` rows now carry `"infer_us"`: mean 159 µs, p50 149, p95 173,
+  p99 205, max 3547 (single cold-path inference). At 159 µs/agent, even
+  128 concurrent agents at full throttle would only cost ~20 ms/s of
+  inference total — ONNX will not be the scaling bottleneck.
+
+### Spawner: reproducible sweep config
+
+`APCSPAgentSpawner` extended for T1.3 sweep automation:
+
+- New `RandomSeed` UPROPERTY (default -1 = non-deterministic).
+- New CVar `pcsp.SpawnSeed` overrides `RandomSeed` when ≥ 0.
+- New CVar `pcsp.AgentCount` overrides `AgentCount` when ≥ 1.
+- When seed is set, `FMath::RandInit(seed)` runs once in `BeginPlay`
+  before any `FMath::VRand` / `GetRandomReachablePointInRadius` call,
+  making the spawn pattern reproducible.
+- A `run_config.json` sidecar is written into the session dir on
+  spawner BeginPlay:
+  `{n_agents, seed, spawn_radius, spawn_on_navmesh}` — keyed by session
+  stamp, so the sweep analyzer can label runs without parsing PIE logs.
+
+Sweep can now be driven from a small startup-CVar list per run
+(e.g. `pcsp.AgentCount=64 pcsp.SpawnSeed=2`), no editor edits required
+between settings.
+
+### Auto-quit + headless sweep driver
+
+`UPCSPPerfSamplerSubsystem` gained a one-shot auto-quit hook keyed off
+the new CVar `pcsp.RunDurationSeconds` (default -1 = never). When set
+to a positive value at startup, a timer scheduled in `OnWorldBeginPlay`
+calls `FPlatformMisc::RequestExit(false)` after that many seconds.
+Combined with `pcsp.AgentCount` and `pcsp.SpawnSeed`, three CVars now
+fully parameterize a single sweep run.
+
+The PowerShell driver [tools/run_scaling_sweep.ps1](tools/run_scaling_sweep.ps1)
+loops `{agent_count} × {seed}`, launching `UnrealEditor.exe -game
+-WINDOWED -ResX=800 -ResY=450 -Unattended -NoSplash -NoSound` per
+combination with all three CVars set via `-ExecCmds`. It auto-detects
+the engine install from the `.uproject` EngineAssociation (registry
+lookup with `C:\Program Files\Epic Games\UE_<ver>` fallback), and the
+project path resolves relative to the script. `-DryRun` prints the
+planned 18 invocations without launching anything; tested locally and
+the resulting commands point at UE_5.7. The script `Start-Process
+-Wait`s on each invocation so runs are strictly serial — no log-dir
+collisions, no GPU thrash.
+
+Standalone `-game` mode uses the map set as Project Settings → Maps &
+Modes → Editor Startup Map. Rendering stays on (windowed 800×450) so
+`frame_stats.jsonl` reflects the realtime budget the paper claims, not
+a no-render artifact.
+
+### Sweep analyzer: `research/scripts/analyze_scaling_sweep.py`
+
+Ingests N session dirs (one per PIE run), reads `run_config.json` (or
+falls back to `len(agent_p*.jsonl)` for legacy sessions like the smoke
+run), `frame_stats.jsonl`, `zone_occupancy.jsonl`, and the per-agent
+JSONL. Outputs:
+
+- `per_session.json` — one row per PIE run (latency / frame / fail /
+  intent metrics, plus per-zone mean utilization and failure-reason
+  histogram).
+- `scaling_curve.json` — per-`n_agents` aggregate across seeds (mean +
+  std for inference µs, frame p95 ms, fail rate, intents/agent/min).
+- `latency_budget.tsv` — tab-separated, paste-ready for the §7 latency
+  table.
+- Optional `scaling_curve.png` (Fig 5) when `--plot` is passed
+  (matplotlib).
+
+First WARMUP_SECONDS = 5 s of every session are dropped before computing
+latency / frame-time aggregates to remove the cold-start hitch.
+
+Smoke-run dry-run validated the fallback path (no `run_config.json`,
+inferred n_agents=16 from file count, seed=-1) and produced sensible
+numbers: 149.6 µs mean / 170.4 µs p95 inference, 9.77 ms mean / 13.19 ms
+p95 frame, 1.6% fail rate, 5.44 intents/agent/min.
+
+### Sweep driver hardening (post-smoke regressions)
+
+First attempted sweep (`-DurationSeconds 180 -AgentCounts 8,64 -Seeds 0`)
+exposed three independent bugs in the unattended path; all fixed:
+
+1. **Engine idled on focus loss.** UnrealEditor.exe `-game` launched via
+   `Start-Process` starts unfocused, and the editor's default
+   `t.IdleWhenNotForeground=1` throttles the *entire* engine loop —
+   FTSTicker, world TimerManager, and agent BTs all stop together.
+   Symptom: agents freeze, auto-quit timer never fires, process lives
+   forever. Fix: `[ConsoleVariables] t.IdleWhenNotForeground=0` in
+   `Config/DefaultEngine.ini` (applied at engine init, before any world).
+   Also added `bPauseOnLossOfFocus=False` and
+   `bSuppressLostFocusMessage=True` as belt-and-suspenders.
+2. **Auto-quit timer was on world TimerManager.** Originally scheduled
+   via `World->GetTimerManager().SetTimer(...)` — stops when the world
+   is paused for any reason. Moved to `FTSTicker::GetCoreTicker()` in
+   `PCSPPerfSamplerSubsystem.cpp` so the quit fires regardless of
+   world pause state.
+3. **`-ExecCmds` CVars arrived after `BeginPlay`.** Three runs in the
+   first post-fix attempt produced clean frame_stats but all showed
+   `n_agents=16` (default), `seed=-1`, and ran ~255 s instead of the
+   requested 180 s — proof that `pcsp.AgentCount` / `pcsp.SpawnSeed` /
+   `pcsp.RunDurationSeconds` were still at defaults when the spawner
+   and perf-sampler read them in `BeginPlay`. Root cause: UE processes
+   `-ExecCmds` from `UGameEngine::Tick` *after* the first map's
+   `BeginPlay`. Fix: read from the command line directly using
+   `FParse::Value(FCommandLine::Get(), TEXT("PCSP_AgentCount="), ...)`
+   (and the analogous switches for seed / duration). `FCommandLine`
+   is populated before any `BeginPlay` so the override is always
+   visible. `-ExecCmds` is still passed as a belt-and-suspenders for
+   any future late readers. Driver
+   [tools/run_scaling_sweep.ps1](tools/run_scaling_sweep.ps1) now
+   emits both `-PCSP_*=N` switches and the original `-ExecCmds` list.
+
+Also hardened the driver itself:
+- Switched `Start-Process -ArgumentList` from a `@()` array to a single
+  string — PS 5.1 mangles embedded quotes when the array form is used
+  with `-ExecCmds="..."`.
+- Added a `Duration + 90 s` PowerShell watchdog that force-kills the
+  process if the in-engine auto-quit ever fails to fire, so one stuck
+  run can't block a multi-hour sweep.
+
+### Verification (session `20260519_163305`)
+
+One-run sanity sweep (`-DurationSeconds 90 -AgentCounts 8 -Seeds 0`)
+after all three fixes:
+
+- `run_config.json` = `{"n_agents":8,"seed":0,...}` — switches reached
+  the spawner.
+- 8 `agent_p*.jsonl` files, 89 frame_stats rows (90 s @ 1 Hz), 890
+  zone_occupancy rows (10 zones × 89 s) — all telemetry streams
+  populated cleanly.
+- Mean frame time 7.5 ms / p95 10.7 ms (~130 FPS at 8 agents,
+  windowed 800×450) — engine genuinely ticking, not idle.
+- Wall-clock 103.5 s = ~13 s startup + 90 s sim + clean exit — the
+  in-engine FTSTicker quit fired; watchdog never engaged.
+- Decision rows still carry `logits` and `infer_us` from the prior
+  schema extension.
+
+Pipeline is now ready for the real T1.3 sweep
+(`{8,16,32,64,96,128} × 3 seeds × 600 s` ≈ 3.5 h wall-clock).

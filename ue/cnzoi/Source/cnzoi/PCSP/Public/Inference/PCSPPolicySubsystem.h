@@ -43,7 +43,7 @@ public:
 	 * Used for trajectory-log policy-KL export.
 	 */
 	EPCSPActionType RunInferenceWithLogits(const TArray<float>& Observation, int32 PersonaId,
-	                                       TArray<float>& OutLogits);
+	                                       TArray<float>& OutLogits, double& OutInferenceMicros);
 
 	int32 GetNumActions() const { return NActions; }
 
