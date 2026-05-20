@@ -8,6 +8,8 @@
 \usepackage{xcolor}
 \usepackage{booktabs}
 \usepackage{multirow}
+\usepackage{array}
+\usepackage{tabularx}
 \usepackage{url}
 \usepackage{microtype}
 \usepackage{nicefrac}
@@ -447,7 +449,7 @@ and report each layer against the question it can actually answer
   \label{fig:three_layer}
 \end{figure}
 
-\begin{table}[t]
+\begin{table*}[t]
   \centering
   \small
   \caption{%
@@ -455,8 +457,14 @@ and report each layer against the question it can actually answer
     persona partition, and whether the InfoNCE consistency term is ablated
     inside that layer.}
   \label{tab:layer_matrix}
-  \setlength{\tabcolsep}{3pt}
-  \begin{tabular}{p{0.08\linewidth}p{0.20\linewidth}p{0.22\linewidth}p{0.14\linewidth}p{0.18\linewidth}c}
+  \setlength{\tabcolsep}{4pt}
+  \renewcommand{\arraystretch}{1.08}
+  \begin{tabularx}{\textwidth}{c
+      >{\raggedright\arraybackslash}X
+      >{\raggedright\arraybackslash}X
+      >{\raggedright\arraybackslash}p{0.17\textwidth}
+      >{\raggedright\arraybackslash}X
+      c}
     \toprule
     Layer & Substrate & Question answered & Personas (train/eval) & Key metrics & InfoNCE abl.\ \\
     \midrule
@@ -477,8 +485,8 @@ and report each layer against the question it can actually answer
       & Fail \%, throughput, $\rho_{\text{intra}}$, sym.\ KL
       & \checkmark (\S\ref{sec:ue5}) \\
     \bottomrule
-  \end{tabular}
-\end{table}
+  \end{tabularx}
+\end{table*}
 
 \subsection{Layer 1 — \PCSPD{}: a controlled substrate for persona-traceability analysis}
 \label{sec:layer1env}
@@ -966,7 +974,7 @@ and (ii) trajectory$\to$persona retrieval top-3 accuracy with the trained GRU
 encoder over the $10$-train vocabulary (chance $3/10\!=\!0.30$). Bootstrap 95\%
 CIs use $10\,000$ resamples over seeds.
 
-\begin{table}[t]
+\begin{table*}[t]
   \centering
   \small
   \caption{%
@@ -982,8 +990,8 @@ CIs use $10\,000$ resamples over seeds.
     full has 5 seeds and a single ablation seed for backward compatibility,
     the two new substrates have 3 seeds per condition.}
   \label{tab:mp_multi}
-  \setlength{\tabcolsep}{3pt}
-  \begin{tabular}{llcccr}
+  \setlength{\tabcolsep}{5pt}
+  \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X l c c c r}
     \toprule
     Substrate (category) & Config & seeds & top-1 & top-3 & pair KL \\
     \midrule
@@ -998,8 +1006,8 @@ CIs use $10\,000$ resamples over seeds.
     \midrule
     chance (10 train personas)         & ---                       & --- & $0.10$ & $0.30$ & $0$ \\
     \bottomrule
-  \end{tabular}
-\end{table}
+  \end{tabularx}
+\end{table*}
 
 \begin{figure}[t]
   \centering
@@ -1163,7 +1171,8 @@ scaling.
     Source: \texttt{latency\_budget.tsv} from
     \texttt{research/scripts/analyze\_scaling\_sweep.py}.}
   \label{tab:ue5_scaling}
-  \setlength{\tabcolsep}{4pt}
+  \setlength{\tabcolsep}{2pt}
+  \scriptsize
   \begin{tabular}{rrrrrrr}
     \toprule
     Agents & infer\,$\bar{\mu}$s & infer\,$p95\,\mu$s & frame\,$\bar{\text{ms}}$ & frame\,$p95$\,ms & Fail\,\% & Int./ag./min \\
@@ -1406,8 +1415,10 @@ in isolation.
     from $\sim\!0\%$ into \texttt{FindBestZone}-class aborts, naming
     contention as the engine-side mechanism behind the $\rho$-drop.}
   \label{tab:ue5_failures}
-  \setlength{\tabcolsep}{3pt}
-  \begin{tabular}{lrrrr}
+  \setlength{\tabcolsep}{2pt}
+  \scriptsize
+  \begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X r
+      >{\raggedright\arraybackslash}p{0.24\linewidth} r r}
     \toprule
     Session / mode & Dec.\ & FindBestZone & ZoneNoFree & PathStall \\
     \midrule
@@ -1417,7 +1428,7 @@ in isolation.
     HybridNoPersona ablation  & ---     & majority of $13.3\%$ aborts & --- & --- \\
     BTOnly (no policy)        & 9{,}644 & 8{,}062 & 85 & 1  \\
     \bottomrule
-  \end{tabular}
+  \end{tabularx}
 \end{table}
 
 \begin{figure}[t]
@@ -1672,7 +1683,7 @@ metrics, baselines, and chance levels are unchanged.
   \label{fig:learning}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[t]
   \centering
   \small
   \caption{%
@@ -1697,7 +1708,7 @@ metrics, baselines, and chance levels are unchanged.
     $^\dagger$KL $\approx\!0.39$; $\rho$ not meaningful.}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[t]
   \centering
   \small
   \caption{%
