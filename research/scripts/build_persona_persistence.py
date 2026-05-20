@@ -5,7 +5,7 @@ Aggregates per-minute intent-category activity from a UE5 standalone session
 JSONL log and renders a 4-row activity strip for the chosen personas.
 
 Input:  ue/cnzoi/Saved/PCSP/Logs/<stamp>/agent_p<id>_*.jsonl
-Output: research/paper/cog2026_vision/figures/persona_persistence.pdf
+Output: research/paper/cog2026_main/figures/persona_persistence.pdf
         research/results/ue_sessions/<stamp>/persona_persistence.json
 
 Usage:
@@ -13,7 +13,7 @@ Usage:
       --session ue/cnzoi/Saved/PCSP/Logs/20260520_PERSISTENCE \
       --personas 1 9 41 58 \
       --bin-seconds 60 \
-      --out-fig research/paper/cog2026_vision/figures/persona_persistence.pdf \
+      --out-fig research/paper/cog2026_main/figures/persona_persistence.pdf \
       --out-json research/results/ue_sessions/20260520_PERSISTENCE/persona_persistence.json
 
 Persona selection (max-pairwise sym-KL on category distributions from the

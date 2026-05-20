@@ -1,7 +1,7 @@
 # PLAN.md - PCSP Active Checklist
 
 **Project:** Persona-Conditioned Shared Policy (PCSP) for life-simulation NPCs  
-**Primary paper:** `paper/cog2026_vision/main.tex`  
+**Primary paper:** `paper/cog2026_main/main.tex` (**COG 2026 Main Track**; not a workshop, vision, or position paper)  
 **Done log:** completed work, decisions, and result details live in `DONE.md`.
 
 ---
@@ -9,7 +9,7 @@
 ## Operating Rule
 
 - Read this checklist before research, code, evaluation, or paper changes.
-- Align work with `paper/cog2026_vision/main.tex`.
+- Align work with `paper/cog2026_main/main.tex`.
 - Connect new work to one checklist item below.
 - After non-trivial work, update checklist status here and put detailed results/decisions in `DONE.md`.
 
@@ -48,7 +48,7 @@
 
 ## Phase B - Paper Consistency
 
-- [x] Add coarse-action observability limitation to `paper/cog2026_vision/main.tex`.
+- [x] Add coarse-action observability limitation to `paper/cog2026_main/main.tex`.
 - [x] Add rich trajectory observability to the evaluation agenda.
 - [x] Add v3 zero-shot ablation table to `main.tex`.
 - [x] Reframe paper away from "FiLM > concat" and toward "InfoNCE consistency is load-bearing".

@@ -136,7 +136,7 @@ ablation table and the zero-shot replication.
 
 - **Paper Tables (Mini-Inzoi → UE5 mirror):** the same per-persona
   histograms, KL divergences, and Spearman ρ that drive Tables III–V in
-  `research/paper/cog2026_vision/main.tex` are computable from the JSONL
+  `research/paper/cog2026_main/main.tex` are computable from the JSONL
   alone — no re-instrumentation.
 - **Ablation paired runs:** the NoConsist ablation (2026-05-18) compares
   full-PCSP vs NoConsist ONNX over the same 64 personas via `--compare`,

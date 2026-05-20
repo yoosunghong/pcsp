@@ -60,10 +60,14 @@ diversity training objective. Across three \PCSPD{} (formerly \textit{Mini-Inzoi
 including a richer 20-action v3 ontology, ablations show that the InfoNCE
 trajectory-consistency objective is load-bearing: removing it collapses
 zero-shot persona identification to chance even when task reward is preserved or
-improved. External validation on \texttt{commons\_harvest\_\_open} from
-\textit{Melting Pot 2.4.0}~\cite{leibo2021meltingpot} confirms that the
-\S\ref{sec:method} method produces persona-conditioned behavioral divergence in
-a multi-agent strategic substrate. A UE5
+improved. External validation on three \textit{Melting Pot
+2.4.0}~\cite{leibo2021meltingpot} substrates spanning commons-pool, public-good,
+and dyadic-matrix social dilemmas (\texttt{commons\_harvest\_\_open},
+\texttt{clean\_up}, \texttt{prisoners\_dilemma\_in\_the\_matrix\_\_repeated})
+confirms that the \S\ref{sec:method} method produces persona-conditioned
+behavioral divergence in multi-agent strategic substrates and that the
+consistency-loss ablation collapses trajectory$\to$persona retrieval to chance
+in every substrate while leaving (or inflating) pairwise action-KL. A UE5
 deployment reproduces the in-engine persona-conditioning ablation at 64 agents
 with a 1.7\% failure rate and held-out zero-shot generalization at 0.04\%
 failure, showing that the sub-frame inference profile and ablation structure
@@ -172,7 +176,11 @@ alignment, and real-time deployment.
     \texttt{prisoners\_dilemma\_\dots\_repeated}); the consistency-loss
     ablation collapses trajectory$\to$persona retrieval to chance in all
     three while leaving (or inflating) pairwise action-KL
-    (\S\ref{sec:meltingpot}).
+    (\S\ref{sec:meltingpot}). Retrieval over the full $12$-persona vocabulary
+    remains $3.4$--$4.9\times$ chance top-1, and a CU $\to$ CH cross-substrate
+    transfer of the persona projection and trajectory encoder retrieves at
+    $1.79\times$ chance top-1 (\S\ref{sec:mp_transfer},
+    Tab.~\ref{tab:mp_transfer}).
   \item \textbf{Deployment finding (Layer 3).} A frozen Layer-1 checkpoint
     deployed in UE5 sustains 64 concurrent persona-conditioned agents at
     realtime with 1.7\% failure, generalizes to 60 held-out personas at
@@ -940,7 +948,6 @@ matrix-game with distinct action ontology and 40$\times$40 RGB). The
 substrates were chosen \emph{before} training and were not tuned against.
 We evaluate persona identifiability with the same protocol as Layer 1 and
 re-run the InfoNCE ablation in every substrate.
-% TODO(T2.1): cross-substrate persona transfer (train on commons_harvest, eval on clean_up).
 
 \noindent\textbf{Substrate.}
 \texttt{commons\_harvest\_\_open} is a 7-player common-pool resource substrate with
@@ -960,7 +967,7 @@ $T\!=\!0.07$ and $\lambda_{\text{IC}}\!=\!0.5$, KL diversity at
 $\lambda_2\!=\!0.1$ over $8$ personas $\times\,32$ states, and PPO
 ($\gamma\!=\!0.99$, GAE-$\lambda\!=\!0.95$, clip $0.2$, entropy $0.01$)---are
 identical to \S\ref{sec:method}. Personas are the same 12-persona Qwen3
-corpus as the concurrent workshop study~\cite{phase5report}, split
+corpus as the companion technical report~\cite{phase5report}, split
 $10$ train / $2$ held-out; this section reports in-distribution metrics on the
 $10$ train personas at $1\,\text{M}$ environment steps per seed. Under the
 shaping, agents earn modest non-zero return throughout training (mean per-step
@@ -1039,8 +1046,91 @@ prisoners\_dilemma) while trajectory$\to$persona retrieval collapses to
 chance ($0.10$ top-1 in all three new substrates vs.\ $0.56$--$0.69$ for the
 full objective). The consistency loss is what makes the policy
 \emph{traceable to its conditioning}, not merely diverse, and this property
-is invariant across the three social-dilemma categories tested. Cross-substrate
-persona transfer is deferred to T2.1.
+is invariant across the three social-dilemma categories tested.
+
+\subsection{Held-out persona recovery and cross-substrate transfer}
+\label{sec:mp_transfer}
+
+The 12-persona corpus is split $10$ train / $2$ held-out
+(\texttt{fast\_mover}, \texttt{spinner}). The substrate-internal results
+above use the 10-train vocabulary. Here we ask two additional Layer-2
+questions that the in-distribution table cannot: (i) does the InfoNCE-trained
+manifold extend to the held-out persona embeddings; and (ii) does the
+manifold learned on one substrate transfer to trajectories collected on a
+different substrate.
+
+\noindent\textbf{Protocol.} For each Layer-2 checkpoint we run a $256$-step
+rollout in the substrate's environment, with every agent independently
+conditioned on a persona embedding drawn from the full 12-vocab. Per-agent
+trajectories are encoded by the trained $\text{GRU}$ trajectory encoder and
+compared against the 12 \emph{projected} persona embeddings via cosine
+similarity; chance top-1 is $1/12\!\approx\!0.083$ and chance top-3 is
+$0.25$. Cross-substrate transfer between
+\texttt{commons\_harvest\_\_open} (CH) and \texttt{clean\_up} (CU) reuses
+the source substrate's persona projection and trajectory encoder
+(zero-padded on the GRU input weight from $8$ to $9$ action one-hots when
+needed; no other parameter is touched) and applies them to trajectories
+collected by the target substrate's policy in the target environment.
+Observation shapes match across CH and CU ($88\!\times\!88\!\times\!3$);
+\texttt{prisoners\_dilemma} is excluded from cross-substrate transfer
+because of its $40\!\times\!40$ RGB.
+
+\begin{table}[t]
+  \centering
+  \small
+  \caption{%
+    \textbf{Held-out-vocab and cross-substrate transfer (Tab.~4).}
+    \emph{Top:} retrieval against the full 12-persona vocabulary
+    (chance top-1 $=0.083$, top-3 $=0.25$); seeds match Tab.~\ref{tab:mp_multi}.
+    \emph{Bottom:} cross-substrate transfer over CH and CU full PCSP
+    checkpoints (3 seed pairs, chance top-1 $=0.10$, top-3 $=0.30$).
+    Mean$\pm$std over seeds.}
+  \label{tab:mp_transfer}
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{l l c c c}
+    \toprule
+    \multicolumn{2}{l}{Setting} & seeds & top-1 & top-3 \\
+    \midrule
+    \multicolumn{5}{l}{\emph{Held-out vocabulary (12-persona)}} \\
+    CH                & Full \PCSP            & 5 & $0.286\!\pm\!0.120$ & $0.657\!\pm\!0.153$ \\
+                      & $-\!$InfoNCE          & 1 & $0.000$            & $0.357$            \\
+    CU                & Full \PCSP            & 3 & $\mathbf{0.405\!\pm\!0.168}$ & $\mathbf{0.810\!\pm\!0.089}$ \\
+                      & $-\!$InfoNCE          & 3 & $0.071\!\pm\!0.000$ & $0.262\!\pm\!0.089$ \\
+    PD                & Full \PCSP            & 3 & $\mathbf{0.333\!\pm\!0.068}$ & $\mathbf{0.889\!\pm\!0.104}$ \\
+                      & $-\!$InfoNCE          & 3 & $0.028\!\pm\!0.039$ & $0.167\!\pm\!0.068$ \\
+    \midrule
+    \multicolumn{5}{l}{\emph{Cross-substrate transfer (CH$\leftrightarrow$CU, 10-train vocab)}} \\
+    \multicolumn{2}{l}{CH $\to$ CU}                            & 3 & $0.060\!\pm\!0.034$ & $0.417\!\pm\!0.034$ \\
+    \multicolumn{2}{l}{CU $\to$ CH}                            & 3 & $\mathbf{0.179\!\pm\!0.058}$ & $\mathbf{0.429\!\pm\!0.077}$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\noindent\textbf{Results.}
+Three things stand out (Tab.~\ref{tab:mp_transfer}). \emph{(i) Full PCSP
+generalises to the 12-vocab.} Full-objective retrieval over the
+12-persona vocabulary remains $3.4$--$4.9\times$ chance for top-1 and
+$2.6$--$3.6\times$ chance for top-3 in every substrate, and the no-InfoNCE
+ablation collapses to chance in every substrate (top-1 $\le 0.071$). The
+mechanism is robust to vocabulary expansion. \emph{(ii) Held-out persona
+recovery is the open problem.} Across all 11 full \PCSP{} runs, the held-out
+top-1 is $0.000$: the two held-out personas (\texttt{fast\_mover},
+\texttt{spinner}) never retrieve themselves. This reproduces the embedding-margin
+condition documented in the companion technical report~\cite{phase5report}:
+the held-out embeddings sit inside the convex hull of the train
+embeddings and the trained projection does not separate them. We flag this
+as the most direct remaining Layer-2 gap. \emph{(iii) Cross-substrate
+transfer is asymmetric.} CU $\to$ CH yields top-1 $0.179\!\pm\!0.058$
+($1.79\times$ chance) and top-3 $0.429\!\pm\!0.077$ ($1.43\times$ chance),
+showing that the persona manifold learned on the richer \texttt{clean\_up}
+substrate carries information that survives transplantation into the CH
+environment. The reverse direction CH $\to$ CU is at-or-below chance for
+top-1 ($0.060\!\pm\!0.034$) but recovers a non-trivial top-3 signal
+($0.417\!\pm\!0.034$, $1.39\times$ chance), indicating partial transfer at
+the rank-3 level. The asymmetry---a positive cross-task signal, but
+direction-dependent---is consistent with the InfoNCE manifold's
+substrate-specific shaping; building a substrate-invariant projection is a
+clean follow-up.
 
 
 % ---------------------------------------------------------------
@@ -1554,20 +1644,23 @@ update model or retrieval-augmented memory module that can influence the shared
 policy without requiring per-step LLM inference~\cite{park2023generative}.
 
 \textbf{Scaling to richer environments.}
-The Melting Pot result in \S\ref{sec:meltingpot} is a single-substrate,
-in-distribution external check: the \S\ref{sec:method} method survives the
-strong reward gradient and 7-agent strategic pressure of
-\texttt{commons\_harvest\_\_open}, but multi-substrate generalization, held-out
-persona recovery, and the per-seed projection-head landscape are addressed only
-in a concurrent workshop study~\cite{phase5report}. That study documents a
-bimodal projection-head landing and an embedding-margin condition on held-out
-recovery that we do not attempt to resolve here; the natural mechanistic
-targets---multi-objective InfoNCE with per-cluster pinning, projection-head
-re-seeding, and a controlled-margin held-out corpus---follow directly from
-those observations. The UE5 deployment in \S\ref{sec:ue5} shows that the
-sub-frame inference profile and the persona-conditioning ablation both survive
-the move out of the Python benchmark; what remains is commercial-scale
-multi-agent validation in worlds substantially richer than a single district.
+The Melting Pot evidence in \S\ref{sec:meltingpot} now spans three substrates
+across distinct social-dilemma categories and includes both held-out-vocabulary
+retrieval and cross-substrate transfer (\S\ref{sec:mp_transfer},
+Tab.~\ref{tab:mp_transfer}). Two open problems remain. \emph{Held-out
+persona recovery} fails consistently---across $11$ full \PCSP{} runs, neither
+held-out persona is retrieved at rank~1---reproducing the embedding-margin
+condition documented in the companion technical
+report~\cite{phase5report}; the natural mechanistic targets are
+multi-objective InfoNCE with per-cluster pinning, projection-head re-seeding,
+and a controlled-margin held-out corpus. \emph{Cross-substrate transfer}
+is positive but asymmetric (CU $\to$ CH $1.79\times$ chance top-1,
+CH $\to$ CU at-or-below chance top-1 but $1.39\times$ chance top-3), pointing
+to a substrate-invariant projection as the next architectural target.
+The UE5 deployment in \S\ref{sec:ue5} shows that the sub-frame inference
+profile and the persona-conditioning ablation both survive the move out of
+the Python benchmark; what remains is commercial-scale multi-agent
+validation in worlds substantially richer than a single district.
 
 \textbf{Human evaluation methodology.}
 Automatic metrics are necessary for ablations but insufficient for perceived NPC
@@ -1643,16 +1736,19 @@ generalization, and real-time inference.
 Across three \PCSPD{} settings, \PCSP achieves up to 17$\times$ above-chance
 zero-shot persona identification, $\rho\!\approx\!0.73$ semantic-behavioral
 alignment, and 22$\times$ faster inference than an LLM-as-policy baseline.
-External validation on \texttt{commons\_harvest\_\_open} from \textit{Melting Pot
-2.4.0} confirms that the same method produces persona-conditioned behavioral
-divergence in a multi-agent strategic substrate, with the no-InfoNCE ablation
-again confirming the consistency loss is load-bearing. The main empirical
-finding is that the InfoNCE trajectory-consistency objective is load-bearing:
-removing it collapses zero-shot persona traceability to chance even when reward
-improves. The next steps are to couple static personas with dynamic memory,
-extend the external Melting Pot check to additional substrates and held-out
-personas (mechanistic targets from the concurrent workshop study~\cite{phase5report}),
-and complete human studies using rich trajectory traces.
+External validation on three \textit{Melting Pot 2.4.0} substrates
+(\texttt{commons\_harvest\_\_open}, \texttt{clean\_up},
+\texttt{prisoners\_dilemma\_in\_the\_matrix\_\_repeated}) confirms that the same
+method produces persona-conditioned behavioral divergence across commons-pool,
+public-good, and dyadic-matrix social dilemmas, with the no-InfoNCE ablation
+collapsing trajectory$\to$persona retrieval to chance in every substrate. The
+main empirical finding is that the InfoNCE trajectory-consistency objective is
+load-bearing: removing it collapses zero-shot persona traceability to chance
+even when reward improves. The next steps are to couple static personas with
+dynamic memory, test cross-substrate persona transfer and held-out-persona
+recovery against the mechanistic targets identified in the companion technical
+report~\cite{phase5report}, and complete human studies using rich trajectory
+traces.
 
 % ---------------------------------------------------------------
 \appendices

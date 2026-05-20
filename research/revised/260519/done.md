@@ -1,6 +1,6 @@
 # Tier 1 Progress — 2026-05-19
 
-Writing-only pass executed on [main.tex](../../paper/cog2026_vision/main.tex).
+Writing-only pass executed on [main.tex](../../paper/cog2026_main/main.tex).
 Compiles cleanly to 12 pages.
 
 ## Completed (writing)
@@ -179,6 +179,119 @@ All Tier-1 items from REVISE_PLAN.md are now complete.
   (includes the radius-sweep robustness block and per-node archetype map).
   New §7.7 *Emergent social structure* added before §8.
 
-  **Not yet verified:** no LaTeX engine is installed on this machine, so the
-  paper was not recompiled after the §7.7 insert. The block is brace-balanced
-  and `fig:ue5_social` is defined+referenced; compile elsewhere to confirm.
+  **Verified 2026-05-20:** recompiled with system `pdflatex`; clean 15-page
+  PDF, no undefined references, `fig:ue5_social` resolves.
+
+## Sixth pass — 2026-05-20 (Main Track refit)
+
+The paper is being submitted to the **COG 2026 Main Track**, not a workshop.
+This pass scrubs residual workshop / vision / single-substrate framing from
+the manuscript and context docs so future agents cannot reintroduce it.
+
+- **Abstract** (`main.tex` ~L63). Single-substrate Melting Pot line
+  ("External validation on `commons_harvest__open`…") rewritten to span all
+  three substrates and explicitly state that the no-InfoNCE ablation collapses
+  retrieval to chance in every substrate while pairwise KL is preserved or
+  inflated.
+- **§8 Discussion** ("Scaling to richer environments"). Removed the stale
+  "single-substrate, in-distribution external check" framing and the
+  "concurrent workshop study" phrasing. Replaced with a paragraph that
+  acknowledges the three-substrate evidence, points to the **companion
+  technical report** for the projection-head/margin analysis, and names
+  cross-substrate persona transfer as the most direct external next check.
+- **§9 Conclusion**. Rewritten to enumerate the three Melting Pot substrates
+  by name; "concurrent workshop study" replaced with "companion technical
+  report". The single-substrate sentence is gone.
+- **§6 substrate paragraph** (~L963). "concurrent workshop study" replaced
+  with "companion technical report".
+- **T2.1 TODO comment** at the head of §6 removed; cross-substrate transfer
+  is now a named open question in §8 rather than an inline TODO.
+- **Directory rename.** `research/paper/cog2026_vision/` →
+  `research/paper/cog2026_main/` (`git mv`, history preserved). All live
+  references updated:
+  `research/{DONE,PLAN,README}.md`, `AGENTS.md`,
+  `research/meltingpot/MELTINGPOT_PLAN.md`,
+  `research/paper/neurips2026_workshop_meltingpot/OUTLINE.md`,
+  `research/revised/260519/{REVISE_PLAN,done}.md`,
+  `research/scripts/build_persona_persistence.py`,
+  `ue/cnzoi/docs/portfolio/observability.md`. Only `research/archive/`
+  (intentionally frozen) still references the old path.
+- **Context-doc lock.** `CLAUDE.md`, `AGENTS.md`, and `research/PLAN.md`
+  now each state explicitly that the paper is the **COG 2026 Main Track**
+  manuscript and that workshop / vision / position-paper framing must not be
+  reintroduced.
+- **Recompile.** `pdflatex` × 2 from
+  `research/paper/cog2026_main/`; clean 15-page PDF, no undefined
+  references, all renamed labels resolve.
+
+### Tier-2 status snapshot (post-refit)
+
+- **T2.1 cross-substrate transfer.** **Completed 2026-05-20** (user pointed
+  out that the `research/meltingpot/runs/` checkpoints — including
+  `cog_clean/seed{1..5}_1M[_no_infonce]/` for CH and
+  `t1_2/{clean_up,prisoners_dilemma…}/full_seed{1..3}_1M/` for CU/PD — were
+  in fact present locally; the earlier "blocked" claim was wrong). See
+  Seventh-pass entry below.
+- **T2.2 social-graph emergence.** Done (Fifth pass) and now verified to
+  compile.
+- **T2.3 per-substrate behavioural-axis metric.** Subsumed by the
+  multi-substrate `tab:mp_multi` and the existing substrate-meaningful KL
+  story; no extra row needed for the Main Track submission.
+- **T2.4 v3-large.** GPU-bound, deliberately deferred (see `research/PLAN.md`).
+- **T2.5 human-written persona set.** Requires recruitment; out of scope for
+  this submission.
+
+All Tier-1 items and the only Tier-2 item that was achievable from this
+machine (T2.2) are now complete and verified. The paper is in a clean Main
+Track state.
+
+## Seventh pass — 2026-05-20 (T2.1 held-out + cross-substrate transfer)
+
+- **T2.1 (complete, 2026-05-20).** Two-part evaluation harness in a single
+  new script, `research/meltingpot/scripts/eval_t2_1_transfer.py`. Each
+  rollout is $256$ steps; trajectories per agent are encoded by the trained
+  GRU encoder and compared against the projected persona vocabulary.
+
+  *Part 1 — held-out-vocabulary retrieval (within each substrate).* For every
+  Layer-2 checkpoint (CH: $5$ full $+\,1$ no-InfoNCE; CU: $3$ full $+\,3$
+  no-InfoNCE; PD: $3$ full $+\,3$ no-InfoNCE), rollouts span all $12$
+  personas (10 train $+\,2$ held-out: `fast_mover`, `spinner`) and retrieval
+  is taken against the full $12$-persona projection (chance top-1 $=1/12$).
+  Full PCSP retrieves at $3.4$--$4.9\times$ chance top-1 in every substrate:
+  CH $0.286\!\pm\!0.120$, CU $0.405\!\pm\!0.168$, PD $0.333\!\pm\!0.068$;
+  the no-InfoNCE ablation collapses to $\le 0.071$ in every substrate.
+  Across all $11$ full \PCSP{} runs the two held-out personas never retrieve
+  themselves at rank 1 — an honest negative that lines up with the
+  embedding-margin condition documented in `PHASE5_REPORT.md`.
+
+  *Part 2 — CH$\leftrightarrow$CU cross-substrate transfer.* Source
+  substrate's persona projection + trajectory encoder are reused on
+  trajectories collected by the target substrate's policy in the target
+  environment. The GRU input layer is zero-padded for an extra action
+  one-hot slot when needed ($8\to 9$ for CH$\to$CU); no other parameter is
+  touched. Three seed pairs each direction. CU$\to$CH: top-1
+  $0.179\!\pm\!0.058$ ($1.79\times$ chance), top-3 $0.429\!\pm\!0.077$
+  ($1.43\times$ chance). CH$\to$CU: top-1 $0.060\!\pm\!0.034$ (at/below
+  chance) but top-3 $0.417\!\pm\!0.034$ ($1.39\times$ chance). The
+  asymmetry is publishable as-is.
+
+  Results landed in the paper as a new `tab:mp_transfer` and a new §6.X
+  subsection *Held-out persona recovery and cross-substrate transfer*
+  (`\label{sec:mp_transfer}`), with §1.3 Layer-2 bullet extended to mention
+  the $12$-vocab and CU$\to$CH numbers and the §8 "Scaling to richer
+  environments" paragraph rewritten to drop the "transfer remains untested"
+  framing in favour of the two named open problems (held-out persona
+  recovery, substrate-invariant projection).
+
+  Sidecar JSON per run: `research/meltingpot/runs/t2_1/{held-out,cross}/`
+  plus aggregated `research/meltingpot/runs/t2_1/t2_1_summary.json`.
+
+- **Recompile.** `pdflatex` × 2 from `research/paper/cog2026_main/`; clean
+  16-page PDF, no undefined references, `tab:mp_transfer` and
+  `sec:mp_transfer` resolve.
+
+All Tier-2 work that the checkpoints on this machine permit
+(T2.1 + T2.2) is now complete and in the paper. Remaining Tier-2 items
+(T2.3 behavioural-axis metric — subsumed by `tab:mp_multi`; T2.4
+v3-large — GPU-bound; T2.5 human-written personas — requires recruitment)
+are deliberately out of scope for this submission.

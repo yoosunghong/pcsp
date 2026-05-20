@@ -1,7 +1,7 @@
 # Paper Repositioning Plan — 2026-05-19
 
 **Target paper:** *One Policy, Infinite NPCs: Scalable Persona-Conditioned NPC Control via Shared Reinforcement Learning Policies*
-**Source draft:** [research/paper/cog2026_vision/main.tex](../../paper/cog2026_vision/main.tex)
+**Source draft:** [research/paper/cog2026_main/main.tex](../../paper/cog2026_main/main.tex)
 **Goal:** Eliminate "toy gridworld" reviewer reaction; reposition as a deployment-oriented agent-systems paper.
 **Preserved claims:** trajectory-level persona recoverability, InfoNCE as the load-bearing component, shared realtime policy on frozen persona embeddings.
 
@@ -11,8 +11,8 @@
 
 Four specific signals in the current draft trigger the reaction; each has a precise fix downstream in this plan.
 
-1. **§3.1 names the env first** ([main.tex:269](../../paper/cog2026_vision/main.tex#L269)): "Mini-Inzoi … 6×6 grid, 4 agents" appears before the method. Readers anchor on the grid.
-2. **§5 self-describes Melting Pot as "a preliminary external check"** ([main.tex:849](../../paper/cog2026_vision/main.tex#L849)). The paper tells reviewers it does not count.
+1. **§3.1 names the env first** ([main.tex:269](../../paper/cog2026_main/main.tex#L269)): "Mini-Inzoi … 6×6 grid, 4 agents" appears before the method. Readers anchor on the grid.
+2. **§5 self-describes Melting Pot as "a preliminary external check"** ([main.tex:849](../../paper/cog2026_main/main.tex#L849)). The paper tells reviewers it does not count.
 3. **§6 title "Engine Integration: UE5 Deployment"** reads as appendix. The strongest numbers (64-agent realtime, 0.04% held-out failure, in-engine InfoNCE ablation) are buried late in a 9-section paper.
 4. **Contributions list (§1.3)** leads with the toy-env benchmark and "22× faster than LLM-as-policy"; UE5 is contribution #5.
 
@@ -62,7 +62,7 @@ New section order:
 
 Net effect: UE5 jumps from §6 to §7 of a 10-section paper with double the content and its own results section parallel to Mini-Inzoi. Mini-Inzoi loses ~40% of main-paper real estate; v1/v2 tables → appendix.
 
-**Rewritten Introduction contributions (§1.3)** — replaces [main.tex:145–184](../../paper/cog2026_vision/main.tex#L145-L184):
+**Rewritten Introduction contributions (§1.3)** — replaces [main.tex:145–184](../../paper/cog2026_main/main.tex#L145-L184):
 
 1. **Method.** PCSP — a shared policy conditioned on frozen LLM persona embeddings via low-rank projection and FiLM/concat fusion, co-trained with PPO, an InfoNCE trajectory-consistency objective, and KL diversity regularization.
 2. **Three-layer validation methodology.** We argue that persona-conditioned agents require *separated* validation of mechanism, generalization, and deployment, and instantiate this with a controlled diagnostic substrate, two external Melting Pot substrates, and a realtime UE5 engine deployment.
@@ -166,7 +166,7 @@ Matrix table: rows = layers, columns = (Question, Environment, Personas eval'd, 
 
 Drop these in directly. Sequenced for max effect.
 
-### A. PCSP-Diagnostic naming and reframe — replaces [main.tex:269–286](../../paper/cog2026_vision/main.tex#L269-L286)
+### A. PCSP-Diagnostic naming and reframe — replaces [main.tex:269–286](../../paper/cog2026_main/main.tex#L269-L286)
 
 Rename "Mini-Inzoi" → **PCSP-Diagnostic** (PCSP-D). Keep "Mini-Inzoi" as a parenthetical legacy name on first mention only.
 
@@ -175,15 +175,15 @@ Rename "Mini-Inzoi" → **PCSP-Diagnostic** (PCSP-D). Keep "Mini-Inzoi" as a par
 
 Repeat "microscope, not a world" in §4 and §8.
 
-### B. Limitations rewrite — replaces [main.tex:1192–1232](../../paper/cog2026_vision/main.tex#L1192-L1232) "Minimal environments"
+### B. Limitations rewrite — replaces [main.tex:1192–1232](../../paper/cog2026_main/main.tex#L1192-L1232) "Minimal environments"
 
 > **Deliberate minimality of Layer 1.** PCSP-Diagnostic is intentionally simpler than commercial life-simulation worlds. Behavioral realism is not its purpose; it is the layer at which we can run controlled InfoNCE ablations across three independent environment instantiations and thousands of held-out personas. Realism claims in this paper are grounded in Layers 2 (Melting Pot) and 3 (UE5), where realism, contention, and asynchrony are present and where the same checkpoint is shown to behave consistently.
 
-### C. §6 (Melting Pot) opening — replaces [main.tex:849](../../paper/cog2026_vision/main.tex#L849)
+### C. §6 (Melting Pot) opening — replaces [main.tex:849](../../paper/cog2026_main/main.tex#L849)
 
 > **Layer 2: Cross-substrate generalization on Melting Pot.** We apply PCSP unchanged to three Melting Pot 2.4.0 substrates that differ in social structure (commons-pool, public-good, dyadic-matrix), observation geometry (88×88×3 RGB vs symbolic), and action ontology. The substrates were chosen *before* training and were not tuned against. On each substrate we evaluate persona identifiability on a held-out set of 60 personas using the same protocol as Layer 1, and we re-run the InfoNCE ablation in-substrate. We additionally test cross-substrate persona transfer — a setting that the Layer 1 environment cannot probe.
 
-### D. §7 (UE5) opening — replaces [main.tex:937](../../paper/cog2026_vision/main.tex#L937)
+### D. §7 (UE5) opening — replaces [main.tex:937](../../paper/cog2026_main/main.tex#L937)
 
 > **Layer 3: Realtime deployment in Unreal Engine 5.** A persona-conditioned policy is only meaningful if it survives the engineering pressure of a real game engine: asynchronous tick rates, NavMesh contention, BT failure recovery, ONNX runtime constraints, and shared world state. We deploy a *frozen* Layer-1 checkpoint into UE5.5 via a hybrid intent stack — PCSP selects semantic intents, the Behavior Tree, Blackboard, EQS, and NavMesh execute them — and ask three questions that Layers 1 and 2 cannot answer: (i) does the policy meet a realtime wall-budget at deployment scale; (ii) does the InfoNCE finding survive engine-side contention; (iii) do personas maintain identity over horizons far longer than the training episode.
 
@@ -253,7 +253,7 @@ Repeat "microscope, not a world" in §4 and §8.
 ## Execution sequencing
 
 **Week 1**
-- Day 1–2: T1.1 restructure + paste rewrites A, B, C, D into [main.tex](../../paper/cog2026_vision/main.tex). Rename Mini-Inzoi → PCSP-Diagnostic across the draft.
+- Day 1–2: T1.1 restructure + paste rewrites A, B, C, D into [main.tex](../../paper/cog2026_main/main.tex). Rename Mini-Inzoi → PCSP-Diagnostic across the draft.
 - Day 1 (parallel): kick off T1.2 Melting Pot `clean_up` training.
 - Day 3: T1.3 UE5 scaling sweep.
 - Day 4: T1.4 persistence figure + T1.5 contention heatmap.

@@ -92,7 +92,7 @@ Held-out persona-edit and asymmetric-role substrates (`predator_prey__*`, `hidde
 - Moved the existing PCSP research project into `research/`.
 - Created top-level `ue/` as the reserved Unreal Engine project location.
 - Added top-level `README.md` and `PLAN.md` as workspace-level routing docs.
-- Updated top-level `AGENTS.md` / `CLAUDE.md` to point agents to `research/PLAN.md` and `research/paper/cog2026_vision/main.tex` for research work.
+- Updated top-level `AGENTS.md` / `CLAUDE.md` to point agents to `research/PLAN.md` and `research/paper/cog2026_main/main.tex` for research work.
 - Updated `.gitignore` for `research/results/...` generated artifacts and common Unreal-generated directories under `ue/`.
 - Replaced stale hardcoded `/home/swim/Documents/Projects/co-spec` paths in research scripts with dynamic `Path(__file__).resolve()` roots.
 
@@ -108,10 +108,10 @@ Held-out persona-edit and asymmetric-role substrates (`predator_prey__*`, `hidde
 - Empirical Figure 3 sampled-pair results:
   - v1: 100 pairs, 200 states, Spearman rho = 0.755, mean KL = 4.64.
   - v2: 60 pairs, 100 states, Spearman rho = 0.717, mean KL = 5.46.
-- Updated `paper/cog2026_vision/main.tex` to distinguish aggregate evaluation rho values (0.728 / 0.725) from the independently regenerated plotted sample (0.755 / 0.717).
+- Updated `paper/cog2026_main/main.tex` to distinguish aggregate evaluation rho values (0.728 / 0.725) from the independently regenerated plotted sample (0.755 / 0.717).
 - Corrected the headline zero-shot claim from "11x above chance" to "up to 17x above chance" to align with the v3 concat result.
 - Corrected the v2 table emphasis so concat is bolded for the highest zero-shot accuracy while PCSP full remains bolded for rho/KL.
-- Recompiled `paper/cog2026_vision/main.pdf` with system `pdflatex` after conda TeX failed due a missing `pdflatex.fmt`.
+- Recompiled `paper/cog2026_main/main.pdf` with system `pdflatex` after conda TeX failed due a missing `pdflatex.fmt`.
 - Build status: PDF compiles; remaining warnings are underfull hboxes and the standard IEEEtran final-column reminder.
 
 ### Coarse Google Forms Human Pilot
@@ -129,7 +129,7 @@ Held-out persona-edit and asymmetric-role substrates (`predator_prey__*`, `hidde
   - ambiguous: 8/30
   - misleading: 5/30
 - Important caveat: Google Forms preserved only item-level A/B selection ratios. Participant-level variance, confidence, response time, order effects, and inter-rater reliability are unavailable.
-- Updated `paper/cog2026_vision/main.tex` with a scoped "Coarse-Trace Human Pilot" subsection and revised the human-evaluation limitation from "No completed human evaluation" to "Limited aggregate human evaluation."
+- Updated `paper/cog2026_main/main.tex` with a scoped "Coarse-Trace Human Pilot" subsection and revised the human-evaluation limitation from "No completed human evaluation" to "Limited aggregate human evaluation."
 
 ---
 
@@ -137,7 +137,7 @@ Held-out persona-edit and asymmetric-role substrates (`predator_prey__*`, `hidde
 
 ### Experimental Paper Restructure
 
-- Rewrote `paper/cog2026_vision/main.tex` from a vision/position-paper framing into a standard experimental research paper.
+- Rewrote `paper/cog2026_main/main.tex` from a vision/position-paper framing into a standard experimental research paper.
 - Updated title to "One Policy, Infinite NPCs: Scalable Persona-Conditioned NPC Control via Shared Reinforcement Learning Policies."
 - Rewrote abstract to lead with quantitative results: 11x zero-shot, Spearman rho = 0.73, and 22x faster inference.
 - Reframed introduction and contributions as empirical findings, with InfoNCE consistency as the load-bearing result.
@@ -150,17 +150,17 @@ Held-out persona-edit and asymmetric-role substrates (`predator_prey__*`, `hidde
 
 ### arXiv Readiness Cleanup
 
-- Updated `paper/cog2026_vision/main.tex` after pre-upload review.
+- Updated `paper/cog2026_main/main.tex` after pre-upload review.
 - Fixed the persona projection notation to match the implementation: 1024 -> rank-16 -> 64 low-rank projection with normalization, instead of the stale 1024 -> 512 -> 64 MLP equation.
 - Fixed the policy architecture text from stale `(256-256-10)` to the implemented 3-hidden-layer `(256-256-128)` policy with an action-space-sized output head.
 - Renamed overloaded notation so the value network and trajectory encoder no longer both use `\phi`.
 - Deleted the legacy claim that FiLM and concat were statistically indistinguishable at v1/v2 zero-shot accuracy, per upload-review decision.
 - Replaced the unsupported `43--500 ms` LLM latency wording with the paper's measured Qwen3-1.7B LLM-as-policy baseline latency of 43.7 ms/decision step.
 - Removed the dangling "supplementary" reference from the results section.
-- Fixed `paper/cog2026_vision/refs.bib`:
+- Fixed `paper/cog2026_main/refs.bib`:
   - Corrected CIC authors to Laskin, Liu, Peng, Yarats, Rajeswaran, and Abbeel.
   - Updated Qwen3 Embedding to the 2025 technical-report title and arXiv identifier.
-- Recompiled `paper/cog2026_vision/main.pdf` with `pdflatex -> bibtex -> pdflatex -> pdflatex`.
+- Recompiled `paper/cog2026_main/main.pdf` with `pdflatex -> bibtex -> pdflatex -> pdflatex`.
 - Build status: citations and references resolve; no overfull hboxes remain. Remaining warnings are underfull hboxes in prose/bibliography and the standard IEEEtran final-column reminder.
 
 ---
@@ -180,7 +180,7 @@ Held-out persona-edit and asymmetric-role substrates (`predator_prey__*`, `hidde
 
 ### Planning and Paper Direction
 
-- Confirmed the active direction as the PCSP paper in `paper/cog2026_vision/main.tex`.
+- Confirmed the active direction as the PCSP paper in `paper/cog2026_main/main.tex`.
 - Archived old planning/proposal docs under `archive/docs_2026-05-08/`.
 - Confirmed `full-proposal.md` is not the active PCSP direction; it remains separate co-adaptation context.
 - Reframed the human-survey issue as an observability problem: persona-conditioned behavior must be visible in trajectories, not only recoverable from hidden state or reward.
@@ -368,7 +368,7 @@ Findings:
 
 ### Paper Reframe
 
-- Updated `paper/cog2026_vision/main.tex` to shift the central claim from "FiLM > concat" to "InfoNCE consistency loss is load-bearing; conditioning architecture is secondary and split-dependent."
+- Updated `paper/cog2026_main/main.tex` to shift the central claim from "FiLM > concat" to "InfoNCE consistency loss is load-bearing; conditioning architecture is secondary and split-dependent."
 - Updated abstract, contributions, method framing, observations, Figure 2 caption, significance, and conclusion.
 - Added v3 zero-shot ablation table.
 - PDF compiled cleanly at 7 pages.
@@ -432,10 +432,10 @@ Interpretation: combo follows the archetype direction in point estimate but not 
 
 ### Paper Update After v3 Combo
 
-- Updated `paper/cog2026_vision/main.tex` to mention the unseen-combo result in the architecture paragraph.
+- Updated `paper/cog2026_main/main.tex` to mention the unseen-combo result in the architecture paragraph.
 - Standardized paper claims on the v3 zero-shot eval-driver/compositional ablation summaries, not the legacy CLI-only `test_60_v3` number.
 - The unseen-combo result is reported as FiLM higher in point estimate but not statistically separated from concat because Wilson intervals overlap.
-- Recompiled `paper/cog2026_vision/main.pdf`: clean 7-page PDF.
+- Recompiled `paper/cog2026_main/main.pdf`: clean 7-page PDF.
 - Remaining warnings are the same minor layout warnings seen before this update: one underfull intro paragraph, one 8.3pt overfull LoRA equation line, and one bibliography underfull hbox.
 
 ### Designer-Authored Persona Case Study
@@ -479,13 +479,13 @@ Interpretation: the case study produces both positive and negative qualitative e
 - Regenerated:
   - `results/designer_persona_case_study/designer_personas_tsne.png`
   - `paper/figures/fig5_designer_personas_tsne.png`
-  - `paper/cog2026_vision/main.pdf`
+  - `paper/cog2026_main/main.pdf`
 - Verified the rebuilt PDF by rendering page 5; the former top-right overlap is resolved.
 - No experiment outputs, checkpoint compatibility, action spaces, or observations changed. No retraining is required.
 
 ### Paper Section IV-D: Qualitative Case Study
 
-- Added Section IV-D, "Qualitative Case Study: Designer-Authored Personas," to `paper/cog2026_vision/main.tex`.
+- Added Section IV-D, "Qualitative Case Study: Designer-Authored Personas," to `paper/cog2026_main/main.tex`.
 - Inserted after the v3/key-observations material and before the former Significance subsection, so the qualitative case study is now Section IV-D and Significance becomes Section IV-E.
 - Added `Table V` with: persona name, top-3 actions, nearest training persona, nearest-neighbor cosine similarity, and aligned/partial/no judgment.
 - Added t-SNE figure to the paper:
@@ -495,21 +495,21 @@ Interpretation: the case study produces both positive and negative qualitative e
   - `sims3traits`
   - `nookipediaVillager`
 - Updated the limitations paragraph on synthetic personas to acknowledge the qualitative designer-authored case study while preserving the limitation that robustness to production-authored personas remains unproven.
-- Recompiled `paper/cog2026_vision/main.pdf`: citations and labels resolved; output is now 8 pages.
+- Recompiled `paper/cog2026_main/main.pdf`: citations and labels resolved; output is now 8 pages.
 - Remaining compile warnings: pre-existing LoRA equation overfull hbox plus several underfull boxes around qualitative prose/bibliography. No new fatal LaTeX errors.
 
 ### Public Preprint / GitHub Metadata
 
 - User clarified there is no intention to submit this work to IEEE CoG.
 - Public arXiv/GitHub version should therefore not carry an IEEE submitted-work notice or imply conference submission.
-- Updated `paper/cog2026_vision/main.tex`:
+- Updated `paper/cog2026_main/main.tex`:
   - Author: Yoosung Hong
   - Affiliation: Independent Researcher
   - GitHub link: `https://github.com/yoosunghong/pcsp`
 - Removed the previously added IEEE submitted-work title-block footnote.
 - Added root `README.md` with project summary, commands, and GitHub link.
 - Added root `LICENSE` with MIT License for source code and scripts.
-- Recompiled `paper/cog2026_vision/main.pdf`; the first page contains the author, affiliation, and GitHub link, with no IEEE submitted-work notice.
+- Recompiled `paper/cog2026_main/main.pdf`; the first page contains the author, affiliation, and GitHub link, with no IEEE submitted-work notice.
 
 ## 2026-05-12
 
@@ -520,9 +520,9 @@ Interpretation: the case study produces both positive and negative qualitative e
 - Deleted the legacy Figure 1 assets:
   - `paper/figures/fig1_system.png`
   - `paper/figures/fig1_system.pdf`
-- Added the new Figure 1 to `paper/cog2026_vision/main.tex` as a two-column `figure*` at `width=0.98\textwidth`, preserving label `fig:system`.
+- Added the new Figure 1 to `paper/cog2026_main/main.tex` as a two-column `figure*` at `width=0.98\textwidth`, preserving label `fig:system`.
 - Restored the designer-persona t-SNE figure block so it is again Figure 3.
-- Recompiled `paper/cog2026_vision/main.pdf` with `latexmk -pdf -interaction=nonstopmode main.tex`.
+- Recompiled `paper/cog2026_main/main.pdf` with `latexmk -pdf -interaction=nonstopmode main.tex`.
 - Verified `main.aux`: `fig:system` resolves to Figure 1 on page 4, `fig:learning` to Figure 2 on page 4, and `fig:designer_tsne` to Figure 3 on page 5.
 - Rendered pages 4--5 for visual inspection; Figure 1 spans both columns and Figure 3 is restored.
 - No code, checkpoints, action spaces, or observations changed. No retraining is required.

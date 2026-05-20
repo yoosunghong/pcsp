@@ -7,7 +7,7 @@ This workspace has two active top-level project areas:
 - `research/` - the existing PCSP research code, data artifacts, paper source, plans, and historical docs.
 - `ue/` - Unreal Engine work. The current UE5 project lives under `ue/cnzoi/`.
 
-The PCSP research project is a self-contained subtree. Research commands should normally be run from `D:\Github\pcsp\research`, so existing relative paths such as `scripts/test_env.py`, `data/personas/...`, `results/...`, and `paper/cog2026_vision/main.tex` continue to work.
+The PCSP research project is a self-contained subtree. Research commands should normally be run from `D:\Github\pcsp\research`, so existing relative paths such as `scripts/test_env.py`, `data/personas/...`, `results/...`, and `paper/cog2026_main/main.tex` continue to work.
 
 UE5 commands and file edits should normally target `D:\Github\pcsp\ue\cnzoi`.
 
@@ -22,7 +22,7 @@ UE5 commands and file edits should normally target `D:\Github\pcsp\ue\cnzoi`.
 For research work:
 
 1. Read `research/PLAN.md` before changing code, experiments, evaluation, or paper text.
-2. Treat `research/paper/cog2026_vision/main.tex` as the source of truth for the active paper framing.
+2. Treat `research/paper/cog2026_main/main.tex` as the source of truth for the active paper framing. This is the **COG 2026 Main Track** manuscript; it is not a workshop, vision, or position paper. Do not reintroduce workshop/vision framing in the abstract, contributions, conclusion, or context docs. The previous directory name `cog2026_vision/` has been renamed to `cog2026_main/`; any reference to the old path is stale.
 3. Do not treat older proposals such as `research/persona-proposal.md` or archived documents as the active direction.
 4. Connect non-trivial research changes to `research/PLAN.md`.
 5. Record important decisions, result paths, failed experiments, and retraining requirements in `research/PLAN.md` or `research/DONE.md`.
@@ -63,7 +63,7 @@ UE5 work should be performed inside `ue/cnzoi/`. Do not add generated directorie
 - `research/scripts/` - training, evaluation, plotting, and artifact scripts.
 - `research/data/` - persona datasets and human-eval artifacts.
 - `research/results/` - generated metrics, figures, checkpoints, and reports.
-- `research/paper/cog2026_vision/` - current manuscript source.
+- `research/paper/cog2026_main/` - current manuscript source.
 - `research/docs/` - design notes such as Mini-Inzoi v3.
 
 ## Key UE5 Paths

@@ -373,7 +373,7 @@ Convert experiments into a defensible main-track paper.
 
 #### Writing
 
-- [ ] Draft against `paper/meltingpot_main/main.tex` (new directory; do not co-mingle with `paper/cog2026_vision/`).
+- [ ] Draft against `paper/meltingpot_main/main.tex` (new directory; do not co-mingle with `paper/cog2026_main/`).
 - [ ] Method section grounded in `MELTINGPOT_FEAT.md`.
 - [ ] Limitations section grounded in `MELTINGPOT_PROPOSAL.md` §5.
 - [ ] Reproducibility section grounded in Phase 6 outputs.
