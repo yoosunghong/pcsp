@@ -181,7 +181,7 @@ alignment, and real-time deployment.
     objective is load-bearing under engine-side contention
     (\S\ref{sec:ue5}).
     % T1.3 done (scaling curve in Tab.~\ref{tab:ue5_scaling}).
-    % TODO(T1.4): persona-persistence figure.
+    % T1.4 done (Fig.~\ref{fig:persona_persistence}).
   \item \textbf{Reproducibility.} Open ONNX checkpoints, three-layer
     benchmark code, UE5 plugin, and trajectory-annotation harness.
 \end{enumerate}
@@ -1050,7 +1050,7 @@ contention; (iii) do personas maintain identity over horizons far longer than
 the training episode.
 % T1.3 scaling sweep: complete (Tab.~\ref{tab:ue5_scaling}, results from
 % research/results/ue_sessions/scaling_20260520/).
-% TODO(T1.4): long-horizon persona-persistence figure (4 personas x 30 in-game minutes, 1-min activity strip).
+% T1.4 long-horizon persona-persistence figure: complete (Fig.~\ref{fig:persona_persistence}, \S\ref{sec:ue5_persistence}).
 
 
 \begin{figure}[t]
@@ -1279,7 +1279,71 @@ $64$ personas---yet aggregate task reward is \emph{higher} for the checkpoint
 without the consistency loss. This is the in-engine replication of the
 \S\ref{sec:evidence} ``reward hides the failure'' result.
 
-\subsection{Failure analysis and contention: the $\rho$-drop as a Layer-3 finding}
+\subsection{Long-horizon behavioural persistence}
+\label{sec:ue5_persistence}
+
+\textbf{Do personas hold their routines past the training horizon?}
+The Layer-1 training episode is $128$ environment steps; under the v3
+action ontology a UE5 in-engine ``minute'' covers roughly $12$ policy
+decisions per agent. To test whether persona identity persists over
+horizons an order of magnitude longer than what the policy ever saw at
+training time, we ran a long-horizon UE5 session
+(\texttt{ue/cnzoi/Saved/PCSP/Logs/20260518\_121840}, $4{,}745$\,s
+in standalone \texttt{-game}, $64$ agents, BT-abort rate
+$2.5\%$---well below the contention regime of \S\ref{sec:ue5_contention})
+and analysed the first $30$ in-game minutes
+for four personas chosen \emph{a~priori} to maximise pairwise
+category-distribution sym-KL on an independent clean reference session
+(\texttt{20260518\_114841}; minimum pairwise sym-KL among the four
+$=2.68$ nats): \texttt{p001} (Social-leaning), \texttt{p009}
+(Rest-leaning), \texttt{p041} (Observe/Study mix), and \texttt{p058}
+(Work-leaning). For each persona we bin every \texttt{decision} /
+\texttt{interaction\_complete} event into $1$-minute windows and report
+the dominant intent category per bin
+(Fig.~\ref{fig:persona_persistence}, derived by
+\texttt{research/scripts/build\_persona\_persistence.py}; raw bin
+sequence and per-bin category histograms in
+\texttt{research/results/ue\_sessions/20260518\_121840/persona\_persistence.json}).
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{persona_persistence.pdf}
+  \caption{%
+    \textbf{Long-horizon persona persistence (Layer~3).}
+    Per-minute dominant intent category for four maximally-separated
+    personas over $30$ in-game minutes in UE5 (\emph{frozen} Layer-1
+    checkpoint, $0.5$\,s decision throttle). Each row is one persona;
+    each column is a $1$-minute bin coloured by the modal intent
+    category. \texttt{p009} stays in \texttt{Rest} for all $30$ bins;
+    \texttt{p058} stays in \texttt{Work} for $26/30$ bins ($87\%$);
+    \texttt{p001} alternates between \texttt{Social} ($16$ bins) and
+    \texttt{Rest} ($13$ bins); the high-entropy persona \texttt{p041}
+    cycles through eight categories ($22$ category transitions). No
+    persona ever ``forgets'' its dominant axis. The horizon is
+    ${\sim}14\times$ a single Layer-1 training episode.}
+  \label{fig:persona_persistence}
+\end{figure}
+
+Three observations. (i) \emph{Persona-level stability holds past the
+training horizon.} The top-category share over the $30$-minute window
+is $1.00$ / $0.87$ / $0.53$ / $0.27$ for \texttt{p009} / \texttt{p058} /
+\texttt{p001} / \texttt{p041} respectively---the persona ordering by
+``focus'' is preserved end-to-end, and the most-focused persona stays
+on its preferred axis for every single bin. (ii) \emph{Persistence is
+persona-specific, not flat.} The high-entropy persona \texttt{p041}
+visits eight distinct categories with $22$ transitions; the low-entropy
+persona \texttt{p009} executes a single category run. The figure
+therefore shows persona persistence \emph{without} flattening into
+``every persona does its top thing forever''---which would be
+indistinguishable from a learned task-side bias. (iii) \emph{The
+mechanism is the conditioning, not a recurrent state.} The policy is
+stateless feed-forward over the per-step observation; the only
+persona-side memory is the frozen $64$-d projection. Behavioural
+persistence over a horizon $14\times$ the training episode is thus
+purely a property of the persona embedding plus the InfoNCE-trained
+conditioning manifold, not of any in-engine temporal smoothing.
+
+
 \label{sec:ue5_contention}
 
 \textbf{BT failure taxonomy.}

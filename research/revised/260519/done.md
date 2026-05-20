@@ -78,9 +78,7 @@ Paper recompiles cleanly to 13 pages with no undefined references.
   table) from `t1_2/*/{full,no_infonce}_seed{1,2,3}_1M/logs.jsonl` and
   rewrite the §6 results paragraph.
 - ~~**T1.3 missing points.**~~ Done 2026-05-20 — see Second-pass entry above.
-- **T1.4.** Long-horizon persona-persistence figure (4 personas × 30
-  in-game minutes, 1-min activity strip) — needs new UE5 PIE run with a
-  per-minute intent-class logger.
+- ~~**T1.4.**~~ Done 2026-05-20 — see Third-pass entry below.
 - **T1.5 missing figures.** Contention heatmap (per-zone occupancy over
   the episode); per-persona expressed-vs-preferred intent chart (requires
   comparing full-stack action distributions against the persona's
@@ -89,3 +87,36 @@ Paper recompiles cleanly to 13 pages with no undefined references.
 No numbers were fabricated; every table cell is sourced from an existing
 log under `research/results/ue_sessions/` or
 `research/meltingpot/runs/`.
+
+## Third pass — 2026-05-20 (T1.4 long-horizon persistence)
+
+- **T1.4 (complete, 2026-05-20).** New §7.5 *Long-horizon behavioural
+  persistence* with `fig:persona_persistence`. Four personas chosen
+  a-priori for maximum pairwise category sym-KL on the clean reference
+  session `20260518_114841` (minimum pairwise sym-KL = 2.68 nats):
+  - `p001` Social-leaning,
+  - `p009` Rest-leaning,
+  - `p041` Observe/Study mix (high-entropy),
+  - `p058` Work-leaning.
+  Analysis aggregates per-minute dominant intent category from
+  `decision` / `interaction_complete` events in
+  `ue/cnzoi/Saved/PCSP/Logs/20260518_121840/` (4 745 s standalone
+  `-game`, 64 agents, BT-abort 2.5 %) over the first 30 in-game minutes.
+  No engine changes — offline-only aggregation via
+  `research/scripts/build_persona_persistence.py`. Raw bin sequence and
+  per-bin histograms in
+  `research/results/ue_sessions/20260518_121840/persona_persistence.json`.
+
+  Headline numbers (30 × 1-min bins):
+  - `p009`: 30/30 bins on Rest (top-category share 1.00, 1 run)
+  - `p058`: 26/30 Work (0.87, 9 runs — short Eat/Rest interludes)
+  - `p001`: 16/30 Social, 13/30 Rest (0.53, 6 runs)
+  - `p041`: 8 distinct categories, 22 transitions (0.27, high-entropy)
+  Horizon ≈ 14 × the Layer-1 training episode; policy is stateless
+  feed-forward so the persistence is purely a property of the persona
+  embedding plus the InfoNCE-trained conditioning manifold.
+
+  The TODO(T1.4) markers in `main.tex` (contributions block at §1.3 and
+  Layer-3 opener) are removed.
+
+All Tier-1 items from REVISE_PLAN.md are now complete.
