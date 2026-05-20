@@ -46,11 +46,17 @@ Compiles cleanly to 12 pages.
   - `commons_harvest__open` (5 seeds full / 1 seed abl): top-1 0.564 → 0.071
   - `clean_up`              (3 seeds each):              top-1 0.690 → 0.095
   - `prisoners_dilemma_…__repeated` (3 seeds each):      top-1 0.625 → 0.125
-- **T1.3 (partial).** New `tab:ue5_scaling` placed in §7 with the three
-  validated scales (16/32/64 from existing sessions) plus the latency-budget
-  paragraph (0.5 s decision throttle, ≤2 ONNX calls/agent/s, ≤128 calls/s
-  at 64 agents, 30–60 FPS PIE wall budget). 8 / 96 / 128 agent points
-  flagged inline as `% TODO(T1.3)` — those need new PIE runs.
+- **T1.3 (complete, 2026-05-20).** Full sweep `{8,16,32,64,96,128}` × 3
+  seeds × 630 s standalone `-game` run (18 sessions
+  `ue/cnzoi/Saved/PCSP/Logs/20260520_000614..030856`, aggregated to
+  `research/results/ue_sessions/scaling_20260520/`). `tab:ue5_scaling`
+  in §7 rewritten with the full curve: per-setting mean / p95 inference
+  latency, mean / p95 frame ms, BT-abort failure rate, intents/agent/min.
+  Headline: inference flat 183–202 µs through n=64; frame time scales
+  ≈0.27 ms/agent; failure rate cliffs at n=128 (44.9 %) — NavMesh
+  `FindPath` queue saturation, not ONNX inference. n≤64 is the
+  recommended realtime operating point. The `% TODO(T1.3)` markers in
+  `main.tex` are removed.
 - **T1.5 (partial).** New `tab:ue5_failures` BT-abort taxonomy in §7.6,
   drawn directly from `research/results/ue_sessions/*/summary.json`
   failure_reason_totals (FindBestZone, zone_no_free_interaction_point,
@@ -71,9 +77,7 @@ Paper recompiles cleanly to 13 pages with no undefined references.
 - **T1.2 aggregation.** Once PD finishes, regenerate Tab 3 (multi-substrate
   table) from `t1_2/*/{full,no_infonce}_seed{1,2,3}_1M/logs.jsonl` and
   rewrite the §6 results paragraph.
-- **T1.3 missing points.** Run PIE at 8, 96, 128 agents (the 64-agent
-  ceiling note in `docs/phase5/paper_extension.md` flags that 128+ needs
-  async batched inference + World Partition streaming sources).
+- ~~**T1.3 missing points.**~~ Done 2026-05-20 — see Second-pass entry above.
 - **T1.4.** Long-horizon persona-persistence figure (4 personas × 30
   in-game minutes, 1-min activity strip) — needs new UE5 PIE run with a
   per-minute intent-class logger.

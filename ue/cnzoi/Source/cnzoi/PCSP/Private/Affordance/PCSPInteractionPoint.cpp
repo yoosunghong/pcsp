@@ -5,6 +5,7 @@
 APCSPInteractionPoint::APCSPInteractionPoint()
 {
 	PrimaryActorTick.bCanEverTick = false;
+	bIsSpatiallyLoaded = false; // always loaded; must be reachable from any streaming state
 }
 
 bool APCSPInteractionPoint::TryReserve(AActor* Requester)

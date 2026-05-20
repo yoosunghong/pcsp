@@ -8,6 +8,8 @@
 #include "HAL/IConsoleManager.h"
 #include "Misc/CommandLine.h"
 #include "Misc/Parse.h"
+#include "Components/WorldPartitionStreamingSourceComponent.h"
+#include "WorldPartition/WorldPartitionStreamingSource.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "HAL/FileManager.h"
@@ -27,6 +29,12 @@ static TAutoConsoleVariable<int32> CVarPCSPAgentCount(
 APCSPAgentSpawner::APCSPAgentSpawner()
 {
 	PrimaryActorTick.bCanEverTick = false;
+
+	// Register a WP streaming source so standalone -game streams in every cell
+	// within StreamingSourceRadius. PIE does this automatically; -game does not,
+	// leaving most affordance zones unloaded and causing ~95% pathfind failures.
+	StreamingSource = CreateDefaultSubobject<UWorldPartitionStreamingSourceComponent>(
+		TEXT("WPStreamingSource"));
 }
 
 void APCSPAgentSpawner::BeginPlay()
@@ -52,12 +60,22 @@ void APCSPAgentSpawner::BeginPlay()
 		FMath::RandInit(RandomSeed);
 	}
 
-	UE_LOG(LogTemp, Log,
-		TEXT("PCSPAgentSpawner: agents=%d seed=%d (CVars: spawn_seed=%d agent_count=%d)"),
-		AgentCount, RandomSeed, SeedOverride, CountOverride);
+	// Push a single fixed-radius sphere shape so the WP source covers the whole
+	// district regardless of the grid's default loading range.
+	if (StreamingSource)
+	{
+		FStreamingSourceShape Shape;
+		Shape.bUseGridLoadingRange = false;
+		Shape.Radius = StreamingSourceRadius;
+		StreamingSource->Shapes.Add(Shape);
+	}
 
-	// One-shot run_config.json next to the per-agent jsonl files so the analyzer
-	// can label each session by (agents, seed) without parsing PIE logs.
+	UE_LOG(LogTemp, Log,
+		TEXT("PCSPAgentSpawner: agents=%d seed=%d wp_radius=%.0f spawn_delay=%.1fs (CVars: spawn_seed=%d agent_count=%d)"),
+		AgentCount, RandomSeed, StreamingSourceRadius, SpawnDelay, SeedOverride, CountOverride);
+
+	// Write run_config.json immediately (not inside SpawnAgents) so the session
+	// dir is labelled before the delayed spawn fires.
 	const FString ConfigPath = UPCSPTrajectoryLogComponent::GetSessionDir() / TEXT("run_config.json");
 	const FString ConfigBlob = FString::Printf(
 		TEXT("{\"n_agents\":%d,\"seed\":%d,\"spawn_radius\":%.1f,\"spawn_on_navmesh\":%s}\n"),
@@ -67,7 +85,46 @@ void APCSPAgentSpawner::BeginPlay()
 		FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM,
 		&IFileManager::Get(), FILEWRITE_None);
 
-	SpawnAgents();
+	// In standalone -game the pre-baked NavMesh tiles for distant WP cells may
+	// not be loaded when play begins — only geometry near active streaming
+	// sources is present at startup. Trigger a full NavMesh rebuild so tiles
+	// are generated from whatever geometry IS loaded, then poll until the build
+	// finishes before spawning agents.
+	// In PIE this is a no-op (IsNavigationBuilt returns true immediately because
+	// the editor's pre-built navmesh is already in memory).
+	if (UNavigationSystemV1* NavSys = UNavigationSystemV1::GetCurrent(GetWorld()))
+	{
+		UE_LOG(LogTemp, Log, TEXT("PCSPAgentSpawner: triggering NavMesh rebuild for standalone game"));
+		NavSys->Build();
+	}
+
+	SpawnWaitElapsed = 0.f;
+	GetWorldTimerManager().SetTimer(SpawnDelayHandle,
+		FTimerDelegate::CreateWeakLambda(this, [this]() { PollNavMeshAndSpawn(); }),
+		0.5f, /*bLoop=*/true);
+}
+
+void APCSPAgentSpawner::PollNavMeshAndSpawn()
+{
+	SpawnWaitElapsed += 0.5f;
+
+	UNavigationSystemV1* NavSys = UNavigationSystemV1::GetCurrent(GetWorld());
+	const bool bNavReady = !NavSys || !NavSys->IsNavigationBuildInProgress();
+
+	if (bNavReady || SpawnWaitElapsed >= SpawnDelay)
+	{
+		GetWorldTimerManager().ClearTimer(SpawnDelayHandle);
+		UE_LOG(LogTemp, Log,
+			TEXT("PCSPAgentSpawner: NavMesh %s after %.1fs — spawning %d agents"),
+			bNavReady ? TEXT("ready") : TEXT("timed out"), SpawnWaitElapsed, AgentCount);
+		SpawnAgents();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Verbose,
+			TEXT("PCSPAgentSpawner: waiting for NavMesh (%.1fs / %.1fs)"),
+			SpawnWaitElapsed, SpawnDelay);
+	}
 }
 
 bool APCSPAgentSpawner::FindSpawnLocation(FVector& OutLocation) const

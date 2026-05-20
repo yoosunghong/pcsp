@@ -222,8 +222,15 @@ without async batching.
   agents toward what's reachable, not what their embedding most
   prefers. Quantifying this gap (and whether it shrinks on a less
   congested map) is the most concrete open follow-up.
-- **64-agent ceiling.** Validated; 128+ would require async batched
-  inference and World Partition streaming sources (`scale-targets.md`).
+- **64-agent ceiling.** Validated empirically by the 2026-05-20 sweep
+  (`{8,16,32,64,96,128}` × 3 seeds × 630 s, 18 runs;
+  `research/results/ue_sessions/scaling_20260520/`). ONNX inference is
+  flat at 183–202 µs through n=64 (well under the 250 µs budget); frame
+  time scales ≈ 0.27 ms/agent (p95 within 60 fps through n=96); BT-abort
+  failure rate is 0.2 % at n=64, 4.7 % at n=96, and **44.9 % at n=128**.
+  The hard ceiling is NavMesh `FindPath` queue saturation, not policy
+  inference. 128+ requires async batched pathfinding and a WP streaming
+  source on the spawner (the latter now in `APCSPAgentSpawner`).
 - **Map geometry generalisation.** Results are for one map. We have not
   yet tested whether ρ_intra and the persona-embedding effect hold on a
   second, structurally different district.

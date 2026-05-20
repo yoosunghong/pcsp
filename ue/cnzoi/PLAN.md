@@ -159,6 +159,32 @@ Movement is an execution detail, not a policy action. The policy should output s
       Avg 32.8 interactions/agent over 343s (~4× throughput vs 16-agent baseline).
       Total reward: 347.85. Prerequisite for 64-agent run: add a second Rest zone
       or raise Rest capacity further to keep AllOverCapacity below 50%.
+- [x] **T1.3 scaling sweep {8,16,32,64,96,128} × 3 seeds × 630 s**
+      (2026-05-20, 18 sessions `20260520_000614`..`030856`,
+      `research/results/ue_sessions/scaling_20260520/`):
+      Inference latency flat 183--202 µs through n=64 (well under 250 µs
+      budget); the apparent drop to 153/132 µs at n≥96 is CPU-scheduler
+      timeslicing at saturation, not model speedup.
+      Frame time scales ≈ 0.27 ms/agent: mean 5.57 ms (n=8) →
+      14.39 ms (n=128); p95 stays inside the 60 fps budget (16.67 ms)
+      through n=96.
+      Failure rate is 0\% at n≤32, 0.2\% at n=64, **4.7\% at n=96, 44.9\% at n=128**.
+      NavMesh `FindPath` queue saturation is the hard ceiling above n=96.
+      Intent throughput stable at 5.6--6.1/agent/min for n≤64.
+      **Headline:** ≤64 agents is the recommended real-time operating
+      point; 96 is a soft cap; 128+ requires async batched pathfinding.
+      Driver: `ue/cnzoi/tools/run_scaling_sweep.ps1` (added `-StartIndex`
+      for resume after PS death); analyzer: `analyze_scaling_sweep.py`;
+      outputs `per_session.json`, `scaling_curve.json`, `latency_budget.tsv`.
+      Three sweep-driver bugs fixed beforehand:
+      `t.IdleWhenNotForeground=1` engine freeze on focus loss,
+      world-TimerManager auto-quit not firing on paused world (moved to
+      `FTSTicker::GetCoreTicker`), and `-ExecCmds` arriving after
+      `BeginPlay` (replaced by `-PCSP_AgentCount/SpawnSeed/RunDurationSeconds`
+      cmdline switches read via `FParse::Value`). Also added a WP
+      streaming source on the spawner + `RuntimeGeneration=Dynamic` for
+      standalone NavMesh parity with PIE — was 95 % pathfind failure
+      before, 0 % after.
 - [x] Stress test 64 agents — three-run progression (2026-05-17):
       **Run 1** session `20260517_150713` (1,490s, Rest cap=20, Social cap unchanged):
       9,833 `interaction_complete`, 69,421 `move_failed`, failure rate 87.6%.

@@ -51,6 +51,7 @@ param(
     [int[]]    $Seeds           = @(0, 1, 2),
     [int]      $DurationSeconds = 600,
     [string]   $WindowedRes     = "800x450",
+    [int]      $StartIndex      = 1,
     [switch]   $DryRun
 )
 
@@ -112,6 +113,10 @@ $runIdx = 0
 foreach ($n in $AgentCounts) {
     foreach ($seed in $Seeds) {
         $runIdx++
+        if ($runIdx -lt $StartIndex) {
+            Write-Host "[$runIdx/$totalRuns] SKIP (StartIndex=$StartIndex)  agents=$n seed=$seed"
+            continue
+        }
         $stamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
         # Pass values as cmdline switches (NOT -ExecCmds). UE's -ExecCmds queue
         # often runs after the first map's BeginPlay, so CVar-based overrides
