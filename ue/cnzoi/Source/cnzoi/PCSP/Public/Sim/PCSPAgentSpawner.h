@@ -66,6 +66,11 @@ protected:
 	UPROPERTY()
 	TArray<TObjectPtr<APCSPAgentCharacter>> SpawnedAgents;
 
+	/** Explicit persona IDs to cycle across spawned agents, resolved in
+	 *  BeginPlay from `pcsp.PersonaIds` / `-PCSP_PersonaIds`. Empty = default
+	 *  (i % 300) + 1 assignment. */
+	TArray<int32> PersonaIdOverride;
+
 	FTimerHandle SpawnDelayHandle;
 	float        SpawnWaitElapsed = 0.f;
 

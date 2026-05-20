@@ -79,10 +79,7 @@ Paper recompiles cleanly to 13 pages with no undefined references.
   rewrite the §6 results paragraph.
 - ~~**T1.3 missing points.**~~ Done 2026-05-20 — see Second-pass entry above.
 - ~~**T1.4.**~~ Done 2026-05-20 — see Third-pass entry below.
-- **T1.5 missing figures.** Contention heatmap (per-zone occupancy over
-  the episode); per-persona expressed-vs-preferred intent chart (requires
-  comparing full-stack action distributions against the persona's
-  unconstrained Layer-1 policy or against HybridNoPersona).
+- ~~**T1.5 missing figures.**~~ Done 2026-05-20 — see Fourth-pass entry below.
 
 No numbers were fabricated; every table cell is sourced from an existing
 log under `research/results/ue_sessions/` or
@@ -98,25 +95,90 @@ log under `research/results/ue_sessions/` or
   - `p009` Rest-leaning,
   - `p041` Observe/Study mix (high-entropy),
   - `p058` Work-leaning.
-  Analysis aggregates per-minute dominant intent category from
-  `decision` / `interaction_complete` events in
-  `ue/cnzoi/Saved/PCSP/Logs/20260518_121840/` (4 745 s standalone
-  `-game`, 64 agents, BT-abort 2.5 %) over the first 30 in-game minutes.
-  No engine changes — offline-only aggregation via
-  `research/scripts/build_persona_persistence.py`. Raw bin sequence and
+  A dedicated low-contention session was run for this figure:
+  `ue/cnzoi/Saved/PCSP/Logs/20260520_102022` — 8 agents (the 4 personas
+  ×2 each) in standalone `-game`, `pcsp.RunDurationSeconds=1800`
+  (1 794 s actual), **0.0 % BT-abort**, seed 0. Required a small engine
+  change: added a `pcsp.PersonaIds` CVar / `-PCSP_PersonaIds=1+9+41+58`
+  cmdline override to `APCSPAgentSpawner` so a low-agent-count run can
+  pin specific personas instead of the default 1..N cycle (`+`/`-`
+  separators because `FParse::Value` truncates a value token at a comma).
+  Each agent issues 119–291 intent decisions over the window (0.9–2.3×
+  the 128-step training episode). Per-minute aggregation via
+  `research/scripts/build_persona_persistence.py`; raw bin sequence and
   per-bin histograms in
-  `research/results/ue_sessions/20260518_121840/persona_persistence.json`.
+  `research/results/ue_sessions/20260520_102022/persona_persistence.json`.
 
-  Headline numbers (30 × 1-min bins):
-  - `p009`: 30/30 bins on Rest (top-category share 1.00, 1 run)
-  - `p058`: 26/30 Work (0.87, 9 runs — short Eat/Rest interludes)
-  - `p001`: 16/30 Social, 13/30 Rest (0.53, 6 runs)
-  - `p041`: 8 distinct categories, 22 transitions (0.27, high-entropy)
-  Horizon ≈ 14 × the Layer-1 training episode; policy is stateless
-  feed-forward so the persistence is purely a property of the persona
+  Headline numbers (30 × 1-min bins, top-category share):
+  - `p009`: 30/30 bins on Rest (1.00, single run, 291 decisions/agent)
+  - `p058`: Work modal in 17/30 bins (0.57, 16 runs, 5 categories)
+  - `p001`: Social-dominant 15/30 (0.50, 18 transitions, 5 categories)
+  - `p041`: even Social/Work split (0.47, 9 runs, high-entropy)
+  Persona ordering by focus preserved end-to-end; policy is stateless
+  feed-forward so persistence is purely a property of the persona
   embedding plus the InfoNCE-trained conditioning manifold.
 
   The TODO(T1.4) markers in `main.tex` (contributions block at §1.3 and
-  Layer-3 opener) are removed.
+  Layer-3 opener) are removed. New §7.5 *Long-horizon behavioural
+  persistence* added; the §7.6 *Failure analysis and contention*
+  subsection header (briefly clobbered by the §7.5 insert) is restored.
 
 All Tier-1 items from REVISE_PLAN.md are now complete.
+
+## Fourth pass — 2026-05-20 (T1.5 contention figures)
+
+- **T1.5 (complete, 2026-05-20).** The two outstanding §7.6 figures are
+  built and wired in. New `research/scripts/build_t15_contention.py`
+  reads a single canonical 64-agent HybridPCSP session
+  (`ue/cnzoi/Saved/PCSP/Logs/20260520_013551`, 3 881 decisions /
+  3 728 completed interactions over 629 s) and emits:
+  - `fig:ue5_contention` (`fig_ue5_contention_heatmap.pdf`) — per-zone
+    occupants/capacity across 30 time bins. Rest carries the load
+    (mean 0.51, peak 0.65); Work/Hygiene/Exercise peak ≈0.63–0.65;
+    Leisure/Shop stay empty.
+  - `fig:ue5_evp` (`fig_ue5_expressed_vs_preferred.pdf`) — policy
+    *preferred* category distribution (mean softmax over the 20-d
+    logits, folded to 11 categories) vs *expressed* (completed
+    affordance categories), aggregated over 64 agents. The policy's
+    top preferences Leisure (0.34) and Study (0.29) collapse at
+    execution (0.00 / 0.04) while Rest (0.03→0.48), Social (0.11→0.31),
+    and Work (0.03→0.11) absorb the displaced mass. Symmetric KL
+    (preferred‖expressed) = 9.07 nats — the execution-time compression
+    behind the ρ-drop, made concrete.
+  Sidecar JSON: `research/results/ue_sessions/20260520_013551/contention_t15.json`.
+  New "Where the contention lands" paragraph added to §7.6; the
+  `% TODO(T1.5)` marker in `main.tex` is removed.
+
+## Fifth pass — 2026-05-20 (T2.2 social-graph emergence)
+
+- **T2.2 (complete, 2026-05-20).** Tier-1 was already finished; the first
+  Tier-2 pick is T2.2 (social-graph emergence, §7.7, Fig 7). T2.1 (Melting
+  Pot cross-substrate transfer) is **blocked on this machine** — its
+  checkpoints live under the git-ignored `research/meltingpot/runs/` tree,
+  which is not present locally — so T2.2 was taken first.
+  New `research/scripts/build_t22_social_graph.py` reads the same canonical
+  64-agent HybridPCSP session (`ue/cnzoi/Saved/PCSP/Logs/20260520_013551`,
+  3 728 completed interactions). Logs carry no explicit partner field, so
+  co-presence is reconstructed from per-agent zone-occupancy intervals
+  (`decision`→`interaction_complete` fixes a zone, a `[t_start,t_end]`
+  window, and the completion position). A co-interaction edge joins two
+  agents when their intervals overlap in the same zone **and** their
+  interaction points are within a `--radius` (default 250 world units,
+  i.e. same/adjacent seat) — same-zone-category alone yields a
+  near-complete graph because one zone holds up to ~36 agents.
+  - New `fig:ue5_social` (`fig_ue5_social_graph.pdf`): 64 nodes coloured by
+    behavioural archetype (modal expressed category), edges weighted by
+    shared-zone overlap seconds, node size by weighted degree.
+  - Headline: 672 edges, density 0.33, mean weighted degree 21; **archetype
+    assortativity = 0.357**, 63.5 % of edges same-archetype. Robust to the
+    threshold and strengthens monotonically as it tightens (assortativity
+    0.135→0.256→0.357 for radius 600→400→250), confirming the structure is
+    driven by genuine physical co-location, not zone coincidence. No social
+    objective/reward exists — clustering is emergent.
+  Sidecar JSON: `research/results/ue_sessions/20260520_013551/social_graph_t22.json`
+  (includes the radius-sweep robustness block and per-node archetype map).
+  New §7.7 *Emergent social structure* added before §8.
+
+  **Not yet verified:** no LaTeX engine is installed on this machine, so the
+  paper was not recompiled after the §7.7 insert. The block is brace-balanced
+  and `fig:ue5_social` is defined+referenced; compile elsewhere to confirm.

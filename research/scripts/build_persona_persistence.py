@@ -61,7 +61,7 @@ PERSONA_LABEL = {
     6:  "p006  (Work/Study)",
     9:  "p009  (Rest)",
     13: "p013  (Rest/Work)",
-    41: "p041  (Observe/Study)",
+    41: "p041  (high-entropy)",
     58: "p058  (Work)",
 }
 

@@ -26,6 +26,34 @@ static TAutoConsoleVariable<int32> CVarPCSPAgentCount(
 	TEXT("Override APCSPAgentSpawner::AgentCount for this run (-1 = use actor value)."),
 	ECVF_Default);
 
+// T1.4 persona-persistence: pin the spawned agents to an explicit persona list
+// (comma-separated 1-based IDs) instead of the default 1..N cycle. Lets a
+// low-agent-count run sample specific, maximally-separated personas. Empty =
+// use the default (i % 300) + 1 assignment.
+static TAutoConsoleVariable<FString> CVarPCSPPersonaIds(
+	TEXT("pcsp.PersonaIds"), TEXT(""),
+	TEXT("Comma-separated 1-based persona IDs to cycle across spawned agents (empty = default 1..N)."),
+	ECVF_Default);
+
+static void ParsePersonaIdList(const FString& Raw, TArray<int32>& Out)
+{
+	Out.Reset();
+	// Accept comma, '+', or '-' separators. '+' / '-' are useful on the command
+	// line because FParse::Value stops a value token at a comma.
+	FString Normalized = Raw.Replace(TEXT("+"), TEXT(",")).Replace(TEXT("-"), TEXT(","));
+	TArray<FString> Tokens;
+	Normalized.ParseIntoArray(Tokens, TEXT(","), /*CullEmpty=*/true);
+	for (const FString& Tok : Tokens)
+	{
+		const FString Trimmed = Tok.TrimStartAndEnd();
+		if (Trimmed.IsNumeric())
+		{
+			const int32 Id = FCString::Atoi(*Trimmed);
+			if (Id >= 1) { Out.Add(Id); }
+		}
+	}
+}
+
 APCSPAgentSpawner::APCSPAgentSpawner()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -52,6 +80,16 @@ void APCSPAgentSpawner::BeginPlay()
 	if (SeedOverride  >= 0) { RandomSeed = SeedOverride; }
 	if (CountOverride >= 1) { AgentCount = CountOverride; }
 
+	// Resolve the explicit persona-ID list (cmdline wins over CVar, same as above).
+	FString PersonaIdsRaw = CVarPCSPPersonaIds.GetValueOnGameThread();
+	FString CmdPersonaIds;
+	if (FParse::Value(FCommandLine::Get(), TEXT("PCSP_PersonaIds="), CmdPersonaIds,
+		/*bShouldStopOnSeparator=*/false))
+	{
+		PersonaIdsRaw = CmdPersonaIds;
+	}
+	ParsePersonaIdList(PersonaIdsRaw, PersonaIdOverride);
+
 	// Seed the global FMath random stream once before any FMath::VRand /
 	// GetRandomReachablePointInRadius call so the spawn pattern is reproducible.
 	// Skipped when RandomSeed < 0 to preserve historical non-deterministic behavior.
@@ -76,11 +114,18 @@ void APCSPAgentSpawner::BeginPlay()
 
 	// Write run_config.json immediately (not inside SpawnAgents) so the session
 	// dir is labelled before the delayed spawn fires.
+	FString PersonaIdsJson = TEXT("[]");
+	if (PersonaIdOverride.Num() > 0)
+	{
+		TArray<FString> Parts;
+		for (int32 Id : PersonaIdOverride) { Parts.Add(FString::FromInt(Id)); }
+		PersonaIdsJson = FString::Printf(TEXT("[%s]"), *FString::Join(Parts, TEXT(",")));
+	}
 	const FString ConfigPath = UPCSPTrajectoryLogComponent::GetSessionDir() / TEXT("run_config.json");
 	const FString ConfigBlob = FString::Printf(
-		TEXT("{\"n_agents\":%d,\"seed\":%d,\"spawn_radius\":%.1f,\"spawn_on_navmesh\":%s}\n"),
+		TEXT("{\"n_agents\":%d,\"seed\":%d,\"spawn_radius\":%.1f,\"spawn_on_navmesh\":%s,\"persona_ids\":%s}\n"),
 		AgentCount, RandomSeed, SpawnRadius,
-		bSpawnOnNavMesh ? TEXT("true") : TEXT("false"));
+		bSpawnOnNavMesh ? TEXT("true") : TEXT("false"), *PersonaIdsJson);
 	FFileHelper::SaveStringToFile(ConfigBlob, *ConfigPath,
 		FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM,
 		&IFileManager::Get(), FILEWRITE_None);
@@ -174,11 +219,15 @@ int32 APCSPAgentSpawner::SpawnAgents()
 
 		if (AIControllerClass) { Agent->AIControllerClass = AIControllerClass; }
 
-		// Assign a unique 1-based persona ID so each agent uses a different embedding.
-		// IDs cycle through 1..300 (the full persona set).
+		// Assign a 1-based persona ID so each agent uses a different embedding.
+		// If an explicit list was supplied (pcsp.PersonaIds / -PCSP_PersonaIds),
+		// cycle through it; otherwise cycle the full 1..300 persona set.
 		if (Agent->Persona)
 		{
-			Agent->Persona->PersonaId = FString::FromInt((i % 300) + 1);
+			const int32 PersonaId = PersonaIdOverride.Num() > 0
+				? PersonaIdOverride[i % PersonaIdOverride.Num()]
+				: (i % 300) + 1;
+			Agent->Persona->PersonaId = FString::FromInt(PersonaId);
 		}
 
 		Agent->FinishSpawning(SpawnXform);
