@@ -295,3 +295,83 @@ All Tier-2 work that the checkpoints on this machine permit
 (T2.3 behavioural-axis metric — subsumed by `tab:mp_multi`; T2.4
 v3-large — GPU-bound; T2.5 human-written personas — requires recruitment)
 are deliberately out of scope for this submission.
+
+## Eighth pass — 2026-05-22 (T2.4 v3-large)
+
+- **T2.4 (complete, 2026-05-22).** v3-large is the v3 20-action ontology
+  at v2 scale: 12$\times$12 grid, 16 agents, 500 personas (400 train /
+  100 zero-shot test), obs.\ dim.\ 69, 300 PPO iterations, 3 seeds per
+  arm. New env class `src/env/mini_inzoi_v3_large.py` mirrors
+  `MiniInzoiV3Env` semantics with a 12$\times$12 footprint and the 8
+  world objects spread across the larger map; the 20-action ontology,
+  reward shape, and per-agent observation layout are unchanged.
+  New persona builder `research/scripts/build_personas_500_v3.py`
+  applies the v1$\to$v3 mapping table (`build_personas_v3.py`) to
+  `personas_500.json`, producing `personas_500_v3.json` and matched
+  `train_400_v3.json` / `test_100_v3.json` splits (split assignment
+  inherited from the source file).
+
+  *Training.* Full sweep through
+  `research/scripts/run_full_sweep_v3_large.py`: 4 PCSP modes
+  (`full`, `no_consist`, `no_diverse`, `concat`) + 2 baselines (B1
+  no-persona PPO, B3 SBERT-conditioned) $\times$ 3 seeds = 18 runs,
+  300 iterations each, $\approx$138 min/run, **38h wall-clock** on
+  the RTX 6000 Ada. Checkpoints under
+  `research/results/pcsp_v3_large/{mode}_seed{S}/{mode}/` and
+  `research/results/baselines_v3_large/{b1_no_persona,b3_sbert}_seed{S}/`.
+  Final rewards (mean$\pm$std over 3 seeds): full $119.0\pm2.0$,
+  no\_consist $122.2\pm0.9$, no\_diverse $112.8\pm8.5$, concat
+  $120.1\pm0.9$, B1 $57.8\pm1.1$, B3 $119.4\pm1.3$. B1's large reward
+  gap from the other arms ($\sim$2$\times$) confirms persona
+  conditioning is providing meaningful task signal at this scale.
+
+  *Zero-shot evaluation.* New
+  `research/scripts/run_eval_v3_large_zeroshot.py` iterates the per-seed
+  PCSP checkpoints, runs `zero_shot_consistency` on the 100 held-out
+  personas (5 episodes each) against the precomputed 500-persona Qwen3
+  embeddings (`results/embeddings/persona_embeddings_500.npy`), and
+  aggregates accuracy / coherence ratio across seeds. Per-checkpoint
+  cost is high ($\approx$26 min/ckpt because each episode is
+  16 agents $\times$ 200 steps $=$ 3200 transitions, $\sim$6$\times$ the
+  base v3 eval); 12 ckpts ran in $\approx$5h. Sidecar JSON per ckpt:
+  `eval_persona_classification_zs100.json`; aggregated summary:
+  `research/results/pcsp_v3_large/eval_zs100_summary.json`.
+
+  Headline numbers (3 seeds; chance top-1 = 0.010):
+  - **full**:       top-1 $0.040\pm0.009$ (4.0$\times$ chance), coherence $1.89\pm0.18$
+  - **no\_consist**: top-1 $0.013\pm0.005$ (at chance), coherence $1.05\pm0.01$
+  - **no\_diverse**: top-1 $0.054\pm0.029$, coherence $2.19\pm0.39$
+  - **concat**:     top-1 $0.058\pm0.004$, coherence $2.36\pm0.47$
+
+  The InfoNCE finding holds: removing the consistency loss collapses
+  trajectory-to-persona retrieval to chance and crushes the coherence
+  ratio to 1.05 (intra-persona cosine $\approx$ inter-persona cosine)
+  while task reward is preserved — exactly mirroring the v3-base
+  pattern. Concat slightly edges full on this larger setting, matching
+  the v3-base table. The diversity-loss ablation is within full's
+  Wilson interval at this scale, also matching v3-base. v3-large thus
+  closes out the "scaling" claim: the consistency objective is
+  load-bearing across grid size (6$\to$12), agent count (4$\to$16),
+  persona-set size (300$\to$500), and action ontology (12$\to$20).
+
+  *Paper integration.* New `tab:results_v3_large` added to App.~A
+  (`app:v1v2`) directly after `tab:results_v2`; the App.~A header
+  rewritten to enumerate all three replications; the
+  \S\ref{sec:evidence} opener and the "v3-large" Experimental Setup
+  paragraph added between v2 and the Results subsection. Compiles
+  cleanly to 16 pages, no undefined references.
+
+  *Infra note.* The repo has two namespace-package `src/` roots
+  (`co-spec/src/` for env code, `research/src/` for training/eval) that
+  Python merges as a namespace package; both directory `__init__.py`
+  files must remain absent for the merge to work (one introduced this
+  session was removed). The eval script puts `research/` first on
+  `sys.path` so the broken `co-spec/src/eval/__init__.py` (which imports
+  a non-existent `src.training.cleanrl_ppo`) is shadowed by
+  `research/src/eval/__init__.py`; the training scripts put `co-spec/`
+  first so env modules resolve. Recorded here because future agents
+  will hit it.
+
+T2.4 was the last Tier-2 item achievable from this machine; T2.5
+(human-written personas) still requires recruitment and remains out of
+scope.

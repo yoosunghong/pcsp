@@ -1,0 +1,12 @@
+{
+  "full": {
+    "iteration": 19,
+    "mean_ep_reward": 82.64381161893671,
+    "n_transitions": 25600,
+    "policy_loss": -0.011453769670333713,
+    "value_loss": 8.059071437716485,
+    "entropy": 2.222165815234184,
+    "consistency_loss": 1.9489209353923798,
+    "diversity_loss": -0.00787113793194294
+  }
+}

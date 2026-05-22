@@ -96,8 +96,8 @@
 - [x] Add `unseen_combo_v3` findings to `DONE.md`.
 - [ ] Cross-check whether the v3 legacy CLI vs compositional-wrapper accuracy discrepancy is reproducible.
 - [ ] Consider a focused follow-up analysis of architecture generalization gaps by split family.
-- [ ] Design and run v3-large: v3 20-action ontology at v2 scale (12x12, 16 agents, 500 personas) before claiming broad environment scaling.
-- [ ] Treat Melting Pot as optional external validation after v3-large, not as a blocker for the immediate human-eval study.
+- [x] Design and run v3-large: v3 20-action ontology at v2 scale (12x12, 16 agents, 500 personas) before claiming broad environment scaling. *(2026-05-22: complete. 4 PCSP modes + B1 + B3 × 3 seeds × 300 iter, ~38h wall-clock. Eval on 100 held-out personas: full=0.040±0.009 (4× chance), no_consist=0.013±0.005 (at chance, coherence collapses 1.89→1.05). InfoNCE finding replicates at expanded scale + richer ontology. Details: `revised/260519/done.md` Eighth pass; new `tab:results_v3_large` in App.~A of `paper/cog2026_main/main.tex`.)*
+- [x] Treat Melting Pot as optional external validation after v3-large, not as a blocker for the immediate human-eval study. *(2026-05-22: complete via Layer-2 Melting Pot integration — `tab:mp_multi` (3 substrates × 3 seeds × {full, no_infonce}), `tab:mp_transfer` (T2.1 held-out + CH↔CU cross-substrate), and the `phase5report` companion technical report. See `revised/260519/done.md`.)*
 - [x] UE5 zero-shot persona validation on held-out IDs 241..300 (2026-05-18):
       With Work + Hygiene zone capacities matched to the held-out demand
       profile, the v3 policy runs on personas 241..300 in UE5 with
