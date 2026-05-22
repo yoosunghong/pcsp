@@ -17,6 +17,12 @@
 \usepackage[hidelinks]{hyperref}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta, calc, positioning}
+\usepackage{placeins}
+
+% Tighten vertical spacing between top-floats (figures/tables) and surrounding text.
+\setlength{\textfloatsep}{10pt plus 2pt minus 4pt}
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
+\setlength{\intextsep}{8pt plus 2pt minus 2pt}
 
 \graphicspath{{../figures/}}
 
@@ -42,10 +48,10 @@ via Shared Reinforcement Learning Policies}
 
 % ---------------------------------------------------------------
 \begin{abstract}
-On a 300-persona life-simulation benchmark, \PCSP achieves zero-shot persona
-identification up to 17$\times$ above chance, Spearman $\rho\!\approx\!0.73$
-semantic-behavioral alignment, and 22$\times$ faster inference than an
-LLM-as-policy baseline. Life simulation games require hundreds to thousands of
+On a 300-persona life-simulation benchmark, \PCSP achieves compositional
+zero-shot persona identification (unseen-occupation held-out) up to
+17$\times$ above chance, Spearman $\rho\!\approx\!0.73$ semantic-behavioral
+alignment, and 22$\times$ faster inference than an LLM-as-policy baseline. Life simulation games require hundreds to thousands of
 non-player characters (NPCs) that behave consistently with distinct personalities
 while remaining controllable through designer-authored natural language.
 Hand-authored behavior trees, per-character RL policies, unsupervised skill
@@ -67,7 +73,14 @@ and dyadic-matrix social dilemmas (\texttt{commons\_harvest\_\_open},
 confirms that the \S\ref{sec:method} method produces persona-conditioned
 behavioral divergence in multi-agent strategic substrates and that the
 consistency-loss ablation collapses trajectory$\to$persona retrieval to chance
-in every substrate while leaving (or inflating) pairwise action-KL. A UE5
+in every substrate while leaving (or inflating) pairwise action-KL.
+We distinguish two senses of held-out evaluation: \emph{compositional zero-shot}
+(unseen occupation $\times$ archetype crosses within the trained
+persona-space coverage; the regime of Layer 1 and Layer 3), and
+\emph{vocabulary-expansion held-out} (new persona tokens whose embeddings
+lie inside the convex hull of training embeddings but were never present at
+training; the regime where Layer 2 still fails, top-1 $=0$, and which we
+report as an open problem). A UE5
 deployment reproduces the in-engine persona-conditioning ablation at 64 agents
 with a 1.7\% failure rate and held-out zero-shot generalization at 0.04\%
 failure, showing that the sub-frame inference profile and ablation structure
@@ -97,7 +110,7 @@ current game AI architectures were not designed to address.
 
 \subsection{The NPC Personalization Scaling Gap}
 
-\paragraph{Behavior trees} remain the industrial standard~\cite{yannakakis2018ai}.
+\paragraph{Behavior trees} remain the industrial standard~\cite{yannakakis2018ai,colledanchise2018bt}.
 A skilled designer hand-crafts decision logic for each character archetype.
 This produces believable, predictable NPCs, but authoring cost scales linearly
 with character count, and trees are brittle outside authored scenarios.
@@ -109,7 +122,7 @@ behaviors. In practice, memory and training cost also scale linearly, and each
 new persona requires a full retraining cycle---a prohibitive expense for
 live-service games that regularly introduce new characters.
 
-\paragraph{LLM-as-policy} methods~\cite{park2023generative,wang2023voyager,yao2023react}
+\paragraph{LLM-as-policy} methods~\cite{park2023generative,wang2023voyager,yao2023react,shinn2023reflexion,wei2022chain}
 achieve rich, natural-language-grounded persona expression by querying a language
 model at every decision step. This works well in offline or turn-based contexts,
 but even our local Qwen3-1.7B LLM-as-policy baseline requires 43.7\,ms per
@@ -120,7 +133,8 @@ minute-resolution plans rather than per-frame actions, which suits narrative
 simulation but cannot drive moment-to-moment NPC movement and activity selection.
 
 \paragraph{Unsupervised skill discovery} (DIAYN~\cite{eysenbach2018diayn},
-CIC~\cite{laskin2022cic}) learns a shared policy conditioned on latent skill codes,
+CIC~\cite{laskin2022cic}), often paired with intrinsic-motivation
+objectives~\cite{pathak2017curiosity}, learns a shared policy conditioned on latent skill codes,
 achieving behavioral diversity without per-character training. But the codes carry
 no semantic content. A game designer cannot specify ``this NPC should be agreeable
 and fitness-oriented'' by selecting a latent index.
@@ -154,7 +168,9 @@ alignment, and real-time deployment.
 \begin{enumerate}
   \setlength\itemsep{2pt}
   \item \textbf{Method.} \PCSP{}---a shared policy conditioned on frozen LLM
-    persona embeddings via low-rank projection and FiLM/concat fusion,
+    persona embeddings via a low-rank persona projection (LoRA-style matrix
+    factorization used as a standalone projection layer, not as a parallel
+    adapter on a pretrained weight) and FiLM/concat fusion,
     co-trained with PPO, an InfoNCE trajectory-consistency objective, and
     KL diversity regularization (\S\ref{sec:method}).
   \item \textbf{Three-layer validation methodology.} We argue that
@@ -207,7 +223,12 @@ matter for practical life-simulation NPC deployment.
   \centering
   \small
   \caption{Paradigm comparison. \checkmark\,= satisfied, $\times$ = not
-    satisfied, $\triangle$ = partially satisfied.}
+    satisfied, $\triangle$ = partially satisfied. The \PCSP{} row reports
+    satisfaction \emph{in our evaluated settings} (the three-layer stack of
+    \S\ref{sec:layers}); open issues such as Melting Pot vocabulary-expansion
+    held-out recovery (\S\ref{sec:mp_transfer}), broader human believability,
+    and open-world generalization beyond Layer 3 are discussed in
+    \S\ref{sec:limits}.}
   \label{tab:paradigms}
   \setlength{\tabcolsep}{3pt}
   \begin{tabular}{lcccc}
@@ -263,7 +284,11 @@ Techniques such as action caching, plan reuse, and smaller distilled models can
 reduce latency, but the fundamental tension---rich language reasoning versus
 real-time step budgets---remains. Generalist agents such as
 Gato~\cite{reed2022gato} demonstrate that a single model can handle diverse
-tasks, but inference cost is similar.
+tasks, but inference cost is similar. Large-scale self-play agents such as
+AlphaStar~\cite{vinyals2019alphastar}, OpenAI Five~\cite{berner2019dota},
+and AlphaZero~\cite{silver2018alphazero} establish that RL can master complex
+games, but they specialize a single policy to a single game rather than
+expressing a vocabulary of personas within one world.
 
 \paragraph{Summary.}
 No existing paradigm satisfies all four axes. The design space between
@@ -287,13 +312,21 @@ deferred to \S\ref{sec:layers} together with the layer they instantiate.
 \subsection{Persona Encoding}
 
 Given persona text $p$, we compute a frozen LLM embedding
-$\hat{e}_p \in \mathbb{R}^{1024}$ using Qwen3-0.6B-Embedding~\cite{qwen3embed}
-(last-token pooling, L2-normalized).
+$\hat{e}_p \in \mathbb{R}^{1024}$ using the Transformer-based~\cite{vaswani2017attention}
+Qwen3-0.6B-Embedding~\cite{qwen3embed}
+(last-token pooling, L2-normalized); contrastively-trained sentence encoders
+such as Sentence-BERT~\cite{reimers2019sbert} provide our B3 baseline below.
 This is computed once per NPC lifetime (14.6\,ms/persona), imposing negligible
 runtime cost.
 
-A learned low-rank projection~\cite{hu2022lora} ($r\!=\!16$,
-$\text{lr}\!=\!10^{-4}$) maps $\hat{e}_p \to e_p \in \mathbb{R}^{64}$:
+A learned low-rank persona projection ($r\!=\!16$,
+$\text{lr}\!=\!10^{-4}$) maps $\hat{e}_p \to e_p \in \mathbb{R}^{64}$
+through a low-dimensional projection layer whose matrix-factorization
+structure is inspired by LoRA~\cite{hu2022lora}---we do not add a parallel
+$BA$ adapter to a pretrained weight matrix in the Qwen3 backbone; rather, we
+factor the standalone $1024\!\to\!64$ persona projection as a rank-$16$
+$BA$ to keep the learnable persona pathway small while leaving the embedding
+model frozen:
 \[
 \begin{aligned}
   e_p &= \operatorname{norm}\!\left(\alpha\, B A \hat{e}_p\right), \\
@@ -339,7 +372,9 @@ the policy is conditioned.
     + \lambda_2 \mathcal{L}_{\text{diverse}},
 \end{equation}
 with $\lambda_1\!=\!0.5$, $\lambda_2\!=\!0.1$ (PPO: $\gamma\!=\!0.99$,
-$\epsilon\!=\!0.2$, GAE-$\lambda\!=\!0.95$, batch\,$=\!2048$~\cite{schulman2017ppo}).
+$\epsilon\!=\!0.2$, GAE-$\lambda\!=\!0.95$, batch\,$=\!2048$~\cite{schulman2017ppo};
+cooperative multi-agent PPO variants~\cite{yu2022mappo,dewitt2020ippo} share the
+same per-agent update used here).
 
 \textbf{Consistency loss.}
 A 2-layer GRU trajectory encoder $g_\eta(\tau) \in \mathbb{R}^{64}$
@@ -453,11 +488,12 @@ and report each layer against the question it can actually answer
 Validating that a policy's behavior is causally traceable to its conditioning
 embedding requires an environment where (i) every state transition is fully
 observable, (ii) the action space is small enough to compute exact trajectory
-distributions and KL divergences, (iii) reward shaping is independent of
-persona, and (iv) episode length is short enough to run thousands of held-out
+distributions and KL divergences, (iii) the reward composition is controllable
+so that the contribution of any persona-aligned shaping term can be isolated
+or removed, and (iv) episode length is short enough to run thousands of held-out
 personas. No commercial or photorealistic environment satisfies all four
 simultaneously. We therefore construct \PCSPD{} (\PCSP-Diagnostic; formerly
-\textit{Mini-Inzoi}), an intentionally minimal PettingZoo AEC substrate
+\textit{Mini-Inzoi}), an intentionally minimal PettingZoo~\cite{terry2021pettingzoo} AEC substrate
 (6$\times$6 grid, 4 agents, 20 discrete intents over 8 bio-social needs) whose
 role in this paper is \emph{not} to demonstrate behavioral realism---that is
 the role of Layers 2 and 3---but to expose the InfoNCE consistency term to
@@ -475,8 +511,19 @@ position, time-of-day, needs, summaries of the other agents, and (v3) location
 affordance, social context, and routine regularity.
 Reward combines needs satisfaction, persona-aligned activity bonuses ($+0.5$
 for preferred actions), and social bonuses scaled by Big Five
-compatibility~\cite{mccrae1992introduction}
+compatibility~\cite{mccrae1992introduction,goldberg1990bigfive}
 ($0.2 + 0.3 \times \text{cos-sim}(\text{BF}_i, \text{BF}_j)$).
+The v1/v2 base ontology uses only needs-driven and persona-agnostic social
+shaping; the v3 instantiation additionally adds a per-action persona-style
+term (\S\ref{sec:evidence}) that is \emph{declared as part of the
+\PCSPD-v3 environment}, not as a method component, and that the InfoNCE
+ablation (\S\ref{sec:evidence}) is run against without modification so that
+any persona-recoverability collapse cannot be attributed to removing this
+shaping. The mechanistic claim of the paper---that the InfoNCE consistency
+loss is what makes trajectories traceable to their conditioning persona---is
+therefore demonstrated under \emph{both} the persona-agnostic-reward regime
+(v1/v2) and the persona-style-reward regime (v3): the no\_consist ablation
+collapses zero-shot identification to chance in every case.
 
 \textbf{Persona dataset.}
 300 persona texts are generated from 15 Big Five archetypes $\times$ 20
@@ -821,7 +868,7 @@ none of the above triggers).
     training distribution: their mean nearest-neighbor distance to any
     training persona is $12.9\times$ the mean train--train nearest-neighbor
     distance.
-    \textbf{(b)} After the learned 64-dim LoRA projection used by the policy,
+    \textbf{(b)} After the learned 64-dim low-rank persona projection used by the policy,
     the same designer personas are fully intermixed with training personas
     across all five sources (ratio drops to $1.47\times$).
     The projection is what makes the case-study setting effectively
@@ -840,9 +887,9 @@ multilingual Qwen3 backbone plus the learned low-rank projection yields a
 language-agnostic persona representation. Figure~\ref{fig:designer_tsne}
 makes the role of the projection explicit: in the raw Qwen3 space the English
 designer personas form a clearly separated cluster ($12.9\times$ the
-train--train nearest-neighbor distance), but after the learned LoRA projection
-that the policy actually consumes they are fully intermixed with the Korean
-training personas ($1.47\times$). The mean cosine similarity between each
+train--train nearest-neighbor distance), but after the learned low-rank persona projection
+that the policy actually consumes (the low-rank persona projection) they are
+fully intermixed with the Korean training personas ($1.47\times$). The mean cosine similarity between each
 English persona and its nearest Korean training neighbor drops only modestly
 (0.608 with the Korean-text variant of the same designer set vs.\ 0.590 here),
 and per-source success rates are stable or higher across the language shift.
@@ -899,7 +946,10 @@ checkpoints, again showing strong monotone alignment at both scales.
 
 \PCSPD{} isolates persona-conditioned control in a deliberately small grid
 world; Layer 2 tests whether the method survives a different observation
-geometry, action ontology, and social-dilemma structure. We apply \PCSP{}
+geometry, action ontology, and social-dilemma structure. Cooperative
+multi-agent benchmarks such as Hanabi~\cite{bard2020hanabi} and centralized-critic
+algorithms~\cite{foerster2018coma,lowe2017maddpg} target related challenges of
+joint policy learning, but do not address per-agent persona conditioning. We apply \PCSP{}
 unchanged---no algorithmic modifications beyond the CNN front-end required
 by RGB inputs---to three \textit{Melting Pot
 2.4.0}~\cite{leibo2021meltingpot} substrates spanning three distinct
@@ -923,7 +973,7 @@ observation to a 256-d feature that feeds the unchanged FiLM trunk, and (ii) a
 small persona-agnostic shaping term $\tilde r_i = r_i + 0.1\cdot\bar r$
 (team-mean potential) is added to escape the well-known apple-depletion trap on
 which vanilla PPO collapses to zero return. All other components---frozen
-Qwen3-0.6B-Embedding, LoRA $r\!=\!16$ persona projection $1024\!\to\!64$, FiLM
+Qwen3-0.6B-Embedding, rank-$16$ low-rank persona projection $1024\!\to\!64$, FiLM
 trunk 256-256-128, 2-layer GRU trajectory encoder, full-batch InfoNCE at
 $T\!=\!0.07$ and $\lambda_{\text{IC}}\!=\!0.5$, KL diversity at
 $\lambda_2\!=\!0.1$ over $8$ personas $\times\,32$ states, and PPO
@@ -1178,13 +1228,13 @@ To characterise the realtime envelope of the hybrid stack we ran a full
 scaling sweep on a single workstation:
 $\{8,16,32,64,96,128\}$ agents $\times\;3$ seeds $\times\;630$\,s in
 standalone \texttt{-game} mode, $18$ runs total
-(\texttt{research/results/ue\_sessions/scaling\_20260520/}).
+(\texttt{research/\allowbreak results/\allowbreak ue\_sessions/\allowbreak scaling\_20260520/}).
 Table~\ref{tab:ue5_scaling} reports the per-setting latency budget, frame
 time, BT-abort failure rate, and per-agent intent throughput. All runs share
 the same ONNX policy, the same $0.5$\,s decision throttle with
 urgency-driven preemption, and a $60$\,FPS wall budget.
 The sweep is fully automated by \texttt{tools/run\_scaling\_sweep.ps1},
-which sets \texttt{-PCSP\_AgentCount}/\texttt{SpawnSeed}/\texttt{RunDurationSeconds}
+which sets \texttt{-PCSP\_AgentCount}\,/\,\allowbreak\texttt{SpawnSeed}\,/\,\allowbreak\texttt{RunDurationSeconds}
 on the command line (\texttt{FParse::Value} reads these before any
 \texttt{BeginPlay}); auto-quit fires from \texttt{FTSTicker::GetCoreTicker}
 inside \texttt{UPCSPPerfSamplerSubsystem}, and a $+90$\,s PowerShell
@@ -1366,9 +1416,9 @@ episode), spanning $30$ minutes of wall-clock realtime. For each persona
 we bin every \texttt{decision} / \texttt{interaction\_complete} event
 into $1$-minute windows and report the dominant intent category per bin
 (Fig.~\ref{fig:persona_persistence}, derived by
-\texttt{research/scripts/build\_persona\_persistence.py}; raw bin
+\texttt{research/\allowbreak scripts/\allowbreak build\_\allowbreak persona\_\allowbreak persistence.py}; raw bin
 sequence and per-bin category histograms in
-\texttt{research/results/ue\_sessions/20260520\_102022/persona\_persistence.json}).
+\texttt{research/\allowbreak results/\allowbreak ue\_sessions/\allowbreak 20260520\_\allowbreak 102022/\allowbreak persona\_\allowbreak persistence.json}).
 
 \begin{figure}[t]
   \centering
@@ -1604,6 +1654,8 @@ may alter future action preferences. A natural extension is to separate stable
 persona traits from dynamic memory state, using a lightweight event-conditioned
 update model or retrieval-augmented memory module that can influence the shared
 policy without requiring per-step LLM inference~\cite{park2023generative}.
+Persona-grounded dialog corpora~\cite{zhang2018personachat} provide a
+complementary signal for evolving personas from social interaction.
 
 \textbf{Scaling to richer environments.}
 The Melting Pot evidence in \S\ref{sec:meltingpot} now spans three substrates
@@ -1622,7 +1674,9 @@ to a substrate-invariant projection as the next architectural target.
 The UE5 deployment in \S\ref{sec:ue5} shows that the sub-frame inference
 profile and the persona-conditioning ablation both survive the move out of
 the Python benchmark; what remains is commercial-scale multi-agent
-validation in worlds substantially richer than a single district.
+validation in worlds substantially richer than a single district, including
+procedurally-generated suites~\cite{cobbe2020procgen} that stress
+persona-policy generalization beyond a fixed training map.
 
 \textbf{Human evaluation methodology.}
 Automatic metrics are necessary for ablations but insufficient for perceived NPC
@@ -1696,8 +1750,13 @@ persona consistency, natural-language controllability, zero-shot
 generalization, and real-time inference.
 
 Across three \PCSPD{} settings, \PCSP achieves up to 17$\times$ above-chance
-zero-shot persona identification, $\rho\!\approx\!0.73$ semantic-behavioral
-alignment, and 22$\times$ faster inference than an LLM-as-policy baseline.
+\emph{compositional} zero-shot persona identification (unseen-occupation
+held-out crosses), $\rho\!\approx\!0.73$ semantic-behavioral alignment, and
+22$\times$ faster inference than an LLM-as-policy baseline. We separate this
+regime from \emph{vocabulary-expansion} held-out evaluation in Melting Pot
+(\S\ref{sec:mp_transfer}), where top-1 retrieval on the two genuinely held-out
+persona tokens remains at $0$ across $11$ runs and which we flag as the most
+direct open problem.
 External validation on three \textit{Melting Pot 2.4.0} substrates
 (\texttt{commons\_harvest\_\_open}, \texttt{clean\_up},
 \texttt{prisoners\_dilemma\_in\_the\_matrix\_\_repeated}) confirms that the same
@@ -1713,6 +1772,17 @@ report~\cite{phase5report}, and complete human studies using rich trajectory
 traces.
 
 % ---------------------------------------------------------------
+% Loosen float-packing parameters so the appendix figures and tables
+% pack densely instead of each landing on its own page.
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\bottomfraction}{0.95}
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\floatpagefraction}{0.80}
+\renewcommand{\dbltopfraction}{0.95}
+\renewcommand{\dblfloatpagefraction}{0.80}
+\setcounter{topnumber}{4}
+\setcounter{bottomnumber}{4}
+\setcounter{totalnumber}{8}
 \appendices
 \section{Layer 1 base-scale (v1), expanded-scale (v2), and v3-large replications}
 \label{app:v1v2}
@@ -1726,9 +1796,9 @@ Experimental Setup paragraphs of \S\ref{sec:evidence}; metrics, baselines,
 and chance levels are unchanged. v3-large is the only one of the three with
 3-seed aggregation; v1 and v2 report point estimates from a single seed.
 
-\begin{figure}[h]
+\begin{figure*}[!t]
   \centering
-  \includegraphics[width=\linewidth]{fig2_learning_v1v2.png}
+  \includegraphics[width=0.9\textwidth]{fig2_learning_v1v2.png}
   \caption{%
     \textbf{Training reward curves at two scales.}
     (a) v1 (6$\times$6, 4 agents, 300 iters).
@@ -1741,9 +1811,9 @@ and chance levels are unchanged. v3-large is the only one of the three with
     accuracy is within the Wilson CI of full (\S\ref{sec:evidence}).
   }
   \label{fig:learning}
-\end{figure}
+\end{figure*}
 
-\begin{table}[t]
+\begin{table}[!t]
   \centering
   \small
   \caption{%
@@ -1768,7 +1838,7 @@ and chance levels are unchanged. v3-large is the only one of the three with
     $^\dagger$KL $\approx\!0.39$; $\rho$ not meaningful.}
 \end{table}
 
-\begin{table}[t]
+\begin{table}[!t]
   \centering
   \small
   \caption{%
@@ -1791,7 +1861,7 @@ and chance levels are unchanged. v3-large is the only one of the three with
     $^\ddagger$High KL without consistency reflects unstructured divergence, not persona alignment.}
 \end{table}
 
-\begin{table}[t]
+\begin{table}[!t]
   \centering
   \small
   \caption{%
@@ -1821,7 +1891,7 @@ and chance levels are unchanged. v3-large is the only one of the three with
    agents, 5/3$\times$ personas, under the 20-action ontology.}
 \end{table}
 
-\begin{figure}[h]
+\begin{figure}[!htbp]
   \centering
   \includegraphics[width=\linewidth]{fig4_zeroshot.png}
   \caption{%
@@ -1834,7 +1904,7 @@ and chance levels are unchanged. v3-large is the only one of the three with
   \label{fig:zeroshot}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[!htbp]
   \centering
   \includegraphics[width=\linewidth]{fig3_kl_v1v2.png}
   \caption{%
