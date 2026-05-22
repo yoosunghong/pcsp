@@ -1,6 +1,6 @@
 # Phase 5 — Architecture & Data-Flow Diagrams
 
-Mermaid source for the architectural figures referenced by the paper extension.
+Mermaid source for the UE5 portfolio architecture figures.
 Render with any Mermaid-aware viewer (GitHub renders these inline).
 
 ---
@@ -191,9 +191,9 @@ HybridNoPersona = 13.3% fail / 574 reward (yellow).
 ## Render notes
 
 - All five diagrams render directly in GitHub's Markdown preview.
-- For paper inclusion, export each to PDF/PNG via [mermaid-cli](https://github.com/mermaid-js/mermaid-cli):
+- Export each to PDF/PNG via [mermaid-cli](https://github.com/mermaid-js/mermaid-cli):
   ```
   mmdc -i diagrams.md -o ../../../paper/figures/fig_<name>.pdf
   ```
-- Diagrams 1, 2, and 3 are the most paper-load-bearing; 4 is reference for
-  the architecture writeup; 5 documents the ablation methodology.
+- Diagrams 1, 2, and 3 are the most important for portfolio explanation; 4 is
+  reference for the affordance architecture; 5 documents the ablation methodology.

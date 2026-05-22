@@ -20,6 +20,22 @@ Movement is an execution detail, not a policy action. The policy should output s
 | Main | Medium district | 16 | 300-500 | Paper reproduction plus UE5 extension |
 | Stress | Large district | 32-64 | 500+ | Scalability and real-time evaluation |
 
+## Current Portfolio Focus
+
+Near-term UE5 agent work is portfolio-focused. Prioritize engine-facing
+extensions before demo presentation:
+
+1. Stabilize the live hybrid policy / Behavior Tree contract.
+2. Improve affordance selection under congestion with EQS or weighted scoring.
+3. Add async/batched inference only when targeting larger showcase runs or
+   when synchronous inference becomes visible in capture.
+4. Extend observability so live HUD panels can reuse the same event stream as
+   JSONL logs.
+5. Build the nearest-agent camera focus and HUD after the runtime behavior is
+   strong enough to showcase.
+
+Detailed portfolio docs live under [docs/portfolio/](docs/portfolio/).
+
 ## Architecture Tasks
 
 - Define an affordance-zone taxonomy for the UE5 level.
@@ -295,20 +311,20 @@ Movement is an execution detail, not a policy action. The policy should output s
 ### Phase 5: Paper And Portfolio Artifacts
 
 - [x] Prepare implementation diagrams
-      ([docs/phase5/diagrams.md](docs/phase5/diagrams.md) — 5 Mermaid figures:
+      ([docs/portfolio/diagrams.md](docs/portfolio/diagrams.md) — 5 Mermaid figures:
       system overview, per-decision sequence, BT subtree, three-layer
       affordance, ablation mode switch).
-- [ ] Capture rich trajectory clips (requires PIE — `[NEEDS CAPTURE]` slot
-      X.7 in paper extension).
+- [ ] Capture rich trajectory clips (requires PIE; use the capture sequence in
+      [docs/portfolio/demo-video-hud-plan.md](docs/portfolio/demo-video-hud-plan.md)).
+- [x] Draft portfolio demo video and HUD plan
+      ([docs/portfolio/demo-video-hud-plan.md](docs/portfolio/demo-video-hud-plan.md)):
+      scenario beats, capture checklist, nearest-agent camera focus via
+      `SetViewTargetWithBlend`, and HUD panels for persona, needs,
+      decision stack, affordance state, social context, and trajectory events.
 - [/] Prepare UE5 screenshots, performance tables, and architecture figures.
       Architecture figures done (Mermaid); performance/ablation tables
       drafted from `ablation.json`; PIE screenshots
       (`[NEEDS CAPTURE]` slots X.5, X.6) deferred to next editor session.
-- [x] Draft the paper extension section: "Engine-Integrated Hybrid Persona Control"
-      ([docs/phase5/paper_extension.md](docs/phase5/paper_extension.md) —
-      7-section draft covering hybrid stack, why-hybrid, trajectory
-      logging, Phase 4 results, implementation cost, limitations,
-      reproducibility, plus figure/table inventory).
 - [x] Intra-session persona-distance vs action-KL Spearman
       (2026-05-18): `research/scripts/analyze_persona_distance_vs_kl.py`
       reads `summary.json` (per-persona `policy_probs` from logits, with
@@ -326,6 +342,23 @@ Movement is an execution detail, not a policy action. The policy should output s
       persona signal at execution time; NoConsist scoring *higher*
       than Full PCSP here echoes the v1/v3 "reward hides the failure"
       pattern and is worth a limitations-section note.
+
+### Portfolio Engineering Roadmap
+
+Portfolio work is now ordered around engine-facing technical depth first and
+demo presentation second. Start with the runtime extensions that make the
+simulation more robust and explainable; build the camera/HUD only after those
+systems have at least a first pass. All portfolio planning docs live under
+`docs/portfolio/`.
+
+| Order | Item | Status | Planning doc | UE5 update target |
+| --- | --- | --- | --- |
+| 1 | Hybrid policy/BT contract cleanup | Live, minor open issues | [docs/portfolio/hybrid-stack.md](docs/portfolio/hybrid-stack.md) | centralize action-to-category mapping, handle `Leisure`, log active ablation |
+| 2 | EQS-driven affordance congestion handling | Deferred | [docs/portfolio/eqs-congestion.md](docs/portfolio/eqs-congestion.md) | `UPCSPAffordanceSubsystem`, `UBTTask_MoveToAffordance`, EQS query/tests |
+| 3 | Async/batched ONNX inference | Deferred | [docs/portfolio/async-inference.md](docs/portfolio/async-inference.md) | `UPCSPPolicySubsystem`, `BTTask_PCSPDecision`, spawner AgentIndex wiring |
+| 4 | Trajectory observability pipeline extensions | Live, extendable | [docs/portfolio/observability.md](docs/portfolio/observability.md) | `UPCSPTrajectoryLogComponent`, analyzer scripts, HUD event ring buffer |
+| 5 | Agent-camera focus + demo HUD | Planned after extension work | [docs/portfolio/demo-video-hud-plan.md](docs/portfolio/demo-video-hud-plan.md) | Demo observer controller, agent camera/view target, UMG HUD/data adapter |
+| 6 | Diagram polish | Live, update after implementation | [docs/portfolio/diagrams.md](docs/portfolio/diagrams.md) | refresh architecture figures and capture inventory |
 
 ## Debug Log Map
 

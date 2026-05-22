@@ -153,15 +153,10 @@ one pass.
   would need (async batched inference, more zones, WP streaming sources).
 
 **Phase 5:**
-- [docs/phase5/diagrams.md](docs/phase5/diagrams.md) — 5 Mermaid diagrams:
+- [docs/portfolio/diagrams.md](docs/portfolio/diagrams.md) — 5 Mermaid diagrams:
   system overview (research→UE→analysis), per-decision sequence diagram,
   BT subtree with failure branches, three-layer affordance system,
   ablation runtime switch. Render via mermaid-cli for paper inclusion.
-- [docs/phase5/paper_extension.md](docs/phase5/paper_extension.md) — draft
-  of the paper extension section ("Engine-Integrated Hybrid Persona
-  Control"). 7 sub-sections plus figure/table inventory marking which
-  artifacts still need PIE capture (X.5/X.6/X.7 — screenshots and video).
-
 **Training-side ablation spec** added to `research/PLAN.md` Phase E. Lists
 the two ONNX exports still needed for the full ablation table
 (`Hybrid-NoConsist` and `RL-only`) with concrete recipes — `no_consist`
@@ -484,3 +479,26 @@ Output: `research/results/ue_sessions/scaling_20260520/`
 
 Note: sessions 011402, 012457, 013551, 014644, 015736, 020829 are from a
 duplicate sweep script that ran parallel UE instances; excluded from analysis.
+
+## 2026-05-22 - Portfolio Demo Video And HUD Plan
+
+- Added [docs/portfolio/demo-video-hud-plan.md](docs/portfolio/demo-video-hud-plan.md).
+- The document defines the portfolio video structure, shot list, scenario beats,
+  demo-map policy, capture checklist, and a concrete HUD information
+  architecture for selected agents.
+- It also specifies the planned nearest-agent camera focus feature:
+  use `SetViewTargetWithBlend()` from a demo observer controller instead of
+  true controller possession, so `APCSPAIController` and the Behavior Tree keep
+  running while the player observes an agent's camera.
+- Updated [docs/portfolio/README.md](docs/portfolio/README.md) and
+  [docs/index.md](docs/index.md) with the new artifact.
+
+## 2026-05-22 - Portfolio Documentation Consolidation
+
+- Moved Phase 5 architecture diagrams into the portfolio directory:
+  [docs/portfolio/diagrams.md](docs/portfolio/diagrams.md).
+- Reworked [docs/portfolio/README.md](docs/portfolio/README.md) around the
+  intended implementation order: hybrid cleanup, EQS congestion, async
+  inference, observability extensions, then camera/HUD capture.
+- Updated [PLAN.md](PLAN.md) so portfolio work is now explicitly
+  engine-extension-first and demo-UI-second.
