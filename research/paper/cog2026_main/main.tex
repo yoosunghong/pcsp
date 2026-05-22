@@ -1150,144 +1150,39 @@ clean follow-up.
 \label{sec:ue5}
 
 \noindent\textbf{Layer 3 framing.}
-A persona-conditioned policy is only meaningful if it survives the engineering
-pressure of a real game engine: asynchronous tick rates, NavMesh contention,
-BT failure recovery, ONNX runtime constraints, and shared world state. We
-deploy a \emph{frozen} Layer-1 (\PCSPD{}-v3) checkpoint into UE5.5 via a
-hybrid intent stack---\PCSP{} selects semantic intents, the Behavior Tree,
-Blackboard, EQS, and NavMesh execute them---and ask three questions that
-Layers 1 and 2 cannot answer: (i) does the policy meet a realtime wall-budget
-at deployment scale; (ii) does the InfoNCE finding survive engine-side
-contention; (iii) do personas maintain identity over horizons far longer than
-the training episode.
-% T1.3 scaling sweep: complete (Tab.~\ref{tab:ue5_scaling}, results from
-% research/results/ue_sessions/scaling_20260520/).
-% T1.4 long-horizon persona-persistence figure: complete (Fig.~\ref{fig:persona_persistence}, \S\ref{sec:ue5_persistence}).
-
-
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=\linewidth]{{Research–UE5 split}.png}
-  \caption{%
-    \textbf{Research--UE5 split.} The Python pipeline (left) trains
-    \PCSP and exports a single ONNX actor plus a JSON of L2-normalised
-    persona projections. Unreal (centre) loads both into
-    \texttt{UPCSPPolicySubsystem} and runs synchronous inference inside a
-    Blackboard-driven Behaviour Tree; per-decision JSONL traces feed the
-    offline analysis scripts (right). No engine-side training.
-  }
-  \label{fig:ue5_system}
-\end{figure}
-
-To test whether the \S\ref{sec:method} method survives the engineering pressure of
-a commercial game engine, we ported a v3 checkpoint into Unreal Engine 5.5 as a
-hybrid behaviour stack (Fig.~\ref{fig:ue5_system}): \PCSP chooses semantic
-intents (e.g.\ \texttt{EatQuick}, \texttt{FocusedWork},
-\texttt{LeisureOutdoor}), and Behaviour Tree, Blackboard, EQS,
+A persona-conditioned policy is only meaningful if it survives the
+engineering pressure of a real game engine: asynchronous tick rates,
+NavMesh contention, BT failure recovery, ONNX runtime constraints, and
+shared world state. We deploy a \emph{frozen} Layer-1 (\PCSPD{}-v3)
+checkpoint into Unreal Engine 5.5 as a hybrid intent stack
+(architecture and PIE screenshots in App.~\ref{app:ue5_system},
+Figs.~\ref{fig:ue5_system}--\ref{fig:ue5_debugger}): \PCSP{} selects
+semantic intents (e.g.\ \texttt{EatQuick}, \texttt{FocusedWork},
+\texttt{LeisureOutdoor}) and the Behavior Tree, Blackboard, EQS,
 AIController, and NavMesh execute them. The policy is exported to ONNX
-(20-action head, $33$-d obs, $64$-d persona projection) and run through Epic's
-NNE/NNERuntimeORT plugin from a custom \texttt{UPCSPPolicySubsystem}. Persona
-embeddings are loaded once at level start from the same
-\texttt{persona\_embeddings.json} produced by the research pipeline; the policy
-network itself is the unmodified PCSP checkpoint.
+(20-action head, $33$-d obs, $64$-d persona projection) and run through
+Epic's NNE/NNERuntimeORT plugin from a custom
+\texttt{UPCSPPolicySubsystem}; persona embeddings are loaded once at
+level start from the same \texttt{persona\_embeddings.json} produced by
+the research pipeline, and the policy network itself is the unmodified
+\PCSP{} checkpoint (no engine-side training).
+With this stack we ask three questions that Layers 1 and 2 cannot
+answer: (i) does the policy meet a realtime wall-budget at deployment
+scale; (ii) does the InfoNCE finding survive engine-side contention;
+(iii) do personas maintain identity over horizons far longer than the
+training episode.
 
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=\linewidth]{ue5-topdown.png}
-  \caption{%
-    \textbf{\texttt{Map\_PCSPDistrict\_M} in PIE.} Top-down view with
-    affordance-zone labels (SocialHub, Library/Study, Office/Work,
-    Bedroom/Rest, \ldots); each green sphere is an
-    \texttt{APCSPAgentCharacter} executing the hybrid PCSP/BT stack. The
-    map has $10$ zones spanning the v3 affordance taxonomy (Kitchen,
-    Bedroom, Office, Library, Gym, Bathroom, SocialHub, Park, Shop;
-    Leisure folded into Observe).
-  }
-  \label{fig:ue5_screenshot}
-\end{figure}
-
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=\linewidth]{ue5-x6.png}
-  \caption{%
-    \textbf{Gameplay Debugger overlay on a single agent.}
-    Yellow text (right) is the live Blackboard / BT snapshot for the
-    selected \texttt{APCSPAgentCharacter}: current
-    \texttt{DesiredActionType}, \texttt{UrgencyScore},
-    \texttt{bAffordanceReserved}, and the active BT node. This view
-    confirms that the persona branch is routing decisions through
-    \texttt{BTTask\_PCSPDecision} $\to$ \texttt{MoveToAffordance} $\to$
-    \texttt{PerformInteraction} and that the emergency decorator fires
-    only when \texttt{UrgencyScore}~$\geq\!0.85$.
-  }
-  \label{fig:ue5_debugger}
-\end{figure}
-
-\textbf{Scale and real-time behaviour.}
-To characterise the realtime envelope of the hybrid stack we ran a full
-scaling sweep on a single workstation:
-$\{8,16,32,64,96,128\}$ agents $\times\;3$ seeds $\times\;630$\,s in
-standalone \texttt{-game} mode, $18$ runs total
-(\texttt{research/\allowbreak results/\allowbreak ue\_sessions/\allowbreak scaling\_20260520/}).
-Table~\ref{tab:ue5_scaling} reports the per-setting latency budget, frame
-time, BT-abort failure rate, and per-agent intent throughput. All runs share
-the same ONNX policy, the same $0.5$\,s decision throttle with
-urgency-driven preemption, and a $60$\,FPS wall budget.
-The sweep is fully automated by \texttt{tools/run\_scaling\_sweep.ps1},
-which sets \texttt{-PCSP\_AgentCount}\,/\,\allowbreak\texttt{SpawnSeed}\,/\,\allowbreak\texttt{RunDurationSeconds}
-on the command line (\texttt{FParse::Value} reads these before any
-\texttt{BeginPlay}); auto-quit fires from \texttt{FTSTicker::GetCoreTicker}
-inside \texttt{UPCSPPerfSamplerSubsystem}, and a $+90$\,s PowerShell
-watchdog guarantees forward progress.
-
-Three observations dominate the curve. (i) \emph{ONNX inference is not the
-bottleneck.} Mean per-call latency stays at $183$--$202$\,\textmu s through
-$n{=}64$; the apparent drop to $154$\,\textmu s ($n{=}96$) and
-$132$\,\textmu s ($n{=}128$) reflects CPU-scheduler timeslicing at
-saturation, not model speedup. (ii) \emph{Frame time scales near-linearly
-at $\sim\!0.27$\,ms/agent}, with the $p95$ frame budget intact through
-$n{=}96$ ($15.9$\,ms) and only $0.4$\,ms over the $16.67$\,ms $60$\,FPS
-budget at $n{=}128$. (iii) \emph{NavMesh pathfinding is the hard ceiling.}
-BT-abort failure rate is $\leq\!0.2\%$ for $n{\leq}64$, rises to $4.7\%$ at
-$n{=}96$, and collapses to $\mathbf{44.9\%}$ at $n{=}128$ as concurrent
-\texttt{FindPath} requests exceed the Recast query queue's async capacity
-(synchronous BT \texttt{MoveToAffordance}). The recommended real-time
-operating point is $\boldsymbol{n{\leq}64}$; $96$ is a soft cap;
-$128{+}$ requires async batched pathfinding or a crowd-simulation fallback.
-Intent throughput is stable at $5.6$--$6.1$ intents/agent/min for
-$n{\leq}64$ --- per-agent decision rate is invariant under crowd
-scaling.
-
-\begin{table}[t]
-  \centering
-  \small
-  \caption{%
-    \textbf{UE5 scaling sweep (Fig.~\ref{fig:ue5_screenshot}; $18$ runs).}
-    $\{8,16,32,64,96,128\}$ agents $\times\;3$ seeds $\times\;630$\,s on
-    \texttt{Map\_PCSPDistrict\_M} in standalone \texttt{-game} mode.
-    All runs use the same frozen v3 ONNX policy, identical zone
-    capacities, $0.5$\,s decision throttle, and $60$\,FPS wall budget.
-    Inference latency stays well under the $250$\,\textmu s per-agent budget
-    through $n{=}64$; the hard ceiling is NavMesh \texttt{FindPath}
-    saturation at $n{\geq}96$, not policy inference.
-    Source: \texttt{latency\_budget.tsv} from
-    \texttt{research/scripts/analyze\_scaling\_sweep.py}.}
-  \label{tab:ue5_scaling}
-  \setlength{\tabcolsep}{2pt}
-  \scriptsize
-  \begin{tabular}{rrrrrrr}
-    \toprule
-    Agents & infer\,$\bar{\mu}$s & infer\,$p95\,\mu$s & frame\,$\bar{\text{ms}}$ & frame\,$p95$\,ms & Fail\,\% & Int./ag./min \\
-    \midrule
-    8   & 183.2 & 234.8 &  5.57 &  7.75 &  0.1 & 5.67 \\
-    16  & 184.1 & 230.5 &  5.84 &  8.19 &  0.0 & 5.67 \\
-    32  & 202.6 & 257.6 &  7.53 & 11.27 &  0.0 & 6.06 \\
-    \textbf{64}  & \textbf{199.8} & \textbf{264.1} & \textbf{10.25} & \textbf{13.38} & \textbf{0.2} & \textbf{5.61} \\
-    96  & 153.7 & 198.1 & 11.62 & 15.89 &  4.7 & 5.35 \\
-    128 & 132.0 & 181.6 & 14.39 & 17.05 & \textbf{44.9} & 4.98 \\
-    \bottomrule
-  \end{tabular}
-\end{table}
+\textbf{Realtime envelope (summary).}
+A single-workstation scaling sweep
+($\{8,16,32,64,96,128\}$ agents $\times\;3$ seeds $\times\;630$\,s in
+standalone \texttt{-game} mode; full protocol and per-setting numbers in
+App.~\ref{app:ue5_scaling}, Table~\ref{tab:ue5_scaling}) establishes that
+ONNX inference is \emph{not} the bottleneck (mean per-call latency
+$183$--$202$\,\textmu s through $n{=}64$); frame time scales near-linearly
+at $\sim\!0.27$\,ms/agent; and the hard ceiling is NavMesh \texttt{FindPath}
+saturation, not policy inference (BT-abort rate $\leq\!0.2\%$ for $n{\leq}64$,
+$4.7\%$ at $n{=}96$, $44.9\%$ at $n{=}128$). We therefore fix
+$n\!=\!64$ as the operating point for every Layer-3 finding below.
 
 \begin{table}[t]
   \centering
@@ -1574,27 +1469,12 @@ reachable, not what their embedding most prefers, compressing the persona
 signal at execution time. We treat this gap as a quantified engine--research
 mismatch, not a refutation of the in-research result.
 
-\textbf{Observability.}
-In addition to the offline JSONL traces, the live Gameplay Debugger
-(Fig.~\ref{fig:ue5_debugger}) exposes per-agent Blackboard and BT state
-at runtime. Every agent emits a per-decision JSONL trace (action, $20$-d softmax logits,
-$8$-d needs snapshot, urgency, reward, zone selection diagnostic, failure
-reason). The same \texttt{analyze\_ue\_session.py} pipeline that aggregates these
-traces also computes per-persona symmetric KL between paired PIE sessions, so
-the consistency-loss ablation that defines the paper's central finding can be
-re-run inside the engine without re-instrumenting.
-
-\textbf{Implementation cost.}
-The engine integration is deliberately lightweight: $\sim\!2{,}000$ lines of
-C++ across \texttt{Source/cnzoi/PCSP/} (one world subsystem, five agent
-components, three BT tasks, an agent character), one $\sim\!4$\,MB ONNX file
-plus a $\sim\!150$\,KB persona-embedding JSON, and zero engine-side training.
-The Python pipeline remains the single source of truth for both the policy and
-the persona embeddings. The 64-agent stress test runs at $\geq\!60$\,FPS in PIE
-on a single consumer GPU/CPU; inference is synchronous on the BT tick with a
-$0.5$\,s decision throttle and exponential backoff on repeated move failures,
-capping ONNX calls at $\leq\!128/\text{s}$ at this scale---comfortably within
-the NNERuntimeORT CPU path's headroom without async batching.
+Per-decision JSONL traces, the live Gameplay Debugger overlay
+(Fig.~\ref{fig:ue5_debugger}), and a $\sim\!2{,}000$-line C++ integration
+make the consistency-loss ablation re-runnable inside the engine without
+re-instrumenting; full observability instrumentation, trace schema, and
+implementation-cost breakdown are described in
+App.~\ref{app:ue5_pipeline}.
 
 % ---------------------------------------------------------------
 \subsection{Emergent social structure}
@@ -1919,6 +1799,185 @@ and chance levels are unchanged. v3-large is the only one of the three with
   }
   \label{fig:kl}
 \end{figure}
+
+% ---------------------------------------------------------------
+% Appendix B: UE5 system architecture (engine integration figures).
+% Appendix C: Inference pipeline, observability, and implementation cost.
+% Appendix D: Realtime scaling sweep on a single workstation.
+% Scientific Layer-3 findings (held-out transfer, in-engine ablation,
+% consistency-loss replication, long-horizon persistence, the rho-drop
+% mechanism, and emergent social structure) remain in \S\ref{sec:ue5}.
+% ---------------------------------------------------------------
+
+\section{UE5 System Architecture}
+\label{app:ue5_system}
+
+This appendix collects the engine-integration scaffolding for the
+Layer-3 deployment whose \emph{scientific} findings are reported in
+\S\ref{sec:ue5}. Figure~\ref{fig:ue5_system} shows the
+research\,/\,engine split: the Python pipeline trains \PCSP and exports a
+single ONNX actor plus a JSON of L2-normalised persona projections;
+Unreal loads both into \texttt{UPCSPPolicySubsystem} and runs synchronous
+inference inside a Blackboard-driven Behaviour Tree; per-decision JSONL
+traces feed the offline analysis scripts. No engine-side training.
+Figure~\ref{fig:ue5_screenshot} shows \texttt{Map\_PCSPDistrict\_M} in PIE
+with the affordance-zone layout used throughout the Layer-3 evaluation,
+and Fig.~\ref{fig:ue5_debugger} shows the live Gameplay Debugger overlay
+that exposes per-agent Blackboard and BT state at runtime.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{{Research–UE5 split}.png}
+  \caption{%
+    \textbf{Research--UE5 split.} The Python pipeline (left) trains
+    \PCSP and exports a single ONNX actor plus a JSON of L2-normalised
+    persona projections. Unreal (centre) loads both into
+    \texttt{UPCSPPolicySubsystem} and runs synchronous inference inside a
+    Blackboard-driven Behaviour Tree; per-decision JSONL traces feed the
+    offline analysis scripts (right). No engine-side training.
+  }
+  \label{fig:ue5_system}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{ue5-topdown.png}
+  \caption{%
+    \textbf{\texttt{Map\_PCSPDistrict\_M} in PIE.} Top-down view with
+    affordance-zone labels (SocialHub, Library/Study, Office/Work,
+    Bedroom/Rest, \ldots); each green sphere is an
+    \texttt{APCSPAgentCharacter} executing the hybrid PCSP/BT stack. The
+    map has $10$ zones spanning the v3 affordance taxonomy (Kitchen,
+    Bedroom, Office, Library, Gym, Bathroom, SocialHub, Park, Shop;
+    Leisure folded into Observe).
+  }
+  \label{fig:ue5_screenshot}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{ue5-x6.png}
+  \caption{%
+    \textbf{Gameplay Debugger overlay on a single agent.}
+    Yellow text (right) is the live Blackboard / BT snapshot for the
+    selected \texttt{APCSPAgentCharacter}: current
+    \texttt{DesiredActionType}, \texttt{UrgencyScore},
+    \texttt{bAffordanceReserved}, and the active BT node. This view
+    confirms that the persona branch is routing decisions through
+    \texttt{BTTask\_PCSPDecision} $\to$ \texttt{MoveToAffordance} $\to$
+    \texttt{PerformInteraction} and that the emergency decorator fires
+    only when \texttt{UrgencyScore}~$\geq\!0.85$.
+  }
+  \label{fig:ue5_debugger}
+\end{figure}
+
+\section{Inference Pipeline, Observability, and Implementation Cost}
+\label{app:ue5_pipeline}
+
+This appendix documents the engine-side instrumentation and the
+integration footprint that supports the Layer-3 findings in
+\S\ref{sec:ue5}. The key claim is reproducibility: the same
+consistency-loss ablation that defines the paper's central Layer-1
+finding can be re-run end-to-end inside the engine without
+re-instrumenting, on top of an integration that is small enough to be
+audited in a single sitting.
+
+\textbf{Observability.}
+In addition to the offline JSONL traces, the live Gameplay Debugger
+(Fig.~\ref{fig:ue5_debugger}) exposes per-agent Blackboard and BT state
+at runtime. Every agent emits a per-decision JSONL trace (action,
+$20$-d softmax logits, $8$-d needs snapshot, urgency, reward, zone
+selection diagnostic, failure reason). The same
+\texttt{analyze\_ue\_session.py} pipeline that aggregates these traces
+also computes per-persona symmetric KL between paired PIE sessions, so
+the consistency-loss ablation that defines the paper's central finding
+can be re-run inside the engine without re-instrumenting.
+
+\textbf{Implementation cost.}
+The engine integration is deliberately lightweight: $\sim\!2{,}000$
+lines of C++ across \texttt{Source/cnzoi/PCSP/} (one world subsystem,
+five agent components, three BT tasks, an agent character), one
+$\sim\!4$\,MB ONNX file plus a $\sim\!150$\,KB persona-embedding JSON,
+and zero engine-side training. The Python pipeline remains the single
+source of truth for both the policy and the persona embeddings. The
+64-agent stress test runs at $\geq\!60$\,FPS in PIE on a single consumer
+GPU/CPU; inference is synchronous on the BT tick with a $0.5$\,s
+decision throttle and exponential backoff on repeated move failures,
+capping ONNX calls at $\leq\!128/\text{s}$ at this scale---comfortably
+within the NNERuntimeORT CPU path's headroom without async batching.
+
+\section{Realtime Scaling Sweep}
+\label{app:ue5_scaling}
+
+This appendix reports the single-workstation scaling sweep that
+establishes the realtime envelope of the hybrid stack and identifies
+NavMesh \texttt{FindPath} saturation (not policy inference) as the hard
+ceiling. Table~\ref{tab:ue5_scaling} is the source data behind the
+``\,$n\!\leq\!64$ recommended, $n\!=\!96$ soft cap, $n\!\geq\!128$
+requires async batched pathfinding\,'' guidance referenced in
+\S\ref{sec:ue5}.
+
+\textbf{Protocol.}
+$18$ runs total
+(\texttt{research/\allowbreak results/\allowbreak ue\_sessions/\allowbreak scaling\_20260520/}).
+All runs share the same ONNX policy, the same $0.5$\,s decision throttle
+with urgency-driven preemption, and a $60$\,FPS wall budget.
+The sweep is fully automated by \texttt{tools/run\_scaling\_sweep.ps1},
+which sets \texttt{-PCSP\_AgentCount}\,/\,\allowbreak\texttt{SpawnSeed}\,/\,\allowbreak\texttt{RunDurationSeconds}
+on the command line (\texttt{FParse::Value} reads these before any
+\texttt{BeginPlay}); auto-quit fires from \texttt{FTSTicker::GetCoreTicker}
+inside \texttt{UPCSPPerfSamplerSubsystem}, and a $+90$\,s PowerShell
+watchdog guarantees forward progress.
+
+\textbf{Observations.}
+(i) \emph{ONNX inference is not the bottleneck.} Mean per-call latency
+stays at $183$--$202$\,\textmu s through $n{=}64$; the apparent drop to
+$154$\,\textmu s ($n{=}96$) and $132$\,\textmu s ($n{=}128$) reflects
+CPU-scheduler timeslicing at saturation, not model speedup.
+(ii) \emph{Frame time scales near-linearly at $\sim\!0.27$\,ms/agent},
+with the $p95$ frame budget intact through $n{=}96$ ($15.9$\,ms) and only
+$0.4$\,ms over the $16.67$\,ms $60$\,FPS budget at $n{=}128$.
+(iii) \emph{NavMesh pathfinding is the hard ceiling.} BT-abort failure
+rate is $\leq\!0.2\%$ for $n{\leq}64$, rises to $4.7\%$ at $n{=}96$, and
+collapses to $\mathbf{44.9\%}$ at $n{=}128$ as concurrent
+\texttt{FindPath} requests exceed the Recast query queue's async capacity
+(synchronous BT \texttt{MoveToAffordance}). The recommended real-time
+operating point is $\boldsymbol{n{\leq}64}$; $96$ is a soft cap;
+$128{+}$ requires async batched pathfinding or a crowd-simulation
+fallback. Intent throughput is stable at $5.6$--$6.1$ intents/agent/min
+for $n{\leq}64$ --- per-agent decision rate is invariant under crowd
+scaling.
+
+\begin{table}[t]
+  \centering
+  \small
+  \caption{%
+    \textbf{UE5 scaling sweep (Fig.~\ref{fig:ue5_screenshot}; $18$ runs).}
+    $\{8,16,32,64,96,128\}$ agents $\times\;3$ seeds $\times\;630$\,s on
+    \texttt{Map\_PCSPDistrict\_M} in standalone \texttt{-game} mode.
+    All runs use the same frozen v3 ONNX policy, identical zone
+    capacities, $0.5$\,s decision throttle, and $60$\,FPS wall budget.
+    Inference latency stays well under the $250$\,\textmu s per-agent budget
+    through $n{=}64$; the hard ceiling is NavMesh \texttt{FindPath}
+    saturation at $n{\geq}96$, not policy inference.
+    Source: \texttt{latency\_budget.tsv} from
+    \texttt{research/scripts/analyze\_scaling\_sweep.py}.}
+  \label{tab:ue5_scaling}
+  \setlength{\tabcolsep}{2pt}
+  \scriptsize
+  \begin{tabular}{rrrrrrr}
+    \toprule
+    Agents & infer\,$\bar{\mu}$s & infer\,$p95\,\mu$s & frame\,$\bar{\text{ms}}$ & frame\,$p95$\,ms & Fail\,\% & Int./ag./min \\
+    \midrule
+    8   & 183.2 & 234.8 &  5.57 &  7.75 &  0.1 & 5.67 \\
+    16  & 184.1 & 230.5 &  5.84 &  8.19 &  0.0 & 5.67 \\
+    32  & 202.6 & 257.6 &  7.53 & 11.27 &  0.0 & 6.06 \\
+    \textbf{64}  & \textbf{199.8} & \textbf{264.1} & \textbf{10.25} & \textbf{13.38} & \textbf{0.2} & \textbf{5.61} \\
+    96  & 153.7 & 198.1 & 11.62 & 15.89 &  4.7 & 5.35 \\
+    128 & 132.0 & 181.6 & 14.39 & 17.05 & \textbf{44.9} & 4.98 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 % ---------------------------------------------------------------
 \clearpage
