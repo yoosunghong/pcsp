@@ -69,7 +69,18 @@ public:
 
 	const TArray<TWeakObjectPtr<APCSPAffordanceZone>>& GetAllZones() const { return Zones; }
 
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	virtual void OnWorldBeginPlay(UWorld& InWorld) override;
+	virtual void Deinitialize() override;
+
 protected:
 	UPROPERTY()
 	TArray<TWeakObjectPtr<APCSPAffordanceZone>> Zones;
+
+	/** T1.5 contention telemetry — 1 Hz dump of {t, zone_tag, category, occupants, capacity}
+	 *  to <session>/zone_occupancy.jsonl. */
+	void SampleOccupancy();
+
+	FTimerHandle OccupancySampleTimerHandle;
+	FString      OccupancyLogPath;
 };

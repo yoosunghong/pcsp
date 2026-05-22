@@ -1,0 +1,203 @@
+{
+  "session_dir": "ue\\cnzoi\\Saved\\PCSP\\Logs\\20260520_013551",
+  "colocation_radius": 250.0,
+  "n_agents": 64,
+  "total_completions": 3728,
+  "graph": {
+    "n_nodes": 64,
+    "n_edges": 672,
+    "density": 0.3333333333333333,
+    "mean_degree": 21.0,
+    "archetype_assortativity": 0.3570256971022416,
+    "modularity": 0.22773513662752953,
+    "n_communities": 3
+  },
+  "archetype_counts": {
+    "Social": 24,
+    "Rest": 30,
+    "Work": 9,
+    "Study": 1
+  },
+  "same_archetype_edge_fraction": 0.6354166666666666,
+  "radius_sweep": [
+    {
+      "radius": 250.0,
+      "n_edges": 672,
+      "density": 0.3333,
+      "archetype_assortativity": 0.3570256971022416,
+      "same_archetype_edge_fraction": 0.6354166666666666
+    },
+    {
+      "radius": 400.0,
+      "n_edges": 1163,
+      "density": 0.5769,
+      "archetype_assortativity": 0.2558605211505262,
+      "same_archetype_edge_fraction": 0.5485812553740327
+    },
+    {
+      "radius": 600.0,
+      "n_edges": 1581,
+      "density": 0.7842,
+      "archetype_assortativity": 0.134672751376414,
+      "same_archetype_edge_fraction": 0.45983554712207464
+    }
+  ],
+  "node_archetype": {
+    "p001": "Social",
+    "p002": "Rest",
+    "p003": "Social",
+    "p004": "Rest",
+    "p005": "Work",
+    "p006": "Work",
+    "p007": "Work",
+    "p008": "Study",
+    "p009": "Rest",
+    "p010": "Social",
+    "p011": "Social",
+    "p012": "Work",
+    "p013": "Rest",
+    "p014": "Social",
+    "p015": "Rest",
+    "p016": "Social",
+    "p017": "Social",
+    "p018": "Social",
+    "p019": "Rest",
+    "p020": "Work",
+    "p021": "Rest",
+    "p022": "Rest",
+    "p023": "Rest",
+    "p024": "Rest",
+    "p025": "Social",
+    "p026": "Social",
+    "p027": "Rest",
+    "p028": "Rest",
+    "p029": "Rest",
+    "p030": "Rest",
+    "p031": "Social",
+    "p032": "Social",
+    "p033": "Social",
+    "p034": "Rest",
+    "p035": "Social",
+    "p036": "Rest",
+    "p037": "Work",
+    "p038": "Rest",
+    "p039": "Rest",
+    "p040": "Work",
+    "p041": "Social",
+    "p042": "Rest",
+    "p043": "Work",
+    "p044": "Rest",
+    "p045": "Rest",
+    "p046": "Social",
+    "p047": "Rest",
+    "p048": "Social",
+    "p049": "Rest",
+    "p050": "Rest",
+    "p051": "Work",
+    "p052": "Social",
+    "p053": "Rest",
+    "p054": "Rest",
+    "p055": "Social",
+    "p056": "Social",
+    "p057": "Rest",
+    "p058": "Social",
+    "p059": "Rest",
+    "p060": "Rest",
+    "p061": "Social",
+    "p062": "Social",
+    "p063": "Social",
+    "p064": "Rest"
+  },
+  "top_co_interaction_pairs": [
+    {
+      "pair": [
+        "p042",
+        "p048"
+      ],
+      "overlap_s": 26.3,
+      "events": 4,
+      "same_archetype": false
+    },
+    {
+      "pair": [
+        "p024",
+        "p027"
+      ],
+      "overlap_s": 24.1,
+      "events": 9,
+      "same_archetype": true
+    },
+    {
+      "pair": [
+        "p052",
+        "p054"
+      ],
+      "overlap_s": 21.5,
+      "events": 5,
+      "same_archetype": false
+    },
+    {
+      "pair": [
+        "p041",
+        "p055"
+      ],
+      "overlap_s": 19.7,
+      "events": 4,
+      "same_archetype": true
+    },
+    {
+      "pair": [
+        "p027",
+        "p030"
+      ],
+      "overlap_s": 19.6,
+      "events": 8,
+      "same_archetype": true
+    },
+    {
+      "pair": [
+        "p033",
+        "p048"
+      ],
+      "overlap_s": 18.4,
+      "events": 7,
+      "same_archetype": true
+    },
+    {
+      "pair": [
+        "p033",
+        "p055"
+      ],
+      "overlap_s": 18.4,
+      "events": 9,
+      "same_archetype": true
+    },
+    {
+      "pair": [
+        "p037",
+        "p044"
+      ],
+      "overlap_s": 18.2,
+      "events": 4,
+      "same_archetype": false
+    },
+    {
+      "pair": [
+        "p015",
+        "p057"
+      ],
+      "overlap_s": 17.7,
+      "events": 7,
+      "same_archetype": true
+    },
+    {
+      "pair": [
+        "p046",
+        "p060"
+      ],
+      "overlap_s": 16.9,
+      "events": 3,
+      "same_archetype": false
+    }
+  ]
+}

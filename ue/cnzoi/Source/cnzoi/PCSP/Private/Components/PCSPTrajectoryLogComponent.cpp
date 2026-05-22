@@ -183,7 +183,7 @@ void UPCSPTrajectoryLogComponent::RecordDecision(EPCSPActionType Action, float U
 }
 
 void UPCSPTrajectoryLogComponent::RecordDecisionWithLogits(EPCSPActionType Action,
-	float UrgencyScore, TArrayView<const float> Logits)
+	float UrgencyScore, TArrayView<const float> Logits, double InferenceMicros)
 {
 	FString Extra;
 	if (Logits.Num() > 0)
@@ -194,6 +194,11 @@ void UPCSPTrajectoryLogComponent::RecordDecisionWithLogits(EPCSPActionType Actio
 			Extra += FString::Printf(TEXT("%s%.4f"), i == 0 ? TEXT("") : TEXT(","), Logits[i]);
 		}
 		Extra += TEXT("]");
+	}
+	if (InferenceMicros >= 0.0)
+	{
+		if (!Extra.IsEmpty()) { Extra += TEXT(","); }
+		Extra += FString::Printf(TEXT("\"infer_us\":%.2f"), InferenceMicros);
 	}
 	EmitEvent(EPCSPTrajectoryEvent::Decision, Action, FGameplayTag(), 0.f,
 	          EPCSPAffordanceCategory::None, UrgencyScore, Extra);

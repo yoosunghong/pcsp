@@ -12,3 +12,4 @@ Project docs for the UE5 side of PCSP. See `PLAN.md` for the active task roadmap
 | [phase0/scale-targets.md](phase0/scale-targets.md) | Empirical confirmation of Debug/Main/Stress scale targets with reference runs |
 | [phase5/diagrams.md](phase5/diagrams.md) | Architecture and runtime data-flow diagrams (Mermaid) |
 | [phase5/paper_extension.md](phase5/paper_extension.md) | Draft "Engine-Integrated Hybrid Persona Control" section for the PCSP paper extension |
+| [portfolio/README.md](portfolio/README.md) | Engineering-area PLAN documents (EQS congestion, async inference, observability, hybrid stack) — portfolio format |

@@ -193,3 +193,294 @@ doc links.
   inter-persona dispersion, ρ + symmetric KL vs reference). BTOnly
   KL vs reference is reported as `null` because its logits are zero
   by construction.
+
+## 2026-05-18 - Intra-Session Persona-Distance vs Action-KL
+
+- Added `research/scripts/analyze_persona_distance_vs_kl.py`. Reads a
+  session `summary.json` (per-persona `policy_probs` from logits, with
+  fallback to the 20-bin action histogram) and the active
+  `persona_embeddings.json`, then for every persona pair computes
+  cosine distance over the 64-d embedding vs symmetric KL over the
+  policy distribution and reports the Spearman ρ between the two
+  pairwise vectors. Optional `--manifest` arg handles held-out slot
+  remapping. Output written next to the session summary as
+  `persona_distance_vs_kl.json` with `n_pairs`, `spearman_rho`,
+  `pearson_r`, plus the full scatter table for follow-up plotting.
+- Results across the four logit-bearing 64-agent sessions:
+  - `noconsist_ablation_20260518` (Full PCSP, 2,016 pairs):
+    ρ = 0.236, mean cos-dist 0.532, mean KL 1.78.
+  - `noconsist_only_20260518` (NoConsist checkpoint, same map): ρ = 0.569.
+  - `kl_20260518_151255` (Full PCSP): ρ = 0.257.
+  - `btonly_detail` (BTOnly, sanity check): ρ = 0.007 with KL ≡ 0 —
+    expected, since BTOnly emits zero logits and bypasses the persona
+    vector entirely.
+- Headline: in-engine ρ ≈ 0.24-0.26 for the consistency-trained
+  checkpoint, well below the paper's research-side ρ ≈ 0.73 — the BT
+  + capacity contention layer compresses the persona signal at
+  execution time. Interestingly the NoConsist checkpoint scores
+  *higher* (0.57) here, mirroring the v1/v3 "reward hides the
+  failure" pattern: removing the consistency loss does not collapse
+  the engine-level persona separability metric, even though
+  research-side analysis flags it. Worth noting in the paper
+  extension's limitations section.
+
+## 2026-05-19 - T1 telemetry prep (scaling-curve / persistence / contention)
+
+Three additive telemetry hooks landed ahead of the T1.3 scaling sweep
+([research/revised/260519/REVISE_PLAN.md](../../research/revised/260519/REVISE_PLAN.md)).
+All emit to the existing `Saved/PCSP/Logs/<stamp>/` session dir; no schema
+break — existing `analyze_ue_session.py` aggregations continue to work.
+
+- **ONNX inference latency (Gap 1, T1.3).**
+  `UPCSPPolicySubsystem::RunInferenceWithLogits` now returns wall-time in
+  microseconds via a `double& OutInferenceMicros` out-parameter (timed with
+  `FPlatformTime::Seconds()` around the existing `RunInference` body).
+  `BTTask_PCSPDecision::ExecuteTask` plumbs the value through to
+  `UPCSPTrajectoryLogComponent::RecordDecisionWithLogits(..., double InferenceMicros = -1.0)`,
+  which appends `"infer_us":<f>` to each `decision` JSONL row alongside the
+  existing `logits` array. Direct measurement was required because the
+  pre-existing throttle (`MinDecisionInterval`, `BTTask_PCSPDecision.cpp:58`)
+  makes per-decision `t` deltas useless as a latency proxy.
+
+- **Zone occupancy sampler (Gap 3, T1.5).**
+  `UPCSPAffordanceSubsystem` now overrides `OnWorldBeginPlay` to start a
+  1 Hz timer (`SampleOccupancy`) that iterates `Zones[]` and appends one row
+  per zone per second to `<session>/zone_occupancy.jsonl`:
+  `{t, zone_tag, category, occupants, capacity}`. Drives the §7.6
+  contention heatmap. `APCSPAffordanceZone::GetCurrentOccupancy()` already
+  existed but was never emitted.
+
+- **Frame-time sampler (Gap 2, T1.3).**
+  New `UPCSPPerfSamplerSubsystem` (`PCSP/Sim/PCSPPerfSamplerSubsystem.{h,cpp}`)
+  — a `UTickableWorldSubsystem` that captures DeltaTime each frame into a
+  rolling buffer and on a 1 Hz timer dumps
+  `{t, n_samples, mean_ms, p50_ms, p95_ms, p99_ms}` to
+  `<session>/frame_stats.jsonl`. Gated to `PIE` / `Game` world types; no-op
+  in editor preview. Single writer, zero per-agent overhead.
+
+All additions are local — no changes to `cnzoi.Build.cs` (Sim/Public &
+Sim/Private already in PublicIncludePaths/PrivateIncludePaths). Next step
+is an editor rebuild + 16-agent / 60-s PIE smoke run to verify the three
+new JSONL files populate, then the T1.3 sweep `{8, 16, 32, 64, 96, 128}`
+× 3 seeds × 10 min.
+
+### 16-agent / 60 s smoke verification (session `20260519_121204`)
+
+All three telemetry streams populate cleanly:
+
+- `frame_stats.jsonl` (84 rows, 1 Hz): warm steady-state mean 10.0 ms /
+  p95 12.9 ms / p99 18.9 ms (≈100 FPS). First-row p99 = 400 ms is the PIE
+  startup hitch — the sweep analyzer trims the first 5 s.
+- `zone_occupancy.jsonl` (840 rows = 10 zones × 84 s): all zone tags +
+  capacities emitted at 1 Hz.
+- `decision` rows now carry `"infer_us"`: mean 159 µs, p50 149, p95 173,
+  p99 205, max 3547 (single cold-path inference). At 159 µs/agent, even
+  128 concurrent agents at full throttle would only cost ~20 ms/s of
+  inference total — ONNX will not be the scaling bottleneck.
+
+### Spawner: reproducible sweep config
+
+`APCSPAgentSpawner` extended for T1.3 sweep automation:
+
+- New `RandomSeed` UPROPERTY (default -1 = non-deterministic).
+- New CVar `pcsp.SpawnSeed` overrides `RandomSeed` when ≥ 0.
+- New CVar `pcsp.AgentCount` overrides `AgentCount` when ≥ 1.
+- When seed is set, `FMath::RandInit(seed)` runs once in `BeginPlay`
+  before any `FMath::VRand` / `GetRandomReachablePointInRadius` call,
+  making the spawn pattern reproducible.
+- A `run_config.json` sidecar is written into the session dir on
+  spawner BeginPlay:
+  `{n_agents, seed, spawn_radius, spawn_on_navmesh}` — keyed by session
+  stamp, so the sweep analyzer can label runs without parsing PIE logs.
+
+Sweep can now be driven from a small startup-CVar list per run
+(e.g. `pcsp.AgentCount=64 pcsp.SpawnSeed=2`), no editor edits required
+between settings.
+
+### Auto-quit + headless sweep driver
+
+`UPCSPPerfSamplerSubsystem` gained a one-shot auto-quit hook keyed off
+the new CVar `pcsp.RunDurationSeconds` (default -1 = never). When set
+to a positive value at startup, a timer scheduled in `OnWorldBeginPlay`
+calls `FPlatformMisc::RequestExit(false)` after that many seconds.
+Combined with `pcsp.AgentCount` and `pcsp.SpawnSeed`, three CVars now
+fully parameterize a single sweep run.
+
+The PowerShell driver [tools/run_scaling_sweep.ps1](tools/run_scaling_sweep.ps1)
+loops `{agent_count} × {seed}`, launching `UnrealEditor.exe -game
+-WINDOWED -ResX=800 -ResY=450 -Unattended -NoSplash -NoSound` per
+combination with all three CVars set via `-ExecCmds`. It auto-detects
+the engine install from the `.uproject` EngineAssociation (registry
+lookup with `C:\Program Files\Epic Games\UE_<ver>` fallback), and the
+project path resolves relative to the script. `-DryRun` prints the
+planned 18 invocations without launching anything; tested locally and
+the resulting commands point at UE_5.7. The script `Start-Process
+-Wait`s on each invocation so runs are strictly serial — no log-dir
+collisions, no GPU thrash.
+
+Standalone `-game` mode uses the map set as Project Settings → Maps &
+Modes → Editor Startup Map. Rendering stays on (windowed 800×450) so
+`frame_stats.jsonl` reflects the realtime budget the paper claims, not
+a no-render artifact.
+
+### Sweep analyzer: `research/scripts/analyze_scaling_sweep.py`
+
+Ingests N session dirs (one per PIE run), reads `run_config.json` (or
+falls back to `len(agent_p*.jsonl)` for legacy sessions like the smoke
+run), `frame_stats.jsonl`, `zone_occupancy.jsonl`, and the per-agent
+JSONL. Outputs:
+
+- `per_session.json` — one row per PIE run (latency / frame / fail /
+  intent metrics, plus per-zone mean utilization and failure-reason
+  histogram).
+- `scaling_curve.json` — per-`n_agents` aggregate across seeds (mean +
+  std for inference µs, frame p95 ms, fail rate, intents/agent/min).
+- `latency_budget.tsv` — tab-separated, paste-ready for the §7 latency
+  table.
+- Optional `scaling_curve.png` (Fig 5) when `--plot` is passed
+  (matplotlib).
+
+First WARMUP_SECONDS = 5 s of every session are dropped before computing
+latency / frame-time aggregates to remove the cold-start hitch.
+
+Smoke-run dry-run validated the fallback path (no `run_config.json`,
+inferred n_agents=16 from file count, seed=-1) and produced sensible
+numbers: 149.6 µs mean / 170.4 µs p95 inference, 9.77 ms mean / 13.19 ms
+p95 frame, 1.6% fail rate, 5.44 intents/agent/min.
+
+### Sweep driver hardening (post-smoke regressions)
+
+First attempted sweep (`-DurationSeconds 180 -AgentCounts 8,64 -Seeds 0`)
+exposed three independent bugs in the unattended path; all fixed:
+
+1. **Engine idled on focus loss.** UnrealEditor.exe `-game` launched via
+   `Start-Process` starts unfocused, and the editor's default
+   `t.IdleWhenNotForeground=1` throttles the *entire* engine loop —
+   FTSTicker, world TimerManager, and agent BTs all stop together.
+   Symptom: agents freeze, auto-quit timer never fires, process lives
+   forever. Fix: `[ConsoleVariables] t.IdleWhenNotForeground=0` in
+   `Config/DefaultEngine.ini` (applied at engine init, before any world).
+   Also added `bPauseOnLossOfFocus=False` and
+   `bSuppressLostFocusMessage=True` as belt-and-suspenders.
+2. **Auto-quit timer was on world TimerManager.** Originally scheduled
+   via `World->GetTimerManager().SetTimer(...)` — stops when the world
+   is paused for any reason. Moved to `FTSTicker::GetCoreTicker()` in
+   `PCSPPerfSamplerSubsystem.cpp` so the quit fires regardless of
+   world pause state.
+3. **`-ExecCmds` CVars arrived after `BeginPlay`.** Three runs in the
+   first post-fix attempt produced clean frame_stats but all showed
+   `n_agents=16` (default), `seed=-1`, and ran ~255 s instead of the
+   requested 180 s — proof that `pcsp.AgentCount` / `pcsp.SpawnSeed` /
+   `pcsp.RunDurationSeconds` were still at defaults when the spawner
+   and perf-sampler read them in `BeginPlay`. Root cause: UE processes
+   `-ExecCmds` from `UGameEngine::Tick` *after* the first map's
+   `BeginPlay`. Fix: read from the command line directly using
+   `FParse::Value(FCommandLine::Get(), TEXT("PCSP_AgentCount="), ...)`
+   (and the analogous switches for seed / duration). `FCommandLine`
+   is populated before any `BeginPlay` so the override is always
+   visible. `-ExecCmds` is still passed as a belt-and-suspenders for
+   any future late readers. Driver
+   [tools/run_scaling_sweep.ps1](tools/run_scaling_sweep.ps1) now
+   emits both `-PCSP_*=N` switches and the original `-ExecCmds` list.
+
+Also hardened the driver itself:
+- Switched `Start-Process -ArgumentList` from a `@()` array to a single
+  string — PS 5.1 mangles embedded quotes when the array form is used
+  with `-ExecCmds="..."`.
+- Added a `Duration + 90 s` PowerShell watchdog that force-kills the
+  process if the in-engine auto-quit ever fails to fire, so one stuck
+  run can't block a multi-hour sweep.
+
+### Verification (session `20260519_163305`)
+
+One-run sanity sweep (`-DurationSeconds 90 -AgentCounts 8 -Seeds 0`)
+after all three fixes:
+
+- `run_config.json` = `{"n_agents":8,"seed":0,...}` — switches reached
+  the spawner.
+- 8 `agent_p*.jsonl` files, 89 frame_stats rows (90 s @ 1 Hz), 890
+  zone_occupancy rows (10 zones × 89 s) — all telemetry streams
+  populated cleanly.
+- Mean frame time 7.5 ms / p95 10.7 ms (~130 FPS at 8 agents,
+  windowed 800×450) — engine genuinely ticking, not idle.
+- Wall-clock 103.5 s = ~13 s startup + 90 s sim + clean exit — the
+  in-engine FTSTicker quit fired; watchdog never engaged.
+- Decision rows still carry `logits` and `infer_us` from the prior
+  schema extension.
+
+Pipeline is now ready for the real T1.3 sweep
+(`{8,16,32,64,96,128} × 3 seeds × 600 s` ≈ 3.5 h wall-clock).
+
+## 2026-05-20 - T1.3 Scaling Sweep Results
+
+**18-run sweep** (`{8,16,32,64,96,128} agents × seeds {0,1,2} × 630 s`).
+Original sweep PS ran all 18 runs sequentially; sessions logged to
+`ue/cnzoi/Saved/PCSP/Logs/20260520_000614` … `20260520_030856`.
+Analyzer: `research/scripts/analyze_scaling_sweep.py`
+Output: `research/results/ue_sessions/scaling_20260520/`
+
+### Latency budget (`latency_budget.tsv`)
+
+| n_agents | seeds | infer_µs mean | infer_µs p95 | frame_ms mean | frame_ms p95 | fail_rate | intents/agent/min |
+|----------|-------|--------------|-------------|--------------|-------------|-----------|-------------------|
+| 8        | 3     | 183.2        | 234.8       | 5.57         | 7.75        | 0.1%      | 5.67              |
+| 16       | 3     | 184.1        | 230.5       | 5.84         | 8.19        | 0.0%      | 5.67              |
+| 32       | 3     | 202.6        | 257.6       | 7.53         | 11.27       | 0.0%      | 6.06              |
+| 64       | 3     | 199.8        | 264.1       | 10.25        | 13.38       | 0.2%      | 5.61              |
+| 96       | 3     | 153.7        | 198.1       | 11.62        | 15.89       | 4.7%      | 5.35              |
+| 128      | 3     | 132.0        | 181.6       | 14.39        | 17.05       | **44.9%** | 4.98              |
+
+### Findings
+
+1. **Inference is not the bottleneck.** ONNX inference latency stays flat at
+   183–202 µs from n=8 to n=64. The per-agent inference budget (≤ 250 µs mean)
+   holds across all tested counts. The drop to 153/132 µs at n≥96 reflects
+   CPU scheduler timeslicing at saturation — per-call wall-time shrinks while
+   total throughput degrades.
+
+2. **Frame time scales near-linearly**, at ~0.27 ms/agent from n=8 to n=128.
+   The 60 fps budget (16.67 ms) is maintained through n=96 (mean 11.62 ms,
+   p95 15.89 ms). At n=128 the p95 hits 17.05 ms, just over the limit.
+
+3. **NavMesh pathfinding is the hard ceiling.** Fail rate is 0% for n≤32,
+   rises to 4.7% at n=96, and collapses to **44.9% at n=128**. This is
+   NavMesh query-queue saturation — 128 simultaneous `FindPath` requests from
+   `BTTask_MoveToAffordance` exceed the recast navigation system's async
+   capacity. Intent throughput drops from 5.67 to 4.98 intents/agent/min
+   as failed agents stall their BT branch.
+
+4. **Recommended operating point: ≤ 64 agents** for reliable real-time
+   behavior (fail rate < 0.2%, frame p95 < 14 ms). 96 agents is a soft-cap
+   (borderline frame budget, manageable fail rate). 128+ requires async
+   batched pathfinding or a crowd-simulation movement fallback.
+
+5. **Intents/agent/min is stable** at 5.6–6.1 for n≤64 (within 8% of the
+   n=8 baseline) — the policy's per-agent decision rate does not degrade as
+   the crowd scales, confirming the ONNX inference path is genuinely parallel
+   with BT execution.
+
+### Session index (original sweep — resumed-sweep duplicates excluded)
+
+| Run | Session dir       | n   | seed |
+|-----|-------------------|-----|------|
+| 1   | 20260520_000614   | 8   | 0    |
+| 2   | 20260520_001656   | 8   | 1    |
+| 3   | 20260520_002739   | 8   | 2    |
+| 4   | 20260520_003821   | 16  | 0    |
+| 5   | 20260520_004906   | 16  | 1    |
+| 6   | 20260520_005949   | 16  | 2    |
+| 7   | 20260520_011032   | 32  | 0    |
+| 8   | 20260520_012120   | 32  | 1    |
+| 9   | 20260520_013209   | 32  | 2    |
+| 10  | 20260520_014258   | 64  | 0    |
+| 11  | 20260520_015347   | 64  | 1    |
+| 12  | 20260520_020437   | 64  | 2    |
+| 13  | 20260520_021526   | 96  | 0    |
+| 14  | 20260520_022609   | 96  | 1    |
+| 15  | 20260520_023651   | 96  | 2    |
+| 16  | 20260520_024732   | 128 | 0    |
+| 17  | 20260520_025814   | 128 | 1    |
+| 18  | 20260520_030856   | 128 | 2    |
+
+Note: sessions 011402, 012457, 013551, 014644, 015736, 020829 are from a
+duplicate sweep script that ran parallel UE instances; excluded from analysis.

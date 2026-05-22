@@ -86,7 +86,8 @@ EBTNodeResult::Type UBTTask_PCSPDecision::ExecuteTask(UBehaviorTreeComponent& Ow
 	const TArray<float>& Obs = Agent->Observation->BuildObservation();
 	const int32 PersonaId = Agent->Persona ? Agent->Persona->GetPersonaId() : 1;
 	TArray<float> Logits;
-	const EPCSPActionType Action = Policy->RunInferenceWithLogits(Obs, PersonaId, Logits);
+	double InferenceMicros = -1.0;
+	const EPCSPActionType Action = Policy->RunInferenceWithLogits(Obs, PersonaId, Logits, InferenceMicros);
 	if (Action == EPCSPActionType::None)
 	{
 		UE_LOG(LogTemp, Error, TEXT("BTTask_PCSPDecision: ONNX inference failed"));
@@ -102,7 +103,7 @@ EBTNodeResult::Type UBTTask_PCSPDecision::ExecuteTask(UBehaviorTreeComponent& Ow
 
 	if (Agent->TrajectoryLog)
 	{
-		Agent->TrajectoryLog->RecordDecisionWithLogits(Action, UrgencyScore, Logits);
+		Agent->TrajectoryLog->RecordDecisionWithLogits(Action, UrgencyScore, Logits, InferenceMicros);
 	}
 	return EBTNodeResult::Succeeded;
 }

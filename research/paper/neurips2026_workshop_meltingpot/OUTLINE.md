@@ -89,7 +89,7 @@ The arc avoids overclaiming (H5 negative is named in §Limitations) and converts
 - H4 and PREREG (committed but not yet executed).
 - Any persona-arithmetic / joint-loss exploration (out of scope for this paper).
 
-## 6. Re-use plan from `cog2026_vision/`
+## 6. Re-use plan from `cog2026_main/`
 
 Reuse:
 - `\PCSP` macro definition + persona-encoding paragraph (Method §2)

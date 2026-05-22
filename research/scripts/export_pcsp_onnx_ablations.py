@@ -15,14 +15,20 @@ do too):
   persona_embeddings_full.json
   persona_embeddings_no_consist.json
 
+Checkpoint locations
+--------------------
+Checkpoints + embeddings live at the *repository root* `results/` directory
+(not under `research/results/`):
+    <repo>/results/pcsp_v3/full/policy.pt
+    <repo>/results/pcsp_v3/no_consist/policy.pt
+    <repo>/results/embeddings/persona_embeddings_300.npy
+
+Exports are written to `<repo>/research/results/export_ue5/` so they sit next to
+the rest of the research artifacts.
+
 Usage
 -----
-    # Copy from training PC first:
-    #   results/pcsp_v3/full/policy.pt
-    #   results/pcsp_v3/no_consist/policy.pt
-    #   results/embeddings/persona_embeddings_300.npy
-
-    conda run -n paper python scripts/export_pcsp_onnx_ablations.py
+    conda run -n paper python research/scripts/export_pcsp_onnx_ablations.py
 """
 from __future__ import annotations
 
@@ -30,27 +36,28 @@ import subprocess
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-EXPORT_SCRIPT = ROOT / "scripts" / "export_pcsp_onnx.py"
-OUT_DIR = ROOT / "results" / "export_ue5"
+SCRIPT_DIR    = Path(__file__).resolve().parent          # research/scripts
+RESEARCH_ROOT = SCRIPT_DIR.parent                         # research
+REPO_ROOT     = RESEARCH_ROOT.parent                      # <repo>
+EXPORT_SCRIPT = SCRIPT_DIR / "export_pcsp_onnx.py"
+OUT_DIR       = RESEARCH_ROOT / "results" / "export_ue5"
 
 ABLATIONS = [
-    ("full",       "results/pcsp_v3/full/policy.pt"),
-    ("no_consist", "results/pcsp_v3/no_consist/policy.pt"),
+    ("full",       REPO_ROOT / "results" / "pcsp_v3" / "full"       / "policy.pt"),
+    ("no_consist", REPO_ROOT / "results" / "pcsp_v3" / "no_consist" / "policy.pt"),
 ]
 
 
 def main() -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    embeddings = ROOT / "results" / "embeddings" / "persona_embeddings_300.npy"
+    embeddings = REPO_ROOT / "results" / "embeddings" / "persona_embeddings_300.npy"
 
     if not embeddings.exists():
         print(f"[ERROR] Embeddings not found: {embeddings}")
         print("Copy from training PC: results/embeddings/persona_embeddings_300.npy")
         sys.exit(1)
 
-    for tag, ckpt_rel in ABLATIONS:
-        ckpt = ROOT / ckpt_rel
+    for tag, ckpt in ABLATIONS:
         if not ckpt.exists():
             print(f"[SKIP] {tag}: checkpoint not found at {ckpt}")
             continue

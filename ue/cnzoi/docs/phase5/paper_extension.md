@@ -11,8 +11,9 @@ the existing experimental sections.**
 > We additionally demonstrate that the trained PCSP policy transfers, without
 > retraining, into Unreal Engine 5 as a high-level intent selector inside a
 > hybrid Behavior-Tree control stack, where it preserves persona-distinct
-> behavior on held-out personas (inter-persona action dispersion ρ = 0.368
-> on training personas, 0.368 on a held-out 60-persona split) and where
+> behavior on held-out personas (inter-persona action dispersion
+> ρ = 0.383 on training personas, ρ = 0.368 on a held-out 60-persona
+> split — i.e. *more* persona-distinct on unseen personas) and where
 > ablating the persona embedding collapses dispersion to ρ = 0.990.
 
 ---
@@ -136,7 +137,9 @@ persona set, varying the `pcsp.PolicyMode` console variable:
 | HybridNoPersona | 1,752 | 13.3 | 573.9 | 0.539 | 1.049 | 0.990 |
 
 (BTOnly KL is suppressed: its logits are zero by construction, so any KL
-against PCSP would just measure distance from uniform.)
+against PCSP would just measure distance from uniform. RL-only is
+equivalent to HybridNoPersona at inference time — both zero out the
+persona vector against the same architecture — so we report it once.)
 
 Two findings:
 
@@ -153,11 +156,45 @@ Two findings:
    (Exercise / Study / Shop / Observe never reached). Throughput halves;
    reward halves.
 
-The remaining two ablations from the original five (`Hybrid-NoConsist` and
-`RL-only`) require additional ONNX exports of already-trained checkpoints
-(`results/pcsp_v3/no_consist/policy.pt` and
-`results/baselines_v3/b1_no_persona/policy.pt`) and are tracked in
-`research/PLAN.md` Phase E.
+**8.4.5 Training-side ablation: removing the consistency loss.** We
+additionally exported the `results/pcsp_v3/no_consist/policy.pt`
+checkpoint (a v3 run with the persona-consistency auxiliary loss
+removed) to ONNX side-by-side with the full model via
+`export_pcsp_onnx_ablations.py`, and ran paired 64-agent PIE sessions
+under identical `HybridPCSP` mode but swapped weights. Full
+(`20260518_171226`, 658 s) reached 3,110 interactions / 0.32% failure /
+reward 1,079.8 / ρ_intra 0.379; NoConsist (`20260518_172443`, 681 s)
+reached 4,005 / 0.05% failure / reward 1,423.5 / ρ_intra 0.312.
+Matched-persona pairing gave mean Spearman ρ = 0.348 and mean
+symmetric KL = 1.79 across the 64 personas — i.e. the two checkpoints
+choose meaningfully different actions per persona in-engine, but the
+task-reward signal alone does *not* surface the consistency failure
+(NoConsist's reward is higher). This mirrors the v1/v3 research-side
+"reward hides the failure" pattern and is a useful negative result for
+the paper extension.
+
+**8.4.6 Within-session persona-distance vs action-KL.** The
+paper's research-side headline is ρ ≈ 0.73 between pairwise persona
+embedding cosine distance and pairwise action-distribution KL. We
+re-test it in the engine via
+`analyze_persona_distance_vs_kl.py`, which uses the per-decision
+logged 20-dim logits softmaxed and averaged per persona, and 2,016
+persona pairs per 64-agent session:
+
+| Session | Mode | Spearman ρ |
+|---|---|---:|
+| `noconsist_ablation_20260518` | HybridPCSP (full) | 0.236 |
+| `kl_20260518_151255` | HybridPCSP (full) | 0.257 |
+| `noconsist_only_20260518` | HybridPCSP (no-consist weights) | 0.569 |
+| `btonly_detail` | BTOnly (sanity) | 0.007 |
+
+In-engine ρ is well below the research-side 0.73. The BT and capacity
+contention layers compress the persona signal at execution time:
+agents converge on what the environment will *let them do*, not what
+their embedding most prefers. The no-consistency checkpoint scores
+*higher* on this engine-side metric than the full model — another
+instance of the §8.4.5 pattern where downstream metrics do not flag
+the training-time degradation.
 
 ### 8.5 Implementation cost
 
@@ -179,10 +216,21 @@ without async batching.
 
 ### 8.6 Limitations and open work
 
-- **Hybrid-NoConsist and RL-only** ablations are pending the export work
-  noted in §8.4.4.
-- **64-agent ceiling.** Validated; 128+ would require async batched
-  inference and World Partition streaming sources (`scale-targets.md`).
+- **In-engine persona-distance/action-KL ρ is ≈0.24, not the
+  research-side ≈0.73.** The hybrid stack itself imposes a ceiling:
+  capacity contention and the BT's failure-recovery decorators force
+  agents toward what's reachable, not what their embedding most
+  prefers. Quantifying this gap (and whether it shrinks on a less
+  congested map) is the most concrete open follow-up.
+- **64-agent ceiling.** Validated empirically by the 2026-05-20 sweep
+  (`{8,16,32,64,96,128}` × 3 seeds × 630 s, 18 runs;
+  `research/results/ue_sessions/scaling_20260520/`). ONNX inference is
+  flat at 183–202 µs through n=64 (well under the 250 µs budget); frame
+  time scales ≈ 0.27 ms/agent (p95 within 60 fps through n=96); BT-abort
+  failure rate is 0.2 % at n=64, 4.7 % at n=96, and **44.9 % at n=128**.
+  The hard ceiling is NavMesh `FindPath` queue saturation, not policy
+  inference. 128+ requires async batched pathfinding and a WP streaming
+  source on the spawner (the latter now in `APCSPAgentSpawner`).
 - **Map geometry generalisation.** Results are for one map. We have not
   yet tested whether ρ_intra and the persona-embedding effect hold on a
   second, structurally different district.
@@ -249,6 +297,8 @@ from logs alone.
 
 | Tab | Content | Source |
 |---|---|---|
-| X.1 | Phase 4 ablation results (HybridPCSP / BTOnly / HybridNoPersona) | `research/results/ue_sessions/ablation_20260518_154827/ablation.json` |
+| X.1 | Phase 4 runtime ablations (HybridPCSP / BTOnly / HybridNoPersona) | `research/results/ue_sessions/ablation_20260518_154827/ablation.json` |
 | X.2 | Scale validation summary (8/16/32/64 agents, failure rate, throughput) | `scale-targets.md` §"Confirmed scale ceiling" |
 | X.3 | Held-out persona transfer (train vs. test_60_v3) | `ue/cnzoi/PLAN.md` Phase 4 zero-shot entry |
+| X.4 | Training-side NoConsist vs Full (paired sessions, matched-persona ρ + KL) | `research/results/ue_sessions/noconsist_ablation_20260518/compare.json` |
+| X.5 | Within-session persona-distance vs action-KL Spearman (4 sessions) | `research/results/ue_sessions/*/persona_distance_vs_kl.json` |

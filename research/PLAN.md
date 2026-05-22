@@ -1,7 +1,7 @@
 # PLAN.md - PCSP Active Checklist
 
 **Project:** Persona-Conditioned Shared Policy (PCSP) for life-simulation NPCs  
-**Primary paper:** `paper/cog2026_vision/main.tex`  
+**Primary paper:** `paper/cog2026_main/main.tex` (**COG 2026 Main Track**; not a workshop, vision, or position paper)  
 **Done log:** completed work, decisions, and result details live in `DONE.md`.
 
 ---
@@ -9,7 +9,7 @@
 ## Operating Rule
 
 - Read this checklist before research, code, evaluation, or paper changes.
-- Align work with `paper/cog2026_vision/main.tex`.
+- Align work with `paper/cog2026_main/main.tex`.
 - Connect new work to one checklist item below.
 - After non-trivial work, update checklist status here and put detailed results/decisions in `DONE.md`.
 
@@ -48,7 +48,7 @@
 
 ## Phase B - Paper Consistency
 
-- [x] Add coarse-action observability limitation to `paper/cog2026_vision/main.tex`.
+- [x] Add coarse-action observability limitation to `paper/cog2026_main/main.tex`.
 - [x] Add rich trajectory observability to the evaluation agenda.
 - [x] Add v3 zero-shot ablation table to `main.tex`.
 - [x] Reframe paper away from "FiLM > concat" and toward "InfoNCE consistency is load-bearing".
@@ -96,8 +96,8 @@
 - [x] Add `unseen_combo_v3` findings to `DONE.md`.
 - [ ] Cross-check whether the v3 legacy CLI vs compositional-wrapper accuracy discrepancy is reproducible.
 - [ ] Consider a focused follow-up analysis of architecture generalization gaps by split family.
-- [ ] Design and run v3-large: v3 20-action ontology at v2 scale (12x12, 16 agents, 500 personas) before claiming broad environment scaling.
-- [ ] Treat Melting Pot as optional external validation after v3-large, not as a blocker for the immediate human-eval study.
+- [x] Design and run v3-large: v3 20-action ontology at v2 scale (12x12, 16 agents, 500 personas) before claiming broad environment scaling. *(2026-05-22: complete. 4 PCSP modes + B1 + B3 × 3 seeds × 300 iter, ~38h wall-clock. Eval on 100 held-out personas: full=0.040±0.009 (4× chance), no_consist=0.013±0.005 (at chance, coherence collapses 1.89→1.05). InfoNCE finding replicates at expanded scale + richer ontology. Details: `revised/260519/done.md` Eighth pass; new `tab:results_v3_large` in App.~A of `paper/cog2026_main/main.tex`.)*
+- [x] Treat Melting Pot as optional external validation after v3-large, not as a blocker for the immediate human-eval study. *(2026-05-22: complete via Layer-2 Melting Pot integration — `tab:mp_multi` (3 substrates × 3 seeds × {full, no_infonce}), `tab:mp_transfer` (T2.1 held-out + CH↔CU cross-substrate), and the `phase5report` companion technical report. See `revised/260519/done.md`.)*
 - [x] UE5 zero-shot persona validation on held-out IDs 241..300 (2026-05-18):
       With Work + Hygiene zone capacities matched to the held-out demand
       profile, the v3 policy runs on personas 241..300 in UE5 with

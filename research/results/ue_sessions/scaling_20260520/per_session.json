@@ -1,0 +1,740 @@
+[
+  {
+    "session": "20260520_000614",
+    "n_agents": 8,
+    "seed": 0,
+    "duration_s": 628.0,
+    "n_decisions": 488,
+    "n_interaction_complete": 465,
+    "n_move_failed": 0,
+    "fail_rate": 0.0,
+    "intents_per_agent_per_min": 5.55,
+    "infer_us": {
+      "n": 480,
+      "mean": 181.6,
+      "p50": 173.5,
+      "p95": 237.2,
+      "p99": 338.6,
+      "max": 393.8
+    },
+    "frame_ms": {
+      "n": 626,
+      "mean": 5.638,
+      "p95_of_p95": 7.949,
+      "p95_max": 9.565,
+      "p99_max": 32.931
+    },
+    "failure_reasons": {},
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.044151579694711035,
+      "PCSP.Zone.Exercise": 0.07880724174653911,
+      "PCSP.Zone.Eat": 0.0017971246006389776,
+      "PCSP.Zone.Study": 0.047523961661342186,
+      "PCSP.Zone.Observe": 0.0,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.04605963791267304,
+      "PCSP.Zone.Higiene": 0.0075878594249201275,
+      "PCSP.Zone.Social": 0.02541711040113588
+    }
+  },
+  {
+    "session": "20260520_001656",
+    "n_agents": 8,
+    "seed": 1,
+    "duration_s": 629.5,
+    "n_decisions": 499,
+    "n_interaction_complete": 479,
+    "n_move_failed": 1,
+    "fail_rate": 0.0021,
+    "intents_per_agent_per_min": 5.71,
+    "infer_us": {
+      "n": 491,
+      "mean": 182.5,
+      "p50": 171.0,
+      "p95": 223.4,
+      "p99": 528.4,
+      "max": 908.3
+    },
+    "frame_ms": {
+      "n": 626,
+      "mean": 5.514,
+      "p95_of_p95": 7.686,
+      "p95_max": 8.678,
+      "p99_max": 33.125
+    },
+    "failure_reasons": {
+      "path_follow_idle_short": 1
+    },
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.041888533901313627,
+      "PCSP.Zone.Exercise": 0.07627795527156547,
+      "PCSP.Zone.Eat": 0.0018969648562300319,
+      "PCSP.Zone.Study": 0.0545527156549522,
+      "PCSP.Zone.Observe": 0.0018969648562300319,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.04599307774227904,
+      "PCSP.Zone.Higiene": 0.003893769968051118,
+      "PCSP.Zone.Social": 0.024245651402200852
+    }
+  },
+  {
+    "session": "20260520_002739",
+    "n_agents": 8,
+    "seed": 2,
+    "duration_s": 629.0,
+    "n_decisions": 503,
+    "n_interaction_complete": 483,
+    "n_move_failed": 0,
+    "fail_rate": 0.0,
+    "intents_per_agent_per_min": 5.76,
+    "infer_us": {
+      "n": 495,
+      "mean": 185.4,
+      "p50": 173.0,
+      "p95": 243.8,
+      "p99": 494.1,
+      "max": 734.7
+    },
+    "frame_ms": {
+      "n": 626,
+      "mean": 5.555,
+      "p95_of_p95": 7.622,
+      "p95_max": 8.962,
+      "p99_max": 32.615
+    },
+    "failure_reasons": {},
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.041622293219737615,
+      "PCSP.Zone.Exercise": 0.08067092651757193,
+      "PCSP.Zone.Eat": 0.005690894568690096,
+      "PCSP.Zone.Study": 0.04624600638977667,
+      "PCSP.Zone.Observe": 0.0,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.046192758253461086,
+      "PCSP.Zone.Higiene": 0.0017971246006389776,
+      "PCSP.Zone.Social": 0.026801561945331835
+    }
+  },
+  {
+    "session": "20260520_003821",
+    "n_agents": 16,
+    "seed": 0,
+    "duration_s": 628.9,
+    "n_decisions": 987,
+    "n_interaction_complete": 943,
+    "n_move_failed": 0,
+    "fail_rate": 0.0,
+    "intents_per_agent_per_min": 5.62,
+    "infer_us": {
+      "n": 971,
+      "mean": 182.8,
+      "p50": 175.6,
+      "p95": 232.2,
+      "p99": 280.5,
+      "max": 478.5
+    },
+    "frame_ms": {
+      "n": 626,
+      "mean": 5.825,
+      "p95_of_p95": 8.055,
+      "p95_max": 9.018,
+      "p99_max": 41.522
+    },
+    "failure_reasons": {},
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.08834753283635133,
+      "PCSP.Zone.Exercise": 0.09265175718849836,
+      "PCSP.Zone.Eat": 0.0075878594249201275,
+      "PCSP.Zone.Study": 0.0809105431309902,
+      "PCSP.Zone.Observe": 0.000998402555910543,
+      "PCSP.Zone.Shop": 0.004969826056088039,
+      "PCSP.Zone.Work": 0.09531416400425989,
+      "PCSP.Zone.Higiene": 0.028154952076677318,
+      "PCSP.Zone.Social": 0.06421725239616638
+    }
+  },
+  {
+    "session": "20260520_004906",
+    "n_agents": 16,
+    "seed": 1,
+    "duration_s": 627.0,
+    "n_decisions": 988,
+    "n_interaction_complete": 945,
+    "n_move_failed": 0,
+    "fail_rate": 0.0,
+    "intents_per_agent_per_min": 5.65,
+    "infer_us": {
+      "n": 972,
+      "mean": 182.2,
+      "p50": 177.3,
+      "p95": 225.3,
+      "p99": 270.8,
+      "max": 373.6
+    },
+    "frame_ms": {
+      "n": 626,
+      "mean": 5.77,
+      "p95_of_p95": 8.054,
+      "p95_max": 8.977,
+      "p99_max": 40.642
+    },
+    "failure_reasons": {},
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.09025559105431386,
+      "PCSP.Zone.Exercise": 0.08799254526091584,
+      "PCSP.Zone.Eat": 0.012180511182108627,
+      "PCSP.Zone.Study": 0.07963258785942463,
+      "PCSP.Zone.Observe": 0.002895367412140575,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.0889909478168264,
+      "PCSP.Zone.Higiene": 0.024860223642172524,
+      "PCSP.Zone.Social": 0.06698615548455858
+    }
+  },
+  {
+    "session": "20260520_005949",
+    "n_agents": 16,
+    "seed": 2,
+    "duration_s": 629.0,
+    "n_decisions": 1002,
+    "n_interaction_complete": 961,
+    "n_move_failed": 1,
+    "fail_rate": 0.001,
+    "intents_per_agent_per_min": 5.73,
+    "infer_us": {
+      "n": 986,
+      "mean": 187.4,
+      "p50": 180.0,
+      "p95": 234.0,
+      "p99": 346.3,
+      "max": 684.4
+    },
+    "frame_ms": {
+      "n": 626,
+      "mean": 5.938,
+      "p95_of_p95": 8.457,
+      "p95_max": 9.964,
+      "p99_max": 41.435
+    },
+    "failure_reasons": {
+      "path_follow_idle_short": 1
+    },
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.08417642882499163,
+      "PCSP.Zone.Exercise": 0.09238551650692217,
+      "PCSP.Zone.Eat": 0.014776357827476038,
+      "PCSP.Zone.Study": 0.08498402555910521,
+      "PCSP.Zone.Observe": 0.004792332268370607,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.09025559105431301,
+      "PCSP.Zone.Higiene": 0.02456070287539936,
+      "PCSP.Zone.Social": 0.06538871139510162
+    }
+  },
+  {
+    "session": "20260520_011032",
+    "n_agents": 32,
+    "seed": 0,
+    "duration_s": 629.4,
+    "n_decisions": 2111,
+    "n_interaction_complete": 2033,
+    "n_move_failed": 0,
+    "fail_rate": 0.0,
+    "intents_per_agent_per_min": 6.06,
+    "infer_us": {
+      "n": 2079,
+      "mean": 201.1,
+      "p50": 197.5,
+      "p95": 251.8,
+      "p99": 326.6,
+      "max": 741.5
+    },
+    "frame_ms": {
+      "n": 626,
+      "mean": 7.31,
+      "p95_of_p95": 10.775,
+      "p95_max": 13.512,
+      "p99_max": 44.736
+    },
+    "failure_reasons": {},
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.22816826411075658,
+      "PCSP.Zone.Exercise": 0.16107561235356768,
+      "PCSP.Zone.Eat": 0.037539936102236424,
+      "PCSP.Zone.Study": 0.09928115015974437,
+      "PCSP.Zone.Observe": 0.0049920127795527154,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.1465654952076679,
+      "PCSP.Zone.Higiene": 0.054712460063897767,
+      "PCSP.Zone.Social": 0.1266595669151589
+    }
+  },
+  {
+    "session": "20260520_012120",
+    "n_agents": 32,
+    "seed": 1,
+    "duration_s": 629.5,
+    "n_decisions": 2119,
+    "n_interaction_complete": 2042,
+    "n_move_failed": 2,
+    "fail_rate": 0.001,
+    "intents_per_agent_per_min": 6.08,
+    "infer_us": {
+      "n": 2087,
+      "mean": 201.2,
+      "p50": 196.8,
+      "p95": 257.2,
+      "p99": 342.5,
+      "max": 908.8
+    },
+    "frame_ms": {
+      "n": 626,
+      "mean": 7.573,
+      "p95_of_p95": 11.369,
+      "p95_max": 13.937,
+      "p99_max": 42.922
+    },
+    "failure_reasons": {
+      "path_follow_idle_short": 2
+    },
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.22994320198793072,
+      "PCSP.Zone.Exercise": 0.16014376996805124,
+      "PCSP.Zone.Eat": 0.03464456869009585,
+      "PCSP.Zone.Study": 0.11685303514376968,
+      "PCSP.Zone.Observe": 0.007088658146964856,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.13804579339723103,
+      "PCSP.Zone.Higiene": 0.04642571884984026,
+      "PCSP.Zone.Social": 0.12417465388711488
+    }
+  },
+  {
+    "session": "20260520_013209",
+    "n_agents": 32,
+    "seed": 2,
+    "duration_s": 628.9,
+    "n_decisions": 2100,
+    "n_interaction_complete": 2024,
+    "n_move_failed": 0,
+    "fail_rate": 0.0,
+    "intents_per_agent_per_min": 6.03,
+    "infer_us": {
+      "n": 2068,
+      "mean": 205.5,
+      "p50": 200.7,
+      "p95": 263.8,
+      "p99": 355.8,
+      "max": 1097.9
+    },
+    "frame_ms": {
+      "n": 625,
+      "mean": 7.705,
+      "p95_of_p95": 11.668,
+      "p95_max": 13.862,
+      "p99_max": 400.0
+    },
+    "failure_reasons": {},
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.2340000000000005,
+      "PCSP.Zone.Exercise": 0.16013333333333332,
+      "PCSP.Zone.Eat": 0.0319,
+      "PCSP.Zone.Study": 0.1041599999999999,
+      "PCSP.Zone.Observe": 0.0078,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.14466666666666672,
+      "PCSP.Zone.Higiene": 0.0556,
+      "PCSP.Zone.Social": 0.12305777777777842
+    }
+  },
+  {
+    "session": "20260520_014258",
+    "n_agents": 64,
+    "seed": 0,
+    "duration_s": 629.2,
+    "n_decisions": 3854,
+    "n_interaction_complete": 3712,
+    "n_move_failed": 8,
+    "fail_rate": 0.0022,
+    "intents_per_agent_per_min": 5.53,
+    "infer_us": {
+      "n": 3789,
+      "mean": 204.7,
+      "p50": 200.8,
+      "p95": 273.2,
+      "p99": 381.8,
+      "max": 1581.9
+    },
+    "frame_ms": {
+      "n": 625,
+      "mean": 10.584,
+      "p95_of_p95": 14.103,
+      "p95_max": 38.121,
+      "p99_max": 329.456
+    },
+    "failure_reasons": {
+      "path_follow_idle_short": 8
+    },
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.5046666666666674,
+      "PCSP.Zone.Exercise": 0.23999999999999996,
+      "PCSP.Zone.Eat": 0.0743,
+      "PCSP.Zone.Study": 0.11720000000000003,
+      "PCSP.Zone.Observe": 0.0053,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.2899333333333334,
+      "PCSP.Zone.Higiene": 0.1204,
+      "PCSP.Zone.Social": 0.3064177777777788
+    }
+  },
+  {
+    "session": "20260520_015347",
+    "n_agents": 64,
+    "seed": 1,
+    "duration_s": 629.5,
+    "n_decisions": 3934,
+    "n_interaction_complete": 3777,
+    "n_move_failed": 8,
+    "fail_rate": 0.0021,
+    "intents_per_agent_per_min": 5.62,
+    "infer_us": {
+      "n": 3870,
+      "mean": 199.6,
+      "p50": 199.0,
+      "p95": 261.3,
+      "p99": 349.9,
+      "max": 1641.6
+    },
+    "frame_ms": {
+      "n": 626,
+      "mean": 10.219,
+      "p95_of_p95": 13.165,
+      "p95_max": 16.974,
+      "p99_max": 305.698
+    },
+    "failure_reasons": {
+      "path_follow_idle_short": 8
+    },
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.5089634362797302,
+      "PCSP.Zone.Exercise": 0.23149627263045783,
+      "PCSP.Zone.Eat": 0.07148562300319489,
+      "PCSP.Zone.Study": 0.12188498402555926,
+      "PCSP.Zone.Observe": 0.007987220447284345,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.28048455804046885,
+      "PCSP.Zone.Higiene": 0.11092252396166134,
+      "PCSP.Zone.Social": 0.3048633297834577
+    }
+  },
+  {
+    "session": "20260520_020437",
+    "n_agents": 64,
+    "seed": 2,
+    "duration_s": 629.3,
+    "n_decisions": 3975,
+    "n_interaction_complete": 3816,
+    "n_move_failed": 9,
+    "fail_rate": 0.0024,
+    "intents_per_agent_per_min": 5.69,
+    "infer_us": {
+      "n": 3911,
+      "mean": 195.0,
+      "p50": 192.7,
+      "p95": 257.9,
+      "p99": 334.0,
+      "max": 1073.3
+    },
+    "frame_ms": {
+      "n": 625,
+      "mean": 9.954,
+      "p95_of_p95": 12.869,
+      "p95_max": 63.248,
+      "p99_max": 400.0
+    },
+    "failure_reasons": {
+      "path_follow_idle_short": 9
+    },
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.5030222222222219,
+      "PCSP.Zone.Exercise": 0.21666666666666687,
+      "PCSP.Zone.Eat": 0.0661,
+      "PCSP.Zone.Study": 0.12047999999999992,
+      "PCSP.Zone.Observe": 0.0061,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.2836000000000001,
+      "PCSP.Zone.Higiene": 0.1227,
+      "PCSP.Zone.Social": 0.3067733333333339
+    }
+  },
+  {
+    "session": "20260520_021526",
+    "n_agents": 96,
+    "seed": 0,
+    "duration_s": 629.0,
+    "n_decisions": 5799,
+    "n_interaction_complete": 5370,
+    "n_move_failed": 203,
+    "fail_rate": 0.0364,
+    "intents_per_agent_per_min": 5.34,
+    "infer_us": {
+      "n": 5700,
+      "mean": 151.5,
+      "p50": 156.0,
+      "p95": 196.8,
+      "p99": 241.7,
+      "max": 596.0
+    },
+    "frame_ms": {
+      "n": 625,
+      "mean": 13.476,
+      "p95_of_p95": 23.039,
+      "p95_max": 43.582,
+      "p99_max": 343.215
+    },
+    "failure_reasons": {
+      "zone_no_free_interaction_point": 112,
+      "FindBestZone": 81,
+      "path_follow_idle_short": 10
+    },
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.7660888888888896,
+      "PCSP.Zone.Exercise": 0.34266666666666656,
+      "PCSP.Zone.Eat": 0.0892,
+      "PCSP.Zone.Study": 0.16632000000000008,
+      "PCSP.Zone.Observe": 0.0057,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.4442,
+      "PCSP.Zone.Higiene": 0.208,
+      "PCSP.Zone.Social": 0.46204444444444454
+    }
+  },
+  {
+    "session": "20260520_022609",
+    "n_agents": 96,
+    "seed": 1,
+    "duration_s": 629.4,
+    "n_decisions": 5864,
+    "n_interaction_complete": 5405,
+    "n_move_failed": 245,
+    "fail_rate": 0.0434,
+    "intents_per_agent_per_min": 5.37,
+    "infer_us": {
+      "n": 5768,
+      "mean": 155.1,
+      "p50": 157.2,
+      "p95": 200.3,
+      "p99": 242.2,
+      "max": 504.8
+    },
+    "frame_ms": {
+      "n": 626,
+      "mean": 10.719,
+      "p95_of_p95": 12.412,
+      "p95_max": 19.196,
+      "p99_max": 323.62
+    },
+    "failure_reasons": {
+      "zone_no_free_interaction_point": 174,
+      "FindBestZone": 67,
+      "path_follow_idle_short": 4
+    },
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.775337238196664,
+      "PCSP.Zone.Exercise": 0.32601171458998934,
+      "PCSP.Zone.Eat": 0.08875798722044728,
+      "PCSP.Zone.Study": 0.17084664536741223,
+      "PCSP.Zone.Observe": 0.0059904153354632585,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.43976304579339737,
+      "PCSP.Zone.Higiene": 0.18410543130990414,
+      "PCSP.Zone.Social": 0.46293929712460075
+    }
+  },
+  {
+    "session": "20260520_023651",
+    "n_agents": 96,
+    "seed": 2,
+    "duration_s": 629.4,
+    "n_decisions": 5952,
+    "n_interaction_complete": 5387,
+    "n_move_failed": 345,
+    "fail_rate": 0.0602,
+    "intents_per_agent_per_min": 5.35,
+    "infer_us": {
+      "n": 5848,
+      "mean": 154.5,
+      "p50": 156.4,
+      "p95": 197.2,
+      "p99": 244.0,
+      "max": 497.9
+    },
+    "frame_ms": {
+      "n": 626,
+      "mean": 10.667,
+      "p95_of_p95": 12.225,
+      "p95_max": 14.838,
+      "p99_max": 290.172
+    },
+    "failure_reasons": {
+      "zone_no_free_interaction_point": 194,
+      "FindBestZone": 137,
+      "path_follow_idle_short": 14
+    },
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.7787983670571532,
+      "PCSP.Zone.Exercise": 0.3370607028753993,
+      "PCSP.Zone.Eat": 0.0939496805111821,
+      "PCSP.Zone.Study": 0.15910543130990443,
+      "PCSP.Zone.Observe": 0.010982428115015975,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.4424920127795525,
+      "PCSP.Zone.Higiene": 0.165435303514377,
+      "PCSP.Zone.Social": 0.46467873624423156
+    }
+  },
+  {
+    "session": "20260520_024732",
+    "n_agents": 128,
+    "seed": 0,
+    "duration_s": 629.1,
+    "n_decisions": 12959,
+    "n_interaction_complete": 6614,
+    "n_move_failed": 6047,
+    "fail_rate": 0.4776,
+    "intents_per_agent_per_min": 4.93,
+    "infer_us": {
+      "n": 12771,
+      "mean": 129.9,
+      "p50": 143.5,
+      "p95": 181.1,
+      "p99": 222.8,
+      "max": 422.8
+    },
+    "frame_ms": {
+      "n": 625,
+      "mean": 14.243,
+      "p95_of_p95": 16.329,
+      "p95_max": 43.371,
+      "p99_max": 400.0
+    },
+    "failure_reasons": {
+      "zone_no_free_interaction_point": 4531,
+      "FindBestZone": 1464,
+      "path_follow_idle_short": 52
+    },
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.8996888888888916,
+      "PCSP.Zone.Exercise": 0.46559999999999974,
+      "PCSP.Zone.Eat": 0.1171,
+      "PCSP.Zone.Study": 0.27160000000000034,
+      "PCSP.Zone.Observe": 0.0048,
+      "PCSP.Zone.Shop": 0.0033777777777777786,
+      "PCSP.Zone.Work": 0.5954666666666665,
+      "PCSP.Zone.Higiene": 0.2367,
+      "PCSP.Zone.Social": 0.6107733333333327
+    }
+  },
+  {
+    "session": "20260520_025814",
+    "n_agents": 128,
+    "seed": 1,
+    "duration_s": 629.1,
+    "n_decisions": 12247,
+    "n_interaction_complete": 6735,
+    "n_move_failed": 5202,
+    "fail_rate": 0.4358,
+    "intents_per_agent_per_min": 5.02,
+    "infer_us": {
+      "n": 12063,
+      "mean": 133.4,
+      "p50": 146.4,
+      "p95": 184.7,
+      "p99": 226.0,
+      "max": 401.2
+    },
+    "frame_ms": {
+      "n": 625,
+      "mean": 14.569,
+      "p95_of_p95": 17.747,
+      "p95_max": 53.861,
+      "p99_max": 400.0
+    },
+    "failure_reasons": {
+      "zone_no_free_interaction_point": 3896,
+      "FindBestZone": 1291,
+      "path_follow_idle_short": 15
+    },
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.9055111111111152,
+      "PCSP.Zone.Exercise": 0.46053333333333324,
+      "PCSP.Zone.Eat": 0.1214,
+      "PCSP.Zone.Study": 0.2787199999999999,
+      "PCSP.Zone.Observe": 0.0124,
+      "PCSP.Zone.Shop": 0.005688888888888891,
+      "PCSP.Zone.Work": 0.5966,
+      "PCSP.Zone.Higiene": 0.2207,
+      "PCSP.Zone.Social": 0.6129777777777776
+    }
+  },
+  {
+    "session": "20260520_030856",
+    "n_agents": 128,
+    "seed": 2,
+    "duration_s": 629.2,
+    "n_decisions": 12151,
+    "n_interaction_complete": 6703,
+    "n_move_failed": 5139,
+    "fail_rate": 0.434,
+    "intents_per_agent_per_min": 4.99,
+    "infer_us": {
+      "n": 11963,
+      "mean": 132.6,
+      "p50": 145.9,
+      "p95": 179.1,
+      "p99": 229.7,
+      "max": 454.0
+    },
+    "frame_ms": {
+      "n": 625,
+      "mean": 14.367,
+      "p95_of_p95": 17.066,
+      "p95_max": 47.206,
+      "p99_max": 400.0
+    },
+    "failure_reasons": {
+      "zone_no_free_interaction_point": 3825,
+      "FindBestZone": 1306,
+      "path_follow_idle_short": 8
+    },
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.9020444444444482,
+      "PCSP.Zone.Exercise": 0.4709333333333332,
+      "PCSP.Zone.Eat": 0.1205,
+      "PCSP.Zone.Study": 0.2652000000000001,
+      "PCSP.Zone.Observe": 0.0084,
+      "PCSP.Zone.Shop": 0.0035555555555555566,
+      "PCSP.Zone.Work": 0.604133333333333,
+      "PCSP.Zone.Higiene": 0.2383,
+      "PCSP.Zone.Social": 0.6097066666666661
+    }
+  }
+]

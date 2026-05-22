@@ -11,6 +11,11 @@ APCSPAffordanceZone::APCSPAffordanceZone()
 	Bounds->SetBoxExtent(FVector(400.f, 400.f, 200.f));
 	Bounds->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	RootComponent = Bounds;
+
+	// Phase 0 rule: affordance zones must always be loaded so agents can path
+	// to any zone regardless of streaming state. Without this, standalone -game
+	// only streams in zones near the spawner, causing ~95% pathfinding failures.
+	bIsSpatiallyLoaded = false;
 }
 
 void APCSPAffordanceZone::BeginPlay()

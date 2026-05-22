@@ -152,9 +152,11 @@ bool UPCSPPolicySubsystem::LoadModel()
 // ---------------------------------------------------------------------------
 
 EPCSPActionType UPCSPPolicySubsystem::RunInferenceWithLogits(const TArray<float>& Observation,
-	int32 PersonaId, TArray<float>& OutLogits)
+	int32 PersonaId, TArray<float>& OutLogits, double& OutInferenceMicros)
 {
+	const double StartSec = FPlatformTime::Seconds();
 	const EPCSPActionType Action = RunInference(Observation, PersonaId);
+	OutInferenceMicros = (FPlatformTime::Seconds() - StartSec) * 1.0e6;
 
 	// In BTOnly the ONNX path is skipped; emit a zeroed logit vector so the
 	// trajectory schema stays uniform and analyzer KL math doesn't NaN out.

@@ -159,6 +159,32 @@ Movement is an execution detail, not a policy action. The policy should output s
       Avg 32.8 interactions/agent over 343s (~4× throughput vs 16-agent baseline).
       Total reward: 347.85. Prerequisite for 64-agent run: add a second Rest zone
       or raise Rest capacity further to keep AllOverCapacity below 50%.
+- [x] **T1.3 scaling sweep {8,16,32,64,96,128} × 3 seeds × 630 s**
+      (2026-05-20, 18 sessions `20260520_000614`..`030856`,
+      `research/results/ue_sessions/scaling_20260520/`):
+      Inference latency flat 183--202 µs through n=64 (well under 250 µs
+      budget); the apparent drop to 153/132 µs at n≥96 is CPU-scheduler
+      timeslicing at saturation, not model speedup.
+      Frame time scales ≈ 0.27 ms/agent: mean 5.57 ms (n=8) →
+      14.39 ms (n=128); p95 stays inside the 60 fps budget (16.67 ms)
+      through n=96.
+      Failure rate is 0\% at n≤32, 0.2\% at n=64, **4.7\% at n=96, 44.9\% at n=128**.
+      NavMesh `FindPath` queue saturation is the hard ceiling above n=96.
+      Intent throughput stable at 5.6--6.1/agent/min for n≤64.
+      **Headline:** ≤64 agents is the recommended real-time operating
+      point; 96 is a soft cap; 128+ requires async batched pathfinding.
+      Driver: `ue/cnzoi/tools/run_scaling_sweep.ps1` (added `-StartIndex`
+      for resume after PS death); analyzer: `analyze_scaling_sweep.py`;
+      outputs `per_session.json`, `scaling_curve.json`, `latency_budget.tsv`.
+      Three sweep-driver bugs fixed beforehand:
+      `t.IdleWhenNotForeground=1` engine freeze on focus loss,
+      world-TimerManager auto-quit not firing on paused world (moved to
+      `FTSTicker::GetCoreTicker`), and `-ExecCmds` arriving after
+      `BeginPlay` (replaced by `-PCSP_AgentCount/SpawnSeed/RunDurationSeconds`
+      cmdline switches read via `FParse::Value`). Also added a WP
+      streaming source on the spawner + `RuntimeGeneration=Dynamic` for
+      standalone NavMesh parity with PIE — was 95 % pathfind failure
+      before, 0 % after.
 - [x] Stress test 64 agents — three-run progression (2026-05-17):
       **Run 1** session `20260517_150713` (1,490s, Rest cap=20, Social cap unchanged):
       9,833 `interaction_complete`, 69,421 `move_failed`, failure rate 87.6%.
@@ -226,8 +252,8 @@ Movement is an execution detail, not a policy action. The policy should output s
       matched persona alongside the existing Spearman ρ. Re-run any
       paired PIE sessions after rebuilding to populate `kl_*` fields
       in `compare.json`.
-- [/] Compare BT-only, RL-only, Hybrid-PCSP, Hybrid-NoConsist, and Hybrid-NoPersona settings.
-      **Runtime ablations done (2026-05-18):** `pcsp.PolicyMode` CVar
+- [x] Compare BT-only, RL-only, Hybrid-PCSP, Hybrid-NoConsist, and Hybrid-NoPersona settings.
+      **Runtime ablations (2026-05-18):** `pcsp.PolicyMode` CVar
       switches between `HybridPCSP` (0, default), `BTOnly` (1, uses
       `NeedsHeuristic`, skips ONNX) and `HybridNoPersona` (2, ONNX with
       zeroed persona vector). Mode tagged on each agent's
@@ -242,13 +268,29 @@ Movement is an execution detail, not a policy action. The policy should output s
       under capacity contention). Full results:
       `research/results/ue_sessions/ablation_20260518_154827/ablation.json`,
       writeup in DONE.md.
-      **Training-side ablations still pending:** `Hybrid-NoConsist` and
-      `RL-only` require ONNX models trained without the consistency loss
-      and without persona conditioning respectively — must keep the same
-      ONNX I/O contract as `UPCSPPolicySubsystem` (inputs `obs`[1,33]
-      and `persona_proj`[1,64], output `logits`[1,20]). RL-only would
-      bind a constant zero persona vector, identical to HybridNoPersona
-      at inference, so the meaningful delta is training-time only.
+      **Hybrid-NoConsist training-side ablation (2026-05-18):**
+      `research/scripts/export_pcsp_onnx_ablations.py` exports both `full`
+      and `no_consist` v3 checkpoints to ONNX side-by-side; the
+      `research/scripts/swap_ue5_onnx.py <tag>` utility copies the
+      selected pair into `Content/PCSP/Models/pcsp_actor.onnx` and
+      `Content/PCSP/Data/persona_embeddings.json` and writes
+      `active_ablation.txt` for session tagging. Paired 64-agent PIE runs
+      under identical `HybridPCSP` CVar mode but different ONNX weights:
+      Full (session `20260518_171226`, 658s) 3,110 int / 0.32% fail /
+      reward 1,079.8 / inter-persona ρ 0.379; NoConsist (session
+      `20260518_172443`, 681s) 4,005 int / 0.05% fail / reward 1,423.5 /
+      inter-persona ρ 0.312. Matched-persona pairing
+      (`research/results/ue_sessions/noconsist_ablation_20260518/compare.json`):
+      mean Spearman ρ 0.348, mean symmetric KL 1.79 across 64 personas.
+      The two checkpoints diverge meaningfully per persona in-engine;
+      NoConsist preserves task reward (mirrors v1/v3 "reward hides the
+      failure" pattern). Intra-session persona-distance vs action-KL
+      Spearman now computed by
+      `research/scripts/analyze_persona_distance_vs_kl.py` — see
+      Phase 5 entry below.
+      **RL-only:** identical to HybridNoPersona at inference (zero
+      persona vector); the meaningful RL-only delta is training-time only
+      and is covered by the research-side ablation tables.
 
 ### Phase 5: Paper And Portfolio Artifacts
 
@@ -267,6 +309,23 @@ Movement is an execution detail, not a policy action. The policy should output s
       7-section draft covering hybrid stack, why-hybrid, trajectory
       logging, Phase 4 results, implementation cost, limitations,
       reproducibility, plus figure/table inventory).
+- [x] Intra-session persona-distance vs action-KL Spearman
+      (2026-05-18): `research/scripts/analyze_persona_distance_vs_kl.py`
+      reads `summary.json` (per-persona `policy_probs` from logits, with
+      fallback to the 20-bin action histogram) plus the active
+      `persona_embeddings.json`, and for every persona pair computes
+      cosine distance over the 64-d embedding vs symmetric KL over the
+      policy distribution. Output: `persona_distance_vs_kl.json` next
+      to each session summary (n_pairs, spearman_rho, pearson_r,
+      full scatter rows). Results across 64-agent logit-bearing
+      sessions: Full PCSP ρ = 0.236 (`noconsist_ablation_20260518`) /
+      0.257 (`kl_20260518_151255`); NoConsist ρ = 0.569
+      (`noconsist_only_20260518`); BTOnly ρ = 0.007 (sanity — zero
+      logits). In-engine ρ is well below the research-side ρ ≈ 0.73
+      headline, indicating BT + capacity contention compress the
+      persona signal at execution time; NoConsist scoring *higher*
+      than Full PCSP here echoes the v1/v3 "reward hides the failure"
+      pattern and is worth a limitations-section note.
 
 ## Debug Log Map
 

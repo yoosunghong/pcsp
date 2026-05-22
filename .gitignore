@@ -18,15 +18,14 @@ venv/
 .ipynb_checkpoints/
 
 # ML model weights (binary, large)
-*.pt
 *.pth
 *.ckpt
 *.safetensors
 
 # Large binary data
-research/results/embeddings/
-research/results/figures/*.npy
-research/results/v2/figures/*.npy
+# research/results/embeddings/
+# research/results/figures/*.npy
+# research/results/v2/figures/*.npy
 
 # Unreal Engine generated files
 ue/Binaries/

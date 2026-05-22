@@ -56,9 +56,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category="PCSP|Trajectory")
 	void RecordDecision(EPCSPActionType Action, float UrgencyScore);
 
-	/** Decision variant that also records raw policy logits for offline KL computation. */
+	/** Decision variant that also records raw policy logits for offline KL computation.
+	 *  InferenceMicros is the wall-time of the ONNX RunInference call (microseconds);
+	 *  pass <0 to omit. Used for T1.3 latency-budget telemetry. */
 	void RecordDecisionWithLogits(EPCSPActionType Action, float UrgencyScore,
-	                              TArrayView<const float> Logits);
+	                              TArrayView<const float> Logits,
+	                              double InferenceMicros = -1.0);
 
 	UFUNCTION(BlueprintCallable, Category="PCSP|Trajectory")
 	void RecordInteractionComplete(EPCSPActionType Action, FGameplayTag Affordance,

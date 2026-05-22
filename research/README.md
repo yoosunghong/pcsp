@@ -1,16 +1,16 @@
 # PCSP: Persona-Conditioned Shared Policy
 
 This repository contains the code, data artifacts, and manuscript source for
-**One Policy, Infinite NPCs: A Vision for Scalable Persona-Conditioned NPC
-Control in Life Simulation Games**.
+**One Policy, Infinite NPCs: Scalable Persona-Conditioned NPC Control via
+Shared Reinforcement Learning Policies**.
 
 PCSP trains a single shared reinforcement-learning policy conditioned on frozen
 LLM embeddings of natural-language persona descriptions. The goal is to support
 many life-simulation NPCs with distinct, designer-controllable behavior without
 training one policy per character.
 
-Paper source: `paper/cog2026_vision/main.tex`  
-Current PDF: `paper/cog2026_vision/main.pdf`  
+Paper source: `paper/cog2026_main/main.tex`  
+Current PDF: `paper/cog2026_main/main.pdf`  
 Repository: https://github.com/yoosunghong/pcsp
 
 This repository is maintained as the public research artifact for the manuscript.
@@ -70,7 +70,7 @@ conda run -n paper python scripts/run_designer_persona_case_study.py
 Recompile the paper:
 
 ```bash
-cd paper/cog2026_vision
+cd paper/cog2026_main
 pdflatex -interaction=nonstopmode main.tex
 bibtex main
 pdflatex -interaction=nonstopmode main.tex
@@ -86,7 +86,7 @@ pdflatex -interaction=nonstopmode main.tex
 - `scripts/`: training, evaluation, plotting, and qualitative-study runners.
 - `data/personas/`: persona datasets and train/test splits.
 - `results/`: generated checkpoints, metrics, figures, and case-study outputs.
-- `paper/cog2026_vision/`: LaTeX manuscript source.
+- `paper/cog2026_main/`: LaTeX manuscript source.
 
 ## License
 
