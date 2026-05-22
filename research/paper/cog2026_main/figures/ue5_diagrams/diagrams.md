@@ -193,7 +193,7 @@ HybridNoPersona = 13.3% fail / 574 reward (yellow).
 - All five diagrams render directly in GitHub's Markdown preview.
 - For paper inclusion, export each to PDF/PNG via [mermaid-cli](https://github.com/mermaid-js/mermaid-cli):
   ```
-  mmdc -i diagrams.md -o ../../../paper/figures/fig_<name>.pdf
+  mmdc -i diagrams.md -o ../fig_<name>.pdf
   ```
 - Diagrams 1, 2, and 3 are the most paper-load-bearing; 4 is reference for
   the architecture writeup; 5 documents the ablation methodology.

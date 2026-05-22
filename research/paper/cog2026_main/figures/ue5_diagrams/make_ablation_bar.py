@@ -4,9 +4,9 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(__file__).resolve().parents[4]
 ABL = ROOT / "results/ue_sessions/ablation_20260518_154827/ablation.json"
-OUT = ROOT / "paper/figures/fig_ue5_ablation.pdf"
+OUT = ROOT / "paper/cog2026_main/figures/fig_ue5_ablation.pdf"
 
 data = json.loads(ABL.read_text())
 order = ["HybridPCSP", "BTOnly", "HybridNoPersona"]
