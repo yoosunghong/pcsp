@@ -10,6 +10,7 @@
 #include "PCSPObservationComponent.h"
 #include "PCSPPolicySubsystem.h"
 #include "PCSPTrajectoryLogComponent.h"
+#include "BehaviorTree/BlackboardData.h"
 
 UBTTask_PCSPDecision::UBTTask_PCSPDecision()
 {
@@ -65,12 +66,22 @@ EBTNodeResult::Type UBTTask_PCSPDecision::ExecuteTask(UBehaviorTreeComponent& Ow
 	if (bThrottled && !bEmergency && Mem->LastAction != EPCSPActionType::None)
 	{
 		BB->SetValueAsEnum (PCSPBlackboard::DesiredActionType, static_cast<uint8>(Mem->LastAction));
+		if (BB->GetKeyID(PCSPBlackboard::DesiredCategory) != FBlackboard::InvalidKey)
+		{
+			BB->SetValueAsEnum(PCSPBlackboard::DesiredCategory,
+				static_cast<uint8>(UPCSPPolicySubsystem::ActionToCategory(Mem->LastAction)));
+		}
 		BB->SetValueAsFloat(PCSPBlackboard::UrgencyScore,      UrgencyScore);
 		return EBTNodeResult::Succeeded;
 	}
 
 	UPCSPPolicySubsystem* Policy = World ? World->GetSubsystem<UPCSPPolicySubsystem>() : nullptr;
-	if (!Policy || !Policy->IsReady())
+	if (!Policy)
+	{
+		UE_LOG(LogTemp, Error, TEXT("BTTask_PCSPDecision: PCSPPolicySubsystem is missing"));
+		return EBTNodeResult::Failed;
+	}
+	if (!Policy->IsReady() && UPCSPPolicySubsystem::GetPolicyMode() != EPCSPPolicyMode::BTOnly)
 	{
 		UE_LOG(LogTemp, Error,
 			TEXT("BTTask_PCSPDecision: PCSPPolicySubsystem is not ready (ONNX model missing or load failed). "
@@ -95,6 +106,11 @@ EBTNodeResult::Type UBTTask_PCSPDecision::ExecuteTask(UBehaviorTreeComponent& Ow
 	}
 
 	BB->SetValueAsEnum (PCSPBlackboard::DesiredActionType, static_cast<uint8>(Action));
+	if (BB->GetKeyID(PCSPBlackboard::DesiredCategory) != FBlackboard::InvalidKey)
+	{
+		BB->SetValueAsEnum(PCSPBlackboard::DesiredCategory,
+			static_cast<uint8>(UPCSPPolicySubsystem::ActionToCategory(Action)));
+	}
 	BB->SetValueAsFloat(PCSPBlackboard::UrgencyScore,      UrgencyScore);
 
 	Mem->LastDecisionTime = Now;

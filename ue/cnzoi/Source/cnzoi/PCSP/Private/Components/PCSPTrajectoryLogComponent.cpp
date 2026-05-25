@@ -36,6 +36,13 @@ namespace
 		const UEnum* E = StaticEnum<EPCSPAffordanceCategory>();
 		return E ? E->GetNameStringByValue(static_cast<int64>(C)) : FString::FromInt((int32)C);
 	}
+
+	FString JsonEscaped(FString Value)
+	{
+		Value.ReplaceInline(TEXT("\\"), TEXT("\\\\"));
+		Value.ReplaceInline(TEXT("\""), TEXT("\\\""));
+		return Value;
+	}
 }
 
 UPCSPTrajectoryLogComponent::UPCSPTrajectoryLogComponent()
@@ -70,11 +77,12 @@ void UPCSPTrajectoryLogComponent::BeginPlay()
 	// JSON-escaping complexity; downstream tooling can join on persona_id.
 	const FString ModeName = UPCSPPolicySubsystem::PolicyModeName(
 		UPCSPPolicySubsystem::GetPolicyMode());
+	const FString ActiveAblation = JsonEscaped(UPCSPPolicySubsystem::GetActiveAblationTag());
 	const FString Header = FString::Printf(
-		TEXT("{\"event\":\"session_start\",\"persona_id\":%d,\"actor\":\"%s\",\"t\":%.3f,\"policy_mode\":\"%s\"}"),
+		TEXT("{\"event\":\"session_start\",\"persona_id\":%d,\"actor\":\"%s\",\"t\":%.3f,\"policy_mode\":\"%s\",\"active_ablation\":\"%s\"}"),
 		PersonaId, *ActorName,
 		GetWorld() ? GetWorld()->GetTimeSeconds() : 0.f,
-		*ModeName);
+		*ModeName, *ActiveAblation);
 	AppendLine(Header);
 
 	if (UWorld* World = GetWorld())
@@ -166,14 +174,36 @@ void UPCSPTrajectoryLogComponent::EmitEvent(EPCSPTrajectoryEvent Event,
 
 	AppendLine(Line);
 
-	// Keep the in-memory mirror as well (for runtime queries / Blueprint debug).
+	// In-memory ring buffer mirror — HUD trajectory strip reads from here, so cap
+	// the size to avoid unbounded growth in long-running PIE sessions.
 	FPCSPTrajectoryEntry E;
-	E.TimeSeconds = T;
-	E.Location    = Pos;
-	E.Action      = Action;
-	E.Affordance  = Affordance;
-	E.Reward      = Reward;
+	E.TimeSeconds  = T;
+	E.Location     = Pos;
+	E.EventType    = Event;
+	E.Action       = Action;
+	E.Category     = Category;
+	E.Affordance   = Affordance;
+	E.Reward       = Reward;
+	E.UrgencyScore = UrgencyScore;
 	Entries.Add(MoveTemp(E));
+	const int32 Cap = FMath::Max(8, MaxRecentEntries);
+	if (Entries.Num() > Cap)
+	{
+		Entries.RemoveAt(0, Entries.Num() - Cap, /*bAllowShrinking=*/false);
+	}
+}
+
+TArray<FPCSPTrajectoryEntry> UPCSPTrajectoryLogComponent::GetRecentEvents(int32 MaxCount) const
+{
+	const int32 N = FMath::Clamp(MaxCount, 0, Entries.Num());
+	TArray<FPCSPTrajectoryEntry> Out;
+	if (N <= 0) { return Out; }
+	Out.Reserve(N);
+	for (int32 i = Entries.Num() - N; i < Entries.Num(); ++i)
+	{
+		Out.Add(Entries[i]);
+	}
+	return Out;
 }
 
 void UPCSPTrajectoryLogComponent::RecordDecision(EPCSPActionType Action, float UrgencyScore)

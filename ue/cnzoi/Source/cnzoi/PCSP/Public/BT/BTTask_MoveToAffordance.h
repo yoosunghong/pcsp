@@ -49,6 +49,4 @@ private:
 	EBTNodeResult::Type TryBeginMove(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory);
 	void                ReleaseReservation(uint8* NodeMemory, AActor* Agent) const;
 	void                EmitFinalFailure(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const;
-
-	static EPCSPAffordanceCategory ActionToCategory(EPCSPActionType Action);
 };

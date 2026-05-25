@@ -502,3 +502,120 @@ duplicate sweep script that ran parallel UE instances; excluded from analysis.
   inference, observability extensions, then camera/HUD capture.
 - Updated [PLAN.md](PLAN.md) so portfolio work is now explicitly
   engine-extension-first and demo-UI-second.
+
+## 2026-05-23 - Portfolio Hybrid Stack Cleanup
+
+- Implemented the P0 portfolio cleanup from
+  [docs/portfolio/hybrid-stack.md](docs/portfolio/hybrid-stack.md).
+- Centralized action-to-category routing in
+  `UPCSPPolicySubsystem::ActionToCategory`; `BTTask_PCSPDecision` writes the
+  optional `DesiredCategory` Blackboard key and `BTTask_MoveToAffordance` reads
+  it with a fallback to the same subsystem function.
+- Routed `LeisureIndoor`, `LeisureOutdoor`, and `ObserveCrowd` to the authored
+  Observe category so the effective 9-category taxonomy remains executable
+  without a dedicated Leisure zone.
+- Added `active_ablation` to the trajectory `session_start` row by reading
+  `Content/PCSP/Models/active_ablation.txt`, and updated
+  `research/scripts/analyze_ue_session.py` to preserve the field in
+  `summary.json`.
+- Fixed `BTOnly` decision execution so it can use the needs heuristic even when
+  ONNX assets are absent or the policy subsystem is not ready.
+
+## 2026-05-23 - Observability Pipeline Extensions
+
+Closed the two "What's next" items on
+[docs/portfolio/observability.md](docs/portfolio/observability.md).
+
+- **Coarse trace renderer**:
+  `research/scripts/render_session_trace.py`. Reads
+  `Saved/PCSP/Logs/<stamp>/agent_p*.jsonl`, emits chronological events
+  (`DECIDE` / `INTERACT` / `MFAIL` / `IFAIL` / `START`) or a compressed
+  `schedule` of completed interactions only. Flags: `--persona`,
+  `--from` / `--until`, `--group-by {time,persona}`. Pure stdlib;
+  smoke-tested against session `20260517_230327` per-persona window
+  with both `full` and `schedule` modes.
+- **Persona-distance vs KL output carries `active_ablation`**:
+  `research/scripts/analyze_persona_distance_vs_kl.py` now forwards
+  `summary.json["active_ablation"]` into its output as
+  `session_active_ablation` so paired comparisons across the
+  full/no_consist ONNX swaps can be matched without filesystem
+  inspection.
+
+## 2026-05-23 - Diagram Polish + HUD/Camera C++ Scaffold
+
+Closed roadmap items #5 (engine-side C++ scaffold) and #6 (diagram polish)
+from [PLAN.md §"Portfolio Engineering Roadmap"](PLAN.md).
+
+### Diagram polish
+
+- Refreshed [docs/portfolio/diagrams.md](docs/portfolio/diagrams.md) so the
+  five Mermaid figures match the 2026-05-23 hybrid-stack cleanup:
+  - Diagram 2 (per-decision sequence) now shows `ActionToCategory()` called
+    on `UPCSPPolicySubsystem`, the `DesiredCategory` Blackboard writeback on
+    both the throttle-reuse and fresh-decision paths, and the relaxed
+    `IsReady()` guard for `BTOnly` mode.
+  - Diagram 3 (BT subtree) labels `BTTask_PCSPDecision` and
+    `BTTask_MoveToAffordance` as readers/writers of the centralized
+    `DesiredCategory` key.
+  - Diagram 4 (three-layer affordance) annotates that
+    `Leisure*` / `ObserveCrowd` route to the authored Observe category,
+    so the effective taxonomy is 9 categories.
+  - Diagram 5 (ablation switch) shows `swap_ue5_onnx.py` →
+    `active_ablation.txt` → `UPCSPTrajectoryLogComponent::BeginPlay` →
+    `session_start` row, closing the loop with `compare_ablations.py`.
+- Added a "Change log" section to diagrams.md.
+
+### HUD/camera C++ scaffold (items D1, D3, ring buffer from the plan)
+
+- **`APCSPDemoPlayerController`** ([PCSP/Public/Agent/PCSPDemoPlayerController.h](Source/cnzoi/PCSP/Public/Agent/PCSPDemoPlayerController.h),
+  [PCSP/Private/Agent/PCSPDemoPlayerController.cpp](Source/cnzoi/PCSP/Private/Agent/PCSPDemoPlayerController.cpp)) —
+  spectator-style controller for portfolio capture. Legacy `InputComponent`
+  bindings (no Enhanced Input asset authoring required):
+  `F` toggle focus on nearest agent, `Tab` / `Shift+Tab` cycle by `PersonaId`,
+  `H` broadcasts `OnHudToggle`, `Z` broadcasts `OnZoneOverlayToggle`.
+  Uses `SetViewTargetWithBlend(0.35s)` instead of `Possess()` so each
+  agent's `APCSPAIController` and Behavior Tree continue to run undisturbed
+  (per demo-video-hud-plan.md risk table).
+- **`UPCSPAgentDebugViewModel`** ([PCSP/Public/Components/PCSPAgentDebugViewModel.h](Source/cnzoi/PCSP/Public/Components/PCSPAgentDebugViewModel.h),
+  [PCSP/Private/Components/PCSPAgentDebugViewModel.cpp](Source/cnzoi/PCSP/Private/Components/PCSPAgentDebugViewModel.cpp)) —
+  read-only adapter that reads persona / needs / social / Blackboard /
+  trajectory state from the observed agent and returns
+  `FPCSPHudAgentSnapshot` (persona id+text+embedding status, policy mode,
+  active ablation, decision stack, 8 needs, social summary, target zone
+  occupancy resolved via interaction-point membership, recent events).
+  Pure — never mutates agent state, safe to bind to a UMG widget that
+  ticks every frame. Owned by `APCSPDemoPlayerController`; rebound on
+  `SetObservedAgent`.
+- **In-memory event ring buffer on `UPCSPTrajectoryLogComponent`** —
+  closes the open follow-up in demo-video-hud-plan.md. `FPCSPTrajectoryEntry`
+  gained `EventType`, `Category`, and `UrgencyScore` fields; `Entries` is now
+  bounded by `MaxRecentEntries` (default 64, FIFO drop). New
+  `GetRecentEvents(MaxCount)` returns the newest-last tail for the HUD
+  trajectory strip. JSONL output is unchanged — the ring buffer is purely
+  an in-process mirror.
+
+### Editor-side follow-ups for the demo HUD (D2, D4, D5, D6)
+
+Asset/level work that the C++ scaffold above cannot do; deferred to the next
+editor session:
+
+- **D2 — Agent camera mount.** Add `USpringArmComponent + UCameraComponent`
+  to a BP child of `APCSPAgentCharacter`, or stand up a `APCSPAgentCameraProxy`
+  that attaches to the observed agent. `SetViewTargetWithBlend` already targets
+  the agent actor; the camera component just controls framing.
+- **D4 — UMG widgets.** Author `WBP_PCSPDemoHUD` and the eight sub-widgets in
+  `docs/portfolio/demo-video-hud-plan.md §"Implementation Work Breakdown".`
+  Bind to `UPCSPAgentDebugViewModel::BuildSnapshot()`; consume the new
+  `FPCSPHudAgentSnapshot` USTRUCT. Listen to
+  `APCSPDemoPlayerController::OnObservedAgentChanged` / `OnHudToggle` /
+  `OnZoneOverlayToggle` from BP.
+- **D5 — Zone overlay materials/decals** on the affordance-zone floors,
+  toggled by `OnZoneOverlayToggle`.
+- **D6 — Capture presets.** Duplicate `Map_PCSPDistrict_M` to
+  `Map_PCSPDistrict_Portfolio`, set the demo World Settings
+  `PlayerControllerClass = APCSPDemoPlayerController`, leave the experiment
+  map untouched.
+- **Phase 5 PIE captures.** With the controller + HUD live, capture the
+  story beats (16-agent close-up, 64-agent crowd, persona contrast trio,
+  congestion recovery, data-trail proof) per the demo-video-hud-plan beats
+  table. Then run `analyze_ue_session.py` on the captured stamp.

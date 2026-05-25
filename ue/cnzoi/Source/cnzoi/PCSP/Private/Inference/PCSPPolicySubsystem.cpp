@@ -35,6 +35,18 @@ FString UPCSPPolicySubsystem::PolicyModeName(EPCSPPolicyMode Mode)
 	}
 }
 
+FString UPCSPPolicySubsystem::GetActiveAblationTag()
+{
+	const FString TagPath = FPaths::ProjectContentDir() / TEXT("PCSP/Models/active_ablation.txt");
+	FString Tag;
+	if (!FFileHelper::LoadFileToString(Tag, *TagPath))
+	{
+		return TEXT("unknown");
+	}
+	Tag.TrimStartAndEndInline();
+	return Tag.IsEmpty() ? FString(TEXT("unknown")) : Tag;
+}
+
 // ---------------------------------------------------------------------------
 // Initialize / Deinitialize
 // ---------------------------------------------------------------------------
@@ -280,6 +292,55 @@ EPCSPActionType UPCSPPolicySubsystem::RunInference(const TArray<float>& Observat
 	return EPCSPActionType::None;
 }
 
+EPCSPAffordanceCategory UPCSPPolicySubsystem::ActionToCategory(EPCSPActionType Action)
+{
+	switch (Action)
+	{
+	case EPCSPActionType::EatQuick:
+	case EPCSPActionType::EatSlow:
+		return EPCSPAffordanceCategory::Eat;
+
+	case EPCSPActionType::RestAlone:
+	case EPCSPActionType::RestWithOthers:
+		return EPCSPAffordanceCategory::Rest;
+
+	case EPCSPActionType::FocusedWork:
+	case EPCSPActionType::PlanningWork:
+		return EPCSPAffordanceCategory::Work;
+
+	case EPCSPActionType::DeepStudy:
+	case EPCSPActionType::CasualLearning:
+		return EPCSPAffordanceCategory::Study;
+
+	case EPCSPActionType::ExerciseSolo:
+	case EPCSPActionType::ExerciseSocial:
+		return EPCSPAffordanceCategory::Exercise;
+
+	case EPCSPActionType::HygieneQuick:
+	case EPCSPActionType::HygieneCareful:
+		return EPCSPAffordanceCategory::Hygiene;
+
+	case EPCSPActionType::SocializeInitiate:
+	case EPCSPActionType::SocializeRespond:
+		return EPCSPAffordanceCategory::Social;
+
+	case EPCSPActionType::LeisureIndoor:
+	case EPCSPActionType::LeisureOutdoor:
+	case EPCSPActionType::ObserveCrowd:
+		return EPCSPAffordanceCategory::Observe;
+
+	case EPCSPActionType::ShopEssentials:
+	case EPCSPActionType::BrowseArea:
+		return EPCSPAffordanceCategory::Shop;
+
+	case EPCSPActionType::IdleReflect:
+		return EPCSPAffordanceCategory::Idle;
+
+	default:
+		return EPCSPAffordanceCategory::None;
+	}
+}
+
 // ---------------------------------------------------------------------------
 // Needs heuristic (used when model not loaded)
 // ---------------------------------------------------------------------------
@@ -311,7 +372,7 @@ EPCSPActionType UPCSPPolicySubsystem::NeedsHeuristic(const TArray<float>& NeedsV
 	case EPCSPNeed::Hunger:   return EPCSPActionType::EatQuick;
 	case EPCSPNeed::Sleep:    return EPCSPActionType::RestAlone;
 	case EPCSPNeed::Social:   return EPCSPActionType::SocializeInitiate;
-	case EPCSPNeed::Leisure:  return EPCSPActionType::LeisureIndoor;
+	case EPCSPNeed::Leisure:  return EPCSPActionType::LeisureOutdoor;
 	case EPCSPNeed::Hygiene:  return EPCSPActionType::HygieneQuick;
 	case EPCSPNeed::Fitness:  return EPCSPActionType::ExerciseSolo;
 	case EPCSPNeed::Work:     return EPCSPActionType::FocusedWork;

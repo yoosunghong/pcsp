@@ -28,7 +28,7 @@ listed tag and capacity, plus `BP_InteractionPoint` children equal to capacity.
 exists in `EPCSPAffordanceCategory` but has no zone in the level — the v3
 movement remap (`PCSPPolicySubsystem.cpp`) routes v3 indices 16/18
 (`LeisureOutdoor`) and 17/19 (`ObserveCrowd`) through the Park/Observe zone via
-`BTTask_MoveToAffordance::ActionToCategory`. This is recorded in the Phase 4
+`UPCSPPolicySubsystem::ActionToCategory`. This is recorded in the Phase 4
 16-agent baseline entry of `PLAN.md`.
 
 ## Capacity provenance
@@ -76,7 +76,7 @@ If you add a new category (e.g., `Cook`), update **all four** layers, in this
 order:
 
 1. `EPCSPAffordanceCategory` in `PCSPTypes.h` — add the enum value before `Idle`/`None`.
-2. `BTTask_MoveToAffordance::ActionToCategory` — add the action→category mapping.
+2. `UPCSPPolicySubsystem::ActionToCategory` — add the action→category mapping.
 3. `DT_PCSPAffordanceTags` — register `PCSP.Zone.Cook` (and any sub-tags).
 4. Map — place at least one `BP_AffordanceZone` with the new tag, set
    `Is Spatially Loaded = false`, and add interaction points.

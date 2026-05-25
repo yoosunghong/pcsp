@@ -667,12 +667,35 @@ After recording:
 | Persona text too long | Pre-author short display summaries for selected demo personas. |
 | Zone overlays make footage look like editor debug | Use tasteful translucent floor/outline materials and reserve dense debug UI for short cutaways. |
 
+## Implemented 2026-05-23 (C++ scaffold)
+
+- **`APCSPDemoPlayerController`** lives under `Source/cnzoi/PCSP/Public/Agent/`
+  alongside `APCSPAIController`. Legacy `InputComponent` key bindings (F /
+  Tab / Shift+Tab / H / Z), `SetViewTargetWithBlend(0.35 s)` for camera
+  swap, `OnObservedAgentChanged` / `OnHudToggle` / `OnZoneOverlayToggle`
+  multicast delegates for HUD binding from Blueprint.
+- **`UPCSPAgentDebugViewModel`** under
+  `Source/cnzoi/PCSP/Public/Components/`. Owned by the demo controller;
+  `BuildSnapshot()` returns the `FPCSPHudAgentSnapshot` USTRUCT consumed
+  by UMG. Read-only — never mutates agent state.
+- **Ring buffer on `UPCSPTrajectoryLogComponent`.**
+  `FPCSPTrajectoryEntry` gained `EventType`/`Category`/`UrgencyScore`,
+  `Entries` is now bounded by `MaxRecentEntries` (default 64, FIFO),
+  and `GetRecentEvents(N)` returns the newest tail. The HUD trajectory
+  strip can read the same events being written to JSONL without a
+  parallel poll path.
+
+See [DONE.md §"2026-05-23 - Diagram Polish + HUD/Camera C++ Scaffold"](../../DONE.md).
+
 ## Open Follow-ups
 
-- Decide whether `APCSPDemoPlayerController` should live under the PCSP module
-  or as a demo-only class outside runtime experiment code.
-- Add an in-memory event ring buffer to `UPCSPTrajectoryLogComponent` so the
-  HUD can show the same events being written to JSONL.
+- Author the agent camera mount BP (D2) — `USpringArmComponent +
+  UCameraComponent` on a child of `APCSPAgentCharacter`, or an
+  `APCSPAgentCameraProxy` that attaches to the observed agent.
+- Author the UMG widgets (D4) and bind to `BuildSnapshot()` plus the
+  three demo-controller delegates.
 - Pick 3-5 curated persona IDs for repeatable portfolio capture via
   `pcsp.PersonaIds` / `-PCSP_PersonaIds`.
 - Create a short `LevelSequence` for the establishing and scale shots.
+- Duplicate `Map_PCSPDistrict_M` to `Map_PCSPDistrict_Portfolio` and set
+  the demo World Settings `PlayerControllerClass = APCSPDemoPlayerController`.

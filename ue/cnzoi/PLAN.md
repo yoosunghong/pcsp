@@ -163,7 +163,7 @@ Detailed portfolio docs live under [docs/portfolio/](docs/portfolio/).
       `BrowseArea` at ~0.25% — almost never tried). Note: the `Leisure` enum
       value has no zone in the level — it was folded into Observe during the
       Phase 2 remap (v3 indices 16/18 emit `LeisureOutdoor`, which routes to
-      the Park/Observe zone via `BTTask_MoveToAffordance::ActionToCategory`).
+      the Park/Observe zone via `UPCSPPolicySubsystem::ActionToCategory`).
       Effective taxonomy is 9 categories, not 10.
 - [x] Test 32 agents (2026-05-17, session `20260517_150713`, 32-agent window ~343s):
       Capacity raised from 4 to 8 on bottleneck zones before this run.
@@ -353,12 +353,12 @@ systems have at least a first pass. All portfolio planning docs live under
 
 | Order | Item | Status | Planning doc | UE5 update target |
 | --- | --- | --- | --- |
-| 1 | Hybrid policy/BT contract cleanup | Live, minor open issues | [docs/portfolio/hybrid-stack.md](docs/portfolio/hybrid-stack.md) | centralize action-to-category mapping, handle `Leisure`, log active ablation |
+| 1 | Hybrid policy/BT contract cleanup | Implemented 2026-05-23 | [docs/portfolio/hybrid-stack.md](docs/portfolio/hybrid-stack.md) | centralized action-to-category mapping, routed `Leisure` to Observe, logged active ablation |
 | 2 | EQS-driven affordance congestion handling | Deferred | [docs/portfolio/eqs-congestion.md](docs/portfolio/eqs-congestion.md) | `UPCSPAffordanceSubsystem`, `UBTTask_MoveToAffordance`, EQS query/tests |
 | 3 | Async/batched ONNX inference | Deferred | [docs/portfolio/async-inference.md](docs/portfolio/async-inference.md) | `UPCSPPolicySubsystem`, `BTTask_PCSPDecision`, spawner AgentIndex wiring |
 | 4 | Trajectory observability pipeline extensions | Live, extendable | [docs/portfolio/observability.md](docs/portfolio/observability.md) | `UPCSPTrajectoryLogComponent`, analyzer scripts, HUD event ring buffer |
-| 5 | Agent-camera focus + demo HUD | Planned after extension work | [docs/portfolio/demo-video-hud-plan.md](docs/portfolio/demo-video-hud-plan.md) | Demo observer controller, agent camera/view target, UMG HUD/data adapter |
-| 6 | Diagram polish | Live, update after implementation | [docs/portfolio/diagrams.md](docs/portfolio/diagrams.md) | refresh architecture figures and capture inventory |
+| 5 | Agent-camera focus + demo HUD | C++ scaffold landed 2026-05-23; UMG + map editor work pending | [docs/portfolio/demo-video-hud-plan.md](docs/portfolio/demo-video-hud-plan.md) | `APCSPDemoPlayerController`, `UPCSPAgentDebugViewModel`, trajectory ring buffer in place; agent camera mount, UMG widgets, zone overlays, demo map duplication are editor work |
+| 6 | Diagram polish | Refreshed 2026-05-23 | [docs/portfolio/diagrams.md](docs/portfolio/diagrams.md) | diagrams 2, 3, 4, 5 updated for hybrid-stack cleanup |
 
 ## Debug Log Map
 

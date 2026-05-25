@@ -50,11 +50,17 @@ public:
 	/** Fallback heuristic used when the model is not loaded. */
 	static EPCSPActionType NeedsHeuristic(const TArray<float>& NeedsValues);
 
+	/** Canonical semantic action -> authored affordance category routing. */
+	static EPCSPAffordanceCategory ActionToCategory(EPCSPActionType Action);
+
 	/** Current ablation mode (read from `pcsp.PolicyMode` CVar at each inference). */
 	static EPCSPPolicyMode GetPolicyMode();
 
 	/** Stable string used in trajectory `session_start` rows + analyzer summaries. */
 	static FString PolicyModeName(EPCSPPolicyMode Mode);
+
+	/** Active ONNX ablation tag written by swap_ue5_onnx.py, or "unknown". */
+	static FString GetActiveAblationTag();
 
 private:
 	bool LoadModel();

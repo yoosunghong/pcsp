@@ -111,6 +111,7 @@ namespace PCSPBlackboard
 	static const FName TargetActor         = TEXT("TargetActor");
 	static const FName TargetLocation      = TEXT("TargetLocation");
 	static const FName InteractionStyle    = TEXT("InteractionStyle");
+	static const FName DesiredCategory     = TEXT("DesiredCategory");
 	static const FName UrgencyScore        = TEXT("UrgencyScore");
 	static const FName RecentFailureCount  = TEXT("RecentFailureCount");
 	static const FName SocialTargetActor   = TEXT("SocialTargetActor");

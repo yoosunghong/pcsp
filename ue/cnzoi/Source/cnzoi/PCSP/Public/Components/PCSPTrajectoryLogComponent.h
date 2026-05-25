@@ -8,7 +8,7 @@
 class UPCSPNeedsComponent;
 class UPCSPPersonaComponent;
 
-UENUM()
+UENUM(BlueprintType)
 enum class EPCSPTrajectoryEvent : uint8
 {
 	Decision,             // PCSPDecision selected an action (pre-execution)
@@ -24,9 +24,12 @@ struct FPCSPTrajectoryEntry
 
 	UPROPERTY(BlueprintReadOnly) float TimeSeconds = 0.f;
 	UPROPERTY(BlueprintReadOnly) FVector Location = FVector::ZeroVector;
+	UPROPERTY(BlueprintReadOnly) EPCSPTrajectoryEvent EventType = EPCSPTrajectoryEvent::Decision;
 	UPROPERTY(BlueprintReadOnly) EPCSPActionType Action = EPCSPActionType::IdleReflect;
+	UPROPERTY(BlueprintReadOnly) EPCSPAffordanceCategory Category = EPCSPAffordanceCategory::None;
 	UPROPERTY(BlueprintReadOnly) FGameplayTag Affordance;
 	UPROPERTY(BlueprintReadOnly) float Reward = 0.f;
+	UPROPERTY(BlueprintReadOnly) float UrgencyScore = 0.f;
 };
 
 /**
@@ -80,6 +83,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category="PCSP|Trajectory")
 	const TArray<FPCSPTrajectoryEntry>& GetEntries() const { return Entries; }
 
+	/** Most-recent N events from the in-memory ring buffer, newest last. HUD trajectory strip. */
+	UFUNCTION(BlueprintCallable, Category="PCSP|Trajectory")
+	TArray<FPCSPTrajectoryEntry> GetRecentEvents(int32 MaxCount = 5) const;
+
 	UFUNCTION(BlueprintCallable, Category="PCSP|Trajectory")
 	void ClearLog() { Entries.Reset(); PendingLines.Reset(); }
 
@@ -91,6 +98,10 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="PCSP|Trajectory", meta=(ClampMin="1.0"))
 	float PeriodicFlushSeconds = 5.f;
+
+	/** Cap on the in-memory `Entries` ring buffer. Older entries are dropped FIFO. */
+	UPROPERTY(EditAnywhere, Category="PCSP|Trajectory", meta=(ClampMin="8", ClampMax="2048"))
+	int32 MaxRecentEntries = 64;
 
 protected:
 	void AppendLine(const FString& JsonLine);
