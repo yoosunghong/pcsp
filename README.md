@@ -1,9 +1,9 @@
 # pcsp Workspace
 
-This repository is now split for game-engine integration:
+This repository is split into research and Unreal Engine integration areas:
 
-- `research/` contains the existing PCSP research artifact, including source code, data, results, paper files, and plans.
-- `ue/` is reserved for the Unreal Engine project.
+- `research/` contains the PCSP research code, datasets, scripts, and reproducible experiment artifacts.
+- `ue/` contains the Unreal Engine project and runtime integration work.
 
 For research work, start in `research/`:
 
@@ -13,4 +13,4 @@ conda run -n paper python scripts/test_env.py
 conda run -n paper python scripts/test_env_v3.py
 ```
 
-See `research/README.md` and `research/PLAN.md` for the PCSP research workflow.
+Local planning notes, paper drafts, revision workspaces, and archived notes are intentionally kept out of version control. In particular, `PLAN.md`, `DONE.md`, `persona-proposal.md`, `research/archive/`, `research/paper/`, and `research/revised/` are local-only working materials.

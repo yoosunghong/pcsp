@@ -27,6 +27,14 @@ venv/
 # research/results/figures/*.npy
 # research/results/v2/figures/*.npy
 
+# Local planning / manuscript workspaces
+research/archive/
+research/paper/
+research/revised/
+PLAN.md
+DONE.md
+persona-proposal.md
+
 # Unreal Engine generated files
 ue/Binaries/
 ue/Build/
