@@ -12,5 +12,3 @@ cd research
 conda run -n paper python scripts/test_env.py
 conda run -n paper python scripts/test_env_v3.py
 ```
-
-Local planning notes, paper drafts, revision workspaces, and archived notes are intentionally kept out of version control. In particular, `PLAN.md`, `DONE.md`, `persona-proposal.md`, `research/archive/`, `research/paper/`, and `research/revised/` are local-only working materials.
