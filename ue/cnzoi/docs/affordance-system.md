@@ -8,7 +8,7 @@ action space. It does not. There are three distinct layers with different purpos
 ## Overview
 
 ```
-EPCSPActionType (20)               EPCSPAffordanceCategory (11)      DT_PCSPAffordanceTags (11+)
+EPCSPActionType (20)               EPCSPAffordanceCategory (11 enum, 9 active)  DT_PCSPAffordanceTags
 ────────────────────────           ────────────────────────────      ──────────────────────────
 Policy output / action space       Coarse zone-routing enum          GameplayTag registration
 (what the agent decides)           (bridges action → zone type)      (physical zone identifiers)
@@ -43,7 +43,7 @@ The Behavior Tree reads this value from the Blackboard key `DesiredActionType`
 
 ---
 
-## Layer 2 — Affordance Category (`EPCSPAffordanceCategory`, 11 values)
+## Layer 2 — Affordance Category (`EPCSPAffordanceCategory`, 11 enum values, 9 active)
 
 This is the **routing enum** that maps each action to a zone type.
 It is not the action space; it is a lookup key.
@@ -57,9 +57,8 @@ It is not the action space; it is a lookup key.
 | `Exercise` | `ExerciseSolo`, `ExerciseSocial` |
 | `Hygiene` | `HygieneQuick`, `HygieneCareful` |
 | `Social` | `SocializeInitiate`, `SocializeRespond` |
-| `Leisure` | `LeisureIndoor`, `LeisureOutdoor` |
 | `Shop` | `ShopEssentials`, `BrowseArea` |
-| `Observe` | `ObserveCrowd` |
+| `Observe` | `LeisureIndoor`, `LeisureOutdoor`, `ObserveCrowd` |
 | `Idle` | `IdleReflect` |
 
 Multiple actions collapse to one category because they share the same physical
@@ -69,7 +68,7 @@ expressed via the `InteractionStyle` Blackboard key and resolved inside
 
 ---
 
-## Layer 3 — Gameplay Tags (`DT_PCSPAffordanceTags`, 11+ rows)
+## Layer 3 — Gameplay Tags (`DT_PCSPAffordanceTags`, 9+ active rows)
 
 These are **physical zone identifiers** — `FGameplayTag` values assigned to
 `APCSPAffordanceZone` actors placed in the level. They are registered with UE's
@@ -90,6 +89,7 @@ PCSP.Zone.Eat.Kitchen           ← specific indoor kitchen
 PCSP.Zone.Eat.CafeOutdoor       ← outdoor cafe, preferred for LeisureOutdoor overlap
 ```
 
+`UPCSPPolicySubsystem::ActionToCategory` owns the action-to-category mapping.
 `UPCSPAffordanceSubsystem::FindBestZone` scores candidate zones by distance and
 tag match. A preferred sub-tag (written to `DesiredAffordanceTag`) scores +5 000 UU
 over distance, so the agent can still be routed to the nearest available zone if the
@@ -152,7 +152,7 @@ Having 20 tags (one per action) was considered and rejected for three reasons:
 | Layer | Count | Role | Where |
 |---|---|---|---|
 | `EPCSPActionType` | **20** | Policy action space | `PCSPTypes.h` |
-| `EPCSPAffordanceCategory` | **11** | Zone routing bucket | `PCSPTypes.h` |
-| `DT_PCSPAffordanceTags` rows | **11 minimum** | GameplayTag registration | `Content/PCSP/Data/` |
+| `EPCSPAffordanceCategory` | **11 enum / 9 active** | Zone routing bucket | `PCSPTypes.h` |
+| `DT_PCSPAffordanceTags` rows | **9 active minimum** | GameplayTag registration | `Content/PCSP/Data/` |
 | `APCSPAffordanceZone` actors | **10–30+** | Physical locations in level | Map actors |
 | `APCSPInteractionPoint` actors | **40–80** | Specific seats / stations | Children of zones |

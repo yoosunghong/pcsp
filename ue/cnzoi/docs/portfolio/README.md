@@ -33,4 +33,6 @@ Differs from `PLAN.md` in scope:
 | [observability.md](observability.md) | Per-agent JSONL trace pipeline + analyzer | Phase 3/4 live |
 | [hybrid-stack.md](hybrid-stack.md) | Policy / Behavior Tree integration contract | Phase 2 live |
 | [demo-video-hud-plan.md](demo-video-hud-plan.md) | Portfolio video scenario, nearest-agent camera focus, and HUD structure | Phase 5 planned |
+| [editor-setup-guide.md](editor-setup-guide.md) | GameMode/World Settings, agent camera mount (D2), spawner + Project Settings, capture CVars | Phase 5 editor setup |
+| [hud-widget-guide.md](hud-widget-guide.md) | UMG HUD widgets (D4) and zone-overlay materials (D5) editor build | Phase 5 editor build |
 | [diagrams.md](diagrams.md) | Architecture and runtime data-flow diagrams | Phase 5 live |

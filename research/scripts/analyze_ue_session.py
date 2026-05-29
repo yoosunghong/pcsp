@@ -78,6 +78,7 @@ def _analyze_agent(path: Path) -> dict:
     n_decisions = n_interact = n_failed = 0
     persona_id = None
     policy_mode = None
+    active_ablation = None
     duration = 0.0
     # Running mean of per-decision softmax(logits) — preserves policy KL signal
     # without holding every decision in memory.
@@ -90,6 +91,8 @@ def _analyze_agent(path: Path) -> dict:
             persona_id = rec["persona_id"]
         if policy_mode is None and "policy_mode" in rec:
             policy_mode = rec["policy_mode"]
+        if active_ablation is None and "active_ablation" in rec:
+            active_ablation = rec["active_ablation"]
         if "t" in rec:
             duration = max(duration, float(rec["t"]))
 
@@ -136,6 +139,7 @@ def _analyze_agent(path: Path) -> dict:
         "file": path.name,
         "persona_id": persona_id,
         "policy_mode": policy_mode,
+        "active_ablation": active_ablation,
         "duration_s": duration,
         "n_decisions": n_decisions,
         "n_interactions": n_interact,
@@ -272,11 +276,15 @@ def analyze_session(session_dir: Path) -> dict:
 
     modes = Counter(a["policy_mode"] for a in per_agent if a.get("policy_mode"))
     policy_mode = modes.most_common(1)[0][0] if modes else None
+    ablations = Counter(a["active_ablation"] for a in per_agent if a.get("active_ablation"))
+    active_ablation = ablations.most_common(1)[0][0] if ablations else None
 
     return {
         "session_dir": str(session_dir),
         "policy_mode": policy_mode,
         "policy_mode_counts": dict(modes),
+        "active_ablation": active_ablation,
+        "active_ablation_counts": dict(ablations),
         "n_agents": len(per_agent),
         "n_personas": len(persona_rows),
         "duration_s": duration_s,

@@ -62,6 +62,7 @@ sequenceDiagram
         Note over BT: bypass throttle
     else throttled (< MinDecisionInterval × (1 + RecentFailureCount))
         BT->>BB: SetValueAsEnum(DesiredActionType, LastAction)
+        BT->>BB: SetValueAsEnum(DesiredCategory, ActionToCategory(LastAction))
         BT->>BB: SetValueAsFloat(UrgencyScore, ...)
         BT-->>BT: return Succeeded (reuse last action)
     end
@@ -72,7 +73,7 @@ sequenceDiagram
     BT->>PS: RunInferenceWithLogits(obs, persona_id, &logits)
     PS->>PS: read pcsp.PolicyMode CVar
     alt mode == BTOnly
-        PS->>PS: NeedsHeuristic(obs) [skip ONNX]
+        PS->>PS: NeedsHeuristic(obs) [skip ONNX, no IsReady() required]
         PS-->>BT: action, logits=zeros
     else mode == HybridNoPersona
         PS->>PS: persona_buffer ← zeros, RunSync
@@ -81,7 +82,10 @@ sequenceDiagram
         PS->>PS: persona_buffer ← cache[persona_id], RunSync
         PS-->>BT: action (argmax remap), logits
     end
+    BT->>PS: ActionToCategory(action) [centralized routing]
+    PS-->>BT: EPCSPAffordanceCategory
     BT->>BB: SetValueAsEnum(DesiredActionType, action)
+    BT->>BB: SetValueAsEnum(DesiredCategory, category)
     BT->>BB: SetValueAsFloat(UrgencyScore, ...)
     BT->>TL: RecordDecisionWithLogits(action, urgency, logits)
 ```
@@ -92,8 +96,8 @@ sequenceDiagram
 
 ```mermaid
 flowchart TD
-    Dec[BTTask_PCSPDecision]:::done --> Mov{Move branch}
-    Mov --> Mta[BTTask_MoveToAffordance]
+    Dec["BTTask_PCSPDecision<br/>writes DesiredActionType<br/>+ DesiredCategory"]:::done --> Mov{Move branch}
+    Mov --> Mta["BTTask_MoveToAffordance<br/>reads DesiredCategory<br/>(falls back to ActionToCategory)"]
     Mta -->|FindBestZone success| Reserve[Reserve InteractionPoint]
     Reserve --> Path[MoveTo via NavMesh]
     Path -->|reach success| Perf[BTTask_PerformInteraction]
@@ -129,7 +133,7 @@ flowchart LR
         A5[...16 more]
     end
 
-    subgraph L2[Layer 2: Affordance Category<br/>EPCSPAffordanceCategory - 11 values]
+    subgraph L2["Layer 2: Affordance Category<br/>EPCSPAffordanceCategory<br/>routed via UPCSPPolicySubsystem::ActionToCategory()<br/>Leisure* + ObserveCrowd → Observe (effective 9-cat)"]
         C1[Eat]
         C2[Work]
         C3[...9 more]
@@ -168,9 +172,11 @@ flowchart TD
     CVar -->|1| B[BTOnly<br/>NeedsHeuristic, no ONNX]
     CVar -->|2| N[HybridNoPersona<br/>ONNX + zeroed persona]
 
-    H --> Log["session_start row:<br/>policy_mode = HybridPCSP"]
+    Swap["swap_ue5_onnx.py<br/>writes Content/PCSP/Models/<br/>active_ablation.txt"] -.-> Tag
+    H --> Log["session_start row:<br/>policy_mode = HybridPCSP<br/>active_ablation = full | no_consist | …"]
     B --> Log
     N --> Log
+    Tag["UPCSPTrajectoryLogComponent::BeginPlay<br/>reads active_ablation.txt"] --> Log
 
     Log --> Cmp[compare_ablations.py<br/>aggregates 3 sessions<br/>into one table]
 
@@ -197,3 +203,13 @@ HybridNoPersona = 13.3% fail / 574 reward (yellow).
   ```
 - Diagrams 1, 2, and 3 are the most important for portfolio explanation; 4 is
   reference for the affordance architecture; 5 documents the ablation methodology.
+
+## Change log
+
+- **2026-05-23** — Refreshed diagrams 2, 3, 4, 5 to reflect the hybrid-stack
+  cleanup: `ActionToCategory()` moved to `UPCSPPolicySubsystem`, both
+  `BTTask_PCSPDecision` and `BTTask_MoveToAffordance` now route through it,
+  the optional `DesiredCategory` Blackboard key is written/read, `BTOnly`
+  mode no longer needs `IsReady()`, and `active_ablation` is emitted on
+  every `session_start` JSONL row. See
+  [hybrid-stack.md §"2026-05-23 implementation notes"](hybrid-stack.md).

@@ -8,7 +8,9 @@
 #include "PCSPAffordanceZone.h"
 #include "PCSPInteractionPoint.h"
 #include "PCSPAgentCharacter.h"
+#include "PCSPPolicySubsystem.h"
 #include "PCSPTrajectoryLogComponent.h"
+#include "BehaviorTree/BlackboardData.h"
 
 UBTTask_MoveToAffordance::UBTTask_MoveToAffordance()
 {
@@ -65,7 +67,10 @@ EBTNodeResult::Type UBTTask_MoveToAffordance::TryBeginMove(UBehaviorTreeComponen
 	}
 
 	const EPCSPActionType Action = static_cast<EPCSPActionType>(BB->GetValueAsEnum(PCSPBlackboard::DesiredActionType));
-	const EPCSPAffordanceCategory Category = ActionToCategory(Action);
+	const EPCSPAffordanceCategory Category =
+		(BB->GetKeyID(PCSPBlackboard::DesiredCategory) != FBlackboard::InvalidKey)
+		? static_cast<EPCSPAffordanceCategory>(BB->GetValueAsEnum(PCSPBlackboard::DesiredCategory))
+		: UPCSPPolicySubsystem::ActionToCategory(Action);
 
 	FPCSPAffordanceQuery Query;
 	Query.Category       = Category;
@@ -273,44 +278,4 @@ void UBTTask_MoveToAffordance::EmitFinalFailure(UBehaviorTreeComponent& OwnerCom
 
 	Character->TrajectoryLog->RecordMoveFailed(
 		Action, Memory->RetryCount, Reason, Memory->LastIntendedZoneTag, Memory->LastDistanceToTarget);
-}
-
-EPCSPAffordanceCategory UBTTask_MoveToAffordance::ActionToCategory(EPCSPActionType Action)
-{
-	switch (Action)
-	{
-	case EPCSPActionType::EatQuick:
-	case EPCSPActionType::EatSlow:             return EPCSPAffordanceCategory::Eat;
-
-	case EPCSPActionType::RestAlone:
-	case EPCSPActionType::RestWithOthers:      return EPCSPAffordanceCategory::Rest;
-
-	case EPCSPActionType::FocusedWork:
-	case EPCSPActionType::PlanningWork:        return EPCSPAffordanceCategory::Work;
-
-	case EPCSPActionType::DeepStudy:
-	case EPCSPActionType::CasualLearning:      return EPCSPAffordanceCategory::Study;
-
-	case EPCSPActionType::ExerciseSolo:
-	case EPCSPActionType::ExerciseSocial:      return EPCSPAffordanceCategory::Exercise;
-
-	case EPCSPActionType::HygieneQuick:
-	case EPCSPActionType::HygieneCareful:      return EPCSPAffordanceCategory::Hygiene;
-
-	case EPCSPActionType::SocializeInitiate:
-	case EPCSPActionType::SocializeRespond:    return EPCSPAffordanceCategory::Social;
-
-	// Leisure category has no authored zone — LeisureOutdoor is the Phase 2
-	// remap target for v3 movement indices 16/18 and routes to the Park/Observe
-	// zone by design. LeisureIndoor is unreachable from the live policy.
-	case EPCSPActionType::LeisureIndoor:       return EPCSPAffordanceCategory::Leisure;
-	case EPCSPActionType::LeisureOutdoor:      return EPCSPAffordanceCategory::Observe;
-
-	case EPCSPActionType::ShopEssentials:
-	case EPCSPActionType::BrowseArea:          return EPCSPAffordanceCategory::Shop;
-
-	case EPCSPActionType::ObserveCrowd:        return EPCSPAffordanceCategory::Observe;
-
-	default:                                   return EPCSPAffordanceCategory::Idle;
-	}
 }

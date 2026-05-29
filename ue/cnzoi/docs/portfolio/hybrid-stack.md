@@ -177,16 +177,21 @@ conditions.
   experiment was 25 minutes of wall-clock from "checkpoints exist" to
   "compare.json written."
 
-## Open issues
+## 2026-05-23 implementation notes
 
-- The Blackboard key `DesiredCategory` is derived from `DesiredActionType`
-  in two places (`BTTask_PCSPDecision` and `BTTask_MoveToAffordance`).
-  Centralize in `UPCSPPolicySubsystem::ActionToCategory` and have both
-  call it.
-- `Leisure` is an unreachable enum value (folded into Observe during
-  Phase 2 remap). Either delete the enum case or wire a `Leisure` zone.
-- `active_ablation.txt` is filesystem-side; the engine should read it
-  at `BeginPlay` and emit it on the `session_start` JSONL row.
+- `UPCSPPolicySubsystem::ActionToCategory` is now the single C++ routing
+  function. `BTTask_PCSPDecision` writes `DesiredCategory` when the Blackboard
+  asset exposes that key; `BTTask_MoveToAffordance` reads it when present and
+  otherwise falls back to the same policy-subsystem function.
+- `LeisureIndoor`, `LeisureOutdoor`, and `ObserveCrowd` all route to the
+  authored Observe category. This preserves the effective 9-category taxonomy
+  without requiring a new Leisure zone.
+- `UPCSPTrajectoryLogComponent::BeginPlay` now reads
+  `Content/PCSP/Models/active_ablation.txt` and emits `active_ablation` on the
+  `session_start` JSONL row. `analyze_ue_session.py` carries the field into
+  `summary.json`.
+- `BTOnly` mode no longer requires `UPCSPPolicySubsystem::IsReady()`, matching
+  the documented ablation behavior where ONNX is skipped.
 
 ## Cross-references
 

@@ -197,6 +197,7 @@ def main():
         "embeddings_path": str(args.embeddings),
         "manifest_path": str(args.manifest) if args.manifest else None,
         "session_policy_mode": summary.get("policy_mode"),
+        "session_active_ablation": summary.get("active_ablation"),
         "n_personas": len(rows),
         "n_pairs": len(pair_rows),
         "action_source_mix": source_mix,
@@ -216,8 +217,9 @@ def main():
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(out, indent=2))
     print(f"[ok] wrote {args.out}")
+    abl_s = summary.get("active_ablation") or "-"
     print(f"     personas={len(rows)} pairs={len(pair_rows)} "
-          f"source={source_mix} mode={summary.get('policy_mode')}")
+          f"source={source_mix} mode={summary.get('policy_mode')} ablation={abl_s}")
     print(f"     spearman_rho={rho:.4f}  pearson_r={r_pearson:.4f}")
     print(f"     persona_cos_dist mean={out['persona_distance']['mean']:.4f}  "
           f"action_kl mean={out['action_kl']['mean']:.4f}")

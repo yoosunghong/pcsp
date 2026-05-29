@@ -146,22 +146,27 @@ ablation table and the zero-shot replication.
   cause (World Partition streaming, NavMesh acceptance radius, reservation
   race, etc.).
 
-## What's next
+## Implemented 2026-05-23
 
 - **Per-session `active_ablation` row.** The swap script
   (`research/scripts/swap_ue5_onnx.py`) writes
-  `Content/PCSP/Models/active_ablation.txt`; the trajectory log component
-  should read this at `BeginPlay` and emit it on the `session_start` row
-  so pairing across runs doesn't depend on filesystem inspection.
-- **Intra-session persona-distance vs action-KL analyzer.** The piece
-  needed to mirror the paper's ρ ≈ 0.73 headline inside UE. Small script:
-  load `Content/PCSP/Data/persona_embeddings.json`, compute pairwise
-  cosine distances, compute pairwise KL across `per_persona[*].action_hist`
-  from `summary.json`, return Spearman ρ. ~30 lines.
-- **Coarse trace renderer.** For portfolio / human evaluation: render
-  `decision` + `interaction_complete` rows as a short timeline
-  (`time : persona : action : zone`) per agent, optionally collapsed to a
-  one-line schedule. Reads only the JSONL, no UE runtime.
+  `Content/PCSP/Models/active_ablation.txt`; the trajectory log component now
+  reads this at `BeginPlay` and emits it on the `session_start` row so pairing
+  across runs doesn't depend on filesystem inspection.
+- **Intra-session persona-distance vs action-KL analyzer.**
+  `research/scripts/analyze_persona_distance_vs_kl.py` ingests
+  `summary.json` (per-persona `policy_probs` from logits, with fallback to
+  the 20-bin action histogram) plus the active `persona_embeddings.json`
+  and reports pair-wise Spearman ρ / Pearson r between persona cosine
+  distance and symmetric policy KL. Output now carries
+  `session_active_ablation` so the headline ρ ≈ 0.73 paper claim can be
+  compared per ablation without filesystem inspection.
+- **Coarse trace renderer.**
+  `research/scripts/render_session_trace.py` reads the per-agent JSONL
+  and emits chronological events (`DECIDE` / `INTERACT` / `MFAIL` /
+  `IFAIL`) or a compressed `schedule` of completed interactions only.
+  Supports `--persona` / `--from` / `--until` / `--group-by` for
+  portfolio walkthroughs; pure stdlib, no UE runtime.
 
 ## Cross-references
 
@@ -169,4 +174,9 @@ ablation table and the zero-shot replication.
 - `Source/cnzoi/PCSP/Private/Components/PCSPTrajectoryLogComponent.cpp` — buffered flush, EndPlay drain.
 - `Source/cnzoi/PCSP/Public/PCSPTypes.h` — `FPCSPZoneSelectionDebug`, failure-reason enums.
 - `research/scripts/analyze_ue_session.py` — offline aggregator.
+- `research/scripts/analyze_persona_distance_vs_kl.py` — paper-claim
+  ρ ≈ 0.73 mirror inside UE; outputs `session_active_ablation` for
+  matched comparisons across ablation pairs.
+- `research/scripts/render_session_trace.py` — chronological /
+  schedule-style trace renderer for portfolio walkthroughs.
 - `PLAN.md` §"Debug Log Map" — `jq` recipes for the failure-reason taxonomy.
