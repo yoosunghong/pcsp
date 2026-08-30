@@ -10,6 +10,7 @@
 #include "PCSPAgentCharacter.h"
 #include "PCSPPolicySubsystem.h"
 #include "PCSPTrajectoryLogComponent.h"
+#include "PCSPPathRequestSchedulerSubsystem.h"
 #include "BehaviorTree/BlackboardData.h"
 
 UBTTask_MoveToAffordance::UBTTask_MoveToAffordance()
@@ -65,6 +66,22 @@ EBTNodeResult::Type UBTTask_MoveToAffordance::TryBeginMove(UBehaviorTreeComponen
 		Memory->LastFailureReason = TEXT("subsystem_missing");
 		return EBTNodeResult::Failed;
 	}
+
+	// Do not reserve an interaction point until the navigation system has room
+	// for this request. At 128+ actors, releasing only a bounded number of
+	// MoveTo calls per frame prevents the Recast async query queue from bursting.
+	if (UPCSPPathRequestSchedulerSubsystem* Scheduler =
+		AI->GetWorld()->GetSubsystem<UPCSPPathRequestSchedulerSubsystem>())
+	{
+		const float Urgency = BB->GetValueAsFloat(PCSPBlackboard::UrgencyScore);
+		if (!Scheduler->TryConsumePermit(Agent, Urgency))
+		{
+			Memory->bWaitingForPathPermit = true;
+			Memory->LastFailureReason = TEXT("path_request_scheduled");
+			return EBTNodeResult::InProgress;
+		}
+	}
+	Memory->bWaitingForPathPermit = false;
 
 	const EPCSPActionType Action = static_cast<EPCSPActionType>(BB->GetValueAsEnum(PCSPBlackboard::DesiredActionType));
 	const EPCSPAffordanceCategory Category =
@@ -147,6 +164,17 @@ EBTNodeResult::Type UBTTask_MoveToAffordance::TryBeginMove(UBehaviorTreeComponen
 void UBTTask_MoveToAffordance::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	auto* Memory = reinterpret_cast<FBTMoveToAffordanceMemory*>(NodeMemory);
+
+	if (Memory->bWaitingForPathPermit)
+	{
+		const EBTNodeResult::Type PermitResult = TryBeginMove(OwnerComp, NodeMemory);
+		if (PermitResult == EBTNodeResult::Failed)
+		{
+			EmitFinalFailure(OwnerComp, NodeMemory);
+			FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
+		}
+		return;
+	}
 
 	// Give the move request one tick to register before we start polling status
 	if (!Memory->bMoveStarted)
@@ -237,6 +265,11 @@ EBTNodeResult::Type UBTTask_MoveToAffordance::AbortTask(UBehaviorTreeComponent& 
 	AAIController* AI = OwnerComp.GetAIOwner();
 	if (AI)
 	{
+		if (UPCSPPathRequestSchedulerSubsystem* Scheduler =
+			AI->GetWorld()->GetSubsystem<UPCSPPathRequestSchedulerSubsystem>())
+		{
+			Scheduler->CancelRequest(AI->GetPawn());
+		}
 		AI->StopMovement();
 		ReleaseReservation(NodeMemory, AI->GetPawn());
 	}

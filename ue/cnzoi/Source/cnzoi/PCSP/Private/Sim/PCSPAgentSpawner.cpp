@@ -3,6 +3,7 @@
 #include "PCSPAIController.h"
 #include "PCSPPersonaComponent.h"
 #include "PCSPTrajectoryLogComponent.h"
+#include "PCSPMassSpawner.h"
 #include "Engine/World.h"
 #include "NavigationSystem.h"
 #include "HAL/IConsoleManager.h"
@@ -24,6 +25,11 @@ static TAutoConsoleVariable<int32> CVarPCSPSpawnSeed(
 static TAutoConsoleVariable<int32> CVarPCSPAgentCount(
 	TEXT("pcsp.AgentCount"), -1,
 	TEXT("Override APCSPAgentSpawner::AgentCount for this run (-1 = use actor value)."),
+	ECVF_Default);
+
+static TAutoConsoleVariable<int32> CVarPCSPMassEntityCount(
+	TEXT("pcsp.MassEntityCount"), -1,
+	TEXT("Override APCSPAgentSpawner::MassEntityCount (-1 = use actor value)."),
 	ECVF_Default);
 
 // T1.4 persona-persistence: pin the spawned agents to an explicit persona list
@@ -74,11 +80,17 @@ void APCSPAgentSpawner::BeginPlay()
 	// be ignored here. Fall back to CVars for interactive PIE use.
 	int32 SeedOverride  = CVarPCSPSpawnSeed.GetValueOnGameThread();
 	int32 CountOverride = CVarPCSPAgentCount.GetValueOnGameThread();
-	int32 CmdSeed = -1, CmdCount = -1;
+	int32 MassCountOverride = CVarPCSPMassEntityCount.GetValueOnGameThread();
+	int32 CmdSeed = -1, CmdCount = -1, CmdMassCount = -1;
 	if (FParse::Value(FCommandLine::Get(), TEXT("PCSP_SpawnSeed="),  CmdSeed))  { SeedOverride  = CmdSeed; }
 	if (FParse::Value(FCommandLine::Get(), TEXT("PCSP_AgentCount="), CmdCount)) { CountOverride = CmdCount; }
+	if (FParse::Value(FCommandLine::Get(), TEXT("PCSP_MassEntityCount="), CmdMassCount))
+	{
+		MassCountOverride = CmdMassCount;
+	}
 	if (SeedOverride  >= 0) { RandomSeed = SeedOverride; }
 	if (CountOverride >= 1) { AgentCount = CountOverride; }
+	if (MassCountOverride >= 0) { MassEntityCount = MassCountOverride; }
 
 	// Resolve the explicit persona-ID list (cmdline wins over CVar, same as above).
 	FString PersonaIdsRaw = CVarPCSPPersonaIds.GetValueOnGameThread();
@@ -109,8 +121,9 @@ void APCSPAgentSpawner::BeginPlay()
 	}
 
 	UE_LOG(LogTemp, Log,
-		TEXT("PCSPAgentSpawner: agents=%d seed=%d wp_radius=%.0f spawn_delay=%.1fs (CVars: spawn_seed=%d agent_count=%d)"),
-		AgentCount, RandomSeed, StreamingSourceRadius, SpawnDelay, SeedOverride, CountOverride);
+		TEXT("PCSPAgentSpawner: hero_agents=%d mass_entities=%d total=%d seed=%d wp_radius=%.0f spawn_delay=%.1fs"),
+		AgentCount, MassEntityCount, AgentCount + MassEntityCount,
+		RandomSeed, StreamingSourceRadius, SpawnDelay);
 
 	// Write run_config.json immediately (not inside SpawnAgents) so the session
 	// dir is labelled before the delayed spawn fires.
@@ -123,12 +136,29 @@ void APCSPAgentSpawner::BeginPlay()
 	}
 	const FString ConfigPath = UPCSPTrajectoryLogComponent::GetSessionDir() / TEXT("run_config.json");
 	const FString ConfigBlob = FString::Printf(
-		TEXT("{\"n_agents\":%d,\"seed\":%d,\"spawn_radius\":%.1f,\"spawn_on_navmesh\":%s,\"persona_ids\":%s}\n"),
-		AgentCount, RandomSeed, SpawnRadius,
+		TEXT("{\"n_agents\":%d,\"hero_agents\":%d,\"mass_entities\":%d,\"total_npcs\":%d,")
+		TEXT("\"seed\":%d,\"spawn_radius\":%.1f,\"spawn_on_navmesh\":%s,\"persona_ids\":%s}\n"),
+		AgentCount + MassEntityCount, AgentCount, MassEntityCount, AgentCount + MassEntityCount,
+		RandomSeed, SpawnRadius,
 		bSpawnOnNavMesh ? TEXT("true") : TEXT("false"), *PersonaIdsJson);
 	FFileHelper::SaveStringToFile(ConfigBlob, *ConfigPath,
 		FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM,
 		&IFileManager::Get(), FILEWRITE_None);
+
+	if (MassEntityCount > 0)
+	{
+		const FTransform SpawnTransform(GetActorRotation(), GetActorLocation());
+		SpawnedMassSpawner = GetWorld()->SpawnActorDeferred<APCSPMassSpawner>(
+			APCSPMassSpawner::StaticClass(), SpawnTransform, this, nullptr,
+			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+		if (SpawnedMassSpawner)
+		{
+			SpawnedMassSpawner->EntityCount = MassEntityCount;
+			SpawnedMassSpawner->RandomSeed = RandomSeed;
+			SpawnedMassSpawner->SpawnExtent = FVector2D(SpawnRadius, SpawnRadius);
+			SpawnedMassSpawner->FinishSpawning(SpawnTransform);
+		}
+	}
 
 	// In standalone -game the pre-baked NavMesh tiles for distant WP cells may
 	// not be loaded when play begins — only geometry near active streaming

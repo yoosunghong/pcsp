@@ -25,8 +25,19 @@ public class cnzoi : ModuleRules
 			"Slate",
 			"NNE",
 			"Json",
-			"JsonUtilities"
+			"JsonUtilities",
+			"MassEntity",
+			"MassCommon",
+			"MassSpawner",
+			"MassSimulation"
 		});
+
+		// UE 5.8 split the foundational Mass reflected types out of MassEntity.
+		// Keep the 5.7 project buildable while allowing forward compile checks.
+		if (Target.Version.MajorVersion > 5 || Target.Version.MinorVersion >= 8)
+		{
+			PublicDependencyModuleNames.Add("MassCore");
+		}
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });
 
@@ -39,6 +50,7 @@ public class cnzoi : ModuleRules
 			Path.Combine(ModuleDirectory, "PCSP/Public/Sim"),
 			Path.Combine(ModuleDirectory, "PCSP/Public/BT"),
 			Path.Combine(ModuleDirectory, "PCSP/Public/Inference"),
+			Path.Combine(ModuleDirectory, "PCSP/Public/Mass"),
 			"cnzoi/Variant_Platforming",
 			"cnzoi/Variant_Platforming/Animation",
 			"cnzoi/Variant_Combat",
@@ -61,7 +73,8 @@ public class cnzoi : ModuleRules
 			Path.Combine(ModuleDirectory, "PCSP/Private/Agent"),
 			Path.Combine(ModuleDirectory, "PCSP/Private/Sim"),
 			Path.Combine(ModuleDirectory, "PCSP/Private/BT"),
-			Path.Combine(ModuleDirectory, "PCSP/Private/Inference")
+			Path.Combine(ModuleDirectory, "PCSP/Private/Inference"),
+			Path.Combine(ModuleDirectory, "PCSP/Private/Mass")
 		});
 
 		// Uncomment if you are using Slate UI

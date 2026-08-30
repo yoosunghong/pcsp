@@ -6,6 +6,7 @@
 
 class APCSPAgentCharacter;
 class APCSPAIController;
+class APCSPMassSpawner;
 class UWorldPartitionStreamingSourceComponent;
 
 
@@ -27,6 +28,11 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PCSP|Spawn", meta=(ClampMin="1", ClampMax="128"))
 	int32 AgentCount = 16;
+
+	/** Lightweight Mass background tier. Use 1008 with 16 hero actors for a
+	 *  1024-NPC portfolio run. Zero disables the Mass tier. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PCSP|Spawn", meta=(ClampMin="0", ClampMax="65536"))
+	int32 MassEntityCount = 0;
 
 	/** Per-run RNG seed for reproducible spawn placement (T1.3 sweep).
 	 *  -1 = non-deterministic (use ambient global stream).
@@ -65,6 +71,9 @@ protected:
 
 	UPROPERTY()
 	TArray<TObjectPtr<APCSPAgentCharacter>> SpawnedAgents;
+
+	UPROPERTY()
+	TObjectPtr<APCSPMassSpawner> SpawnedMassSpawner;
 
 	/** Explicit persona IDs to cycle across spawned agents, resolved in
 	 *  BeginPlay from `pcsp.PersonaIds` / `-PCSP_PersonaIds`. Empty = default

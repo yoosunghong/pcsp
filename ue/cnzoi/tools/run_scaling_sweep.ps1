@@ -20,6 +20,16 @@
 .PARAMETER AgentCounts
   Array of agent counts to sweep. Default: 8,16,32,64,96,128.
 
+.PARAMETER MassHybrid
+  Run the two-tier architecture instead: HeroAgentCount full Actor/BT agents
+  plus enough Mass background entities to reach each TotalNpcCounts value.
+
+.PARAMETER TotalNpcCounts
+  Total NPC counts for -MassHybrid. Default: 128,256,512,1024.
+
+.PARAMETER HeroAgentCount
+  Full Actor/BT/NavMesh agents retained in a Mass-hybrid run. Default: 16.
+
 .PARAMETER Seeds
   Array of RNG seeds per agent-count. Default: 0,1,2.
 
@@ -42,12 +52,18 @@
 
   # Just print what would run.
   .\run_scaling_sweep.ps1 -DryRun
+
+  # 16 hero actors + Mass background tier at 128/256/512/1024 total NPCs.
+  .\run_scaling_sweep.ps1 -MassHybrid -DurationSeconds 300 -Seeds 0,1,2
 #>
 [CmdletBinding()]
 param(
     [string]   $EnginePath      = $null,
     [string]   $ProjectPath     = $null,
     [int[]]    $AgentCounts     = @(8, 16, 32, 64, 96, 128),
+    [switch]   $MassHybrid,
+    [int[]]    $TotalNpcCounts  = @(128, 256, 512, 1024),
+    [int]      $HeroAgentCount  = 16,
     [int[]]    $Seeds           = @(0, 1, 2),
     [int]      $DurationSeconds = 600,
     [string]   $WindowedRes     = "800x450",
@@ -95,14 +111,38 @@ if ($WindowedRes -notmatch '^(\d+)x(\d+)$') {
 $ResX = [int]$Matches[1]
 $ResY = [int]$Matches[2]
 
+# --- Build run matrix ---
+$runConfigs = @()
+if ($MassHybrid) {
+    if ($HeroAgentCount -lt 1 -or $HeroAgentCount -gt 128) {
+        throw "HeroAgentCount must be in [1,128], got $HeroAgentCount"
+    }
+    foreach ($total in $TotalNpcCounts) {
+        if ($total -lt $HeroAgentCount) {
+            throw "TotalNpcCounts entry $total is smaller than HeroAgentCount $HeroAgentCount"
+        }
+        $runConfigs += [pscustomobject]@{
+            Total = $total
+            Hero  = $HeroAgentCount
+            Mass  = $total - $HeroAgentCount
+        }
+    }
+} else {
+    foreach ($n in $AgentCounts) {
+        $runConfigs += [pscustomobject]@{ Total = $n; Hero = $n; Mass = 0 }
+    }
+}
+
 # --- Banner ---
-$totalRuns = $AgentCounts.Count * $Seeds.Count
+$totalRuns = $runConfigs.Count * $Seeds.Count
 $estMins = [math]::Round(($DurationSeconds + 45) * $totalRuns / 60.0, 1)
 Write-Host "===================================================================="
 Write-Host " PCSP T1.3 scaling sweep"
 Write-Host "   Engine:   $Exe"
 Write-Host "   Project:  $ProjectPath"
-Write-Host "   Counts:   $($AgentCounts -join ', ')"
+Write-Host "   Mode:     $(if ($MassHybrid) { 'Mass hybrid' } else { 'Actor baseline' })"
+Write-Host "   Totals:   $($runConfigs.Total -join ', ')"
+if ($MassHybrid) { Write-Host "   Heroes:   $HeroAgentCount Actor/BT agents per run" }
 Write-Host "   Seeds:    $($Seeds -join ', ')"
 Write-Host "   Duration: $DurationSeconds s per run"
 Write-Host "   Total:    $totalRuns runs  (est. ~$estMins min wall-clock incl. ~45s startup each)"
@@ -110,11 +150,11 @@ Write-Host "   Window:   ${ResX}x${ResY}"
 Write-Host "===================================================================="
 
 $runIdx = 0
-foreach ($n in $AgentCounts) {
+foreach ($cfg in $runConfigs) {
     foreach ($seed in $Seeds) {
         $runIdx++
         if ($runIdx -lt $StartIndex) {
-            Write-Host "[$runIdx/$totalRuns] SKIP (StartIndex=$StartIndex)  agents=$n seed=$seed"
+            Write-Host "[$runIdx/$totalRuns] SKIP (StartIndex=$StartIndex) total=$($cfg.Total) hero=$($cfg.Hero) mass=$($cfg.Mass) seed=$seed"
             continue
         }
         $stamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
@@ -123,11 +163,11 @@ foreach ($n in $AgentCounts) {
         # arrive too late for the spawner/perf-sampler to see. FCommandLine is
         # populated before any BeginPlay, so FParse::Value reads always win.
         # We keep -ExecCmds too as a belt-and-suspenders for late readers.
-        $execCmds = "pcsp.AgentCount $n, pcsp.SpawnSeed $seed, pcsp.RunDurationSeconds $DurationSeconds"
-        $argString = "`"$ProjectPath`" -game -WINDOWED -ResX=$ResX -ResY=$ResY -Unattended -NoSplash -NoSound -PCSP_AgentCount=$n -PCSP_SpawnSeed=$seed -PCSP_RunDurationSeconds=$DurationSeconds -ExecCmds=`"$execCmds`""
+        $execCmds = "pcsp.AgentCount $($cfg.Hero), pcsp.MassEntityCount $($cfg.Mass), pcsp.SpawnSeed $seed, pcsp.RunDurationSeconds $DurationSeconds"
+        $argString = "`"$ProjectPath`" -game -WINDOWED -ResX=$ResX -ResY=$ResY -Unattended -NoSplash -NoSound -PCSP_AgentCount=$($cfg.Hero) -PCSP_MassEntityCount=$($cfg.Mass) -PCSP_SpawnSeed=$seed -PCSP_RunDurationSeconds=$DurationSeconds -ExecCmds=`"$execCmds`""
 
         Write-Host ""
-        Write-Host "[$runIdx/$totalRuns] $stamp  agents=$n seed=$seed"
+        Write-Host "[$runIdx/$totalRuns] $stamp  total=$($cfg.Total) hero=$($cfg.Hero) mass=$($cfg.Mass) seed=$seed"
         Write-Host "  $Exe $argString"
 
         if ($DryRun) { continue }

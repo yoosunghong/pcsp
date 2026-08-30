@@ -1,0 +1,58 @@
+[
+  {
+    "n_agents": 4,
+    "architecture": "actor_bt",
+    "hero_agents": 4,
+    "mass_entities": 0,
+    "n_seeds": 1,
+    "seeds": [
+      0
+    ],
+    "duration_s_mean": 12.8,
+    "infer_us_mean": {
+      "mean": null,
+      "std": 0.0,
+      "n": 0
+    },
+    "infer_us_p95": {
+      "mean": null,
+      "std": 0.0,
+      "n": 0
+    },
+    "frame_ms_mean": {
+      "mean": 157.041,
+      "std": 0.0,
+      "n": 1
+    },
+    "frame_ms_p95": {
+      "mean": 168.017,
+      "std": 0.0,
+      "n": 1
+    },
+    "fail_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 1
+    },
+    "intents_per_agent_per_min": {
+      "mean": 3.51,
+      "std": 0.0,
+      "n": 1
+    },
+    "path_queue_peak": {
+      "mean": 0,
+      "std": 0.0,
+      "n": 1
+    },
+    "path_wait_ms_p95": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 1
+    },
+    "mass_policy_us_mean": {
+      "mean": null,
+      "std": 0.0,
+      "n": 0
+    }
+  }
+]

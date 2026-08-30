@@ -189,7 +189,7 @@ void UPCSPTrajectoryLogComponent::EmitEvent(EPCSPTrajectoryEvent Event,
 	const int32 Cap = FMath::Max(8, MaxRecentEntries);
 	if (Entries.Num() > Cap)
 	{
-		Entries.RemoveAt(0, Entries.Num() - Cap, /*bAllowShrinking=*/false);
+		Entries.RemoveAt(0, Entries.Num() - Cap, EAllowShrinking::No);
 	}
 }
 

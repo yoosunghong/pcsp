@@ -18,6 +18,7 @@ struct FBTMoveToAffordanceMemory
 	float                                  LastDistanceToTarget = -1.f;
 	int32  RetryCount    = 0;
 	bool   bMoveStarted  = false;
+	bool   bWaitingForPathPermit = false;
 };
 
 /**
