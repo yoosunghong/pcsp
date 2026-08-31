@@ -750,3 +750,24 @@ Implemented the first complete scale-up pass described in
 - The checked map and representative Blueprint assets remained clean, so no
   binary assets were resaved. MCP automation discovery succeeded, but there are
   currently no tests registered under the `PCSP` filter.
+
+## 2026-09-01 - Visible 128–1,024 Mass-Hybrid Benchmark
+
+- Ran `128,256,512,1024` total NPCs × seeds `0,1,2` × 300 seconds in visible
+  UE 5.8 standalone mode with 16 hero Actors and the remaining population in
+  Mass. All 12 runs exited with code 0 and none required watchdog termination.
+- Each session produced 16 agent logs plus `frame_stats.jsonl`,
+  `mass_stats.jsonl`, `path_scheduler.jsonl`, `zone_occupancy.jsonl`, and run
+  configuration files. Eleven sessions contain 300 frame samples and the first
+  contains 299; all contain 296 Mass samples.
+- Aggregate artifact: `research/results/ue_sessions/mass_scaling_20260901/`.
+- At 1,024 NPCs: frame mean `25.47 ± 0.47 ms`, frame p95
+  `30.15 ± 0.53 ms`, hero movement failure `0.0%`, throughput
+  `14.10 ± 0.01` completed intents/NPC/min, Mass policy mean
+  `101.0 ± 2.0 us`.
+- From 128 to 1,024 NPCs, frame p95 changed only `29.90 → 30.15 ms`; this
+  supports bounded incremental population cost. Absolute frame time is still
+  above 16.67 ms, so the result is explicitly not presented as 60 FPS.
+- Added the full report at
+  `docs/portfolio/mass-visible-benchmark-20260901.md` and a reproducible
+  `mass-scaling-evidence` PNG/SVG generated from checked-in JSON.

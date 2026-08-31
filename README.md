@@ -44,11 +44,11 @@ flowchart LR
 | Research benchmark | InfoNCE removal preserves reward while collapsing zero-shot persona identification toward chance | Persona consistency is a load-bearing objective, not a reward side effect |
 | PCSP evaluation | Up to 11× zero-shot identification, persona/action correlation around ρ=0.73, and about 22× faster training than separate per-persona policies | One shared policy retains measurable persona structure |
 | UE Actor baseline | 64 agents: frame p95 13.38 ms, movement failure 0.2%; 128 agents: failure 44.9% | The first hard ceiling is bursty navigation, not ONNX latency |
-| 1,024-NPC runtime smoke | 4 hero Actors + 1,020 Mass entities; 3,322 Mass decisions, 3,933 arrivals, 0 hero movement failures in 29.4 s | The hybrid runtime path is operational at 1,024 entities |
+| Visible Mass-hybrid sweep | 128–1,024 NPCs × 3 seeds × 300 s; at 1,024: frame p95 30.15 ms, 0% hero failure, 14.10 intents/NPC/min | Incremental population cost stays nearly flat, although this configuration is not a 60-FPS result |
 
-The 1,024-NPC run above is a compatibility smoke test, not a final FPS claim.
-Final performance evidence must come from a visible standalone or normal PIE
-three-seed sweep; the offscreen UE run used for the smoke test was throttled.
+The visible sweep completed all 12 runs without watchdog termination. Frame p95
+changed from 29.90 ms at 128 NPCs to 30.15 ms at 1,024 NPCs, but the absolute
+frame time remains above the 16.67-ms 60-FPS budget.
 
 ## Visual evidence
 
@@ -149,11 +149,13 @@ Complete: research-to-UE contract, ONNX policy integration, hybrid
 policy/Behavior Tree execution, affordance reservations, rich trajectory logs,
 ablation tooling, demo HUD/camera scaffolding, Actor scaling baseline, bounded
 path scheduling, Mass background simulation, 1,024-entity runtime smoke test,
-portfolio documentation, and a reproducible static visual evidence pack.
+visible three-seed 128–1,024 benchmark, portfolio documentation, and a
+reproducible static visual evidence pack.
 
-Still required for the final presentation: a visible three-seed 128–1,024
-benchmark on the target machine, profiler captures, screenshots, and the demo
-video. The video capture is intentionally left to the project author.
+Still required for the final presentation: Unreal Insights profiler captures,
+screenshots, and the demo video. Persona preservation by simulation tier is the
+next independent-evaluation task. The video capture is intentionally left to
+the project author.
 
 ## License
 

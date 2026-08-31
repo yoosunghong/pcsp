@@ -231,11 +231,15 @@ Detailed portfolio docs live under [docs/portfolio/](docs/portfolio/).
       failures. The offscreen run was throttled, so its frame time is not a
       publishable performance result. Design and acceptance criteria:
       [docs/portfolio/mass-1024-scaling.md](docs/portfolio/mass-1024-scaling.md).
-- [ ] Run the final visible Mass-hybrid benchmark at 128/256/512/1024 total
-      NPCs × 3 seeds and attach Unreal Insights captures. Report frame
-      mean/p95/p99, game/navigation/Mass/render time, memory per NPC, path
-      queue/wait, failure rate, decision throughput, and persona-distinctness
-      by simulation tier. Do not use `-RenderOffscreen` results as FPS proof.
+- [x] Run the final visible Mass-hybrid benchmark at 128/256/512/1024 total
+      NPCs × 3 seeds. All 12 visible standalone runs completed on 2026-09-01;
+      at 1,024 NPCs frame mean is `25.47 ± 0.47 ms`, frame p95 is
+      `30.15 ± 0.53 ms`, and hero movement failure is `0.0%`. Report:
+      [docs/portfolio/mass-visible-benchmark-20260901.md](docs/portfolio/mass-visible-benchmark-20260901.md).
+- [ ] Attach Unreal Insights captures and report game/navigation/Mass/render
+      breakdown plus memory per NPC. Persona-distinctness by simulation tier
+      remains an independent-evaluator follow-up. Do not use
+      `-RenderOffscreen` results as FPS proof.
 - [x] Stress test 64 agents — three-run progression (2026-05-17):
       **Run 1** session `20260517_150713` (1,490s, Rest cap=20, Social cap unchanged):
       9,833 `interaction_complete`, 69,421 `move_failed`, failure rate 87.6%.
@@ -399,7 +403,7 @@ systems have at least a first pass. All portfolio planning docs live under
 | Order | Item | Status | Planning doc | UE5 update target |
 | --- | --- | --- | --- | --- |
 | 1 | Hybrid policy/BT contract cleanup | Implemented 2026-05-23 | [docs/portfolio/hybrid-stack.md](docs/portfolio/hybrid-stack.md) | centralized action-to-category mapping, routed `Leisure` to Observe, logged active ablation |
-| 2 | 1,024-NPC Mass hybrid + path admission | First pass + smoke implemented 2026-08-31; final benchmark pending | [docs/portfolio/mass-1024-scaling.md](docs/portfolio/mass-1024-scaling.md) | `UPCSPPathRequestSchedulerSubsystem`, `APCSPMassSpawner`, Mass fragments/processor, sweep/analyzer telemetry |
+| 2 | 1,024-NPC Mass hybrid + path admission | Visible 12-run benchmark complete 2026-09-01; Insights capture pending | [docs/portfolio/mass-1024-scaling.md](docs/portfolio/mass-1024-scaling.md) | `UPCSPPathRequestSchedulerSubsystem`, `APCSPMassSpawner`, Mass fragments/processor, sweep/analyzer telemetry |
 | 3 | EQS-driven affordance congestion handling | Deferred | [docs/portfolio/eqs-congestion.md](docs/portfolio/eqs-congestion.md) | `UPCSPAffordanceSubsystem`, `UBTTask_MoveToAffordance`, EQS query/tests |
 | 4 | Async/batched ONNX inference | Cohort staggering live; true dynamic batch deferred | [docs/portfolio/async-inference.md](docs/portfolio/async-inference.md) | `UPCSPPolicySubsystem`, Mass cohort buffers, dynamic `[B,*]` ONNX export |
 | 5 | Trajectory observability pipeline extensions | Scaling-aware and live | [docs/portfolio/observability.md](docs/portfolio/observability.md) | per-agent logs plus `path_scheduler.jsonl`, `mass_stats.jsonl`, analyzer, HUD event ring buffer |

@@ -146,8 +146,24 @@ Mass entities:
 
 This was a UE 5.8 `-RenderOffscreen` compatibility smoke test. That mode also
 throttled a 4-agent control run, so its frame-time numbers are deliberately not
-used as performance evidence. Capture final performance in normal PIE or a
-visible standalone build on the target UE 5.8 installation.
+used as performance evidence.
+
+## Verified Visible Three-Seed Benchmark
+
+The final visible standalone sweep completed on 2026-09-01: 128, 256, 512,
+and 1,024 total NPCs, three seeds per scale, 300 seconds per run, with 16 hero
+Actors and a Mass background tier. All 12 runs exited cleanly.
+
+At 1,024 NPCs, frame mean was `25.47 ± 0.47 ms`, frame p95 was
+`30.15 ± 0.53 ms`, hero movement failure was `0.0%`, completed intent
+throughput was `14.10 ± 0.01` per NPC per minute, and the mean Mass policy call
+was `101.0 ± 2.0 us`. Frame p95 changed only `0.25 ms` from 128 to 1,024 NPCs,
+showing bounded incremental population cost. Absolute frame time remains above
+the 16.67-ms 60-FPS budget, so this is a scaling result rather than a 60-FPS
+claim.
+
+Full protocol, per-scale table, caveats, and source artifacts:
+[mass-visible-benchmark-20260901.md](mass-visible-benchmark-20260901.md).
 
 ## Next Optimization Stages
 

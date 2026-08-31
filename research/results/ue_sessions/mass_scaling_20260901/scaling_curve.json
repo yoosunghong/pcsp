@@ -1,0 +1,234 @@
+[
+  {
+    "n_agents": 128,
+    "architecture": "mass_hybrid",
+    "hero_agents": 16,
+    "mass_entities": 112,
+    "n_seeds": 3,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "duration_s_mean": 299.4,
+    "infer_us_mean": {
+      "mean": 208.567,
+      "std": 8.224,
+      "n": 3
+    },
+    "infer_us_p95": {
+      "mean": 367.933,
+      "std": 43.416,
+      "n": 3
+    },
+    "frame_ms_mean": {
+      "mean": 24.814,
+      "std": 0.292,
+      "n": 3
+    },
+    "frame_ms_p95": {
+      "mean": 29.9,
+      "std": 0.665,
+      "n": 3
+    },
+    "fail_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3
+    },
+    "intents_per_agent_per_min": {
+      "mean": 11.38,
+      "std": 0.037,
+      "n": 3
+    },
+    "path_queue_peak": {
+      "mean": 2,
+      "std": 0.0,
+      "n": 3
+    },
+    "path_wait_ms_p95": {
+      "mean": 20.583,
+      "std": 0.683,
+      "n": 3
+    },
+    "mass_policy_us_mean": {
+      "mean": 203.206,
+      "std": 5.419,
+      "n": 3
+    }
+  },
+  {
+    "n_agents": 256,
+    "architecture": "mass_hybrid",
+    "hero_agents": 16,
+    "mass_entities": 240,
+    "n_seeds": 3,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "duration_s_mean": 298.9,
+    "infer_us_mean": {
+      "mean": 196.733,
+      "std": 7.306,
+      "n": 3
+    },
+    "infer_us_p95": {
+      "mean": 326.367,
+      "std": 32.642,
+      "n": 3
+    },
+    "frame_ms_mean": {
+      "mean": 24.417,
+      "std": 0.269,
+      "n": 3
+    },
+    "frame_ms_p95": {
+      "mean": 28.905,
+      "std": 0.591,
+      "n": 3
+    },
+    "fail_rate": {
+      "mean": 0.001,
+      "std": 0.001,
+      "n": 3
+    },
+    "intents_per_agent_per_min": {
+      "mean": 12.363,
+      "std": 0.037,
+      "n": 3
+    },
+    "path_queue_peak": {
+      "mean": 2.333,
+      "std": 0.471,
+      "n": 3
+    },
+    "path_wait_ms_p95": {
+      "mean": 19.973,
+      "std": 0.342,
+      "n": 3
+    },
+    "mass_policy_us_mean": {
+      "mean": 171.397,
+      "std": 2.43,
+      "n": 3
+    }
+  },
+  {
+    "n_agents": 512,
+    "architecture": "mass_hybrid",
+    "hero_agents": 16,
+    "mass_entities": 496,
+    "n_seeds": 3,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "duration_s_mean": 299.5,
+    "infer_us_mean": {
+      "mean": 194.167,
+      "std": 0.881,
+      "n": 3
+    },
+    "infer_us_p95": {
+      "mean": 338.133,
+      "std": 17.911,
+      "n": 3
+    },
+    "frame_ms_mean": {
+      "mean": 24.763,
+      "std": 0.304,
+      "n": 3
+    },
+    "frame_ms_p95": {
+      "mean": 30.171,
+      "std": 1.423,
+      "n": 3
+    },
+    "fail_rate": {
+      "mean": 0.01,
+      "std": 0.013,
+      "n": 3
+    },
+    "intents_per_agent_per_min": {
+      "mean": 13.213,
+      "std": 0.021,
+      "n": 3
+    },
+    "path_queue_peak": {
+      "mean": 2,
+      "std": 0.0,
+      "n": 3
+    },
+    "path_wait_ms_p95": {
+      "mean": 20.818,
+      "std": 0.325,
+      "n": 3
+    },
+    "mass_policy_us_mean": {
+      "mean": 133.544,
+      "std": 0.563,
+      "n": 3
+    }
+  },
+  {
+    "n_agents": 1024,
+    "architecture": "mass_hybrid",
+    "hero_agents": 16,
+    "mass_entities": 1008,
+    "n_seeds": 3,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "duration_s_mean": 299.5,
+    "infer_us_mean": {
+      "mean": 191.567,
+      "std": 3.159,
+      "n": 3
+    },
+    "infer_us_p95": {
+      "mean": 284.333,
+      "std": 1.488,
+      "n": 3
+    },
+    "frame_ms_mean": {
+      "mean": 25.472,
+      "std": 0.474,
+      "n": 3
+    },
+    "frame_ms_p95": {
+      "mean": 30.15,
+      "std": 0.532,
+      "n": 3
+    },
+    "fail_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3
+    },
+    "intents_per_agent_per_min": {
+      "mean": 14.103,
+      "std": 0.012,
+      "n": 3
+    },
+    "path_queue_peak": {
+      "mean": 2.333,
+      "std": 0.471,
+      "n": 3
+    },
+    "path_wait_ms_p95": {
+      "mean": 21.255,
+      "std": 0.433,
+      "n": 3
+    },
+    "mass_policy_us_mean": {
+      "mean": 101.031,
+      "std": 1.973,
+      "n": 3
+    }
+  }
+]

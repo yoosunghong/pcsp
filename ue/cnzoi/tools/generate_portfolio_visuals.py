@@ -48,6 +48,14 @@ MASS_SOURCE = (
     / "mass_smoke_20260831"
     / "per_session.json"
 )
+MASS_SCALING_SOURCE = (
+    REPO_ROOT
+    / "research"
+    / "results"
+    / "ue_sessions"
+    / "mass_scaling_20260901"
+    / "scaling_curve.json"
+)
 
 COLORS = {
     "background": "#07131f",
@@ -424,6 +432,143 @@ def generate_mass_runtime_proof(output_dir: Path) -> None:
     _save(fig, output_dir, "mass-hybrid-runtime-proof")
 
 
+def generate_mass_scaling(output_dir: Path) -> None:
+    rows = _load_json(MASS_SCALING_SOURCE)
+    totals = [row["n_agents"] for row in rows]
+    frame = [row["frame_ms_p95"]["mean"] for row in rows]
+    frame_std = [row["frame_ms_p95"]["std"] for row in rows]
+    failures = [100.0 * row["fail_rate"]["mean"] for row in rows]
+    failure_std = [100.0 * row["fail_rate"]["std"] for row in rows]
+    throughput = [row["intents_per_agent_per_min"]["mean"] for row in rows]
+    throughput_std = [row["intents_per_agent_per_min"]["std"] for row in rows]
+
+    fig, axes = plt.subplots(1, 3, figsize=(16.2, 6.6))
+    _apply_theme(fig, axes)
+    fig.subplots_adjust(left=0.055, right=0.985, top=0.75, bottom=0.25, wspace=0.27)
+    fig.suptitle(
+        "Mass simulation LOD keeps incremental cost bounded through 1,024 NPCs",
+        color=COLORS["text"],
+        fontsize=20,
+        fontweight="bold",
+        y=0.95,
+    )
+    fig.text(
+        0.5,
+        0.885,
+        "Visible UE 5.8 standalone  |  16 Hero Actors + Mass background  |  3 seeds x 300 seconds",
+        ha="center",
+        color=COLORS["muted"],
+        fontsize=11,
+    )
+
+    ax_frame, ax_failure, ax_throughput = axes
+    ax_frame.errorbar(
+        totals,
+        frame,
+        yerr=frame_std,
+        color=COLORS["cyan"],
+        marker="o",
+        markersize=7,
+        linewidth=2.5,
+        capsize=4,
+    )
+    ax_frame.axhline(16.67, color=COLORS["orange"], linewidth=1.6, linestyle="--")
+    ax_frame.set_title(
+        "Frame p95", loc="left", fontsize=13, pad=12, color=COLORS["text"]
+    )
+    ax_frame.set_xlabel("Total simulated NPCs")
+    ax_frame.set_ylabel("Milliseconds")
+    ax_frame.set_xticks(totals)
+    ax_frame.set_ylim(0, max(frame) * 1.28)
+    ax_frame.text(
+        0.04,
+        0.94,
+        f"128 -> 1,024: {frame[0]:.2f} -> {frame[-1]:.2f} ms",
+        transform=ax_frame.transAxes,
+        color=COLORS["text"],
+        fontsize=9.5,
+        va="top",
+    )
+
+    bars = ax_failure.bar(
+        totals,
+        failures,
+        width=90,
+        color=[COLORS["green"], COLORS["green"], COLORS["orange"], COLORS["green"]],
+        yerr=failure_std,
+        error_kw={"ecolor": COLORS["muted"], "elinewidth": 1.2, "capsize": 3},
+    )
+    for bar, value in zip(bars, failures):
+        ax_failure.text(
+            bar.get_x() + bar.get_width() / 2,
+            value + 0.12,
+            f"{value:.1f}%",
+            ha="center",
+            color=COLORS["text"],
+            fontsize=9.5,
+        )
+    ax_failure.set_title(
+        "Hero movement failure",
+        loc="left",
+        fontsize=13,
+        pad=12,
+        color=COLORS["text"],
+    )
+    ax_failure.set_xlabel("Total simulated NPCs")
+    ax_failure.set_ylabel("Failure rate (%)")
+    ax_failure.set_xticks(totals)
+    ax_failure.set_ylim(0, max(2.0, max(failures) + max(failure_std) + 0.8))
+
+    ax_throughput.errorbar(
+        totals,
+        throughput,
+        yerr=throughput_std,
+        color=COLORS["blue"],
+        marker="o",
+        markersize=7,
+        linewidth=2.5,
+        capsize=4,
+    )
+    ax_throughput.set_title(
+        "Completed intents",
+        loc="left",
+        fontsize=13,
+        pad=12,
+        color=COLORS["text"],
+    )
+    ax_throughput.set_xlabel("Total simulated NPCs")
+    ax_throughput.set_ylabel("Per NPC per minute")
+    ax_throughput.set_xticks(totals)
+    ax_throughput.set_ylim(0, max(throughput) * 1.25)
+    ax_throughput.text(
+        0.04,
+        0.94,
+        f"1,024 NPCs: {throughput[-1]:.2f} intents/min",
+        transform=ax_throughput.transAxes,
+        color=COLORS["text"],
+        fontsize=9.5,
+        va="top",
+    )
+
+    fig.text(
+        0.5,
+        0.075,
+        "Scaling overhead is flat, but the absolute frame time is about 25 ms mean / 30 ms p95; this is not a 60 FPS claim.",
+        ha="center",
+        color=COLORS["orange"],
+        fontsize=10.5,
+    )
+    fig.text(
+        0.5,
+        0.035,
+        "Source: research/results/ue_sessions/mass_scaling_20260901/scaling_curve.json",
+        ha="center",
+        color=COLORS["muted"],
+        fontsize=8.5,
+    )
+    _save(fig, output_dir, "mass-scaling-evidence")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -437,6 +582,7 @@ def main() -> None:
     generate_actor_scaling(args.out)
     generate_ablation(args.out)
     generate_mass_runtime_proof(args.out)
+    generate_mass_scaling(args.out)
     print(f"Wrote portfolio visuals to {args.out}")
 
 

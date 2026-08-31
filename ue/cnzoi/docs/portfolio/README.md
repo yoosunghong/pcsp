@@ -29,7 +29,7 @@ Differs from `PLAN.md` in scope:
 
 | Document | Subsystem | Status |
 | --- | --- | --- |
-| [mass-1024-scaling.md](mass-1024-scaling.md) | Actor path admission + Mass simulation LOD | First implementation and 1,024-entity smoke verified; visible benchmark pending |
+| [mass-1024-scaling.md](mass-1024-scaling.md) | Actor path admission + Mass simulation LOD | Visible 128–1,024 benchmark complete: 12/12 clean runs; 1,024 frame p95 30.15 ms, 0% hero failure |
 | [eqs-congestion.md](eqs-congestion.md) | EQS-driven affordance congestion handling | Deferred from Phase 2 |
 | [async-inference.md](async-inference.md) | Asynchronous batched ONNX inference | Deferred from Phase 3 |
 | [observability.md](observability.md) | Per-agent, path-scheduler, and Mass JSONL telemetry + analyzer | Phase 3/4 live and scaling-aware |
@@ -38,7 +38,7 @@ Differs from `PLAN.md` in scope:
 | [editor-setup-guide.md](editor-setup-guide.md) | GameMode/World Settings, agent camera mount, spawner, and capture CVars | Editor setup guide available |
 | [hud-widget-guide.md](hud-widget-guide.md) | UMG HUD widgets and zone-overlay materials | HUD widget assets present; final capture validation pending |
 | [diagrams.md](diagrams.md) | Architecture and runtime data-flow diagrams | Phase 5 live |
-| [visual-evidence.md](visual-evidence.md) | Data-grounded ablation, scaling, and 1,024-NPC runtime figures | Reproducible PNG/SVG pack complete; visible Mass benchmark pending |
+| [visual-evidence.md](visual-evidence.md) | Data-grounded ablation, Actor scaling, Mass runtime, and visible Mass scaling figures | Reproducible PNG/SVG pack complete |
 
 ## Current handoff
 
@@ -46,6 +46,7 @@ The portfolio now has a complete technical narrative from research objective to
 engine bottleneck, architectural intervention, instrumentation, and verified
 runtime smoke. The static evidence layer is also complete: the root README now
 surfaces reproducible persona-ablation, Actor-scaling, and Mass-runtime figures.
-The remaining presentation work requires a normal visible UE session: run the
-three-seed Mass sweep, attach Unreal Insights CPU/render/navigation/Mass/memory
-captures, take the planned screenshots, and record the author-owned demo video.
+The visible three-seed Mass sweep is complete. Remaining presentation work is
+Unreal Insights CPU/render/navigation/Mass/memory capture, planned screenshots,
+and the author-owned demo video. Persona preservation by simulation tier remains
+a separate independent-evaluator task.

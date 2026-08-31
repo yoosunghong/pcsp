@@ -642,3 +642,17 @@ Interpretation: the case study produces both positive and negative qualitative e
 - The observation schema remains 33-d, the persona embedding remains 64-d, and
   the action ontology remains 20-way. No checkpoint export change or retraining
   is required for this integration.
+
+## 2026-09-01 - Visible UE Mass-Hybrid Scaling Sweep
+
+- Completed 12 visible UE 5.8 standalone sessions:
+  `{128,256,512,1024}` total NPCs × three seeds × 300 seconds, holding the hero
+  tier at 16 Actor/BT agents and assigning the rest to Mass.
+- Aggregated with `scripts/analyze_scaling_sweep.py` into
+  `results/ue_sessions/mass_scaling_20260901/`.
+- At 1,024 NPCs, three-seed means are frame `25.47 ms`, frame p95 `30.15 ms`,
+  hero movement failure `0.0%`, completed intents `14.10/NPC/min`, and Mass
+  policy latency `101.0 us`.
+- The correct claim is bounded incremental cost: frame p95 changes only
+  `0.25 ms` from 128 to 1,024 NPCs. The absolute frame time remains above the
+  60-FPS budget and is reported as such.

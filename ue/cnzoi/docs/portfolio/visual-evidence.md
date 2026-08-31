@@ -41,6 +41,19 @@ is deliberately excluded from the figure and from portfolio performance claims.
 Source:
 [`research/results/ue_sessions/mass_smoke_20260831/per_session.json`](../../../../research/results/ue_sessions/mass_smoke_20260831/per_session.json)
 
+## Visible 128–1,024 NPC Mass Scaling
+
+![Visible Mass scaling evidence](assets/mass-scaling-evidence.png)
+
+The visible UE 5.8 standalone sweep completed 12/12 runs across four population
+sizes and three seeds. From 128 to 1,024 NPCs, frame p95 changes from 29.90 to
+30.15 ms while the 1,024-NPC hero tier records zero movement failures. The
+absolute frame time remains above the 16.67-ms target, so the figure supports a
+bounded incremental-cost claim rather than a 60-FPS claim.
+
+Source:
+[`research/results/ue_sessions/mass_scaling_20260901/scaling_curve.json`](../../../../research/results/ue_sessions/mass_scaling_20260901/scaling_curve.json)
+
 ## Reproducing The Figures
 
 From the repository root:
@@ -54,12 +67,10 @@ The script writes both PNG previews and vector SVG masters to
 
 ## Capture Work Still Required
 
-The static evidence layer is complete. The remaining portfolio visuals require
-a normal visible UE session and cannot be substituted with the offscreen smoke:
+The static evidence layer and visible Mass sweep are complete. Remaining
+portfolio visuals require targeted capture work:
 
-1. Run the Mass-hybrid 128/256/512/1,024 sweep with three seeds.
-2. Capture Unreal Insights CPU, render, navigation, Mass, and memory tracks.
-3. Capture the portfolio map at 16-agent close-up, 64-agent crowd, persona
+1. Capture Unreal Insights CPU, render, navigation, Mass, and memory tracks.
+2. Capture the portfolio map at 16-agent close-up, 64-agent crowd, persona
    contrast, congestion recovery, and 1,024-NPC wide shots.
-4. Record the HUD/camera demo sequence and edit the final video.
-
+3. Record the HUD/camera demo sequence and edit the final video.
