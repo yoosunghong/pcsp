@@ -1,6 +1,6 @@
 # PCSP Unreal Engine Runtime
 
-`cnzoi/` is the Unreal Engine 5.7 deployment of PCSP. It turns a shared
+`cnzoi/` is the Unreal Engine 5.8 deployment of PCSP. It turns a shared
 persona-conditioned ONNX policy into executable NPC behavior through a hybrid
 Behavior Tree/affordance stack and scales background simulation with Mass Entity.
 
@@ -23,26 +23,28 @@ persona state and needs but use a cheaper zone-level movement approximation.
 
 ## Project requirements
 
-- Unreal Engine 5.7 with a complete C++ build installation
+- Unreal Engine 5.8 with a complete C++ build installation
 - Visual Studio 2022 C++ game-development workload
 - Enabled plugins: NNE Runtime ORT, Mass Gameplay, Mass AI, Mass Crowd,
   ZoneGraph, Smart Objects, StateTree, and Gameplay StateTree
 - `Content/PCSP/Models/pcsp_actor.onnx`
 - `Content/PCSP/Data/persona_embeddings.json`
 
-The project also references NarshaMCP for editor automation. Disable that plugin
-locally only if your editor installation does not provide it; do not remove it
-from the shared project configuration.
+The project enables Unreal Engine 5.8's official `ModelContextProtocol` plugin
+and the `AllToolsets` bundle. `.mcp.json` connects MCP clients to
+`http://127.0.0.1:8000/mcp`; launch the editor with
+`-ModelContextProtocolStartServer -ModelContextProtocolPort=8000` when editor
+automation is required.
 
 ## Build and open
 
 From a Developer PowerShell:
 
 ```powershell
-& "C:\Program Files\Epic Games\UE_5.7\Engine\Build\BatchFiles\Build.bat" `
+& "C:\Program Files\Epic Games\UE_5.8\Engine\Build\BatchFiles\Build.bat" `
   cnzoiEditor Win64 Development `
-  -Project="D:\Github\pcsp\ue\cnzoi\cnzoi.uproject" `
-  -NoHotReloadFromIDE -Progress
+  "D:\Github\pcsp\ue\cnzoi\cnzoi.uproject" `
+  -WaitMutex -NoHotReloadFromIDE
 ```
 
 Open `cnzoi.uproject` and use one of these maps:

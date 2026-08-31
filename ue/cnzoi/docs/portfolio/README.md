@@ -38,12 +38,14 @@ Differs from `PLAN.md` in scope:
 | [editor-setup-guide.md](editor-setup-guide.md) | GameMode/World Settings, agent camera mount, spawner, and capture CVars | Editor setup guide available |
 | [hud-widget-guide.md](hud-widget-guide.md) | UMG HUD widgets and zone-overlay materials | HUD widget assets present; final capture validation pending |
 | [diagrams.md](diagrams.md) | Architecture and runtime data-flow diagrams | Phase 5 live |
+| [visual-evidence.md](visual-evidence.md) | Data-grounded ablation, scaling, and 1,024-NPC runtime figures | Reproducible PNG/SVG pack complete; visible Mass benchmark pending |
 
 ## Current handoff
 
 The portfolio now has a complete technical narrative from research objective to
 engine bottleneck, architectural intervention, instrumentation, and verified
-runtime smoke. The only presentation artifact intentionally left to the author
-is video capture. Before publishing quantitative 1,024-NPC performance claims,
-run the normal visible three-seed sweep and attach Unreal Insights CPU, render,
-navigation, Mass, and memory captures.
+runtime smoke. The static evidence layer is also complete: the root README now
+surfaces reproducible persona-ablation, Actor-scaling, and Mass-runtime figures.
+The remaining presentation work requires a normal visible UE session: run the
+three-seed Mass sweep, attach Unreal Insights CPU/render/navigation/Mass/memory
+captures, take the planned screenshots, and record the author-owned demo video.

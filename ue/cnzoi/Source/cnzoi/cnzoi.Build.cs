@@ -33,7 +33,7 @@ public class cnzoi : ModuleRules
 		});
 
 		// UE 5.8 split the foundational Mass reflected types out of MassEntity.
-		// Keep the 5.7 project buildable while allowing forward compile checks.
+		// Keep the version guard explicit for future engine migration checks.
 		if (Target.Version.MajorVersion > 5 || Target.Version.MinorVersion >= 8)
 		{
 			PublicDependencyModuleNames.Add("MassCore");

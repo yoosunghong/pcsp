@@ -4,6 +4,52 @@ This file holds completed work details, decisions, result paths, and experiment 
 
 ---
 
+## 2026-08-31 - Eval v3 Threading And Repository Integrity Audit
+
+### Lower-priority eval threading
+
+- `src/eval/task_perf.py` now accepts an injected environment factory, threads
+  agent count through all persona samplers, and exposes CLI selection for v1/v3
+  environment, observation dimension, action count, persona file, and episode
+  length. Default v1 values remain 20 observations, 12 actions, and four agents.
+- `src/eval/diversity.py` now samples shared states through an injected
+  environment factory and persona set. Its CLI selects v1/v3 dimensions and
+  constructs v3 sampling personas from `train_240_v3.json`.
+- Both outputs now record `env_variant`, `obs_dim`, `n_actions`, and `n_agents`.
+- `conda run -n paper python -m py_compile src/eval/task_perf.py
+  src/eval/diversity.py` passed.
+- Reconciled the stale Phase E ablation-export checklist with the completed UE
+  work: Hybrid-NoConsist already has an ONNX export/swap path and paired engine
+  runs; RL-only inference is represented by the existing HybridNoPersona mode,
+  while its training-only delta remains in the research tables.
+
+### Mini-Inzoi environment recovery
+
+- Root cause confirmed: the historical bare `.gitignore` pattern `env/`
+  matched `research/src/env/` at any depth, so none of the environment sources
+  ever entered Git. It is now anchored as `/env/`.
+- Exhaustive recovery checks found no original source in local disks, Git
+  objects/refs, editor/session history, public branches, releases, artifacts,
+  the public fork, or code search. A similarly named external v4 environment
+  was rejected because its own documentation says it did not preserve the
+  original v3 dynamics.
+- Restored `src/env/{mini_inzoi,mini_inzoi_v2,mini_inzoi_v3,
+  mini_inzoi_v3_large,v3_constants,action_semantics}.py`. Constants that affect
+  checkpoint behavior were recovered from committed rollout transitions:
+  seeded positions, time/need dynamics, restoration table, social compatibility,
+  v3 affordance/social/routine slices, critical-need penalty, and all action
+  style directions.
+- Added `scripts/test_env_recovery.py`. It reconstructs full AEC cycles from the
+  other-agent action IDs encoded in each target observation and replays 2,400
+  v1 plus 2,400 v3 transitions. Results: v1 observation/reward max errors
+  `4.36e-6 / 2.53e-6`; v3 `4.89e-6 / 2.72e-6` (all below `1e-5`).
+- Validation passed: `scripts/test_env.py`, `scripts/test_env_v3.py`,
+  `scripts/test_env_v3_large.py`, PettingZoo API checks for v2 and v3-large,
+  an import audit of 26 environment consumers, a checkpoint-backed v3 task
+  rollout, and a checkpoint-backed v3-large policy cycle.
+
+---
+
 ## 2026-05-18
 
 ### UE5 Zero-Shot Persona Generalization — Validated on Held-Out IDs 241..300

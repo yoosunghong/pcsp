@@ -11,7 +11,12 @@ build/
 # Virtual environments / secrets
 .env
 .venv
-env/
+# NOTE: this was previously the bare pattern `env/`, which gitignore matches at
+# ANY depth — so it silently excluded `research/src/env/` (the Mini-Inzoi
+# environment: v3_constants, mini_inzoi_v3, action_semantics). That module was
+# therefore never committed. Anchored to the repo root so only a top-level
+# virtualenv matches and the recovered research package remains trackable.
+/env/
 venv/
 
 # Jupyter
@@ -53,6 +58,7 @@ ue/**/Intermediate/
 ue/**/Saved/
 ue/**/.vs/
 ue/**/*.sln
+ue/**/*.slnx
 
 # Wandb / tensorboard
 wandb/

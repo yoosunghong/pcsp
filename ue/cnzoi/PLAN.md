@@ -2,6 +2,16 @@
 
 This document is the active implementation plan for the Unreal Engine 5 side of PCSP. It is derived from `PCSP_UE5_Implementation_Plan.md` and should be updated whenever the UE5 architecture, task order, or research interface changes.
 
+## Engine and Editor Automation Baseline
+
+- Target engine: Unreal Engine 5.8 (`EngineAssociation` 5.8, Build Settings V7,
+  UE 5.8 include order).
+- Editor automation: Unreal's official `ModelContextProtocol` and
+  `AllToolsets` plugins, served at `http://127.0.0.1:8000/mcp`.
+- Migration gate: `cnzoiEditor Win64 Development` must build cleanly, all PCSP
+  Blueprint assets must compile with warnings treated as errors, and
+  `Map_PCSPDistrict_Portfolio` must complete a 16-agent Simulate PIE smoke.
+
 ## Direction
 
 Build a UE5 life-simulation sandbox that integrates Persona-Conditioned Shared Policy (PCSP) with Unreal-native AI systems. The core design is a hybrid decision stack:
@@ -347,9 +357,12 @@ Detailed portfolio docs live under [docs/portfolio/](docs/portfolio/).
       `SetViewTargetWithBlend`, and HUD panels for persona, needs,
       decision stack, affordance state, social context, and trajectory events.
 - [/] Prepare UE5 screenshots, performance tables, and architecture figures.
-      Architecture figures and Actor baseline tables done; the scaling
-      analyzer now emits Actor-vs-Mass tables/plots. Final visible Mass sweep,
-      Unreal Insights captures, and PIE screenshots
+      Architecture figures, Actor baseline tables, and the reproducible static
+      evidence pack are done
+      ([docs/portfolio/visual-evidence.md](docs/portfolio/visual-evidence.md)).
+      The pack separates visible Actor performance from the offscreen Mass
+      compatibility smoke and generates PNG/SVG from checked-in JSON. Final
+      visible Mass sweep, Unreal Insights captures, and PIE screenshots
       (`[NEEDS CAPTURE]` slots X.5, X.6) deferred to next editor session.
 - [x] Write portfolio-facing README and 1,024-NPC engineering case study
       (2026-08-31): root `README.md`, `ue/README.md`, and
@@ -392,6 +405,7 @@ systems have at least a first pass. All portfolio planning docs live under
 | 5 | Trajectory observability pipeline extensions | Scaling-aware and live | [docs/portfolio/observability.md](docs/portfolio/observability.md) | per-agent logs plus `path_scheduler.jsonl`, `mass_stats.jsonl`, analyzer, HUD event ring buffer |
 | 6 | Agent-camera focus + demo HUD | C++ scaffold and UMG assets present; capture validation pending | [docs/portfolio/demo-video-hud-plan.md](docs/portfolio/demo-video-hud-plan.md) | `APCSPDemoPlayerController`, `UPCSPAgentDebugViewModel`, HUD widgets, portfolio map |
 | 7 | Diagram polish | Refreshed 2026-05-23 | [docs/portfolio/diagrams.md](docs/portfolio/diagrams.md) | diagrams 2, 3, 4, 5 updated for hybrid-stack cleanup |
+| 8 | Static visual evidence pack | Implemented 2026-08-31 | [docs/portfolio/visual-evidence.md](docs/portfolio/visual-evidence.md) | reproducible ablation, Actor-scaling, and Mass-runtime PNG/SVG figures |
 
 ## Debug Log Map
 

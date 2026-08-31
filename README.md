@@ -50,6 +50,18 @@ The 1,024-NPC run above is a compatibility smoke test, not a final FPS claim.
 Final performance evidence must come from a visible standalone or normal PIE
 three-seed sweep; the offscreen UE run used for the smoke test was throttled.
 
+## Visual evidence
+
+![Persona conditioning ablation](ue/cnzoi/docs/portfolio/assets/persona-ablation-evidence.png)
+
+![Actor and Behavior Tree scaling ceiling](ue/cnzoi/docs/portfolio/assets/actor-scaling-evidence.png)
+
+![Mass hybrid runtime proof](ue/cnzoi/docs/portfolio/assets/mass-hybrid-runtime-proof.png)
+
+The figures are generated directly from checked-in experiment JSON. Their data
+sources, caveats, and reproduction command are documented in the
+[visual evidence case study](ue/cnzoi/docs/portfolio/visual-evidence.md).
+
 ## 1,024-NPC scaling design
 
 The original Actor/BT implementation exposed a useful failure case: hundreds of
@@ -77,7 +89,7 @@ for the failure analysis, implementation, runbook, and acceptance criteria.
 
 - [`research/`](research/) — environments, PCSP models, training, evaluation,
   persona data, paper source, and generated experiment artifacts.
-- [`ue/cnzoi/`](ue/cnzoi/) — UE 5.7 project, C++ runtime, authored affordances,
+- [`ue/cnzoi/`](ue/cnzoi/) — UE 5.8 project, C++ runtime, authored affordances,
   Behavior Trees, Mass integration, demo map, HUD assets, and telemetry tools.
 - [`research/paper/cog2026_main/`](research/paper/cog2026_main/) — active COG
   2026 Main Track manuscript source.
@@ -101,7 +113,7 @@ The active execution contract is a 33-dimensional observation, a cached
 
 Requirements:
 
-- a complete Unreal Engine 5.7 source/toolchain installation;
+- a complete Unreal Engine 5.8 source/toolchain installation;
 - Visual Studio 2022 with the C++ game-development workload; and
 - the ONNX model and persona cache under `Content/PCSP/`.
 
@@ -137,7 +149,7 @@ Complete: research-to-UE contract, ONNX policy integration, hybrid
 policy/Behavior Tree execution, affordance reservations, rich trajectory logs,
 ablation tooling, demo HUD/camera scaffolding, Actor scaling baseline, bounded
 path scheduling, Mass background simulation, 1,024-entity runtime smoke test,
-and portfolio documentation.
+portfolio documentation, and a reproducible static visual evidence pack.
 
 Still required for the final presentation: a visible three-seed 128–1,024
 benchmark on the target machine, profiler captures, screenshots, and the demo

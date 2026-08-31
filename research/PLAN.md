@@ -25,6 +25,23 @@
 
 ---
 
+## Phase 0 - Repository Reproducibility Recovery
+
+- [x] Restore the missing `research/src/env/` package. No original source or
+      verified backup existed in local disks, Git objects/refs, editor history,
+      public branches, or the public fork. The v1/v3 reference implementation
+      was therefore reconstructed from the design contract and the committed
+      real-policy rollout streams. `scripts/test_env_recovery.py` replays all
+      4,800 recorded target-agent transitions: maximum observation error is
+      below `4.9e-6` and maximum reward error below `2.8e-6`. The recovered
+      package also restores v2 (56-dim) and v3-large (69-dim) scale variants.
+- [x] Pass PettingZoo API and smoke tests for v1, v2, v3, and v3-large; pass all
+      v3 acceptance criteria; load and roll out the saved v3 base and v3-large
+      checkpoints. The historical bare `env/` ignore rule is anchored as
+      `/env/`, so the recovered package is now trackable.
+
+---
+
 ## Phase A - Rich Trace Pipeline
 
 - [x] Archive old planning/proposal docs under `archive/docs_2026-05-08/`.
@@ -79,7 +96,13 @@
 - [x] Add `scripts/run_pcsp_v3.py`.
 - [x] Add `scripts/run_full_sweep_v3.py`.
 - [x] Add v3 zero-shot eval driver: `scripts/run_eval_v3_zeroshot.py`.
-- [ ] Thread v3 support through lower-priority eval scripts that still import `MiniInzoiEnv` directly: `src/eval/task_perf.py`, `src/eval/diversity.py`, and any remaining v3 rendering checks.
+- [x] Thread v3 support through `src/eval/task_perf.py` and
+      `src/eval/diversity.py`: injected environment factories, v3 observation /
+      action dimensions, variant-specific persona defaults, and variable agent
+      counts. *(2026-08-31: static compilation and checkpoint-backed v3 rollout
+      validation pass after Phase 0 recovery.)*
+- [ ] Audit remaining lower-priority rendering/benchmark scripts that import
+      `MiniInzoiEnv` directly and decide which require a v3 variant.
 
 ---
 
@@ -140,32 +163,11 @@
 - [ ] Re-measure latency before claiming final real-time speedups in the paper.
 - [ ] Decide whether the frozen projection ablation is worth running for v3.
 - [x] UE5-side v3 action remap: movement indices 16-19 (`move_up/down/left/right`) carry no semantic meaning in UE (engine handles pathing), so the UE bridge now maps 16/18 → `LeisureOutdoor` and 17/19 → `ObserveCrowd` in `PCSPPolicySubsystem.cpp`. Python training/eval are unaffected — the remap lives in the engine bridge only, but recorded here so the v3 action-table interpretation stays consistent across research and UE. UE decisions are now ONNX-only: if `pcsp_actor.onnx` or `persona_embeddings.json` is missing, agents return Failed rather than fall back to a heuristic. *(2026-05-17)*
-- [ ] **UE5 training-side ablation exports (`Hybrid-NoConsist`, `RL-only`).**
-      The UE side already supports three *runtime* ablations via
-      `pcsp.PolicyMode` (HybridPCSP / BTOnly / HybridNoPersona — see
-      `ue/cnzoi/PLAN.md` Phase 4). Completing the Phase 4 ablation table
-      requires two additional ONNX exports of *already-trained* v3 models:
-      1. **Hybrid-NoConsist** — checkpoint `results/pcsp_v3/no_consist/policy.pt`.
-         Same `PCSPActorCritic` architecture as `full`, so
-         `scripts/export_pcsp_onnx.py --checkpoint results/pcsp_v3/no_consist/policy.pt --output_dir results/export_ue5/no_consist`
-         produces a drop-in `pcsp_actor.onnx` with identical I/O shapes
-         (`obs[1,33]`, `persona_proj[1,64]`, `logits[1,20]`). UE switches
-         models by swapping the file under `Content/PCSP/Models/` and
-         relaunching PIE; persona embeddings reuse the `full` export since
-         the `PersonaProjection` LoRA layer is included in both checkpoints
-         and is trained jointly.
-      2. **RL-only** — corresponds to baseline B1 (`baselines/no_persona_ppo.py`,
-         checkpoint `results/baselines_v3/b1_no_persona/policy.pt`). The
-         architecture has no persona conditioning at all (no `PersonaProjection`,
-         no FiLM), so `export_pcsp_onnx.py` cannot be reused as-is. Needs a
-         new `export_b1_onnx.py` wrapper that builds an ONNX with
-         `obs[1,33] -> logits[1,20]` only, *plus* a dummy
-         `persona_embeddings.json` of zero vectors so `UPCSPPolicySubsystem`'s
-         existing two-input binding still validates. Alternative: wrap the B1
-         actor as a two-input ONNX where `persona_proj` is unused (passed
-         through and discarded), keeping the UE bridge identical. The
-         dummy-embedding approach is simpler — recommend that.
-      Both exports must keep the existing action-ID ordering
-      (`research/docs/mini_inzoi_v3_design.md` §3); the UE bridge's V3→UE
-      remap table is keyed on those indices and would silently misroute if
-      ordering changed.
+- [x] Close the UE5 training-side ablation export item. Hybrid-NoConsist is
+      exported/swappable through `scripts/export_pcsp_onnx_ablations.py` and
+      `scripts/swap_ue5_onnx.py`, with paired 64-agent sessions completed on
+      2026-05-18. RL-only at inference is operationally the existing
+      `HybridNoPersona` zero-persona-vector mode; its training-time B1 delta is
+      already reported in the research tables, so a separate incompatible B1
+      ONNX binding is not required. See `ue/cnzoi/PLAN.md` Phase 4 and the
+      2026-05-18 entries in both DONE logs.

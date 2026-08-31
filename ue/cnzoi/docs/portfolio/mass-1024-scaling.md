@@ -147,7 +147,7 @@ Mass entities:
 This was a UE 5.8 `-RenderOffscreen` compatibility smoke test. That mode also
 throttled a 4-agent control run, so its frame-time numbers are deliberately not
 used as performance evidence. Capture final performance in normal PIE or a
-visible standalone build on the target UE 5.7 installation.
+visible standalone build on the target UE 5.8 installation.
 
 ## Next Optimization Stages
 

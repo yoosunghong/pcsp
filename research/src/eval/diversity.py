@@ -36,7 +36,12 @@ N_ACTS  = N_ACTIONS  # 12
 LLM_DIM = 1024
 
 
-def _sample_random_states(n_states: int, seed: int = 0) -> np.ndarray:
+def _sample_random_states(
+    n_states: int,
+    seed: int = 0,
+    env_factory=None,
+    state_personas: list[PersonaConfig] | None = None,
+) -> np.ndarray:
     """
     Sample diverse observations by running a random policy for n_states steps.
     Uses DEFAULT_PERSONAS to avoid bias toward specific persona configs.
@@ -47,7 +52,15 @@ def _sample_random_states(n_states: int, seed: int = 0) -> np.ndarray:
     step = 0
 
     while step < n_states:
-        env = MiniInzoiEnv(personas=DEFAULT_PERSONAS, max_steps=200)
+        if env_factory is None:
+            env = MiniInzoiEnv(
+                personas=state_personas or DEFAULT_PERSONAS,
+                max_steps=200,
+            )
+        else:
+            if not state_personas:
+                raise ValueError("state_personas are required with env_factory")
+            env = env_factory(state_personas)
         env.reset(seed=int(rng.integers(0, 2**31)))
         for agent in env.agent_iter():
             obs, _, term, trunc, _ = env.last()
@@ -72,6 +85,8 @@ def behavioral_kl_diversity(
     n_persona_pairs: int = 100,
     device:         str  = "cuda",
     seed:           int  = 0,
+    env_factory=None,
+    state_personas: list[PersonaConfig] | None = None,
 ) -> dict:
     """
     Sample n_persona_pairs random pairs from personas_data.
@@ -85,7 +100,12 @@ def behavioral_kl_diversity(
     policy.to(dev).eval()
 
     rng = np.random.default_rng(seed)
-    states_np = _sample_random_states(n_states, seed=seed)
+    states_np = _sample_random_states(
+        n_states,
+        seed=seed,
+        env_factory=env_factory,
+        state_personas=state_personas,
+    )
     states    = torch.FloatTensor(states_np).to(dev)           # (S, obs_dim)
 
     N = len(personas_data)
@@ -156,9 +176,14 @@ def _parse_args():
     p = argparse.ArgumentParser()
     p.add_argument("--policy",           default="results/pcsp/full/policy.pt")
     p.add_argument("--embeddings",       default="results/embeddings/persona_embeddings_300.npy")
-    p.add_argument("--personas",         default="data/personas/train_240.json")
+    p.add_argument("--env_variant",      choices=["v1", "v3"], default="v1")
+    p.add_argument("--personas",         default=None,
+                   help="Defaults to train_240.json for v1 and train_240_v3.json for v3.")
     p.add_argument("--n_states",         type=int, default=200)
     p.add_argument("--n_persona_pairs",  type=int, default=100)
+    p.add_argument("--n_agents",         type=int, default=4)
+    p.add_argument("--obs_dim",          type=int, default=None)
+    p.add_argument("--n_actions",        type=int, default=None)
     p.add_argument("--device",           default="cuda")
     return p.parse_args()
 
@@ -166,17 +191,54 @@ def _parse_args():
 if __name__ == "__main__":
     args = _parse_args()
 
-    with open(ROOT / args.personas) as f:
+    if args.n_agents < 1:
+        raise ValueError("--n_agents must be at least 1")
+
+    if args.env_variant == "v3":
+        from src.env.mini_inzoi_v3 import MiniInzoiV3Env
+        from src.env.v3_constants import N_ACTIONS_V3, obs_dim_v3
+
+        obs_dim = args.obs_dim if args.obs_dim is not None else obs_dim_v3(args.n_agents)
+        n_actions = args.n_actions if args.n_actions is not None else N_ACTIONS_V3
+        personas_path = args.personas or "data/personas/train_240_v3.json"
+
+        def selected_env_factory(personas):
+            return MiniInzoiV3Env(personas=personas, max_steps=200)
+    else:
+        obs_dim = args.obs_dim if args.obs_dim is not None else OBS_DIM
+        n_actions = args.n_actions if args.n_actions is not None else N_ACTS
+        personas_path = args.personas or "data/personas/train_240.json"
+        selected_env_factory = None
+
+    with open(ROOT / personas_path) as f:
         personas_data = json.load(f)
+    if len(personas_data) < args.n_agents:
+        raise ValueError(
+            f"Need at least {args.n_agents} personas, found {len(personas_data)} in {personas_path}"
+        )
     all_emb = np.load(ROOT / args.embeddings)
 
-    policy = PCSPActorCritic(OBS_DIM, N_ACTS)
+    policy = PCSPActorCritic(obs_dim, n_actions)
     policy.load_state_dict(torch.load(ROOT / args.policy, map_location="cpu"))
+
+    state_personas = None
+    if args.env_variant == "v3":
+        state_personas = [
+            PersonaConfig.from_dict(p) for p in personas_data[:args.n_agents]
+        ]
 
     result = behavioral_kl_diversity(
         policy, all_emb, personas_data,
         n_states=args.n_states,
         n_persona_pairs=args.n_persona_pairs,
         device=args.device,
+        env_factory=selected_env_factory,
+        state_personas=state_personas,
     )
+    result.update({
+        "env_variant": args.env_variant,
+        "obs_dim": obs_dim,
+        "n_actions": n_actions,
+        "n_agents": args.n_agents,
+    })
     print(json.dumps(result, indent=2))

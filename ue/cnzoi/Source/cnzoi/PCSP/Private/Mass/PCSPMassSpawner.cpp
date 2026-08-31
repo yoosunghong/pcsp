@@ -12,6 +12,11 @@
 #include "HAL/FileManager.h"
 #include "Misc/FileHelper.h"
 
+namespace
+{
+	const FVector MassRepresentationScale(0.22f, 0.22f, 1.65f);
+}
+
 APCSPMassSpawner::APCSPMassSpawner()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -24,9 +29,9 @@ APCSPMassSpawner::APCSPMassSpawner()
 	Representation->bCastDynamicShadow = false;
 	Representation->bAffectDistanceFieldLighting = false;
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> CapsuleMesh(
-		TEXT("/Engine/BasicShapes/Capsule.Capsule"));
-	if (CapsuleMesh.Succeeded()) { Representation->SetStaticMesh(CapsuleMesh.Object); }
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> CylinderMesh(
+		TEXT("/Engine/BasicShapes/Cylinder.Cylinder"));
+	if (CylinderMesh.Succeeded()) { Representation->SetStaticMesh(CylinderMesh.Object); }
 }
 
 void APCSPMassSpawner::BeginPlay()
@@ -88,7 +93,7 @@ int32 APCSPMassSpawner::SpawnMassEntities()
 		MoveTarget.Speed = 260.f;
 
 		Representation->AddInstance(
-			FTransform(FRotator::ZeroRotator, Location, FVector(0.16f, 0.16f, 0.32f)),
+			FTransform(FRotator::ZeroRotator, Location, MassRepresentationScale),
 			/*bWorldSpace=*/true);
 	}
 
@@ -152,7 +157,7 @@ void APCSPMassSpawner::UpdateRepresentation()
 		const FTransformFragment& Transform = EntityManager.GetFragmentDataChecked<FTransformFragment>(Entity);
 		InstanceTransforms.Add(FTransform(
 			Transform.GetTransform().GetRotation(), Transform.GetTransform().GetLocation(),
-			FVector(0.16f, 0.16f, 0.32f)));
+			MassRepresentationScale));
 	}
 	if (InstanceTransforms.Num() == Representation->GetInstanceCount())
 	{

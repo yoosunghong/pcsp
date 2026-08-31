@@ -714,3 +714,39 @@ Implemented the first complete scale-up pass described in
 - Highest-value next engineering steps: ZoneGraph/MassCrowd navigation, shared
   hierarchical route caching, density-aware admission, near/mid/far simulation
   LOD promotion, true dynamic-batch ONNX inference, and sampled rich logging.
+
+## 2026-08-31 - Reproducible Portfolio Visual Evidence
+
+- Added `tools/generate_portfolio_visuals.py`, which reads checked-in UE result
+  JSON and emits PNG plus SVG masters under `docs/portfolio/assets/`.
+- Added three portfolio-facing figures: persona-conditioning ablation,
+  Actor/Behavior Tree scaling ceiling, and 1,024-NPC Mass-hybrid runtime proof.
+- Added [docs/portfolio/visual-evidence.md](docs/portfolio/visual-evidence.md)
+  with source paths, interpretation, reproduction command, and the remaining
+  visible-capture checklist; surfaced the figures from the repository README.
+- Kept evidence classes explicit: the May visible Actor sweep supports frame
+  and failure-rate claims, while the August offscreen Mass smoke supports only
+  runtime-path compatibility. Its throttled frame timing is not plotted or used
+  as a performance claim.
+
+## 2026-08-31 - Unreal Engine 5.8 Migration and Official MCP Verification
+
+- Changed `cnzoi.uproject` to `EngineAssociation` 5.8 and moved both editor and
+  game targets to Build Settings V7 with the UE 5.8 include order.
+- Replaced the unavailable `NarshaMCP` project dependency with Unreal 5.8's
+  official `ModelContextProtocol` and `AllToolsets` plugins. Added the local
+  Streamable HTTP endpoint to `.mcp.json`.
+- Updated the UE 5.8 Mass include to `Mass/EntityHandle.h`, replaced the removed
+  `/Engine/BasicShapes/Capsule` representation with a scaled Cylinder, and
+  migrated two deprecated StateTree instance-data declarations to the explicit
+  zero-initialized macro.
+- `cnzoiEditor Win64 Development` completed successfully on UE 5.8 with no
+  compiler warnings in the final incremental build.
+- Through the live UE MCP server, loaded
+  `/Game/PCSP/Maps/Map_PCSPDistrict_Portfolio`, compiled 16 PCSP Blueprints with
+  warnings treated as errors, and ran a 10-second Simulate PIE smoke. The policy
+  initialized with the 33/64/20 contract and the spawner created all 16 hero
+  agents after NavMesh readiness; the prior Capsule CDO load error did not recur.
+- The checked map and representative Blueprint assets remained clean, so no
+  binary assets were resaved. MCP automation discovery succeeded, but there are
+  currently no tests registered under the `PCSP` filter.

@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "MassEntityHandle.h"
+#include "Mass/EntityHandle.h"
 #include "PCSPMassSpawner.generated.h"
 
 class UHierarchicalInstancedStaticMeshComponent;
