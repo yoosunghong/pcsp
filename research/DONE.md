@@ -719,3 +719,22 @@ Interpretation: the case study produces both positive and negative qualitative e
   claim.
 - Checked-in artifacts: `results/ue_sessions/tier_behavior_20260901_044431/`
   and `docs/ue_simulation_tier_behavior.md`.
+
+## 2026-09-01 - Attributable Gradient-Path Instrumentation
+
+- Added opt-in `PCSPConfig.log_attributable_gradients`; normal training remains
+  unchanged when false.
+- `PCSPTrainer` can now measure per-loss gradient L2 norms for persona
+  projection, actor, critic, and trajectory encoder before optimizer steps and
+  include their epoch means in iteration metrics.
+- Added a topology contract test covering standalone losses and the integrated
+  `update()` metric path.
+- Audited the trained v3-large full seed-42 checkpoint on a real 16-agent,
+  200-step rollout. All expected paths passed: PPO → projection/actor/critic;
+  consistency → projection/trajectory encoder; diversity → projection/actor.
+- Weighted norms were PPO `(269.1, 1.21, 290.0, 0)`, consistency
+  `(0.787, 0, 0, 3.745)`, and diversity `(4.87e-4, 1.82e-4, 0, 0)` in
+  `(projection, actor, critic, trajectory)` order.
+- Added `docs/gradient_path_audit.md` and machine-readable/visual artifacts
+  under `results/gradient_path_audit/`. The report explicitly avoids treating
+  raw pre-clipping norms as effect sizes.

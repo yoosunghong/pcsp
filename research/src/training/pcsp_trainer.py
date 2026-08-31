@@ -15,6 +15,7 @@ Ablation flags in PCSPConfig:
 from __future__ import annotations
 
 import json
+import math
 import sys
 import time
 from dataclasses import dataclass
@@ -57,6 +58,9 @@ class PCSPConfig(PPOConfig):
     # Ablations
     use_film:             bool  = True   # False → ConcatActorCritic
     freeze_projection:    bool  = False  # True → no LoRA gradient
+    # Diagnostic only. Uses autograd.grad before optimizer steps and therefore
+    # adds overhead; disabled for normal training and checkpoint compatibility.
+    log_attributable_gradients: bool = False
 
 
 # ── Actor-critics ──────────────────────────────────────────────────────────────
@@ -248,6 +252,45 @@ class PCSPTrainer:
             param_groups.append({"params": proj_params, "lr": cfg.lora_lr})
         self.optimizer      = Adam(param_groups)
         self.traj_optimizer = Adam(traj_encoder.parameters(), lr=cfg.traj_lr)
+
+    def module_parameters(self) -> dict[str, list[nn.Parameter]]:
+        """Parameter groups used by the attributable gradient-path audit."""
+        named_policy = list(self.policy.named_parameters())
+        return {
+            "persona_projection": [p for p in self.policy.persona_proj.parameters() if p.requires_grad],
+            "actor": [p for name, p in named_policy if name.startswith("actor") and p.requires_grad],
+            "critic": [p for name, p in named_policy if name.startswith("critic") and p.requires_grad],
+            "trajectory_encoder": [p for p in self.traj_encoder.parameters() if p.requires_grad],
+        }
+
+    def attributable_gradient_norms(self, loss: torch.Tensor) -> dict[str, float]:
+        """Return per-module L2 gradient norms attributable to one loss only."""
+        modules = self.module_parameters()
+        parameters: list[nn.Parameter] = []
+        owners: list[str] = []
+        for owner, values in modules.items():
+            for parameter in values:
+                parameters.append(parameter)
+                owners.append(owner)
+        totals = {owner: 0.0 for owner in modules}
+        if not parameters or not loss.requires_grad:
+            return totals
+        gradients = torch.autograd.grad(
+            loss, parameters, retain_graph=True, allow_unused=True
+        )
+        for owner, gradient in zip(owners, gradients):
+            if gradient is not None:
+                totals[owner] += float(gradient.detach().double().square().sum())
+        return {owner: math.sqrt(value) for owner, value in totals.items()}
+
+    @staticmethod
+    def _mean_gradient_norms(rows: list[dict[str, float]]) -> dict[str, float]:
+        if not rows:
+            return {}
+        return {
+            key: float(np.mean([row.get(key, 0.0) for row in rows]))
+            for key in rows[0]
+        }
 
     # ── Rollout ────────────────────────────────────────────────────────────────
 
@@ -462,6 +505,9 @@ class PCSPTrainer:
         stats = dict(policy_loss=0., value_loss=0., entropy=0.,
                      consistency_loss=0., diversity_loss=0.)
         n_ppo = 0
+        ppo_gradient_norms: list[dict[str, float]] = []
+        consistency_gradient_norms: list[dict[str, float]] = []
+        diversity_gradient_norms: list[dict[str, float]] = []
 
         for _ in range(cfg.n_epochs):
             # PPO mini-batch loop
@@ -486,6 +532,8 @@ class PCSPTrainer:
                 entropy  = ent.mean()
                 loss     = pol_loss + cfg.value_coef * val_loss - cfg.entropy_coef * entropy
 
+                if cfg.log_attributable_gradients:
+                    ppo_gradient_norms.append(self.attributable_gradient_norms(loss))
                 self.optimizer.zero_grad()
                 loss.backward()
                 grad_norm = nn.utils.clip_grad_norm_(self.policy.parameters(), cfg.max_grad_norm)
@@ -503,6 +551,14 @@ class PCSPTrainer:
             con_loss = self._consistency_loss(trajectories) * cfg.lambda_consistency
             div_loss = self._diversity_loss(transitions, all_e_llm) * cfg.lambda_diversity
             co_loss  = con_loss + div_loss
+
+            if cfg.log_attributable_gradients:
+                consistency_gradient_norms.append(
+                    self.attributable_gradient_norms(con_loss)
+                )
+                diversity_gradient_norms.append(
+                    self.attributable_gradient_norms(div_loss)
+                )
 
             if co_loss.requires_grad and not (torch.isnan(co_loss) or torch.isinf(co_loss)):
                 self.optimizer.zero_grad()
@@ -525,6 +581,13 @@ class PCSPTrainer:
             stats[k] /= max(1, n_ppo)
         for k in ("consistency_loss", "diversity_loss"):
             stats[k] /= max(1, cfg.n_epochs)
+
+        if cfg.log_attributable_gradients:
+            stats["gradient_norms"] = {
+                "ppo": self._mean_gradient_norms(ppo_gradient_norms),
+                "consistency": self._mean_gradient_norms(consistency_gradient_norms),
+                "diversity": self._mean_gradient_norms(diversity_gradient_norms),
+            }
 
         return stats
 

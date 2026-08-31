@@ -187,6 +187,12 @@
       agreement 71.25%, Actor BA 0.458, Mass BA 0.571. Treat this as a runtime
       bridge validation, not a general Mass-superiority claim; full-PCSP,
       multi-seed, matched-window runs remain. *(2026-09-01)*
+- [x] Add opt-in attributable gradient instrumentation to `PCSPTrainer` and
+      verify it on the trained v3-large seed-42 checkpoint. PPO reaches
+      projection/actor/critic; consistency reaches only projection/trajectory
+      encoder; diversity reaches only projection/actor. Weighted diversity
+      norms are about three orders below consistency in this probe. Treat norms
+      as wiring/scale diagnostics, not causal effect sizes. *(2026-09-01)*
 - [ ] Decide whether the frozen projection ablation is worth running for v3.
 - [x] UE5-side v3 action remap: movement indices 16-19 (`move_up/down/left/right`) carry no semantic meaning in UE (engine handles pathing), so the UE bridge now maps 16/18 → `LeisureOutdoor` and 17/19 → `ObserveCrowd` in `PCSPPolicySubsystem.cpp`. Python training/eval are unaffected — the remap lives in the engine bridge only, but recorded here so the v3 action-table interpretation stays consistent across research and UE. UE decisions are now ONNX-only: if `pcsp_actor.onnx` or `persona_embeddings.json` is missing, agents return Failed rather than fall back to a heuristic. *(2026-05-17)*
 - [x] Close the UE5 training-side ablation export item. Hybrid-NoConsist is

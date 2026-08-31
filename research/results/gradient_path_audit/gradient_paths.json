@@ -1,0 +1,80 @@
+{
+  "protocol": {
+    "checkpoint": "results\\pcsp_v3_large\\full_seed42\\full",
+    "device": "cuda",
+    "rollout_transitions": 3200,
+    "rollout_trajectories": 16,
+    "ppo_probe_batch": 64,
+    "loss_weights": {
+      "consistency": 0.5,
+      "diversity": 0.01
+    },
+    "measurement": "torch.autograd.grad per loss before optimizer step; L2 norm by module"
+  },
+  "loss_values": {
+    "ppo": 12.645509719848633,
+    "consistency": 1.4162662029266357,
+    "diversity": -4.0658287616679445e-05
+  },
+  "gradient_norms": {
+    "ppo": {
+      "persona_projection": 269.14323866458955,
+      "actor": 1.2088657330350627,
+      "critic": 289.9659474874408,
+      "trajectory_encoder": 0.0
+    },
+    "consistency": {
+      "persona_projection": 0.7872605155249427,
+      "actor": 0.0,
+      "critic": 0.0,
+      "trajectory_encoder": 3.7452095889424304
+    },
+    "diversity": {
+      "persona_projection": 0.000486804558522971,
+      "actor": 0.0001821544292758068,
+      "critic": 0.0,
+      "trajectory_encoder": 0.0
+    }
+  },
+  "expected_nonzero": {
+    "ppo": {
+      "persona_projection": true,
+      "actor": true,
+      "critic": true,
+      "trajectory_encoder": false
+    },
+    "consistency": {
+      "persona_projection": true,
+      "actor": false,
+      "critic": false,
+      "trajectory_encoder": true
+    },
+    "diversity": {
+      "persona_projection": true,
+      "actor": true,
+      "critic": false,
+      "trajectory_encoder": false
+    }
+  },
+  "checks": {
+    "ppo": {
+      "persona_projection": true,
+      "actor": true,
+      "critic": true,
+      "trajectory_encoder": true
+    },
+    "consistency": {
+      "persona_projection": true,
+      "actor": true,
+      "critic": true,
+      "trajectory_encoder": true
+    },
+    "diversity": {
+      "persona_projection": true,
+      "actor": true,
+      "critic": true,
+      "trajectory_encoder": true
+    }
+  },
+  "mean_episode_reward": 173.33949764579492
+}
