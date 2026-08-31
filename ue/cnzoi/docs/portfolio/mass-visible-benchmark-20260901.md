@@ -46,9 +46,12 @@ or production crowd avoidance. The benchmark establishes that this explicit
 simulation-LOD boundary keeps additional population cost nearly flat through
 1,024 simulated NPCs while preserving useful intent throughput.
 
-Persona preservation by simulation tier is intentionally not claimed here. It
-requires the independent behavioral evaluator described in the follow-up
-portfolio validation work.
+Persona preservation by simulation tier is intentionally not inferred from
+these runtime metrics. It is evaluated separately by the now-complete
+full-PCSP [three-seed frozen-probe audit](../../../../research/docs/ue_simulation_tier_behavior.md),
+which reports action JS
+`0.068 +/- 0.013` and cross-tier trait-prediction agreement
+`67.9% +/- 4.7%` without claiming either tier is superior.
 
 ## Reproduction
 

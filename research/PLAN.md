@@ -185,8 +185,8 @@
       telemetry. A visible 16-Actor + 112-Mass, 300-second no-consistency run
       produced 16 paired trajectories: mean action JS 0.066, trait prediction
       agreement 71.25%, Actor BA 0.458, Mass BA 0.571. Treat this as a runtime
-      bridge validation, not a general Mass-superiority claim; full-PCSP,
-      multi-seed, matched-window runs remain. *(2026-09-01)*
+      bridge validation, not a general Mass-superiority claim. The full-PCSP
+      multi-seed follow-up is recorded immediately below. *(2026-09-01)*
 - [x] Confirm the UE Actor/Mass bridge with the full PCSP export over three
       visible 300-second spawn seeds. Actor BA is 0.498+/-0.063, Mass BA is
       0.450+/-0.012, action JS is 0.068+/-0.013, and cross-tier trait agreement

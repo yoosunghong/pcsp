@@ -237,8 +237,9 @@ Detailed portfolio docs live under [docs/portfolio/](docs/portfolio/).
       `30.15 ± 0.53 ms`, and hero movement failure is `0.0%`. Report:
       [docs/portfolio/mass-visible-benchmark-20260901.md](docs/portfolio/mass-visible-benchmark-20260901.md).
 - [ ] Attach Unreal Insights captures and report game/navigation/Mass/render
-      breakdown plus memory per NPC. Persona-distinctness by simulation tier
-      remains an independent-evaluator follow-up. Do not use
+      breakdown plus memory per NPC. Persona-distinctness by simulation tier is
+      now covered by the [full-PCSP three-seed independent-evaluator audit](../../research/docs/ue_simulation_tier_behavior.md).
+      Do not use
       `-RenderOffscreen` results as FPS proof.
 - [x] Stress test 64 agents — three-run progression (2026-05-17):
       **Run 1** session `20260517_150713` (1,490s, Rest cap=20, Social cap unchanged):

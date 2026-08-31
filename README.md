@@ -175,12 +175,14 @@ policy/Behavior Tree execution, affordance reservations, rich trajectory logs,
 ablation tooling, demo HUD/camera scaffolding, Actor scaling baseline, bounded
 path scheduling, Mass background simulation, 1,024-entity runtime smoke test,
 visible three-seed 128–1,024 benchmark, portfolio documentation, and a
-reproducible static visual evidence pack.
+reproducible static visual evidence pack. Full-PCSP Actor/Mass persona-signal
+preservation is also validated over three visible 300-second spawn seeds, and
+the fixed-threshold OOD near-neighbor exclusion sensitivity is complete.
 
 Still required for the final presentation: Unreal Insights profiler captures,
-screenshots, and the demo video. Persona preservation by simulation tier is the
-next independent-evaluation task. The video capture is intentionally left to
-the project author.
+screenshots, and the demo video. The video capture is intentionally left to the
+project author; no additional code or research evaluation blocks the current
+portfolio narrative.
 
 ## License
 

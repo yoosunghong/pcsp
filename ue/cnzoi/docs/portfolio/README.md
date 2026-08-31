@@ -32,7 +32,7 @@ Differs from `PLAN.md` in scope:
 | [mass-1024-scaling.md](mass-1024-scaling.md) | Actor path admission + Mass simulation LOD | Visible 128–1,024 benchmark complete: 12/12 clean runs; 1,024 frame p95 30.15 ms, 0% hero failure |
 | [eqs-congestion.md](eqs-congestion.md) | EQS-driven affordance congestion handling | Deferred from Phase 2 |
 | [async-inference.md](async-inference.md) | Asynchronous batched ONNX inference | Deferred from Phase 3 |
-| [observability.md](observability.md) | Per-agent, path-scheduler, aggregate Mass, and sampled Mass-trajectory JSONL + analyzers | Scaling-aware; independent Actor/Mass behavior audit live |
+| [observability.md](observability.md) | Per-agent, path-scheduler, aggregate Mass, and sampled Mass-trajectory JSONL + analyzers | Scaling-aware; full-PCSP Actor/Mass audit complete over 3 visible seeds |
 | [hybrid-stack.md](hybrid-stack.md) | Policy / Behavior Tree integration contract | Phase 2 live |
 | [demo-video-hud-plan.md](demo-video-hud-plan.md) | Portfolio video scenario, nearest-agent camera focus, and HUD structure | Runtime scaffold and HUD assets present; capture pending |
 | [editor-setup-guide.md](editor-setup-guide.md) | GameMode/World Settings, agent camera mount, spawner, and capture CVars | Editor setup guide available |
@@ -48,5 +48,9 @@ runtime smoke. The static evidence layer is also complete: the root README now
 surfaces reproducible persona-ablation, Actor-scaling, and Mass-runtime figures.
 The visible three-seed Mass sweep is complete. Remaining presentation work is
 Unreal Insights CPU/render/navigation/Mass/memory capture, planned screenshots,
-and the author-owned demo video. Persona preservation by simulation tier remains
-a separate independent-evaluator task.
+and the author-owned demo video. Persona preservation by simulation tier is now
+validated separately with the full PCSP export over three visible 300-second
+spawn seeds: action JS `0.068 +/- 0.013` and frozen-trait agreement
+`67.9% +/- 4.7%`; neither tier is claimed superior. See the
+[full report](../../../../research/docs/ue_simulation_tier_behavior.md) and
+[checked-in evidence](../../../../research/results/ue_sessions/tier_behavior_full_multiseed_20260901/summary.json).
