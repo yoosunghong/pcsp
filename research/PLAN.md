@@ -193,6 +193,14 @@
       encoder; diversity reaches only projection/actor. Weighted diversity
       norms are about three orders below consistency in this probe. Treat norms
       as wiring/scale diagnostics, not causal effect sizes. *(2026-09-01)*
+- [x] Audit six OOD persona evaluations for ID, normalized exact, character-5,
+      word-bigram, metadata-cell, and Qwen-nearest-neighbor leakage. All hard
+      identity/lexical checks are zero, but eight split-level cosine>=0.95
+      warnings correspond to seven unique paraphrase/template pairs. Overall
+      gate: warning. *(2026-09-01)*
+- [ ] Run a preregistered sensitivity analysis excluding the seven semantic
+      near-neighbor pairs identified by `results/ood_leakage_audit/`; do not
+      adjust the 0.95 threshold after inspecting metric changes.
 - [ ] Decide whether the frozen projection ablation is worth running for v3.
 - [x] UE5-side v3 action remap: movement indices 16-19 (`move_up/down/left/right`) carry no semantic meaning in UE (engine handles pathing), so the UE bridge now maps 16/18 → `LeisureOutdoor` and 17/19 → `ObserveCrowd` in `PCSPPolicySubsystem.cpp`. Python training/eval are unaffected — the remap lives in the engine bridge only, but recorded here so the v3 action-table interpretation stays consistent across research and UE. UE decisions are now ONNX-only: if `pcsp_actor.onnx` or `persona_embeddings.json` is missing, agents return Failed rather than fall back to a heuristic. *(2026-05-17)*
 - [x] Close the UE5 training-side ablation export item. Hybrid-NoConsist is

@@ -46,6 +46,7 @@ flowchart LR
 | Projection audit | Big Five probe: raw 0.898 vs projected 0.799 balanced accuracy; projected effective rank 3.87 | The learned rank-16 bottleneck retains trait signal but strongly compresses general embedding geometry |
 | Independent behavior probe | Action-only Big Five: full 0.482 vs no-consistency 0.511; action+state: 0.556 vs 0.558 | The independent probe does not support an InfoNCE behavioral advantage; the internal alignment claim must remain separate |
 | Gradient-path audit | PPO → projection/actor/critic; InfoNCE → projection/trajectory encoder; diversity → projection/actor | InfoNCE has no direct actor-head path, and weighted diversity gradients are much smaller in the measured checkpoint probe |
+| OOD leakage audit | 6 splits: zero ID/exact/high-lexical leaks; 8 split-level cosine warnings (7 unique semantic pairs) | OOD results are not copy-driven, but templated/paraphrased near neighbors require an exclusion sensitivity check |
 | UE tier behavior audit | 16 paired personas: Actor/Mass action JS 0.066 and frozen-trait prediction agreement 71.25% | Sampled Mass telemetry preserves substantial action-level structure in one no-consistency run; multi-seed full-policy confirmation remains |
 | UE Actor baseline | 64 agents: frame p95 13.38 ms, movement failure 0.2%; 128 agents: failure 44.9% | The first hard ceiling is bursty navigation, not ONNX latency |
 | Visible Mass-hybrid sweep | 128–1,024 NPCs × 3 seeds × 300 s; at 1,024: frame p95 30.15 ms, 0% hero failure, 14.10 intents/NPC/min | Incremental population cost stays nearly flat, although this configuration is not a 60-FPS result |
@@ -64,6 +65,8 @@ frame time remains above the 16.67-ms 60-FPS budget.
 
 ![PCSP gradient-path audit](research/results/gradient_path_audit/gradient_paths.png)
 
+![OOD persona leakage audit](research/results/ood_leakage_audit/ood_leakage_audit.png)
+
 ![Actor and Behavior Tree scaling ceiling](ue/cnzoi/docs/portfolio/assets/actor-scaling-evidence.png)
 
 ![Mass hybrid runtime proof](ue/cnzoi/docs/portfolio/assets/mass-hybrid-runtime-proof.png)
@@ -79,6 +82,8 @@ The deliberately model-independent countercheck is documented in the
 [independent behavioral evaluation](research/docs/independent_behavior_evaluation.md).
 Loss-to-module wiring is verified in the
 [gradient-path audit](research/docs/gradient_path_audit.md).
+Split hygiene and semantic-neighbor warnings are detailed in the
+[OOD leakage audit](research/docs/ood_leakage_audit.md).
 The runtime bridge and its single-run limitations are in the
 [UE simulation-tier behavior audit](research/docs/ue_simulation_tier_behavior.md).
 

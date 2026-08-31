@@ -1,0 +1,416 @@
+{
+  "protocol": {
+    "normalization": "Unicode NFKC, lowercase, alphanumeric characters only for exact/char comparison",
+    "predeclared_alerts": {
+      "char5_jaccard": 0.8,
+      "word2_jaccard": 0.8,
+      "embedding_cosine": 0.95
+    },
+    "fail_rule": "any ID overlap, normalized exact match, char5>=0.80, or word2>=0.80; cosine>=0.95 alone is warning"
+  },
+  "overall_gate": "warning",
+  "splits": [
+    {
+      "name": "v3_standard",
+      "n_train": 240,
+      "n_test": 60,
+      "gate": "warning",
+      "alert_thresholds": {
+        "char5_jaccard": 0.8,
+        "word2_jaccard": 0.8,
+        "embedding_cosine": 0.95
+      },
+      "counts": {
+        "id_overlap": 0,
+        "normalized_exact": 0,
+        "char5_ge_0_80": 0,
+        "word2_ge_0_80": 0,
+        "cosine_ge_0_95": 1
+      },
+      "maxima": {
+        "char5_jaccard": 0.43243243243243246,
+        "word2_jaccard": 0.3333333333333333,
+        "embedding_cosine": 0.9725842437324852
+      },
+      "quantiles": {
+        "char5_jaccard": {
+          "0.5": 0.17364804964539007,
+          "0.9": 0.28366005259383226,
+          "0.95": 0.3220238095238095,
+          "0.99": 0.3985472972972971
+        },
+        "word2_jaccard": {
+          "0.5": 0.150997150997151,
+          "0.9": 0.23361823361823367,
+          "0.95": 0.2928728070175438,
+          "0.99": 0.32439393939393935
+        },
+        "embedding_cosine": {
+          "0.5": 0.802121753034442,
+          "0.9": 0.8448117636916702,
+          "0.95": 0.8545056785892381,
+          "0.99": 0.9087090851486876
+        }
+      },
+      "metadata_overlap": {
+        "occupation": {
+          "test_values_seen_in_train": 0,
+          "test_count": 60,
+          "fraction": 0.0
+        },
+        "big_five_combo": {
+          "test_values_seen_in_train": 60,
+          "test_count": 60,
+          "fraction": 1.0
+        },
+        "occupation_x_big_five": {
+          "test_values_seen_in_train": 0,
+          "test_count": 60,
+          "fraction": 0.0
+        },
+        "preferred_actions": {
+          "test_values_seen_in_train": 51,
+          "test_count": 60,
+          "fraction": 0.85
+        }
+      },
+      "train_file": "data\\personas\\train_240_v3.json",
+      "test_file": "data\\personas\\test_60_v3.json"
+    },
+    {
+      "name": "v3_large",
+      "n_train": 400,
+      "n_test": 100,
+      "gate": "warning",
+      "alert_thresholds": {
+        "char5_jaccard": 0.8,
+        "word2_jaccard": 0.8,
+        "embedding_cosine": 0.95
+      },
+      "counts": {
+        "id_overlap": 0,
+        "normalized_exact": 0,
+        "char5_ge_0_80": 0,
+        "word2_ge_0_80": 0,
+        "cosine_ge_0_95": 5
+      },
+      "maxima": {
+        "char5_jaccard": 0.5684210526315789,
+        "word2_jaccard": 0.5945945945945946,
+        "embedding_cosine": 0.9706964088167299
+      },
+      "quantiles": {
+        "char5_jaccard": {
+          "0.5": 0.4154686333084391,
+          "0.9": 0.5425531914893617,
+          "0.95": 0.5473684210526316,
+          "0.99": 0.5568182311448726
+        },
+        "word2_jaccard": {
+          "0.5": 0.425,
+          "0.9": 0.5945945945945946,
+          "0.95": 0.5945945945945946,
+          "0.99": 0.5945945945945946
+        },
+        "embedding_cosine": {
+          "0.5": 0.909254461369311,
+          "0.9": 0.9427117452148623,
+          "0.95": 0.9499675265571441,
+          "0.99": 0.9696407086121842
+        }
+      },
+      "metadata_overlap": {
+        "occupation": {
+          "test_values_seen_in_train": 100,
+          "test_count": 100,
+          "fraction": 1.0
+        },
+        "big_five_combo": {
+          "test_values_seen_in_train": 0,
+          "test_count": 100,
+          "fraction": 0.0
+        },
+        "occupation_x_big_five": {
+          "test_values_seen_in_train": 0,
+          "test_count": 100,
+          "fraction": 0.0
+        },
+        "preferred_actions": {
+          "test_values_seen_in_train": 100,
+          "test_count": 100,
+          "fraction": 1.0
+        }
+      },
+      "train_file": "data\\personas\\train_400_v3.json",
+      "test_file": "data\\personas\\test_100_v3.json"
+    },
+    {
+      "name": "unseen_occupation_v3",
+      "n_train": 240,
+      "n_test": 60,
+      "gate": "warning",
+      "alert_thresholds": {
+        "char5_jaccard": 0.8,
+        "word2_jaccard": 0.8,
+        "embedding_cosine": 0.95
+      },
+      "counts": {
+        "id_overlap": 0,
+        "normalized_exact": 0,
+        "char5_ge_0_80": 0,
+        "word2_ge_0_80": 0,
+        "cosine_ge_0_95": 1
+      },
+      "maxima": {
+        "char5_jaccard": 0.43243243243243246,
+        "word2_jaccard": 0.3333333333333333,
+        "embedding_cosine": 0.9725842437324852
+      },
+      "quantiles": {
+        "char5_jaccard": {
+          "0.5": 0.17364804964539007,
+          "0.9": 0.28366005259383226,
+          "0.95": 0.3220238095238095,
+          "0.99": 0.3985472972972971
+        },
+        "word2_jaccard": {
+          "0.5": 0.150997150997151,
+          "0.9": 0.23361823361823367,
+          "0.95": 0.2928728070175438,
+          "0.99": 0.32439393939393935
+        },
+        "embedding_cosine": {
+          "0.5": 0.802121753034442,
+          "0.9": 0.8448117636916702,
+          "0.95": 0.8545056785892381,
+          "0.99": 0.9087090851486876
+        }
+      },
+      "metadata_overlap": {
+        "occupation": {
+          "test_values_seen_in_train": 0,
+          "test_count": 60,
+          "fraction": 0.0
+        },
+        "big_five_combo": {
+          "test_values_seen_in_train": 60,
+          "test_count": 60,
+          "fraction": 1.0
+        },
+        "occupation_x_big_five": {
+          "test_values_seen_in_train": 0,
+          "test_count": 60,
+          "fraction": 0.0
+        },
+        "preferred_actions": {
+          "test_values_seen_in_train": 51,
+          "test_count": 60,
+          "fraction": 0.85
+        }
+      },
+      "train_file": "data\\personas\\splits\\unseen_occupation_v3_train.json",
+      "test_file": "data\\personas\\splits\\unseen_occupation_v3_test.json"
+    },
+    {
+      "name": "unseen_archetype_v3",
+      "n_train": 240,
+      "n_test": 60,
+      "gate": "pass",
+      "alert_thresholds": {
+        "char5_jaccard": 0.8,
+        "word2_jaccard": 0.8,
+        "embedding_cosine": 0.95
+      },
+      "counts": {
+        "id_overlap": 0,
+        "normalized_exact": 0,
+        "char5_ge_0_80": 0,
+        "word2_ge_0_80": 0,
+        "cosine_ge_0_95": 0
+      },
+      "maxima": {
+        "char5_jaccard": 0.30952380952380953,
+        "word2_jaccard": 0.3181818181818182,
+        "embedding_cosine": 0.9216084893942023
+      },
+      "quantiles": {
+        "char5_jaccard": {
+          "0.5": 0.19017480409885473,
+          "0.9": 0.26605421686746994,
+          "0.95": 0.2789426523297491,
+          "0.99": 0.3058935259497057
+        },
+        "word2_jaccard": {
+          "0.5": 0.16666666666666666,
+          "0.9": 0.25,
+          "0.95": 0.2617149758454106,
+          "0.99": 0.3181818181818182
+        },
+        "embedding_cosine": {
+          "0.5": 0.850634874414476,
+          "0.9": 0.8899321847589269,
+          "0.95": 0.8992326460763772,
+          "0.99": 0.9155360975144926
+        }
+      },
+      "metadata_overlap": {
+        "occupation": {
+          "test_values_seen_in_train": 60,
+          "test_count": 60,
+          "fraction": 1.0
+        },
+        "big_five_combo": {
+          "test_values_seen_in_train": 0,
+          "test_count": 60,
+          "fraction": 0.0
+        },
+        "occupation_x_big_five": {
+          "test_values_seen_in_train": 0,
+          "test_count": 60,
+          "fraction": 0.0
+        },
+        "preferred_actions": {
+          "test_values_seen_in_train": 33,
+          "test_count": 60,
+          "fraction": 0.55
+        }
+      },
+      "train_file": "data\\personas\\splits\\unseen_archetype_v3_train.json",
+      "test_file": "data\\personas\\splits\\unseen_archetype_v3_test.json"
+    },
+    {
+      "name": "unseen_combo_v3",
+      "n_train": 240,
+      "n_test": 60,
+      "gate": "warning",
+      "alert_thresholds": {
+        "char5_jaccard": 0.8,
+        "word2_jaccard": 0.8,
+        "embedding_cosine": 0.95
+      },
+      "counts": {
+        "id_overlap": 0,
+        "normalized_exact": 0,
+        "char5_ge_0_80": 0,
+        "word2_ge_0_80": 0,
+        "cosine_ge_0_95": 1
+      },
+      "maxima": {
+        "char5_jaccard": 0.3764705882352941,
+        "word2_jaccard": 0.38095238095238093,
+        "embedding_cosine": 0.9747210309542291
+      },
+      "quantiles": {
+        "char5_jaccard": {
+          "0.5": 0.1812854899118038,
+          "0.9": 0.27808988764044945,
+          "0.95": 0.29938423645320195,
+          "0.99": 0.37461960784313725
+        },
+        "word2_jaccard": {
+          "0.5": 0.15504807692307693,
+          "0.9": 0.25,
+          "0.95": 0.2614624505928853,
+          "0.99": 0.3170995670995667
+        },
+        "embedding_cosine": {
+          "0.5": 0.8501444459250995,
+          "0.9": 0.8994130106933838,
+          "0.95": 0.9123906714012977,
+          "0.99": 0.9564224089123021
+        }
+      },
+      "metadata_overlap": {
+        "occupation": {
+          "test_values_seen_in_train": 60,
+          "test_count": 60,
+          "fraction": 1.0
+        },
+        "big_five_combo": {
+          "test_values_seen_in_train": 60,
+          "test_count": 60,
+          "fraction": 1.0
+        },
+        "occupation_x_big_five": {
+          "test_values_seen_in_train": 0,
+          "test_count": 60,
+          "fraction": 0.0
+        },
+        "preferred_actions": {
+          "test_values_seen_in_train": 52,
+          "test_count": 60,
+          "fraction": 0.8666666666666667
+        }
+      },
+      "train_file": "data\\personas\\splits\\unseen_combo_v3_train.json",
+      "test_file": "data\\personas\\splits\\unseen_combo_v3_test.json"
+    },
+    {
+      "name": "designer_cross_lingual",
+      "n_train": 240,
+      "n_test": 50,
+      "gate": "pass",
+      "alert_thresholds": {
+        "char5_jaccard": 0.8,
+        "word2_jaccard": 0.8,
+        "embedding_cosine": 0.95
+      },
+      "counts": {
+        "id_overlap": 0,
+        "normalized_exact": 0,
+        "char5_ge_0_80": 0,
+        "word2_ge_0_80": 0,
+        "cosine_ge_0_95": 0
+      },
+      "maxima": {
+        "char5_jaccard": 0.0,
+        "word2_jaccard": 0.0,
+        "embedding_cosine": 0.6856978264268834
+      },
+      "quantiles": {
+        "char5_jaccard": {
+          "0.5": 0.0,
+          "0.9": 0.0,
+          "0.95": 0.0,
+          "0.99": 0.0
+        },
+        "word2_jaccard": {
+          "0.5": 0.0,
+          "0.9": 0.0,
+          "0.95": 0.0,
+          "0.99": 0.0
+        },
+        "embedding_cosine": {
+          "0.5": 0.5855968340531648,
+          "0.9": 0.664502922604837,
+          "0.95": 0.676247565401551,
+          "0.99": 0.6849440444819687
+        }
+      },
+      "metadata_overlap": {
+        "occupation": {
+          "test_values_seen_in_train": 0,
+          "test_count": 50,
+          "fraction": 0.0
+        },
+        "big_five_combo": {
+          "test_values_seen_in_train": 7,
+          "test_count": 50,
+          "fraction": 0.14
+        },
+        "occupation_x_big_five": {
+          "test_values_seen_in_train": 0,
+          "test_count": 50,
+          "fraction": 0.0
+        },
+        "preferred_actions": {
+          "test_values_seen_in_train": 1,
+          "test_count": 50,
+          "fraction": 0.02
+        }
+      },
+      "train_file": "data\\personas\\train_240_v3.json",
+      "test_file": "results\\designer_persona_case_study\\designer_personas.json"
+    }
+  ]
+}

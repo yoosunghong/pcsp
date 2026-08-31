@@ -738,3 +738,21 @@ Interpretation: the case study produces both positive and negative qualitative e
 - Added `docs/gradient_path_audit.md` and machine-readable/visual artifacts
   under `results/gradient_path_audit/`. The report explicitly avoids treating
   raw pre-clipping norms as effect sizes.
+
+## 2026-09-01 - OOD Persona Leakage Audit
+
+- Added `scripts/audit_ood_leakage.py` plus a synthetic hard-leak contract
+  test. The audit covers standard v3, v3-large, unseen occupation/archetype/
+  combo v3, and the 50-persona cross-lingual designer set.
+- Across all six splits there are zero persona-ID overlaps, normalized exact
+  matches, character-5 Jaccard alerts at 0.80, or word-bigram alerts at 0.80.
+- The overall gate is `warning`: eight split-level Qwen cosine alerts at 0.95
+  correspond to seven unique train/test pairs. They are strong paraphrases or
+  v3-large records sharing the generated age/occupation/trait template.
+- Intended metadata boundaries remain intact: unseen occupations, held-out
+  Big Five archetypes, and occupation x archetype cells have zero train/test
+  overlap in their respective splits.
+- The English designer set passes cleanly with maximum raw cosine `0.686` and
+  zero lexical overlap; unseen-archetype v3 also passes with max cosine `0.922`.
+- Added `docs/ood_leakage_audit.md`, a 390-row nearest-pair table, JSON summary,
+  and PNG/SVG distribution figure under `results/ood_leakage_audit/`.
