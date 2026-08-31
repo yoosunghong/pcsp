@@ -29,6 +29,11 @@ static TAutoConsoleVariable<float> CVarPCSPMassMoveSpeed(
 	TEXT("Zone-level movement speed for background Mass agents (UU/s)."),
 	ECVF_Default);
 
+static TAutoConsoleVariable<int32> CVarPCSPMassTrajectorySampleCount(
+	TEXT("pcsp.MassTrajectorySampleCount"), 16,
+	TEXT("Number of lowest stable-index Mass agents logged to mass_trajectories.jsonl (0 disables)."),
+	ECVF_Default);
+
 namespace
 {
 	struct FPCSPMassZoneTarget
@@ -214,15 +219,65 @@ void UPCSPMassSimulationProcessor::Execute(FMassEntityManager& EntityManager, FM
 
 			BuildMassObservation(Transform.GetLocation(), Now, Needs, Intent.Category,
 				FMath::Max(1, Population), Observation);
+			const int32 SampleCount = FMath::Max(0,
+				CVarPCSPMassTrajectorySampleCount.GetValueOnGameThread());
+			const bool bRecordTrajectory = Persona.StableIndex < SampleCount;
+			int32 PolicyActionIndex = INDEX_NONE;
 			const double PolicyStart = FPlatformTime::Seconds();
-			Intent.Action = Policy && Policy->IsReady()
-				? Policy->RunInference(Observation, Persona.PersonaId)
-				: SelectNeedsFallback(Needs);
+			if (Policy && Policy->IsReady())
+			{
+				if (bRecordTrajectory)
+				{
+					TArray<float> Logits;
+					double IgnoredInferenceMicros = 0.0;
+					Intent.Action = Policy->RunInferenceWithLogits(
+						Observation, Persona.PersonaId, Logits, IgnoredInferenceMicros);
+					if (Logits.Num() > 0
+						&& UPCSPPolicySubsystem::GetPolicyMode() != EPCSPPolicyMode::BTOnly)
+					{
+						PolicyActionIndex = 0;
+						for (int32 Index = 1; Index < Logits.Num(); ++Index)
+						{
+							if (Logits[Index] > Logits[PolicyActionIndex]) { PolicyActionIndex = Index; }
+						}
+					}
+				}
+				else
+				{
+					Intent.Action = Policy->RunInference(Observation, Persona.PersonaId);
+				}
+			}
+			else
+			{
+				Intent.Action = SelectNeedsFallback(Needs);
+			}
 			WindowPolicyMicros += (FPlatformTime::Seconds() - PolicyStart) * 1e6;
 			Intent.Category = UPCSPPolicySubsystem::ActionToCategory(Intent.Action);
 			Intent.NextDecisionTime = Now +
 				FMath::Max(0.1f, CVarPCSPMassDecisionInterval.GetValueOnGameThread());
 			++WindowDecisions;
+
+			if (bRecordTrajectory)
+			{
+				FString NeedsJson = TEXT("[");
+				for (int32 NeedIndex = 0; NeedIndex < 8; ++NeedIndex)
+				{
+					NeedsJson += FString::Printf(TEXT("%s%.4f"),
+						NeedIndex == 0 ? TEXT("") : TEXT(","), Needs.Values[NeedIndex]);
+				}
+				NeedsJson += TEXT("]");
+				const UEnum* ActionEnum = StaticEnum<EPCSPActionType>();
+				const FString ActionName = ActionEnum
+					? ActionEnum->GetNameStringByValue(static_cast<int64>(Intent.Action))
+					: FString::FromInt(static_cast<int32>(Intent.Action));
+				const FVector Location = Transform.GetLocation();
+				PendingTrajectoryLines.Add(FString::Printf(
+					TEXT("{\"t\":%.3f,\"tier\":\"mass\",\"stable_index\":%d,")
+					TEXT("\"persona_id\":%d,\"policy_action_index\":%d,\"action\":\"%s\",")
+					TEXT("\"pos\":[%.1f,%.1f],\"needs\":%s}"),
+					Now, Persona.StableIndex, Persona.PersonaId, PolicyActionIndex,
+					*ActionName, Location.X, Location.Y, *NeedsJson));
+			}
 
 			const FPCSPMassZoneTarget* BestTarget = nullptr;
 			float BestDistanceSq = TNumericLimits<float>::Max();
@@ -271,6 +326,24 @@ void UPCSPMassSimulationProcessor::FlushTelemetry(UWorld& World, float NowSecond
 	FFileHelper::SaveStringToFile(Line, *Path,
 		FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM,
 		&IFileManager::Get(), FILEWRITE_Append | FILEWRITE_AllowRead);
+
+	if (PendingTrajectoryLines.Num() > 0)
+	{
+		FString TrajectoryBlob;
+		for (const FString& TrajectoryLine : PendingTrajectoryLines)
+		{
+			TrajectoryBlob += TrajectoryLine;
+			TrajectoryBlob += TEXT("\n");
+		}
+		const FString TrajectoryPath = UPCSPTrajectoryLogComponent::GetSessionDir()
+			/ TEXT("mass_trajectories.jsonl");
+		if (FFileHelper::SaveStringToFile(TrajectoryBlob, *TrajectoryPath,
+			FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM,
+			&IFileManager::Get(), FILEWRITE_Append | FILEWRITE_AllowRead))
+		{
+			PendingTrajectoryLines.Reset();
+		}
+	}
 
 	WindowEntitiesProcessed = 0;
 	WindowDecisions = 0;

@@ -60,6 +60,7 @@ One JSON object per line. Event types: `session_start`, `decision`,
   "persona_id": 7,
   "pos": [413.2, -88.1],
   "action": "SocializeInitiate",
+  "policy_action_index": 6,              // canonical v3 index before UE remap
   "category": "Social",
   "urgency": 0.91,
   "needs": { "hunger": 0.32, "sleep": 0.61, "social": 0.18, ... },
@@ -83,6 +84,19 @@ One JSON object per line. Event types: `session_start`, `decision`,
 The `logits` field is the load-bearing addition for paper metrics — it
 lets the offline analyzer compute symmetric KL between policy
 distributions across paired sessions without re-running inference.
+
+Mass background entities use a sampled companion stream,
+`mass_trajectories.jsonl`. By default the lowest 16 stable indices emit a row
+per decision with `persona_id`, `policy_action_index`, executed `action`,
+position, and eight needs. `pcsp.MassTrajectorySampleCount` changes the sample
+budget; zero disables it. Rows are appended during the existing one-second Mass
+telemetry flush rather than written individually.
+
+The canonical action index lets
+`research/scripts/evaluate_ue_behavior_tiers.py` apply the frozen independent
+action-only probe to Actor and Mass tiers without consuming policy logits. The
+first 300-second bridge validation is documented in
+`research/docs/ue_simulation_tier_behavior.md`.
 
 ## Design choices worth noting
 

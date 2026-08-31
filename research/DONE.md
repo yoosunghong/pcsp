@@ -699,3 +699,23 @@ Interpretation: the case study produces both positive and negative qualitative e
   `results/independent_behavior_v3_large/`.
 - No policy was retrained and no environment/action/observation contract was
   changed.
+
+## 2026-09-01 - UE Actor/Mass Independent-Evaluator Bridge
+
+- Added canonical pre-remap `policy_action_index` to Actor decision telemetry
+  and sampled per-entity Mass trajectory telemetry with a default 16-entity
+  budget and one-second buffered flush.
+- Added `scripts/evaluate_ue_behavior_tiers.py` and its synthetic ingestion
+  contract test. The adapter uses only chosen action indices for the frozen
+  action-only evaluator, and writes a compact canonical source artifact.
+- UE 5.8 `cnzoiEditor Win64 Development` compiled successfully.
+- Visible standalone session `20260901_044431` (16 Actor + 112 Mass,
+  no-consistency export, seed 7, 300 seconds) exited code 0 and produced 993
+  sampled Mass decisions plus 16 indexed Actor logs.
+- For 16 paired personas: mean Actor/Mass action JS is `0.066`, frozen trait
+  prediction agreement is `71.25%`, Actor BA is `0.458`, and Mass BA is
+  `0.571`. The Mass-minus-Actor delta interval is `[0.013, 0.218]`, but unequal
+  decision cadence and the single no-consistency seed prevent a superiority
+  claim.
+- Checked-in artifacts: `results/ue_sessions/tier_behavior_20260901_044431/`
+  and `docs/ue_simulation_tier_behavior.md`.

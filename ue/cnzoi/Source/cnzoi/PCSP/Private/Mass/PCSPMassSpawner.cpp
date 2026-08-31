@@ -100,7 +100,8 @@ int32 APCSPMassSpawner::SpawnMassEntities()
 	const FString ConfigPath = UPCSPTrajectoryLogComponent::GetSessionDir() / TEXT("mass_run_config.json");
 	const FString Config = FString::Printf(
 		TEXT("{\"mass_entities\":%d,\"seed\":%d,\"movement\":\"zone_level_no_navmesh\",")
-		TEXT("\"cohorts\":32,\"representation\":\"HISM\"}\n"),
+		TEXT("\"cohorts\":32,\"representation\":\"HISM\",")
+		TEXT("\"trajectory_schema\":\"pcsp_ue_behavior_v1\"}\n"),
 		SpawnedEntities.Num(), RandomSeed);
 	FFileHelper::SaveStringToFile(Config, *ConfigPath,
 		FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM,

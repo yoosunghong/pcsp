@@ -45,6 +45,7 @@ flowchart LR
 | PCSP evaluation | Up to 11× zero-shot identification, persona/action correlation around ρ=0.73, and about 22× faster training than separate per-persona policies | One shared policy retains measurable persona structure |
 | Projection audit | Big Five probe: raw 0.898 vs projected 0.799 balanced accuracy; projected effective rank 3.87 | The learned rank-16 bottleneck retains trait signal but strongly compresses general embedding geometry |
 | Independent behavior probe | Action-only Big Five: full 0.482 vs no-consistency 0.511; action+state: 0.556 vs 0.558 | The independent probe does not support an InfoNCE behavioral advantage; the internal alignment claim must remain separate |
+| UE tier behavior audit | 16 paired personas: Actor/Mass action JS 0.066 and frozen-trait prediction agreement 71.25% | Sampled Mass telemetry preserves substantial action-level structure in one no-consistency run; multi-seed full-policy confirmation remains |
 | UE Actor baseline | 64 agents: frame p95 13.38 ms, movement failure 0.2%; 128 agents: failure 44.9% | The first hard ceiling is bursty navigation, not ONNX latency |
 | Visible Mass-hybrid sweep | 128–1,024 NPCs × 3 seeds × 300 s; at 1,024: frame p95 30.15 ms, 0% hero failure, 14.10 intents/NPC/min | Incremental population cost stays nearly flat, although this configuration is not a 60-FPS result |
 
@@ -64,6 +65,8 @@ frame time remains above the 16.67-ms 60-FPS budget.
 
 ![Mass hybrid runtime proof](ue/cnzoi/docs/portfolio/assets/mass-hybrid-runtime-proof.png)
 
+![UE simulation-tier behavior audit](research/results/ue_sessions/tier_behavior_20260901_044431/ue_behavior_tier_eval.png)
+
 The figures are generated directly from checked-in experiment JSON. Their data
 sources, caveats, and reproduction command are documented in the
 [visual evidence case study](ue/cnzoi/docs/portfolio/visual-evidence.md).
@@ -71,6 +74,8 @@ The representation-level probe and its limitations are documented in the
 [persona projection audit](research/docs/persona_projection_audit.md).
 The deliberately model-independent countercheck is documented in the
 [independent behavioral evaluation](research/docs/independent_behavior_evaluation.md).
+The runtime bridge and its single-run limitations are in the
+[UE simulation-tier behavior audit](research/docs/ue_simulation_tier_behavior.md).
 
 ## 1,024-NPC scaling design
 

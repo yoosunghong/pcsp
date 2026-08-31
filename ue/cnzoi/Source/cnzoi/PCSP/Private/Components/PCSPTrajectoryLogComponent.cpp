@@ -216,9 +216,15 @@ void UPCSPTrajectoryLogComponent::RecordDecisionWithLogits(EPCSPActionType Actio
 	float UrgencyScore, TArrayView<const float> Logits, double InferenceMicros)
 {
 	FString Extra;
-	if (Logits.Num() > 0)
+	if (Logits.Num() > 0 && UPCSPPolicySubsystem::GetPolicyMode() != EPCSPPolicyMode::BTOnly)
 	{
-		Extra = TEXT("\"logits\":[");
+		int32 PolicyActionIndex = 0;
+		for (int32 i = 1; i < Logits.Num(); ++i)
+		{
+			if (Logits[i] > Logits[PolicyActionIndex]) { PolicyActionIndex = i; }
+		}
+		Extra = FString::Printf(TEXT("\"policy_action_index\":%d,\"logits\":["),
+			PolicyActionIndex);
 		for (int32 i = 0; i < Logits.Num(); ++i)
 		{
 			Extra += FString::Printf(TEXT("%s%.4f"), i == 0 ? TEXT("") : TEXT(","), Logits[i]);

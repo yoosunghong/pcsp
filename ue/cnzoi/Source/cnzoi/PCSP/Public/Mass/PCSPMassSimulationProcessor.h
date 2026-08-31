@@ -34,4 +34,5 @@ private:
 	int32 WindowDecisions = 0;
 	int32 WindowArrivals = 0;
 	double WindowPolicyMicros = 0.0;
+	TArray<FString> PendingTrajectoryLines;
 };

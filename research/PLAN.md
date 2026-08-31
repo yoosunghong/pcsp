@@ -181,6 +181,12 @@
       longer/multiple trajectories, evaluator-train policy separation, or a
       revised action ontology changes the negative InfoNCE result. Do not tune
       this evaluation on the held-out 100-persona result.
+- [x] Connect the frozen action-only evaluator to UE Actor and sampled Mass
+      telemetry. A visible 16-Actor + 112-Mass, 300-second no-consistency run
+      produced 16 paired trajectories: mean action JS 0.066, trait prediction
+      agreement 71.25%, Actor BA 0.458, Mass BA 0.571. Treat this as a runtime
+      bridge validation, not a general Mass-superiority claim; full-PCSP,
+      multi-seed, matched-window runs remain. *(2026-09-01)*
 - [ ] Decide whether the frozen projection ablation is worth running for v3.
 - [x] UE5-side v3 action remap: movement indices 16-19 (`move_up/down/left/right`) carry no semantic meaning in UE (engine handles pathing), so the UE bridge now maps 16/18 → `LeisureOutdoor` and 17/19 → `ObserveCrowd` in `PCSPPolicySubsystem.cpp`. Python training/eval are unaffected — the remap lives in the engine bridge only, but recorded here so the v3 action-table interpretation stays consistent across research and UE. UE decisions are now ONNX-only: if `pcsp_actor.onnx` or `persona_embeddings.json` is missing, agents return Failed rather than fall back to a heuristic. *(2026-05-17)*
 - [x] Close the UE5 training-side ablation export item. Hybrid-NoConsist is

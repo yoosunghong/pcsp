@@ -32,7 +32,7 @@ Differs from `PLAN.md` in scope:
 | [mass-1024-scaling.md](mass-1024-scaling.md) | Actor path admission + Mass simulation LOD | Visible 128–1,024 benchmark complete: 12/12 clean runs; 1,024 frame p95 30.15 ms, 0% hero failure |
 | [eqs-congestion.md](eqs-congestion.md) | EQS-driven affordance congestion handling | Deferred from Phase 2 |
 | [async-inference.md](async-inference.md) | Asynchronous batched ONNX inference | Deferred from Phase 3 |
-| [observability.md](observability.md) | Per-agent, path-scheduler, and Mass JSONL telemetry + analyzer | Phase 3/4 live and scaling-aware |
+| [observability.md](observability.md) | Per-agent, path-scheduler, aggregate Mass, and sampled Mass-trajectory JSONL + analyzers | Scaling-aware; independent Actor/Mass behavior audit live |
 | [hybrid-stack.md](hybrid-stack.md) | Policy / Behavior Tree integration contract | Phase 2 live |
 | [demo-video-hud-plan.md](demo-video-hud-plan.md) | Portfolio video scenario, nearest-agent camera focus, and HUD structure | Runtime scaffold and HUD assets present; capture pending |
 | [editor-setup-guide.md](editor-setup-guide.md) | GameMode/World Settings, agent camera mount, spawner, and capture CVars | Editor setup guide available |

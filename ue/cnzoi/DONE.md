@@ -771,3 +771,23 @@ Implemented the first complete scale-up pass described in
 - Added the full report at
   `docs/portfolio/mass-visible-benchmark-20260901.md` and a reproducible
   `mass-scaling-evidence` PNG/SVG generated from checked-in JSON.
+
+## 2026-09-01 - Sampled Mass Behavior Telemetry And Tier Audit
+
+- Actor decision JSONL now records the canonical 0--19
+  `policy_action_index` before UE semantic remapping.
+- `UPCSPMassSimulationProcessor` records the lowest 16 stable-index entities
+  to buffered `mass_trajectories.jsonl`; the budget is controlled by
+  `pcsp.MassTrajectorySampleCount` and can be disabled with zero.
+- Each sampled row carries stable index, persona ID, canonical policy action,
+  executed action, position, and eight needs. Mass run config declares the
+  `pcsp_ue_behavior_v1` trajectory schema.
+- UE 5.8 editor build passed after the C++ change. Visible standalone session
+  `20260901_044431` (16 Actor + 112 Mass, seed 7, 300 seconds) exited code 0
+  with 993 sampled Mass decisions and all 16 indexed Actor logs.
+- The frozen external action probe found mean Actor/Mass action JS `0.066`,
+  trait prediction agreement `71.25%`, Actor BA `0.458`, and Mass BA `0.571`
+  across 16 paired personas. This validates the telemetry/evaluator bridge;
+  it is not a multi-seed Mass-superiority result.
+- Analysis and compact source evidence are checked in under
+  `research/results/ue_sessions/tier_behavior_20260901_044431/`.
