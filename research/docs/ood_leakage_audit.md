@@ -56,10 +56,11 @@ leakage.
 ## Interpretation and follow-up
 
 Current OOD claims are not explained by exact copies or high lexical overlap.
-However, the seven semantic near-neighbor pairs can make the tests easier. A
-future sensitivity analysis should remove those test IDs (or group them with
-their nearest training templates) and recompute the headline metrics without
-tuning thresholds on the resulting scores.
+The preregistered follow-up now excludes those test IDs from the existing
+per-persona accuracy means without tuning the threshold. Full-policy changes
+range from `-0.49` to `+0.49` percentage points across the four affected split
+families, and the largest absolute change across all 24 mode/run evaluations is
+`2.19 pp`. See [the sensitivity report](ood_near_neighbor_sensitivity.md).
 
 ## Reproduction
 
@@ -68,6 +69,7 @@ From `research/`:
 ```powershell
 conda run -n paper python scripts/test_ood_leakage.py
 conda run -n paper python scripts/audit_ood_leakage.py
+conda run -n paper python scripts/run_ood_near_neighbor_sensitivity.py
 ```
 
 The full 390-row nearest-neighbor table and summary are under

@@ -203,9 +203,11 @@
       identity/lexical checks are zero, but eight split-level cosine>=0.95
       warnings correspond to seven unique paraphrase/template pairs. Overall
       gate: warning. *(2026-09-01)*
-- [ ] Run a preregistered sensitivity analysis excluding the seven semantic
-      near-neighbor pairs identified by `results/ood_leakage_audit/`; do not
-      adjust the 0.95 threshold after inspecting metric changes.
+- [x] Run a preregistered sensitivity analysis excluding the seven semantic
+      near-neighbor pairs identified by `results/ood_leakage_audit/`; the fixed
+      0.95 threshold was retained. Across 24 mode/run evaluations, the maximum
+      absolute identification-accuracy shift is 2.19 pp; full-policy shifts are
+      within +/-0.49 pp across affected split families. *(2026-09-01)*
 - [ ] Decide whether the frozen projection ablation is worth running for v3.
 - [x] UE5-side v3 action remap: movement indices 16-19 (`move_up/down/left/right`) carry no semantic meaning in UE (engine handles pathing), so the UE bridge now maps 16/18 → `LeisureOutdoor` and 17/19 → `ObserveCrowd` in `PCSPPolicySubsystem.cpp`. Python training/eval are unaffected — the remap lives in the engine bridge only, but recorded here so the v3 action-table interpretation stays consistent across research and UE. UE decisions are now ONNX-only: if `pcsp_actor.onnx` or `persona_embeddings.json` is missing, agents return Failed rather than fall back to a heuristic. *(2026-05-17)*
 - [x] Close the UE5 training-side ablation export item. Hybrid-NoConsist is

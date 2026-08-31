@@ -774,3 +774,20 @@ Interpretation: the case study produces both positive and negative qualitative e
 - Added `scripts/aggregate_ue_behavior_tiers.py`, per-session compact source
   evidence, and aggregate JSON/CSV/PNG/SVG under
   `results/ue_sessions/tier_behavior_full_multiseed_20260901/`.
+
+## 2026-09-01 - OOD Semantic Near-Neighbor Exclusion Sensitivity
+
+- Kept the leakage audit's predeclared Qwen cosine threshold at `0.95` and
+  excluded its seven unique flagged test IDs from existing per-persona
+  identification-accuracy means.
+- Covered 24 available evaluations: standard v3, unseen occupation, unseen
+  combo, and three-seed v3-large across full/no-consistency/no-diversity/concat.
+- Full-policy changes are v3 standard `+0.49 pp`, unseen occupation `-0.05 pp`,
+  unseen combo `+0.34 pp`, and v3-large mean `-0.49 pp`.
+- The maximum absolute shift across every mode/run is `2.19 pp`; the v3-large
+  full/no-consistency contrast remains `3.51%` vs `1.33%` after filtering.
+- Added `scripts/run_ood_near_neighbor_sensitivity.py`, a fixed-threshold
+  contract test, `docs/ood_near_neighbor_sensitivity.md`, and JSON/CSV/PNG/SVG
+  outputs under `results/ood_leakage_sensitivity/`.
+- This is explicitly a metric-denominator sensitivity check; it does not
+  retrain, alter the classification candidate set, or recompute coherence.
