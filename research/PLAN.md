@@ -161,6 +161,13 @@
 - [ ] If observation dimensions change again, update model input layers and mark existing checkpoints incompatible.
 - [ ] If factorized actions are introduced, redesign the actor as multiple heads: intent, target/place, style/duration.
 - [ ] Re-measure latency before claiming final real-time speedups in the paper.
+- [x] Audit the trained v3 projection independently of policy logits: fixed
+      240/60 Big Five linear probes score 0.898 raw vs 0.799 projected mean
+      balanced accuracy; the 64-d output has numerical rank 16 and effective
+      rank 3.87, with raw/projected pairwise cosine rho=0.404. This supports a
+      compressed-task-representation claim, not full semantic preservation.
+      Artifacts: `scripts/audit_persona_projection.py` and
+      `results/persona_projection_audit/`. *(2026-09-01)*
 - [ ] Decide whether the frozen projection ablation is worth running for v3.
 - [x] UE5-side v3 action remap: movement indices 16-19 (`move_up/down/left/right`) carry no semantic meaning in UE (engine handles pathing), so the UE bridge now maps 16/18 → `LeisureOutdoor` and 17/19 → `ObserveCrowd` in `PCSPPolicySubsystem.cpp`. Python training/eval are unaffected — the remap lives in the engine bridge only, but recorded here so the v3 action-table interpretation stays consistent across research and UE. UE decisions are now ONNX-only: if `pcsp_actor.onnx` or `persona_embeddings.json` is missing, agents return Failed rather than fall back to a heuristic. *(2026-05-17)*
 - [x] Close the UE5 training-side ablation export item. Hybrid-NoConsist is

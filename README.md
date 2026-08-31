@@ -43,6 +43,7 @@ flowchart LR
 | --- | --- | --- |
 | Research benchmark | InfoNCE removal preserves reward while collapsing zero-shot persona identification toward chance | Persona consistency is a load-bearing objective, not a reward side effect |
 | PCSP evaluation | Up to 11× zero-shot identification, persona/action correlation around ρ=0.73, and about 22× faster training than separate per-persona policies | One shared policy retains measurable persona structure |
+| Projection audit | Big Five probe: raw 0.898 vs projected 0.799 balanced accuracy; projected effective rank 3.87 | The learned rank-16 bottleneck retains trait signal but strongly compresses general embedding geometry |
 | UE Actor baseline | 64 agents: frame p95 13.38 ms, movement failure 0.2%; 128 agents: failure 44.9% | The first hard ceiling is bursty navigation, not ONNX latency |
 | Visible Mass-hybrid sweep | 128–1,024 NPCs × 3 seeds × 300 s; at 1,024: frame p95 30.15 ms, 0% hero failure, 14.10 intents/NPC/min | Incremental population cost stays nearly flat, although this configuration is not a 60-FPS result |
 
@@ -54,6 +55,8 @@ frame time remains above the 16.67-ms 60-FPS budget.
 
 ![Persona conditioning ablation](ue/cnzoi/docs/portfolio/assets/persona-ablation-evidence.png)
 
+![Persona projection audit](research/results/persona_projection_audit/projection_audit.png)
+
 ![Actor and Behavior Tree scaling ceiling](ue/cnzoi/docs/portfolio/assets/actor-scaling-evidence.png)
 
 ![Mass hybrid runtime proof](ue/cnzoi/docs/portfolio/assets/mass-hybrid-runtime-proof.png)
@@ -61,6 +64,8 @@ frame time remains above the 16.67-ms 60-FPS budget.
 The figures are generated directly from checked-in experiment JSON. Their data
 sources, caveats, and reproduction command are documented in the
 [visual evidence case study](ue/cnzoi/docs/portfolio/visual-evidence.md).
+The representation-level probe and its limitations are documented in the
+[persona projection audit](research/docs/persona_projection_audit.md).
 
 ## 1,024-NPC scaling design
 

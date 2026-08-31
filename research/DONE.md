@@ -656,3 +656,23 @@ Interpretation: the case study produces both positive and negative qualitative e
 - The correct claim is bounded incremental cost: frame p95 changes only
   `0.25 ms` from 128 to 1,024 NPCs. The absolute frame time remains above the
   60-FPS budget and is reported as such.
+
+## 2026-09-01 - Persona Projection Audit
+
+- Added `scripts/audit_persona_projection.py`, a policy-independent diagnostic
+  for the frozen 1024-d Qwen embeddings and the trained rank-16/64-d PCSP
+  projection.
+- Used the fixed v3 `train_240` / `test_60` split and a standardized multiclass
+  ridge probe whose regularization is selected only on the training set.
+- Mean Big Five held-out balanced accuracy is `0.898` in raw space and `0.799`
+  after projection (`0.333` chance). Projected per-axis accuracy is E `0.733`,
+  N `0.735`, A `0.757`, C `0.869`, and O `0.903`.
+- The projected vectors have numerical rank `16`, effective rank `3.87`, and
+  only moderate raw/projected pairwise cosine agreement (`rho=0.404`). This is
+  recorded as strong task compression with retained trait signal, not general
+  semantic-geometry preservation.
+- Added the reproducible report `docs/persona_projection_audit.md` and outputs
+  under `results/persona_projection_audit/`. A repeated run produced identical
+  JSON, CSV, and PNG hashes.
+- No model, schema, checkpoint, or training input changed; retraining is not
+  required.
