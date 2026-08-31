@@ -676,3 +676,26 @@ Interpretation: the case study produces both positive and negative qualitative e
   JSON, CSV, and PNG hashes.
 - No model, schema, checkpoint, or training input changed; retraining is not
   required.
+
+## 2026-09-01 - Independent v3-Large Behavioral Evaluator
+
+- Added `src/eval/independent_behavior.py`, whose imports and features are
+  independent of PCSP policy internals, the persona projection, logits, and the
+  learned trajectory encoder.
+- Added a deterministic feature contract test and a v3-large runner covering
+  full/no-consistency × seeds 42/43/44 × 500 personas. The resulting cache has
+  exactly 3,000 200-step trajectories with persona-disjoint 320 fit / 80
+  calibration / 100 held-out evaluator splits.
+- Action-only held-out Big Five balanced accuracy is `0.482` for full and
+  `0.511` for no-consistency. The paired cluster-bootstrap delta interval is
+  `[-0.056, -0.002]`; paired randomization `p=0.050`.
+- Action plus state-response accuracy is `0.556` vs `0.558`, with delta interval
+  `[-0.033, 0.030]` and `p=0.875`.
+- This does not validate the earlier strong behavioral interpretation of the
+  InfoNCE ablation. Documentation and the root evidence table now distinguish
+  learned representation alignment from independently observable behavior.
+- Outputs include the compressed frozen features, feature schema, fitted
+  evaluator weights, raw test predictions, metrics, and PNG/SVG figure under
+  `results/independent_behavior_v3_large/`.
+- No policy was retrained and no environment/action/observation contract was
+  changed.

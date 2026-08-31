@@ -168,6 +168,19 @@
       compressed-task-representation claim, not full semantic preservation.
       Artifacts: `scripts/audit_persona_projection.py` and
       `results/persona_projection_audit/`. *(2026-09-01)*
+- [x] Add a model-independent v3-large behavioral evaluator and re-score the
+      three-seed full/no-consistency policies on 100 held-out personas. The
+      result is a negative finding for the strong behavioral interpretation:
+      action-only Big Five BA is 0.482 full vs 0.511 no-consistency; adding
+      state-response features gives 0.556 vs 0.558. Keep learned
+      trajectory-to-projection retrieval and independently observable behavior
+      as separate claims. Artifacts: `src/eval/independent_behavior.py`,
+      `scripts/run_independent_behavior_eval_v3_large.py`, and
+      `results/independent_behavior_v3_large/`. *(2026-09-01)*
+- [ ] Diagnose the independent evaluator's weak C/O transfer and test whether
+      longer/multiple trajectories, evaluator-train policy separation, or a
+      revised action ontology changes the negative InfoNCE result. Do not tune
+      this evaluation on the held-out 100-persona result.
 - [ ] Decide whether the frozen projection ablation is worth running for v3.
 - [x] UE5-side v3 action remap: movement indices 16-19 (`move_up/down/left/right`) carry no semantic meaning in UE (engine handles pathing), so the UE bridge now maps 16/18 → `LeisureOutdoor` and 17/19 → `ObserveCrowd` in `PCSPPolicySubsystem.cpp`. Python training/eval are unaffected — the remap lives in the engine bridge only, but recorded here so the v3 action-table interpretation stays consistent across research and UE. UE decisions are now ONNX-only: if `pcsp_actor.onnx` or `persona_embeddings.json` is missing, agents return Failed rather than fall back to a heuristic. *(2026-05-17)*
 - [x] Close the UE5 training-side ablation export item. Hybrid-NoConsist is
