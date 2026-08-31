@@ -1,0 +1,137 @@
+{
+  "protocol": {
+    "session": "D:\\Github\\pcsp\\ue\\cnzoi\\Saved\\PCSP\\Logs\\20260901_053815",
+    "feature_contract": "independent_behavior.action_only.v1",
+    "policy_action_source": "explicit policy_action_index; legacy Actor fallback is argmax of logged logits",
+    "min_decisions": 5,
+    "active_ablation": "full",
+    "policy_mode": "HybridPCSP"
+  },
+  "tiers": {
+    "actor": {
+      "n_personas": 16,
+      "decision_count": {
+        "min": 17,
+        "max": 45,
+        "mean": 26.0625
+      },
+      "mean_balanced_accuracy": 0.4325661375661376,
+      "axes": {
+        "E": {
+          "n": 16,
+          "accuracy": 0.5,
+          "balanced_accuracy": 0.48888888888888893,
+          "macro_f1": 0.39560439560439553,
+          "ece_equal_frequency_10": 0.4315296525079475
+        },
+        "N": {
+          "n": 16,
+          "accuracy": 0.5,
+          "balanced_accuracy": 0.5,
+          "macro_f1": 0.3829059829059829,
+          "ece_equal_frequency_10": 0.3436274779674124
+        },
+        "A": {
+          "n": 16,
+          "accuracy": 0.375,
+          "balanced_accuracy": 0.34259259259259256,
+          "macro_f1": 0.3568627450980392,
+          "ece_equal_frequency_10": 0.402208583350763
+        },
+        "C": {
+          "n": 16,
+          "accuracy": 0.3125,
+          "balanced_accuracy": 0.34722222222222215,
+          "macro_f1": 0.3090909090909091,
+          "ece_equal_frequency_10": 0.340695861547926
+        },
+        "O": {
+          "n": 16,
+          "accuracy": 0.5,
+          "balanced_accuracy": 0.4841269841269842,
+          "macro_f1": 0.45171957671957674,
+          "ece_equal_frequency_10": 0.3634465940252244
+        }
+      }
+    },
+    "mass": {
+      "n_personas": 16,
+      "decision_count": {
+        "min": 10,
+        "max": 122,
+        "mean": 41.5
+      },
+      "mean_balanced_accuracy": 0.4477777777777778,
+      "axes": {
+        "E": {
+          "n": 16,
+          "accuracy": 0.4375,
+          "balanced_accuracy": 0.43333333333333335,
+          "macro_f1": 0.3444444444444444,
+          "ece_equal_frequency_10": 0.4778814278265677
+        },
+        "N": {
+          "n": 16,
+          "accuracy": 0.375,
+          "balanced_accuracy": 0.375,
+          "macro_f1": 0.3,
+          "ece_equal_frequency_10": 0.29035791778439424
+        },
+        "A": {
+          "n": 16,
+          "accuracy": 0.5625,
+          "balanced_accuracy": 0.5277777777777778,
+          "macro_f1": 0.4971988795518208,
+          "ece_equal_frequency_10": 0.2880805486712692
+        },
+        "C": {
+          "n": 16,
+          "accuracy": 0.375,
+          "balanced_accuracy": 0.513888888888889,
+          "macro_f1": 0.367003367003367,
+          "ece_equal_frequency_10": 0.4017424834656606
+        },
+        "O": {
+          "n": 16,
+          "accuracy": 0.3125,
+          "balanced_accuracy": 0.38888888888888884,
+          "macro_f1": 0.26666666666666666,
+          "ece_equal_frequency_10": 0.5111651614077909
+        }
+      }
+    }
+  },
+  "paired": {
+    "n_personas": 16,
+    "mean_action_js_divergence": 0.07273739726417633,
+    "median_action_js_divergence": 0.027187336971559534,
+    "trait_prediction_agreement": 0.625,
+    "per_persona_action_js": {
+      "1": 0.014403756908257768,
+      "2": 0.012081553492596799,
+      "3": 0.008130363263721716,
+      "4": 0.015080943137195203,
+      "5": 0.0439364948273131,
+      "6": 0.3843616754434659,
+      "7": 0.00010716979010255657,
+      "8": 0.07114940781943224,
+      "9": 0.0,
+      "10": 0.07177302479797729,
+      "11": 0.18532827683361483,
+      "12": 0.15802124060384198,
+      "13": 0.0013527071956198605,
+      "14": 0.1436970681705628,
+      "15": 0.03597375665014844,
+      "16": 0.018400917292970633
+    },
+    "mass_minus_actor_balanced_accuracy": {
+      "observed": 0.015211640211640176,
+      "cluster_bootstrap_95": [
+        -0.12401948051948047,
+        0.15860449735449733
+      ],
+      "paired_randomization_p_two_sided": 0.8525737131434283,
+      "resamples": 2000
+    }
+  }
+}

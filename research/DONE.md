@@ -756,3 +756,21 @@ Interpretation: the case study produces both positive and negative qualitative e
   zero lexical overlap; unseen-archetype v3 also passes with max cosine `0.922`.
 - Added `docs/ood_leakage_audit.md`, a 390-row nearest-pair table, JSON summary,
   and PNG/SVG distribution figure under `results/ood_leakage_audit/`.
+
+## 2026-09-01 - Full-PCSP UE Actor/Mass Multi-Seed Confirmation
+
+- Ran visible UE 5.8 standalone sessions `20260901_052732`,
+  `20260901_053253`, and `20260901_053815` with the full PCSP export, spawn
+  seeds 0/1/2, 16 Actor agents, 112 Mass agents, and 300 seconds per run.
+- All three runs exited with code 0 and produced complete Actor, Mass, frame,
+  path-scheduler, and occupancy telemetry. The original active `no_consist`
+  export was restored byte-for-byte after collection.
+- The frozen independent probe reports Actor BA `0.498+/-0.063`, Mass BA
+  `0.450+/-0.012`, mean action JS `0.068+/-0.013`, and cross-tier trait
+  agreement `67.9+/-4.7%` across spawn seeds.
+- The Mass-minus-Actor delta is `-0.048+/-0.057` and changes sign across
+  seeds. This confirms action-level persona preservation across simulation
+  tiers but rejects a tier-superiority interpretation.
+- Added `scripts/aggregate_ue_behavior_tiers.py`, per-session compact source
+  evidence, and aggregate JSON/CSV/PNG/SVG under
+  `results/ue_sessions/tier_behavior_full_multiseed_20260901/`.

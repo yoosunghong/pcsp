@@ -791,3 +791,17 @@ Implemented the first complete scale-up pass described in
   it is not a multi-seed Mass-superiority result.
 - Analysis and compact source evidence are checked in under
   `research/results/ue_sessions/tier_behavior_20260901_044431/`.
+
+## 2026-09-01 - Full-PCSP Actor/Mass Multi-Seed Confirmation
+
+- Completed three visible 300-second UE 5.8 standalone runs with the full
+  PCSP export, 16 Actor/BT agents, 112 Mass agents, and spawn seeds 0/1/2.
+- All runs exited with code 0; each has 16 indexed Actor trajectories, 300
+  frame samples, and 676--685 sampled Mass decisions.
+- The frozen independent evaluator found action JS `0.068+/-0.013` and trait
+  prediction agreement `67.9+/-4.7%` across seeds. Actor BA was
+  `0.498+/-0.063`; Mass BA was `0.450+/-0.012`.
+- The tier difference changes sign across seeds, so the portfolio claim is
+  cross-tier persona-signal preservation, not Mass or Actor superiority.
+- Restored the pre-run `no_consist` ONNX/persona export after validating its
+  original SHA-256 hashes.

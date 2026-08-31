@@ -3,26 +3,28 @@
 ## Outcome
 
 The frozen action-only evaluator now runs directly on canonical UE telemetry.
-A 300-second visible UE 5.8 standalone validation used 16 Actor/Behavior Tree
-agents and 112 Mass agents with the same 16 sampled persona IDs. The active
-export was `no_consist`, seed 7.
+The primary confirmation consists of three 300-second visible UE 5.8
+standalone runs (spawn seeds 0, 1, 2), each with the full PCSP export, 16
+Actor/Behavior Tree agents, 112 Mass agents, and the same 16 sampled persona
+IDs.
 
-Across the 16 paired personas, Actor and Mass action distributions have mean
-Jensen--Shannon divergence `0.066` (median `0.051`), and their five-axis trait
-predictions agree `71.25%` of the time. The frozen probe's mean balanced
-accuracy is `0.458` for Actor trajectories and `0.571` for Mass trajectories.
-The paired Mass-minus-Actor delta is `+0.113`, cluster-bootstrap 95% interval
-`[+0.013, +0.218]`, paired randomization `p=0.027`.
+Across spawn seeds, the frozen probe's mean balanced accuracy is
+`0.498 +/- 0.063` for Actor trajectories and `0.450 +/- 0.012` for Mass
+trajectories. Actor/Mass action distributions have mean Jensen--Shannon
+divergence `0.068 +/- 0.013`, and their five-axis trait predictions agree
+`67.9% +/- 4.7%` of the time (mean +/- sample standard deviation). The
+Mass-minus-Actor balanced-accuracy difference is `-0.048 +/- 0.057` and changes
+sign across seeds, so these data do not support tier superiority.
 
-![UE tier behavior audit](../results/ue_sessions/tier_behavior_20260901_044431/ue_behavior_tier_eval.png)
+![Full PCSP UE tier multiseed audit](../results/ue_sessions/tier_behavior_full_multiseed_20260901/full_pcsp_ue_tier_multiseed.png)
 
-This single run shows that the Mass tier does not automatically erase the
-policy's action-level persona signal. It does **not** establish that Mass is
-intrinsically more persona-faithful: Mass produced about twice as many sampled
-decisions per persona (62.1 vs 31.8), executes a different movement/interaction
-loop, and the evaluator was fitted in Mini-Inzoi rather than UE. A full claim
-requires full-PCSP and no-consistency runs across multiple UE seeds with matched
-decision windows.
+The result confirms that moving background agents into Mass does not
+automatically erase the policy's action-level persona signal. It does **not**
+establish absolute persona fidelity in UE: the evaluator was fitted in
+Mini-Inzoi, Actor and Mass use different execution loops, and their decision
+counts are not cadence-matched. The earlier seed-7 `no_consist` bridge run
+(Actor BA `0.458`, Mass BA `0.571`, JS `0.066`) remains a telemetry-contract
+check rather than an ablation comparison because it has only one spawn seed.
 
 ## Telemetry contract
 
@@ -41,12 +43,15 @@ decision windows.
 ## Validation evidence
 
 - `cnzoiEditor Win64 Development` compiled successfully on UE 5.8.
-- Standalone session `20260901_044431` exited with code 0 after 322 seconds.
-- It produced 16 Actor files with explicit action indices and 993 sampled Mass
-  decision rows covering all 16 paired personas.
+- Full-PCSP sessions `20260901_052732`, `20260901_053253`, and
+  `20260901_053815` all exited with code 0 after 320--323 seconds.
+- Each produced 16 Actor files, 300 frame samples, and 676--685 sampled Mass
+  decisions covering all 16 paired personas.
 - The checked-in result directory includes a compact canonical copy of the
   source decisions, predictions, metrics, and PNG/SVG figure so the audit does
   not depend on ignored Unreal `Saved/` files.
+- `scripts/aggregate_ue_behavior_tiers.py` validates that input runs share one
+  ablation/policy protocol and emits per-seed CSV plus descriptive aggregates.
 
 ## Reproduction
 
@@ -56,4 +61,8 @@ From `research/`:
 conda run -n paper python scripts/evaluate_ue_behavior_tiers.py `
   --session ../ue/cnzoi/Saved/PCSP/Logs/<session> `
   --output results/ue_sessions/tier_behavior_<session>
+
+conda run -n paper python scripts/aggregate_ue_behavior_tiers.py `
+  --inputs results/ue_sessions/tier_behavior_full_*/ue_behavior_eval.json `
+  --output results/ue_sessions/tier_behavior_full_multiseed_20260901
 ```

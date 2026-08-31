@@ -187,6 +187,11 @@
       agreement 71.25%, Actor BA 0.458, Mass BA 0.571. Treat this as a runtime
       bridge validation, not a general Mass-superiority claim; full-PCSP,
       multi-seed, matched-window runs remain. *(2026-09-01)*
+- [x] Confirm the UE Actor/Mass bridge with the full PCSP export over three
+      visible 300-second spawn seeds. Actor BA is 0.498+/-0.063, Mass BA is
+      0.450+/-0.012, action JS is 0.068+/-0.013, and cross-tier trait agreement
+      is 67.9+/-4.7%. The tier delta changes sign, so report preservation rather
+      than superiority. *(2026-09-01)*
 - [x] Add opt-in attributable gradient instrumentation to `PCSPTrainer` and
       verify it on the trained v3-large seed-42 checkpoint. PPO reaches
       projection/actor/critic; consistency reaches only projection/trajectory
