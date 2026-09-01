@@ -813,6 +813,11 @@ Implemented the first complete scale-up pass described in
 
 ## 2026-09-02 - Expanded Zone Point Metadata Repair
 
+- Follow-up verification is in progress through the reattached official UE MCP
+  bridge. The first full actor-property audit found one duplicate reference in
+  `Rest.Apt_01` and one unreferenced default interaction point, so the native
+  repair path is being strengthened before the final map/PIE sign-off.
+
 - Rebuilt `cnzoiEditor` successfully after adding the editor-only
   `UPCSPZoneLayoutCommandlet` module; the previous compile blockers were the
   unavailable `EditorLoadingAndSavingUtils.h` include and an `FName`/`FString`
@@ -829,3 +834,28 @@ Implemented the first complete scale-up pass described in
   initialized, but the external MCP endpoint was not exposed to this Codex
   session, so a final remote PIE invocation is deferred until that endpoint is
   reattached.
+
+## 2026-09-02 - Zone Expansion MCP And PIE Sign-off
+
+- Restarted the UE 5.8 editor with the official
+  `ModelContextProtocol.StartServer 8000` command. The configured
+  `http://127.0.0.1:8000/mcp` endpoint reconnected and loaded
+  `/Game/PCSP/Maps/Map_PCSPDistrict_Portfolio`.
+- The first complete MCP property audit found one duplicate reference in
+  `Rest.Apt_01` and one unowned, default-metadata interaction point. Updated
+  `UPCSPZoneLayoutCommandlet -Repair` to remove duplicate references, attach
+  any orphan point to its nearest zone, require exactly 592 uniquely assigned
+  points, then persist the native World Partition packages.
+- `cnzoiEditor Win64 Development` rebuilt successfully. The repaired
+  commandlet completed with `normalized 592 points, removed 1 duplicate
+  references, reattached 1 orphan points`.
+- A post-save MCP batch audit passed: 96 zones, 592 interaction points, 592
+  unique parent links, zero zone/point metadata or spatial-loading violations.
+  `EQS_PCSP_SelectAffordanceZone` exists at
+  `/Game/PCSP/AI/EQS/EQS_PCSP_SelectAffordanceZone` and was not modified.
+- Simulate PIE smoke session `Saved/PCSP/Logs/20260902_001749/` ran for more
+  than 10 seconds. `PCSPPolicySubsystem` initialized with `obs=33`,
+  `persona_dim=64`, and `n_actions=20`; NavMesh was ready after 0.5 seconds
+  and the spawner created 16 Hero agents. The session produced 16 agent logs,
+  55 decision events, and zero `move_failed` events. No fatal PCSP, ONNX, or
+  Behavior Tree error was logged.

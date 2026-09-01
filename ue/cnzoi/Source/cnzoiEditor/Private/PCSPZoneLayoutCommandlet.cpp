@@ -147,7 +147,14 @@ int32 UPCSPZoneLayoutCommandlet::Main(const FString& Params)
 	const bool bRepair = FParse::Param(*Params, TEXT("Repair"));
 	if (ExistingZones.Num() == 96 && bRepair)
 	{
-		int32 RepairedPoints = 0;
+		TArray<APCSPInteractionPoint*> AllPoints;
+		for (TActorIterator<APCSPInteractionPoint> It(World); It; ++It)
+		{
+			AllPoints.Add(*It);
+		}
+
+		TSet<APCSPInteractionPoint*> AssignedPoints;
+		int32 RemovedDuplicateReferences = 0;
 		for (APCSPAffordanceZone* Zone : ExistingZones)
 		{
 			if (!Zone || !Zone->ZoneTag.IsValid() || Zone->Category == EPCSPAffordanceCategory::None)
@@ -156,6 +163,58 @@ int32 UPCSPZoneLayoutCommandlet::Main(const FString& Params)
 				return 5;
 			}
 			Zone->Modify();
+			Zone->InteractionPoints.RemoveAll([&AssignedPoints, &RemovedDuplicateReferences](APCSPInteractionPoint* Point)
+			{
+				if (!Point || AssignedPoints.Contains(Point))
+				{
+					++RemovedDuplicateReferences;
+					return true;
+				}
+				AssignedPoints.Add(Point);
+				return false;
+			});
+		}
+
+		int32 ReattachedOrphanPoints = 0;
+		for (APCSPInteractionPoint* Point : AllPoints)
+		{
+			if (!Point || AssignedPoints.Contains(Point))
+			{
+				continue;
+			}
+
+			APCSPAffordanceZone* NearestZone = nullptr;
+			float NearestDistanceSquared = TNumericLimits<float>::Max();
+			for (APCSPAffordanceZone* Zone : ExistingZones)
+			{
+				const float DistanceSquared = FVector::DistSquared2D(Point->GetActorLocation(), Zone->GetActorLocation());
+				if (DistanceSquared < NearestDistanceSquared)
+				{
+					NearestDistanceSquared = DistanceSquared;
+					NearestZone = Zone;
+				}
+			}
+			if (!NearestZone)
+			{
+				UE_LOG(LogTemp, Error, TEXT("PCSP zone repair: could not select an owner for an orphan interaction point."));
+				return 6;
+			}
+
+			NearestZone->Modify();
+			NearestZone->InteractionPoints.Add(Point);
+			AssignedPoints.Add(Point);
+			++ReattachedOrphanPoints;
+		}
+
+		if (AllPoints.Num() != 592 || AssignedPoints.Num() != AllPoints.Num())
+		{
+			UE_LOG(LogTemp, Error, TEXT("PCSP zone repair: expected 592 uniquely assigned points, found %d total and %d assigned."), AllPoints.Num(), AssignedPoints.Num());
+			return 7;
+		}
+
+		int32 RepairedPoints = 0;
+		for (APCSPAffordanceZone* Zone : ExistingZones)
+		{
 			Zone->Capacity = Zone->InteractionPoints.Num();
 			Zone->SetIsSpatiallyLoaded(false);
 			RepairedPoints += ConfigureZonePoints(*Zone);
@@ -165,10 +224,10 @@ int32 UPCSPZoneLayoutCommandlet::Main(const FString& Params)
 		if (!UEditorLoadingAndSavingUtils::SaveDirtyPackages(true, true))
 		{
 			UE_LOG(LogTemp, Error, TEXT("PCSP zone repair: failed to save dirty World Partition packages."));
-			return 6;
+			return 8;
 		}
-		UE_LOG(LogTemp, Display, TEXT("PCSP zone repair complete: normalized %d interaction points."), RepairedPoints);
-		return RepairedPoints == 592 ? 0 : 7;
+		UE_LOG(LogTemp, Display, TEXT("PCSP zone repair complete: normalized %d points, removed %d duplicate references, reattached %d orphan points."), RepairedPoints, RemovedDuplicateReferences, ReattachedOrphanPoints);
+		return RepairedPoints == 592 ? 0 : 9;
 	}
 	if (ExistingZones.Num() != 10)
 	{
