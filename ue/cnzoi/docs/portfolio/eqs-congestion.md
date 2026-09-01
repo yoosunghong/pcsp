@@ -126,4 +126,4 @@ Estimated total: **4–5 engineering days** including measurement.
 - `BTTask_PCSPDecision::ApplyDecisionThrottle` — current backoff (decision-side).
 - `BTTask_MoveToAffordance::TryBeginMove` — where the new EQS call attaches.
 - `UPCSPAffordanceSubsystem::FindBestZone` — fallback path; do not delete.
-- `docs/affordance-system.md` — three-layer zone architecture this builds on.
+- `docs/architecture/affordance-system.md` — three-layer zone architecture this builds on.

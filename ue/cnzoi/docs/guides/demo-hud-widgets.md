@@ -2,7 +2,7 @@
 
 Step-by-step guide for the editor work that the 2026-05-23 C++ scaffold left
 open: **D4 (UMG widgets)** and **D5 (zone overlays)** from
-[demo-video-hud-plan.md](demo-video-hud-plan.md).
+[observer-and-hud.md](../portfolio/demo/observer-and-hud.md).
 
 Prerequisites:
 
@@ -44,7 +44,7 @@ to `APCSPDemoPlayerController`:
 ### D4.1 Widget hierarchy
 
 Create one parent widget and eight sub-widgets. The hierarchy matches the
-layout sketch in [demo-video-hud-plan.md §"Layout"](demo-video-hud-plan.md).
+layout contract in [observer-and-hud.md](../portfolio/demo/observer-and-hud.md).
 
 ```
 WBP_PCSPDemoHUD  (UCommonActivatableWidget or UserWidget root, Canvas Panel)
@@ -465,11 +465,11 @@ In PIE with the overlay live:
 
 ## Cross-references
 
-- [demo-video-hud-plan.md](demo-video-hud-plan.md) — high-level scenario,
+- [demo observer and HUD contract](../portfolio/demo/observer-and-hud.md) — high-level scenario,
   layout sketch, beat table.
 - [PCSPAgentDebugViewModel.h](../../Source/cnzoi/PCSP/Public/Components/PCSPAgentDebugViewModel.h)
   — `FPCSPHudAgentSnapshot` field list.
 - [PCSPDemoPlayerController.h](../../Source/cnzoi/PCSP/Public/Agent/PCSPDemoPlayerController.h)
   — delegate signatures + key bindings.
-- [observability.md](observability.md) — JSONL schema; HUD trajectory
+- [observability.md](../portfolio/observability.md) — JSONL schema; HUD trajectory
   chips mirror the same `EventType` enum that JSONL rows carry.

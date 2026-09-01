@@ -19,7 +19,7 @@ seven unique train/test pairs because standard v3 and unseen-occupation share
 the same split. Manual inspection shows two strong Korean paraphrase pairs and
 five v3-large records that share the generated age/occupation/trait template.
 
-![OOD leakage audit](../results/ood_leakage_audit/ood_leakage_audit.png)
+![OOD leakage audit](../../results/ood_leakage_audit/ood_leakage_audit.png)
 
 ## Split summary
 
@@ -60,7 +60,7 @@ The preregistered follow-up now excludes those test IDs from the existing
 per-persona accuracy means without tuning the threshold. Full-policy changes
 range from `-0.49` to `+0.49` percentage points across the four affected split
 families, and the largest absolute change across all 24 mode/run evaluations is
-`2.19 pp`. See [the sensitivity report](ood_near_neighbor_sensitivity.md).
+`2.19 pp`. See [the sensitivity report](ood-near-neighbor-sensitivity.md).
 
 ## Reproduction
 

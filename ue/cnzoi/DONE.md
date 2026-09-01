@@ -26,6 +26,7 @@ Record durable decisions here.
 | 2026-09-01 | Use the live official MCP to prepare the 1,024-NPC zone expansion safely. | The portfolio map currently has 10 zone actors / 210 interaction points, all non-spatially-loaded and capacity-consistent. MCP supports discovery, tag registration, map verification, and PIE control but has no EQS-asset factory; direct World Partition actor writes did not persist after a reload. | Registered 96 stable instance tags plus `PCSP.Zone.Hygiene` in `Config/DefaultGameplayTags.ini`; create the EQS asset and place/validate new actors through the level editor before C++ EQS integration. |
 | 2026-09-01 | Gate bulk World Partition placement on durable property serialization. | A live five-actor `Rest.Apt_02` probe proved MCP can spawn and initially save external-actor packages, but after a map reload `Category`, `ZoneTag`, and `InteractionPoints` reverted to defaults. The probe was then removed at the exact external-package paths and the portfolio map returned to 10 zones. | Add/use an editor utility that invokes `Modify` plus package save for actor properties, then run the documented 86-zone / 382-point expansion. |
 | 2026-09-01 | Use an editor-only commandlet for durable 1,024-NPC zone authoring. | `UPCSPZoneLayoutCommandlet` uses native `Modify`, `PostEditChange`, `MarkPackageDirty`, and UnrealEd's dirty-package save path, avoiding the generic MCP property-writer persistence defect. | Successfully authored `Map_PCSPDistrict_Portfolio`: legacy Leisure was folded into Observe, 86 zones and 382 interaction points were added, for a saved total of 96 zones / 592 points. The external-actor file count increased exactly 236 → 704. |
+| 2026-09-02 | Organize UE documentation by concern and split the portfolio demo plan. | Contracts, architecture, guides, validation, benchmarks, and demo runbooks change at different rates; a single large page makes targeted updates and context loading costly. | Use `docs/index.md` as the entry point, add new runtime evidence under `docs/portfolio/benchmarks/`, and keep only compatibility stubs at retired paths. |
 
 ## 2026-05-13 - Phase 1 C++ Scaffold
 
@@ -138,23 +139,23 @@ Cleared the remaining Phase 0 docs and the doc-only portion of Phase 5 in
 one pass.
 
 **Phase 0:**
-- [docs/phase0/research-environment-summary.md](docs/phase0/research-environment-summary.md)
+- [docs/contracts/research-environment-summary.md](docs/contracts/research-environment-summary.md)
   — UE-facing summary of v3 action ontology, 33-d observation schema, reward
   function (training-only), persona splits, and the ONNX I/O contract. Pins
   the four things UE must keep stable across research updates: I/O shapes,
   action ID ordering, need ordering, persona-slot ordering.
-- [docs/phase0/affordance-taxonomy.md](docs/phase0/affordance-taxonomy.md)
+- [docs/contracts/affordance-taxonomy.md](docs/contracts/affordance-taxonomy.md)
   — Canonical 10-category roster with per-zone capacity targets and the
   empirical provenance (Phase 4 stress-run progressions) for those numbers.
   Documents the `Leisure`-folded-into-`Observe` quirk and the
   `Is Spatially Loaded = false` World Partition rule.
-- [docs/phase0/bt-blackboard-policy-contract.md](docs/phase0/bt-blackboard-policy-contract.md)
+- [docs/contracts/bt-blackboard-policy-contract.md](docs/contracts/bt-blackboard-policy-contract.md)
   — Wire format between policy / blackboard / BT. Every blackboard key
   (type, writers, readers, lifecycle), the policy interface
   (`RunInference` + `RunInferenceWithLogits` + `pcsp.PolicyMode` CVar),
   the three-branch BT structure, and per-task contracts for
   `BTTask_PCSPDecision` / `MoveToAffordance` / `PerformInteraction`.
-- [docs/phase0/scale-targets.md](docs/phase0/scale-targets.md)
+- [docs/validation/scale-targets.md](docs/validation/scale-targets.md)
   — Confirms Debug/Main/Stress targets with reference runs: 16 verified
   in 2026-05-17 baseline, 32 at 5.4% failure, 64 at 1.7% failure (Run 3),
   held-out 64 at 0.04% (`20260518_140432`). Also enumerates what 128+
@@ -490,7 +491,7 @@ duplicate sweep script that ran parallel UE instances; excluded from analysis.
 
 ## 2026-05-22 - Portfolio Demo Video And HUD Plan
 
-- Added [docs/portfolio/demo-video-hud-plan.md](docs/portfolio/demo-video-hud-plan.md).
+- Added the portfolio demo documentation (now split under [docs/portfolio/demo/](docs/portfolio/demo/README.md)).
 - The document defines the portfolio video structure, shot list, scenario beats,
   demo-map policy, capture checklist, and a concrete HUD information
   architecture for selected agents.
@@ -774,7 +775,7 @@ Implemented the first complete scale-up pass described in
   supports bounded incremental population cost. Absolute frame time is still
   above 16.67 ms, so the result is explicitly not presented as 60 FPS.
 - Added the full report at
-  `docs/portfolio/mass-visible-benchmark-20260901.md` and a reproducible
+  `docs/portfolio/benchmarks/visible-mass-20260901.md` and a reproducible
   `mass-scaling-evidence` PNG/SVG generated from checked-in JSON.
 
 ## 2026-09-01 - Sampled Mass Behavior Telemetry And Tier Audit

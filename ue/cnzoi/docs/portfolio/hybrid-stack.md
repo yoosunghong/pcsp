@@ -199,4 +199,4 @@ conditions.
 - `Source/cnzoi/PCSP/Private/BT/BTTask_PCSPDecision.cpp` — decision throttle, urgency bypass.
 - `Source/cnzoi/PCSP/Private/BT/BTTask_MoveToAffordance.cpp` — `FindBestZone` integration, reservation, failure-reason labelling.
 - `Source/cnzoi/PCSP/Private/Inference/PCSPPolicySubsystem.cpp` — CVar plumbing, ONNX loading.
-- `docs/phase0/bt-blackboard-policy-contract.md` — original spec this implements.
+- `docs/contracts/bt-blackboard-policy-contract.md` — original spec this implements.

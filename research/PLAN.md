@@ -85,7 +85,7 @@
 
 ## Phase C - Mini-Inzoi v3 Environment
 
-- [x] Write `docs/mini_inzoi_v3_design.md`.
+- [x] Establish the split Mini-Inzoi v3 contract under `docs/design/mini-inzoi-v3/`.
 - [x] Define v3 action ontology and observation schema.
 - [x] Commit to flat `Discrete(20)` actions for v3; defer factorized actions.
 - [x] Implement v3 without breaking v1/v2: `src/env/mini_inzoi_v3.py`, `src/env/v3_constants.py`.

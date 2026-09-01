@@ -16,7 +16,7 @@ divergence `0.068 +/- 0.013`, and their five-axis trait predictions agree
 Mass-minus-Actor balanced-accuracy difference is `-0.048 +/- 0.057` and changes
 sign across seeds, so these data do not support tier superiority.
 
-![Full PCSP UE tier multiseed audit](../results/ue_sessions/tier_behavior_full_multiseed_20260901/full_pcsp_ue_tier_multiseed.png)
+![Full PCSP UE tier multiseed audit](../../results/ue_sessions/tier_behavior_full_multiseed_20260901/full_pcsp_ue_tier_multiseed.png)
 
 The result confirms that moving background agents into Mass does not
 automatically erase the policy's action-level persona signal. It does **not**

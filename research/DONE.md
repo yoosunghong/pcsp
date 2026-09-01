@@ -4,6 +4,17 @@ This file holds completed work details, decisions, result paths, and experiment 
 
 ---
 
+## 2026-09-02 - Documentation Information Architecture
+
+- Split the v3 environment monolith into scoped ontology/observation and
+  training/validation contracts under `docs/design/mini-inzoi-v3/`.
+- Moved reproducible audits to `docs/evaluations/` and the UE tier report to
+  `docs/integration/`; `docs/README.md` now defines the update and linking rules.
+- The former root design path remains a short compatibility page. New references
+  target the scoped documents rather than re-growing a single design file.
+
+---
+
 ## 2026-08-31 - Eval v3 Threading And Repository Integrity Audit
 
 ### Lower-priority eval threading
@@ -281,7 +292,7 @@ Held-out persona-edit and asymmetric-role substrates (`predator_prey__*`, `hidde
 
 ### Mini-Inzoi v3 Design
 
-- Wrote `docs/mini_inzoi_v3_design.md`.
+- Wrote the Mini-Inzoi v3 design contract (now split under `docs/design/mini-inzoi-v3/`).
 - Chose flat `Discrete(20)` for v3; factorized actions deferred.
 - Defined v3 observation additions:
   - affordance one-hot

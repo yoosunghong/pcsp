@@ -71,7 +71,7 @@ Open **Edit → Project Settings** and apply the following:
    select `DT_PCSPAffordanceTags`.
 
 > These tags are **zone identifiers**, not the action space.
-> See [affordance-system.md](affordance-system.md) for the full three-layer breakdown.
+> See [affordance-system.md](../architecture/affordance-system.md) for the full three-layer breakdown.
 
 ---
 

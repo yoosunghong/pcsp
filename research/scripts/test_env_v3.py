@@ -1,7 +1,7 @@
 """Mini-Inzoi v3 — environment sanity & §9 acceptance criteria.
 
 Covers the implementation-correctness checklist from
-docs/mini_inzoi_v3_design.md §9:
+docs/design/mini-inzoi-v3/training-and-validation.md:
   - PettingZoo AEC API conformance.
   - All 20 actions reachable.
   - r_persona_style is persona-discriminating.

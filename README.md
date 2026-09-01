@@ -77,15 +77,15 @@ The figures are generated directly from checked-in experiment JSON. Their data
 sources, caveats, and reproduction command are documented in the
 [visual evidence case study](ue/cnzoi/docs/portfolio/visual-evidence.md).
 The representation-level probe and its limitations are documented in the
-[persona projection audit](research/docs/persona_projection_audit.md).
+[persona projection audit](research/docs/evaluations/persona-projection-audit.md).
 The deliberately model-independent countercheck is documented in the
-[independent behavioral evaluation](research/docs/independent_behavior_evaluation.md).
+[independent behavioral evaluation](research/docs/evaluations/independent-behavior.md).
 Loss-to-module wiring is verified in the
-[gradient-path audit](research/docs/gradient_path_audit.md).
+[gradient-path audit](research/docs/evaluations/gradient-path-audit.md).
 Split hygiene and semantic-neighbor warnings are detailed in the
-[OOD leakage audit](research/docs/ood_leakage_audit.md).
+[OOD leakage audit](research/docs/evaluations/ood-leakage-audit.md).
 The runtime bridge and its single-run limitations are in the
-[UE simulation-tier behavior audit](research/docs/ue_simulation_tier_behavior.md).
+[UE simulation-tier behavior audit](research/docs/integration/ue-simulation-tier-behavior.md).
 
 ## 1,024-NPC scaling design
 
@@ -118,6 +118,7 @@ for the failure analysis, implementation, runbook, and acceptance criteria.
   Behavior Trees, Mass integration, demo map, HUD assets, and telemetry tools.
 - [`research/paper/cog2026_main/`](research/paper/cog2026_main/) — active COG
   2026 Main Track manuscript source.
+- [`research/docs/`](research/docs/) — split environment contracts and reproducible research/UE-bridge reports.
 - [`ue/cnzoi/docs/portfolio/`](ue/cnzoi/docs/portfolio/) — engineering case
   studies, diagrams, observability notes, and capture guidance.
 

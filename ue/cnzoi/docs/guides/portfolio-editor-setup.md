@@ -4,7 +4,7 @@ Editor configuration needed to make `Map_PCSPDistrict_Portfolio` capture-ready.
 This guide covers the **settings** work (GameMode/World Settings, the D2 agent
 camera mount, spawner config, Project Settings, and capture CVars). The UMG
 HUD (D4) and zone-overlay (D5) asset work has its own guide:
-[hud-widget-guide.md](hud-widget-guide.md).
+[demo-hud-widgets.md](demo-hud-widgets.md).
 
 > **Where you are now:** you have set `PlayerControllerClass =
 > BP_PCSPDemoPlayerController` on the portfolio level. The sections below pick
@@ -252,16 +252,16 @@ Run 16-agent PIE on `Map_PCSPDistrict_Portfolio` and confirm, in order:
 9. 64-agent take: `move_failed / (interaction_complete + move_failed) < 5%`.
 
 When all pass, capture the beats per
-[demo-video-hud-plan.md §"Video Structure"](demo-video-hud-plan.md), then run
+[the demo video runbook](../portfolio/demo/video-runbook.md), then run
 `research/scripts/analyze_ue_session.py <stamp>` for the data-proof beat.
 
 ---
 
 ## Cross-references
 
-- [hud-widget-guide.md](hud-widget-guide.md) — D4 UMG widgets + D5 zone overlay
+- [demo-hud-widgets.md](demo-hud-widgets.md) — D4 UMG widgets + D5 zone overlay
   asset work (the other half of the editor effort).
-- [demo-video-hud-plan.md](demo-video-hud-plan.md) — scenario, beats, HUD layout.
+- [demo video runbook](../portfolio/demo/video-runbook.md) — scenario and beats.
 - [PCSPDemoPlayerController.h](../../Source/cnzoi/PCSP/Public/Agent/PCSPDemoPlayerController.h)
   — key bindings, delegates, `ViewBlendTime`.
 - [PCSPAgentSpawner.h](../../Source/cnzoi/PCSP/Public/Sim/PCSPAgentSpawner.h)

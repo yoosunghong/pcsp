@@ -61,14 +61,14 @@ Detailed portfolio docs live under [docs/portfolio/](docs/portfolio/).
 ### Phase 0: Environment Redesign Documentation
 
 - [x] Summarize the Python Mini-Inzoi reward, observation, and action logic
-      ([docs/phase0/research-environment-summary.md](docs/phase0/research-environment-summary.md)).
+      ([docs/contracts/research-environment-summary.md](docs/contracts/research-environment-summary.md)).
 - [x] Define the UE5 affordance taxonomy
-      ([docs/phase0/affordance-taxonomy.md](docs/phase0/affordance-taxonomy.md);
-       three-layer architecture in [docs/affordance-system.md](docs/affordance-system.md)).
+      ([docs/contracts/affordance-taxonomy.md](docs/contracts/affordance-taxonomy.md);
+       three-layer architecture in [docs/architecture/affordance-system.md](docs/architecture/affordance-system.md)).
 - [x] Write the BT-Blackboard-Policy interface specification
-      ([docs/phase0/bt-blackboard-policy-contract.md](docs/phase0/bt-blackboard-policy-contract.md)).
+      ([docs/contracts/bt-blackboard-policy-contract.md](docs/contracts/bt-blackboard-policy-contract.md)).
 - [x] Confirm Main and Stress scale targets
-      ([docs/phase0/scale-targets.md](docs/phase0/scale-targets.md);
+      ([docs/validation/scale-targets.md](docs/validation/scale-targets.md);
        16/32/64 all empirically verified, 64 stress at 1.7% failure rate).
 
 ### Phase 1: Continuous-Space Prototype
@@ -236,10 +236,10 @@ Detailed portfolio docs live under [docs/portfolio/](docs/portfolio/).
       NPCs × 3 seeds. All 12 visible standalone runs completed on 2026-09-01;
       at 1,024 NPCs frame mean is `25.47 ± 0.47 ms`, frame p95 is
       `30.15 ± 0.53 ms`, and hero movement failure is `0.0%`. Report:
-      [docs/portfolio/mass-visible-benchmark-20260901.md](docs/portfolio/mass-visible-benchmark-20260901.md).
+      [docs/portfolio/benchmarks/visible-mass-20260901.md](docs/portfolio/benchmarks/visible-mass-20260901.md).
 - [ ] Attach Unreal Insights captures and report game/navigation/Mass/render
       breakdown plus memory per NPC. Persona-distinctness by simulation tier is
-      now covered by the [full-PCSP three-seed independent-evaluator audit](../../research/docs/ue_simulation_tier_behavior.md).
+      now covered by the [full-PCSP three-seed independent-evaluator audit](../../research/docs/integration/ue-simulation-tier-behavior.md).
       Do not use
       `-RenderOffscreen` results as FPS proof.
 - [x] Stress test 64 agents — three-run progression (2026-05-17):
@@ -356,9 +356,9 @@ Detailed portfolio docs live under [docs/portfolio/](docs/portfolio/).
       system overview, per-decision sequence, BT subtree, three-layer
       affordance, ablation mode switch).
 - [ ] Capture rich trajectory clips (requires PIE; use the capture sequence in
-      [docs/portfolio/demo-video-hud-plan.md](docs/portfolio/demo-video-hud-plan.md)).
+      [docs/portfolio/demo/video-runbook.md](docs/portfolio/demo/video-runbook.md)).
 - [x] Draft portfolio demo video and HUD plan
-      ([docs/portfolio/demo-video-hud-plan.md](docs/portfolio/demo-video-hud-plan.md)):
+      ([docs/portfolio/demo/video-runbook.md](docs/portfolio/demo/video-runbook.md)):
       scenario beats, capture checklist, nearest-agent camera focus via
       `SetViewTargetWithBlend`, and HUD panels for persona, needs,
       decision stack, affordance state, social context, and trajectory events.
@@ -411,7 +411,7 @@ systems have at least a first pass. All portfolio planning docs live under
 | 5 | ZoneGraph/MassCrowd + shared routes + density admission | Queued after expanded-zone congestion baseline | [docs/portfolio/mass-1024-scaling.md](docs/portfolio/mass-1024-scaling.md) | Mass route fragments/processors, shared route cache, predicted-arrival admission telemetry |
 | 6 | Async/batched ONNX inference | Cohort staggering live; true dynamic batch deferred pending post-navigation profile | [docs/portfolio/async-inference.md](docs/portfolio/async-inference.md) | `UPCSPPolicySubsystem`, Mass cohort buffers, dynamic `[B,*]` ONNX export |
 | 7 | Trajectory observability pipeline extensions | Scaling-aware; sampled Actor/Mass independent-eval bridge live 2026-09-01 | [docs/portfolio/observability.md](docs/portfolio/observability.md) | canonical Actor action index, sampled `mass_trajectories.jsonl`, frozen evaluator adapter, existing scheduler/Mass stats/HUD ring buffer |
-| 8 | Agent-camera focus + demo HUD | C++ scaffold and UMG assets present; capture validation pending | [docs/portfolio/demo-video-hud-plan.md](docs/portfolio/demo-video-hud-plan.md) | `APCSPDemoPlayerController`, `UPCSPAgentDebugViewModel`, HUD widgets, portfolio map |
+| 8 | Agent-camera focus + demo HUD | C++ scaffold and UMG assets present; capture validation pending | [docs/portfolio/demo/README.md](docs/portfolio/demo/README.md) | `APCSPDemoPlayerController`, `UPCSPAgentDebugViewModel`, HUD widgets, portfolio map |
 | 9 | Diagram polish | Refreshed 2026-05-23 | [docs/portfolio/diagrams.md](docs/portfolio/diagrams.md) | diagrams 2, 3, 4, 5 updated for hybrid-stack cleanup |
 | 10 | Static visual evidence pack | Implemented 2026-08-31 | [docs/portfolio/visual-evidence.md](docs/portfolio/visual-evidence.md) | reproducible ablation, Actor-scaling, and Mass-runtime PNG/SVG figures |
 

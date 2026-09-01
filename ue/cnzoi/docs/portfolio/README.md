@@ -26,7 +26,7 @@ Differs from `PLAN.md` in scope:
 | P4 | ZoneGraph/MassCrowd + shared routes + density admission | Replaces straight-line Mass movement after the hero congestion baseline is measured. |
 | P5 | [async-inference.md](async-inference.md) | Adds true dynamic-batch execution only if the post-navigation profile makes policy work material. |
 | P6 | [observability.md](observability.md) extensions | Feeds HUD/event timelines and portfolio data proof. |
-| P7 | [demo-video-hud-plan.md](demo-video-hud-plan.md) | Defines camera focus, HUD, and the author-owned capture flow. |
+| P7 | [demo/video-runbook.md](demo/video-runbook.md) | Defines capture beats and links the observer/HUD contract. |
 | P8 | [diagrams.md](diagrams.md) | Explains the research-to-runtime system and hybrid execution. |
 
 | Document | Subsystem | Status |
@@ -37,9 +37,9 @@ Differs from `PLAN.md` in scope:
 | [async-inference.md](async-inference.md) | Asynchronous batched ONNX inference | Deferred from Phase 3 |
 | [observability.md](observability.md) | Per-agent, path-scheduler, aggregate Mass, and sampled Mass-trajectory JSONL + analyzers | Scaling-aware; full-PCSP Actor/Mass audit complete over 3 visible seeds |
 | [hybrid-stack.md](hybrid-stack.md) | Policy / Behavior Tree integration contract | Phase 2 live |
-| [demo-video-hud-plan.md](demo-video-hud-plan.md) | Portfolio video scenario, nearest-agent camera focus, and HUD structure | Runtime scaffold and HUD assets present; capture pending |
-| [editor-setup-guide.md](editor-setup-guide.md) | GameMode/World Settings, agent camera mount, spawner, and capture CVars | Editor setup guide available |
-| [hud-widget-guide.md](hud-widget-guide.md) | UMG HUD widgets and zone-overlay materials | HUD widget assets present; final capture validation pending |
+| [demo/README.md](demo/README.md) | Split video runbook, observer/HUD contract, and implementation status | Runtime scaffold and HUD assets present; capture pending |
+| [../guides/portfolio-editor-setup.md](../guides/portfolio-editor-setup.md) | GameMode/World Settings, agent camera mount, spawner, and capture CVars | Editor setup guide available |
+| [../guides/demo-hud-widgets.md](../guides/demo-hud-widgets.md) | UMG HUD widgets and zone-overlay materials | HUD widget assets present; final capture validation pending |
 | [diagrams.md](diagrams.md) | Architecture and runtime data-flow diagrams | Phase 5 live |
 | [visual-evidence.md](visual-evidence.md) | Data-grounded ablation, Actor scaling, Mass runtime, and visible Mass scaling figures | Reproducible PNG/SVG pack complete |
 
@@ -55,5 +55,5 @@ and the author-owned demo video. Persona preservation by simulation tier is now
 validated separately with the full PCSP export over three visible 300-second
 spawn seeds: action JS `0.068 +/- 0.013` and frozen-trait agreement
 `67.9% +/- 4.7%`; neither tier is claimed superior. See the
-[full report](../../../../research/docs/ue_simulation_tier_behavior.md) and
+[full report](../../../../research/docs/integration/ue-simulation-tier-behavior.md) and
 [checked-in evidence](../../../../research/results/ue_sessions/tier_behavior_full_multiseed_20260901/summary.json).

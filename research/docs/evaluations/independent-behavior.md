@@ -18,7 +18,7 @@ internal metric suggested: InfoNCE is load-bearing for alignment between the
 learned trajectory encoder and persona projection, but this experiment does
 not show that it improves independently observable Big Five behavior.
 
-![Independent behavior evaluation](../results/independent_behavior_v3_large/independent_behavior_eval.png)
+![Independent behavior evaluation](../../results/independent_behavior_v3_large/independent_behavior_eval.png)
 
 ## Frozen protocol
 

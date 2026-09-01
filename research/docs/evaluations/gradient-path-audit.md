@@ -15,7 +15,7 @@ and every forbidden direct path is zero:
 | Consistency (weighted) | 7.87e-1 | 0 | 0 | 3.75e+0 |
 | Diversity (weighted) | 4.87e-4 | 1.82e-4 | 0 | 0 |
 
-![Gradient-path audit](../results/gradient_path_audit/gradient_paths.png)
+![Gradient-path audit](../../results/gradient_path_audit/gradient_paths.png)
 
 This clarifies the causal interpretation of the objectives. InfoNCE does not
 directly update the actor head; it changes behavior only indirectly through the

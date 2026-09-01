@@ -2,7 +2,7 @@
 
 Phase 0 calls for a canonical taxonomy of zone categories, sub-tags, and
 capacity targets. The three-layer architecture (action ↔ category ↔ tag) is
-already documented in [`../affordance-system.md`](../affordance-system.md);
+already documented in [`../architecture/affordance-system.md`](../architecture/affordance-system.md);
 this file pins the **specific instances** the medium district must place and
 the capacity targets validated in Phase 4.
 

@@ -96,7 +96,7 @@ The canonical action index lets
 `research/scripts/evaluate_ue_behavior_tiers.py` apply the frozen independent
 action-only probe to Actor and Mass tiers without consuming policy logits. The
 first 300-second bridge validation is documented in
-`research/docs/ue_simulation_tier_behavior.md`.
+`research/docs/integration/ue-simulation-tier-behavior.md`.
 
 ## Design choices worth noting
 

@@ -163,7 +163,7 @@ the 16.67-ms 60-FPS budget, so this is a scaling result rather than a 60-FPS
 claim.
 
 Full protocol, per-scale table, caveats, and source artifacts:
-[mass-visible-benchmark-20260901.md](mass-visible-benchmark-20260901.md).
+[visible Mass benchmark](benchmarks/visible-mass-20260901.md).
 
 ## Next Optimization Stages
 

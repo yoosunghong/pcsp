@@ -31,7 +31,7 @@ and conscientiousness remain strongest. This identifies a concrete follow-up:
 the projection should be checked against independent behavioral evidence before
 claiming that every trait survives equally well.
 
-![Projection audit](../results/persona_projection_audit/projection_audit.png)
+![Projection audit](../../results/persona_projection_audit/projection_audit.png)
 
 ## Protocol
 

@@ -151,7 +151,7 @@ full design and benchmark acceptance criteria are in
 - [`docs/portfolio/mass-1024-scaling.md`](cnzoi/docs/portfolio/mass-1024-scaling.md) — 1,024-NPC case study
 - [`docs/portfolio/diagrams.md`](cnzoi/docs/portfolio/diagrams.md) — system diagrams
 - [`docs/portfolio/observability.md`](cnzoi/docs/portfolio/observability.md) — telemetry design
-- [`docs/portfolio/demo-video-hud-plan.md`](cnzoi/docs/portfolio/demo-video-hud-plan.md) — capture runbook
+- [`docs/portfolio/demo/video-runbook.md`](cnzoi/docs/portfolio/demo/video-runbook.md) — capture runbook
 - [`cnzoi/PLAN.md`](cnzoi/PLAN.md) / [`cnzoi/DONE.md`](cnzoi/DONE.md) — active plan and evidence log
 
 ## Honest limitations

@@ -34,7 +34,7 @@ Two things need to hold for a scale to be "confirmed":
 2. **Behavioral coverage:** every active category gets reached. The
    2026-05-17 Run 3 covered 9/9 active categories (Shop included);
    the Leisure enum has no zone (folded into Observe via the v3 movement
-   remap — see [`affordance-taxonomy.md`](affordance-taxonomy.md)).
+   remap — see [`../contracts/affordance-taxonomy.md`](../contracts/affordance-taxonomy.md)).
 
 Both held under the 64-agent stress run. There's no engine-side reason to
 re-run a separate "Debug = 8" validation: 8 agents is a strict subset of the

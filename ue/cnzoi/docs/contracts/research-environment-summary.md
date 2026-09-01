@@ -4,7 +4,7 @@ This is the UE5-side reference for what the Python research environment provides
 It exists so engine engineers don't have to read the full research design doc to
 understand what the policy expects.
 
-**Authoritative source:** [`research/docs/mini_inzoi_v3_design.md`](../../../../research/docs/mini_inzoi_v3_design.md).
+**Authoritative source:** [`research/docs/design/mini-inzoi-v3/`](../../../../research/docs/design/mini-inzoi-v3/README.md).
 If anything here disagrees with that doc, the research doc wins — open an issue.
 
 ---

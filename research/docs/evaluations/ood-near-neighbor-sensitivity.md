@@ -16,7 +16,7 @@ For the full PCSP policy, the accuracy changes are:
 | unseen combo v3 | 20.33% | 20.68% | +0.34 pp |
 | v3-large (3-seed mean) | 4.00% | 3.51% | -0.49 pp |
 
-![OOD semantic-neighbor sensitivity](../results/ood_leakage_sensitivity/ood_near_neighbor_sensitivity.png)
+![OOD semantic-neighbor sensitivity](../../results/ood_leakage_sensitivity/ood_near_neighbor_sensitivity.png)
 
 Across all 24 available mode/run evaluations, the largest absolute shift is
 `2.19 pp` (`v3_large`, concat, seed 42). The full/no-consistency contrast also
