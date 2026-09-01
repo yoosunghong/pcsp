@@ -21,6 +21,11 @@ Record durable decisions here.
 | 2026-08-31 | Scale beyond 64 high-fidelity NPCs with a two-tier Actor/Mass architecture. | The 128-Actor sweep failed primarily in bursty NavMesh submission, while ONNX inference remained inexpensive. Keeping every NPC as a Character/Controller/BT is the wrong cost model for 1,024 entities. | Preserve 16-32 hero Actors and move background semantic state into Mass chunks. |
 | 2026-08-31 | Bound Actor path admission by urgency plus wait age. | Raising Recast limits alone moves the bottleneck; load shaping controls bursts and age prevents starvation. | Validate queue depth/wait in the visible three-seed sweep. |
 | 2026-08-31 | Treat straight-line Mass movement as an explicit prototype simulation LOD. | It proves the data-oriented semantic tier without pretending to be production obstacle-aware navigation. | Replace with ZoneGraph/MassCrowd and shared coarse-route caching. |
+| 2026-09-01 | Scale authored destinations for the 1,024-NPC district without creating one zone per NPC. | A shared Mass route/density system needs diverse origins and destinations, while Hero Actors alone require reservable interaction points. | Author 96 zone instances / 592 interaction points, then benchmark weighted/EQS congestion before replacing Mass movement. |
+| 2026-09-01 | Introduce a reversible weighted Hero-zone selector before EQS asset integration. | Nearest-zone-only selection creates deterministic hot spots even with sufficient capacity; normalized distance plus remaining capacity distributes arrivals while preserving the policy-to-category contract. | `pcsp.WeightedZoneScoring=0` reproduces the legacy baseline; measure it against the default after editor zone expansion. |
+| 2026-09-01 | Use the live official MCP to prepare the 1,024-NPC zone expansion safely. | The portfolio map currently has 10 zone actors / 210 interaction points, all non-spatially-loaded and capacity-consistent. MCP supports discovery, tag registration, map verification, and PIE control but has no EQS-asset factory; direct World Partition actor writes did not persist after a reload. | Registered 96 stable instance tags plus `PCSP.Zone.Hygiene` in `Config/DefaultGameplayTags.ini`; create the EQS asset and place/validate new actors through the level editor before C++ EQS integration. |
+| 2026-09-01 | Gate bulk World Partition placement on durable property serialization. | A live five-actor `Rest.Apt_02` probe proved MCP can spawn and initially save external-actor packages, but after a map reload `Category`, `ZoneTag`, and `InteractionPoints` reverted to defaults. The probe was then removed at the exact external-package paths and the portfolio map returned to 10 zones. | Add/use an editor utility that invokes `Modify` plus package save for actor properties, then run the documented 86-zone / 382-point expansion. |
+| 2026-09-01 | Use an editor-only commandlet for durable 1,024-NPC zone authoring. | `UPCSPZoneLayoutCommandlet` uses native `Modify`, `PostEditChange`, `MarkPackageDirty`, and UnrealEd's dirty-package save path, avoiding the generic MCP property-writer persistence defect. | Successfully authored `Map_PCSPDistrict_Portfolio`: legacy Leisure was folded into Observe, 86 zones and 382 interaction points were added, for a saved total of 96 zones / 592 points. The external-actor file count increased exactly 236 → 704. |
 
 ## 2026-05-13 - Phase 1 C++ Scaffold
 
@@ -805,3 +810,22 @@ Implemented the first complete scale-up pass described in
   cross-tier persona-signal preservation, not Mass or Actor superiority.
 - Restored the pre-run `no_consist` ONNX/persona export after validating its
   original SHA-256 hashes.
+
+## 2026-09-02 - Expanded Zone Point Metadata Repair
+
+- Rebuilt `cnzoiEditor` successfully after adding the editor-only
+  `UPCSPZoneLayoutCommandlet` module; the previous compile blockers were the
+  unavailable `EditorLoadingAndSavingUtils.h` include and an `FName`/`FString`
+  mismatch in `SetActorLabel`.
+- Ran `-run=PCSPZoneLayout -Repair` against
+  `/Game/PCSP/Maps/Map_PCSPDistrict_Portfolio`. The commandlet loaded the map,
+  normalized and saved all 592 interaction points so each now inherits its
+  parent zone's tag and affordance category, and set zones/points non-spatially
+  loaded for the current World Partition baseline.
+- The commandlet completed with `PCSP zone repair complete: normalized 592
+  interaction points.` The user-authored
+  `EQS_PCSP_SelectAffordanceZone.uasset` remains present and untouched.
+- A visible UE 5.8 editor was reopened afterward. Its local official toolsets
+  initialized, but the external MCP endpoint was not exposed to this Codex
+  session, so a final remote PIE invocation is deferred until that endpoint is
+  reattached.

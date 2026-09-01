@@ -1,7 +1,11 @@
 # EQS-Driven Affordance Congestion Handling
 
-**Status:** Deferred from Phase 2. Current substitute: per-zone capacity +
-`RecentFailureCount` backoff in `BTTask_PCSPDecision`.
+**Status:** First C++ pass implemented (build/PIE validation pending): normalized distance + remaining-capacity
+weighted scoring in `UPCSPAffordanceSubsystem`, controlled by
+`pcsp.WeightedZoneScoring` (`1` by default; `0` restores nearest-zone-only).
+EQS asset integration remains editor-authoring pending. Current substitute for
+the final EQS path is per-zone capacity + `RecentFailureCount` backoff in
+`BTTask_PCSPDecision`.
 **Owner:** AI / Gameplay Programmer
 **Target scale:** 32–64 agents competing for a 9-category affordance set
 

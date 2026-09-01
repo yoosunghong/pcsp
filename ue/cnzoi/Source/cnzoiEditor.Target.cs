@@ -11,5 +11,6 @@ public class cnzoiEditorTarget : TargetRules
 		DefaultBuildSettings = BuildSettingsVersion.V7;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_8;
 		ExtraModuleNames.Add("cnzoi");
+		ExtraModuleNames.Add("cnzoiEditor");
 	}
 }

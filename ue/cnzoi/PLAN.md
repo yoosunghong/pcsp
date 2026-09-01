@@ -96,7 +96,8 @@ Detailed portfolio docs live under [docs/portfolio/](docs/portfolio/).
 - [x] Implement `UBTTask_PerformInteraction` — waits InteractionDuration, applies needs satisfaction delta, releases reservation.
 - [x] Add retry and reservation conflict handling (MoveToAffordance RetryCount + RecentFailureCount BB key; PerformInteraction checks reservation validity each tick).
 - [x] Emergency branch for critical needs (UrgencyScore > 0.85 Blackboard Decorator, Observer Aborts = Both).
-- [ ] Congestion handling — EQS or weighted zone scoring when multiple agents compete for the same zone (deferred to Phase 3 scaling work).
+- [ ] Congestion handling — first weighted scorer is implemented (`pcsp.WeightedZoneScoring=1`);
+      build/PIE validation, expanded-zone measurement, and editor-owned EQS integration remain pending.
 - [x] Zone-coverage fix for engine-integration experiment (2026-05-17):
       Park (Observe) and Gym (Exercise) were systematically unvisited.
       Resolution: agents now run on ONNX inference exclusively — heuristic
@@ -405,12 +406,14 @@ systems have at least a first pass. All portfolio planning docs live under
 | --- | --- | --- | --- | --- |
 | 1 | Hybrid policy/BT contract cleanup | Implemented 2026-05-23 | [docs/portfolio/hybrid-stack.md](docs/portfolio/hybrid-stack.md) | centralized action-to-category mapping, routed `Leisure` to Observe, logged active ablation |
 | 2 | 1,024-NPC Mass hybrid + path admission | Visible 12-run benchmark complete 2026-09-01; Insights capture pending | [docs/portfolio/mass-1024-scaling.md](docs/portfolio/mass-1024-scaling.md) | `UPCSPPathRequestSchedulerSubsystem`, `APCSPMassSpawner`, Mass fragments/processor, sweep/analyzer telemetry |
-| 3 | EQS-driven affordance congestion handling | Deferred | [docs/portfolio/eqs-congestion.md](docs/portfolio/eqs-congestion.md) | `UPCSPAffordanceSubsystem`, `UBTTask_MoveToAffordance`, EQS query/tests |
-| 4 | Async/batched ONNX inference | Cohort staggering live; true dynamic batch deferred | [docs/portfolio/async-inference.md](docs/portfolio/async-inference.md) | `UPCSPPolicySubsystem`, Mass cohort buffers, dynamic `[B,*]` ONNX export |
-| 5 | Trajectory observability pipeline extensions | Scaling-aware; sampled Actor/Mass independent-eval bridge live 2026-09-01 | [docs/portfolio/observability.md](docs/portfolio/observability.md) | canonical Actor action index, sampled `mass_trajectories.jsonl`, frozen evaluator adapter, existing scheduler/Mass stats/HUD ring buffer |
-| 6 | Agent-camera focus + demo HUD | C++ scaffold and UMG assets present; capture validation pending | [docs/portfolio/demo-video-hud-plan.md](docs/portfolio/demo-video-hud-plan.md) | `APCSPDemoPlayerController`, `UPCSPAgentDebugViewModel`, HUD widgets, portfolio map |
-| 7 | Diagram polish | Refreshed 2026-05-23 | [docs/portfolio/diagrams.md](docs/portfolio/diagrams.md) | diagrams 2, 3, 4, 5 updated for hybrid-stack cleanup |
-| 8 | Static visual evidence pack | Implemented 2026-08-31 | [docs/portfolio/visual-evidence.md](docs/portfolio/visual-evidence.md) | reproducible ablation, Actor-scaling, and Mass-runtime PNG/SVG figures |
+| 3 | 1,024-NPC zone expansion + EQS asset | Completed 2026-09-01 through `UPCSPZoneLayoutCommandlet`: native World Partition serialization created 96 zones / 592 points. `EQS_PCSP_SelectAffordanceZone` is editor-authored and saved. MCP-side reload/PIE verification remains once its server is restarted. | [docs/portfolio/zone-expansion-eqs-editor-guide.md](docs/portfolio/zone-expansion-eqs-editor-guide.md) | 96 zone instances / 592 interaction points in `Map_PCSPDistrict_Portfolio`; `EQS_PCSP_SelectAffordanceZone` |
+| 4 | Weighted/EQS affordance congestion handling | First weighted scorer implemented; build and expanded-zone/EQS baseline pending | [docs/portfolio/eqs-congestion.md](docs/portfolio/eqs-congestion.md) | `UPCSPAffordanceSubsystem`, `UBTTask_MoveToAffordance`, EQS query/tests |
+| 5 | ZoneGraph/MassCrowd + shared routes + density admission | Queued after expanded-zone congestion baseline | [docs/portfolio/mass-1024-scaling.md](docs/portfolio/mass-1024-scaling.md) | Mass route fragments/processors, shared route cache, predicted-arrival admission telemetry |
+| 6 | Async/batched ONNX inference | Cohort staggering live; true dynamic batch deferred pending post-navigation profile | [docs/portfolio/async-inference.md](docs/portfolio/async-inference.md) | `UPCSPPolicySubsystem`, Mass cohort buffers, dynamic `[B,*]` ONNX export |
+| 7 | Trajectory observability pipeline extensions | Scaling-aware; sampled Actor/Mass independent-eval bridge live 2026-09-01 | [docs/portfolio/observability.md](docs/portfolio/observability.md) | canonical Actor action index, sampled `mass_trajectories.jsonl`, frozen evaluator adapter, existing scheduler/Mass stats/HUD ring buffer |
+| 8 | Agent-camera focus + demo HUD | C++ scaffold and UMG assets present; capture validation pending | [docs/portfolio/demo-video-hud-plan.md](docs/portfolio/demo-video-hud-plan.md) | `APCSPDemoPlayerController`, `UPCSPAgentDebugViewModel`, HUD widgets, portfolio map |
+| 9 | Diagram polish | Refreshed 2026-05-23 | [docs/portfolio/diagrams.md](docs/portfolio/diagrams.md) | diagrams 2, 3, 4, 5 updated for hybrid-stack cleanup |
+| 10 | Static visual evidence pack | Implemented 2026-08-31 | [docs/portfolio/visual-evidence.md](docs/portfolio/visual-evidence.md) | reproducible ablation, Actor-scaling, and Mass-runtime PNG/SVG figures |
 
 ## Debug Log Map
 

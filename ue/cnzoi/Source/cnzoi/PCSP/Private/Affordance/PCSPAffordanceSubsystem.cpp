@@ -6,7 +6,13 @@
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "HAL/FileManager.h"
+#include "HAL/IConsoleManager.h"
 #include "UObject/Class.h"
+
+static TAutoConsoleVariable<int32> CVarPCSPWeightedZoneScoring(
+	TEXT("pcsp.WeightedZoneScoring"), 1,
+	TEXT("Use distance + availability weighted affordance-zone selection (0 = legacy nearest-zone selection)."),
+	ECVF_Default);
 
 void UPCSPAffordanceSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -74,9 +80,10 @@ FString FPCSPZoneSelectionDebug::ToCompactString() const
 	case EPCSPZoneRejection::AllTooFar:           ReasonName = TEXT("AllTooFar"); break;
 	}
 	return FString::Printf(
-		TEXT("%s(reg=%d,valid=%d,catMatch=%d,capOk=%d,inRange=%d,nearest=%.0f)"),
+		TEXT("%s(reg=%d,valid=%d,catMatch=%d,capOk=%d,inRange=%d,nearest=%.0f,selectedDist=%.0f,selectedOcc=%.2f,score=%.3f)"),
 		ReasonName, RegisteredCount, ValidCount,
-		CategoryMatchCount, CapacityOkCount, InRangeCount, NearestDistance);
+		CategoryMatchCount, CapacityOkCount, InRangeCount, NearestDistance,
+		SelectedDistance, SelectedOccupancy, SelectedScore);
 }
 
 void UPCSPAffordanceSubsystem::RegisterZone(APCSPAffordanceZone* Zone)
@@ -142,9 +149,37 @@ APCSPAffordanceZone* UPCSPAffordanceSubsystem::FindBestZone(
 		}
 		++OutDebug.InRangeCount;
 
+		const bool bWeightedScoring = Query.bUseWeightedScoring
+			&& CVarPCSPWeightedZoneScoring.GetValueOnGameThread() != 0;
+		const float Availability = 1.f - Z->GetOccupancyRatio();
+		const float DistanceScore = 1.f - FMath::Clamp(Dist / FMath::Max(Query.MaxDistance, 1.f), 0.f, 1.f);
+
+		// The final epsilon is deterministic for this agent location and zone tag.
+		// It breaks exact-score herds without making fixed-seed benchmarks depend
+		// on global random-number call order.
+		const uint32 TieHash = HashCombine(GetTypeHash(Query.FromLocation), GetTypeHash(Z->ZoneTag));
+		const float TieBreak = static_cast<float>(TieHash % 1000u) / 1000.f;
+
 		float Score = -Dist;
-		if (Query.PreferredTag.IsValid() && Z->ZoneTag == Query.PreferredTag) { Score += 5000.f; }
-		if (Score > BestScore) { BestScore = Score; Best = Z; }
+		if (bWeightedScoring)
+		{
+			Score = Query.DistanceWeight * DistanceScore
+				+ Query.AvailabilityWeight * Availability
+				+ Query.TieBreakWeight * TieBreak;
+		}
+		if (Query.PreferredTag.IsValid() && Z->ZoneTag == Query.PreferredTag)
+		{
+			Score += bWeightedScoring ? Query.PreferredTagBonus : 5000.f;
+		}
+
+		if (Score > BestScore)
+		{
+			BestScore = Score;
+			Best = Z;
+			OutDebug.SelectedDistance = Dist;
+			OutDebug.SelectedOccupancy = Z->GetOccupancyRatio();
+			OutDebug.SelectedScore = Score;
+		}
 	}
 
 	OutDebug.NearestDistance = (OutDebug.CategoryMatchCount > 0) ? NearestDistOfCategory : -1.f;

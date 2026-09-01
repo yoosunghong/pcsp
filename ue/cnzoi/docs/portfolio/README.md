@@ -21,16 +21,19 @@ Differs from `PLAN.md` in scope:
 | --- | --- | --- |
 | P0 | [hybrid-stack.md](hybrid-stack.md) cleanup | Stabilizes the action/category contract before extending execution. |
 | P1 | [mass-1024-scaling.md](mass-1024-scaling.md) | Converts the measured Actor/NavMesh ceiling into a two-tier 1,024-NPC architecture. |
-| P2 | [eqs-congestion.md](eqs-congestion.md) | Makes hero-tier crowd behavior more demonstrable and reduces capacity hot spots. |
-| P3 | [async-inference.md](async-inference.md) | Adds true dynamic-batch execution after Actor/navigation costs are removed. |
-| P4 | [observability.md](observability.md) extensions | Feeds HUD/event timelines and portfolio data proof. |
-| P5 | [demo-video-hud-plan.md](demo-video-hud-plan.md) | Defines camera focus, HUD, and the author-owned capture flow. |
-| P6 | [diagrams.md](diagrams.md) | Explains the research-to-runtime system and hybrid execution. |
+| P2 | [zone-expansion-eqs-editor-guide.md](zone-expansion-eqs-editor-guide.md) | Expands the district to 96 destinations and supplies the editor-owned EQS asset required for meaningful 1,024-NPC congestion work. |
+| P3 | [eqs-congestion.md](eqs-congestion.md) | Adds weighted/EQS hero-tier congestion handling on the expanded-zone baseline. |
+| P4 | ZoneGraph/MassCrowd + shared routes + density admission | Replaces straight-line Mass movement after the hero congestion baseline is measured. |
+| P5 | [async-inference.md](async-inference.md) | Adds true dynamic-batch execution only if the post-navigation profile makes policy work material. |
+| P6 | [observability.md](observability.md) extensions | Feeds HUD/event timelines and portfolio data proof. |
+| P7 | [demo-video-hud-plan.md](demo-video-hud-plan.md) | Defines camera focus, HUD, and the author-owned capture flow. |
+| P8 | [diagrams.md](diagrams.md) | Explains the research-to-runtime system and hybrid execution. |
 
 | Document | Subsystem | Status |
 | --- | --- | --- |
 | [mass-1024-scaling.md](mass-1024-scaling.md) | Actor path admission + Mass simulation LOD | Visible 128–1,024 benchmark complete: 12/12 clean runs; 1,024 frame p95 30.15 ms, 0% hero failure |
 | [eqs-congestion.md](eqs-congestion.md) | EQS-driven affordance congestion handling | Deferred from Phase 2 |
+| [zone-expansion-eqs-editor-guide.md](zone-expansion-eqs-editor-guide.md) | 96-zone district expansion and editor-owned EQS creation | Ready for editor authoring |
 | [async-inference.md](async-inference.md) | Asynchronous batched ONNX inference | Deferred from Phase 3 |
 | [observability.md](observability.md) | Per-agent, path-scheduler, aggregate Mass, and sampled Mass-trajectory JSONL + analyzers | Scaling-aware; full-PCSP Actor/Mass audit complete over 3 visible seeds |
 | [hybrid-stack.md](hybrid-stack.md) | Policy / Behavior Tree integration contract | Phase 2 live |

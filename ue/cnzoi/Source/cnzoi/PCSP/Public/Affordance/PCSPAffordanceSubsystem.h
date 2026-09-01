@@ -31,6 +31,9 @@ struct FPCSPZoneSelectionDebug
 	UPROPERTY(BlueprintReadOnly) int32 CapacityOkCount   = 0;
 	UPROPERTY(BlueprintReadOnly) int32 InRangeCount      = 0;
 	UPROPERTY(BlueprintReadOnly) float NearestDistance   = -1.f;  // among category matches; -1 if none
+	UPROPERTY(BlueprintReadOnly) float SelectedDistance  = -1.f;
+	UPROPERTY(BlueprintReadOnly) float SelectedOccupancy = -1.f;
+	UPROPERTY(BlueprintReadOnly) float SelectedScore     = 0.f;
 
 	FString ToCompactString() const;
 };
@@ -45,6 +48,16 @@ struct FPCSPAffordanceQuery
 	UPROPERTY(BlueprintReadWrite) FVector FromLocation = FVector::ZeroVector;
 	UPROPERTY(BlueprintReadWrite) float MaxDistance = 50000.f;
 	UPROPERTY(BlueprintReadWrite) bool bRequireCapacity = true;
+
+	/** Applies a normalized distance + available-capacity score instead of the
+	 *  legacy nearest-zone-only rule.  The CVar pcsp.WeightedZoneScoring can
+	 *  still disable the behaviour for an A/B benchmark. */
+	UPROPERTY(BlueprintReadWrite) bool bUseWeightedScoring = true;
+
+	UPROPERTY(BlueprintReadWrite, meta=(ClampMin="0.0")) float DistanceWeight = 0.50f;
+	UPROPERTY(BlueprintReadWrite, meta=(ClampMin="0.0")) float AvailabilityWeight = 0.60f;
+	UPROPERTY(BlueprintReadWrite, meta=(ClampMin="0.0")) float PreferredTagBonus = 0.15f;
+	UPROPERTY(BlueprintReadWrite, meta=(ClampMin="0.0", ClampMax="0.10")) float TieBreakWeight = 0.01f;
 };
 
 UCLASS()

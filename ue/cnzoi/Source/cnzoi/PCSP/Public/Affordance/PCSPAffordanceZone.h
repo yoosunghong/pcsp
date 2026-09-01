@@ -41,6 +41,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category="PCSP|Affordance")
 	bool HasCapacity() const { return CurrentOccupants.Num() < Capacity; }
 
+	/** Fraction of the authored zone capacity currently claimed by Hero Actors.
+	 *  A claim starts with interaction-point reservation, so this includes agents
+	 *  walking toward the zone as well as agents currently interacting. */
+	UFUNCTION(BlueprintCallable, Category="PCSP|Affordance")
+	float GetOccupancyRatio() const
+	{
+		return Capacity > 0
+			? FMath::Clamp(static_cast<float>(CurrentOccupants.Num()) / static_cast<float>(Capacity), 0.f, 1.f)
+			: 1.f;
+	}
+
 	UFUNCTION(BlueprintCallable, Category="PCSP|Affordance")
 	void RegisterOccupant(AActor* Actor);
 
