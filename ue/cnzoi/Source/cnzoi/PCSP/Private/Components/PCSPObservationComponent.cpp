@@ -4,12 +4,14 @@
 #include "PCSPAffordanceSubsystem.h"
 #include "PCSPAffordanceZone.h"
 #include "PCSPTypes.h"
+#include "PCSPSpatialQuerySubsystem.h"
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "ProfilingDebugging/CpuProfilerTrace.h"
 
 // ---------------------------------------------------------------------------
 // v3 observation layout (33 floats, 4-agent training format)
@@ -46,6 +48,8 @@ void UPCSPObservationComponent::BeginPlay()
 
 const TArray<float>& UPCSPObservationComponent::BuildObservation()
 {
+	TRACE_CPUPROFILER_EVENT_SCOPE(PCSP_Observation_Build);
+
 	LastObservation.Reset();
 	LastObservation.Reserve(V3_OBS_DIM);
 
@@ -156,8 +160,19 @@ const TArray<float>& UPCSPObservationComponent::BuildObservation()
 	// Collect all PCSP characters in the world, sort by distance, take closest 3.
 	{
 		TArray<AActor*> Others;
-		if (Owner && World)
+		bool bUsedAsyncResult = false;
+		if (Owner && World && UPCSPSpatialQuerySubsystem::IsAsyncEnabled())
 		{
+			if (const UPCSPSpatialQuerySubsystem* Spatial =
+				World->GetSubsystem<UPCSPSpatialQuerySubsystem>())
+			{
+				TArray<AActor*> Nearby;
+				bUsedAsyncResult = Spatial->GetQueryResult(Owner, Nearby, Others);
+			}
+		}
+		if (Owner && World && !bUsedAsyncResult)
+		{
+			TRACE_CPUPROFILER_EVENT_SCOPE(PCSP_Spatial_NearestNeighbors_Legacy);
 			UGameplayStatics::GetAllActorsOfClass(World, ACharacter::StaticClass(), Others);
 			Others.Remove(Owner);
 			const FVector SelfLoc = Owner->GetActorLocation();

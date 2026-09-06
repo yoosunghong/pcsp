@@ -1,0 +1,137 @@
+{
+  "protocol": {
+    "session": "D:\\Github\\pcsp\\ue\\cnzoi\\Saved\\PCSP\\Logs\\20260901_044431",
+    "feature_contract": "independent_behavior.action_only.v1",
+    "policy_action_source": "explicit policy_action_index; legacy Actor fallback is argmax of logged logits",
+    "min_decisions": 5,
+    "active_ablation": "no_consist",
+    "policy_mode": "HybridPCSP"
+  },
+  "tiers": {
+    "actor": {
+      "n_personas": 16,
+      "decision_count": {
+        "min": 20,
+        "max": 46,
+        "mean": 31.75
+      },
+      "mean_balanced_accuracy": 0.4583597883597884,
+      "axes": {
+        "E": {
+          "n": 16,
+          "accuracy": 0.5,
+          "balanced_accuracy": 0.48888888888888893,
+          "macro_f1": 0.4833333333333332,
+          "ece_equal_frequency_10": 0.407557442897061
+        },
+        "N": {
+          "n": 16,
+          "accuracy": 0.3125,
+          "balanced_accuracy": 0.3333333333333333,
+          "macro_f1": 0.3071095571095571,
+          "ece_equal_frequency_10": 0.3897126739706721
+        },
+        "A": {
+          "n": 16,
+          "accuracy": 0.5,
+          "balanced_accuracy": 0.3703703703703704,
+          "macro_f1": 0.37894736842105264,
+          "ece_equal_frequency_10": 0.39610098156878876
+        },
+        "C": {
+          "n": 16,
+          "accuracy": 0.3125,
+          "balanced_accuracy": 0.47222222222222227,
+          "macro_f1": 0.32491582491582494,
+          "ece_equal_frequency_10": 0.42688606355292225
+        },
+        "O": {
+          "n": 16,
+          "accuracy": 0.5625,
+          "balanced_accuracy": 0.626984126984127,
+          "macro_f1": 0.5174603174603174,
+          "ece_equal_frequency_10": 0.2721792341756708
+        }
+      }
+    },
+    "mass": {
+      "n_personas": 16,
+      "decision_count": {
+        "min": 11,
+        "max": 123,
+        "mean": 62.0625
+      },
+      "mean_balanced_accuracy": 0.5714021164021164,
+      "axes": {
+        "E": {
+          "n": 16,
+          "accuracy": 0.625,
+          "balanced_accuracy": 0.6222222222222222,
+          "macro_f1": 0.6127946127946128,
+          "ece_equal_frequency_10": 0.23487898866628312
+        },
+        "N": {
+          "n": 16,
+          "accuracy": 0.375,
+          "balanced_accuracy": 0.4583333333333333,
+          "macro_f1": 0.3696969696969697,
+          "ece_equal_frequency_10": 0.27816302335868176
+        },
+        "A": {
+          "n": 16,
+          "accuracy": 0.625,
+          "balanced_accuracy": 0.4907407407407407,
+          "macro_f1": 0.5158730158730159,
+          "ece_equal_frequency_10": 0.25054717760953105
+        },
+        "C": {
+          "n": 16,
+          "accuracy": 0.5,
+          "balanced_accuracy": 0.611111111111111,
+          "macro_f1": 0.48888888888888893,
+          "ece_equal_frequency_10": 0.3280077745801471
+        },
+        "O": {
+          "n": 16,
+          "accuracy": 0.625,
+          "balanced_accuracy": 0.6746031746031745,
+          "macro_f1": 0.5619047619047618,
+          "ece_equal_frequency_10": 0.4060301503886948
+        }
+      }
+    }
+  },
+  "paired": {
+    "n_personas": 16,
+    "mean_action_js_divergence": 0.06632987861322819,
+    "median_action_js_divergence": 0.05102603761307789,
+    "trait_prediction_agreement": 0.7125,
+    "per_persona_action_js": {
+      "1": 0.048164466079582954,
+      "2": 0.013787212692809832,
+      "3": 0.03066611688174545,
+      "4": 0.0009341502640059902,
+      "5": 0.09450588742200772,
+      "6": 0.06319562056095926,
+      "7": 0.1052512102581607,
+      "8": 0.021089964335050553,
+      "9": 0.0,
+      "10": 0.057323479768097596,
+      "11": 0.053887609146572826,
+      "12": 0.1893938661106236,
+      "13": 0.2130047077428947,
+      "14": 0.12746096905103052,
+      "15": 0.0,
+      "16": 0.04261279749810927
+    },
+    "mass_minus_actor_balanced_accuracy": {
+      "observed": 0.11304232804232794,
+      "cluster_bootstrap_95": [
+        0.012870435120435156,
+        0.2177261904761904
+      ],
+      "paired_randomization_p_two_sided": 0.027486256871564217,
+      "resamples": 2000
+    }
+  }
+}

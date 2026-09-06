@@ -11,7 +11,12 @@ build/
 # Virtual environments / secrets
 .env
 .venv
-env/
+# NOTE: this was previously the bare pattern `env/`, which gitignore matches at
+# ANY depth — so it silently excluded `research/src/env/` (the Mini-Inzoi
+# environment: v3_constants, mini_inzoi_v3, action_semantics). That module was
+# therefore never committed. Anchored to the repo root so only a top-level
+# virtualenv matches and the recovered research package remains trackable.
+/env/
 venv/
 
 # Jupyter
@@ -33,6 +38,10 @@ research/paper/
 research/revised/
 PLAN.md
 DONE.md
+!research/PLAN.md
+!research/DONE.md
+!ue/cnzoi/PLAN.md
+!ue/cnzoi/DONE.md
 persona-proposal.md
 
 # Unreal Engine generated files
@@ -49,6 +58,7 @@ ue/**/Intermediate/
 ue/**/Saved/
 ue/**/.vs/
 ue/**/*.sln
+ue/**/*.slnx
 
 # Wandb / tensorboard
 wandb/
@@ -80,6 +90,17 @@ Thumbs.db
 
 # Assets
 ue/cnzoi/Content/SkyTown/
+
+# Portfolio-only presentation materials and generated evidence
+# These are local showcase artifacts, not research/runtime source inputs.
+/PORTFOLIO.md
+/ue/cnzoi/docs/portfolio/
+/ue/cnzoi/tools/capture_portfolio_cover.py
+/ue/cnzoi/tools/generate_portfolio_visuals.py
+/ue/cnzoi/tools/generate_optimization_deepdives.py
+/ue/cnzoi/tools/generate_persona_training_assets.py
+/ue/cnzoi/tools/set_dieselpunk_texture_resolution.py
+/research/results/ue_sessions/*_portfolio_*/
 
 # mcp
 /ue/cnzoi/.narshamcp

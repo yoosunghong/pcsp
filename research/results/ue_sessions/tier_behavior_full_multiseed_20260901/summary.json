@@ -1,0 +1,90 @@
+{
+  "protocol": {
+    "active_ablation": "full",
+    "policy_mode": "HybridPCSP",
+    "aggregation_unit": "UE standalone run / spawn seed",
+    "n_runs": 3,
+    "input_audits": [
+      "research/results/ue_sessions/tier_behavior_full_20260901_052732/ue_behavior_eval.json",
+      "research/results/ue_sessions/tier_behavior_full_20260901_053253/ue_behavior_eval.json",
+      "research/results/ue_sessions/tier_behavior_full_20260901_053815/ue_behavior_eval.json"
+    ],
+    "uncertainty": "sample standard deviation across three spawn seeds; descriptive, not a confidence interval"
+  },
+  "runs": [
+    {
+      "session": "20260901_052732",
+      "active_ablation": "full",
+      "policy_mode": "HybridPCSP",
+      "actor_personas": 16,
+      "mass_personas": 16,
+      "actor_mean_decisions": 27.1875,
+      "mass_mean_decisions": 42.25,
+      "actor_balanced_accuracy": 0.5046296296296295,
+      "mass_balanced_accuracy": 0.4387830687830688,
+      "mass_minus_actor_balanced_accuracy": -0.06584656084656076,
+      "mean_action_js_divergence": 0.07780026670601603,
+      "trait_prediction_agreement": 0.7125
+    },
+    {
+      "session": "20260901_053253",
+      "active_ablation": "full",
+      "policy_mode": "HybridPCSP",
+      "actor_personas": 16,
+      "mass_personas": 16,
+      "actor_mean_decisions": 26.125,
+      "mass_mean_decisions": 42.8125,
+      "actor_balanced_accuracy": 0.557936507936508,
+      "mass_balanced_accuracy": 0.4632275132275132,
+      "mass_minus_actor_balanced_accuracy": -0.09470899470899474,
+      "mean_action_js_divergence": 0.053268446719053515,
+      "trait_prediction_agreement": 0.7
+    },
+    {
+      "session": "20260901_053815",
+      "active_ablation": "full",
+      "policy_mode": "HybridPCSP",
+      "actor_personas": 16,
+      "mass_personas": 16,
+      "actor_mean_decisions": 26.0625,
+      "mass_mean_decisions": 41.5,
+      "actor_balanced_accuracy": 0.4325661375661376,
+      "mass_balanced_accuracy": 0.4477777777777778,
+      "mass_minus_actor_balanced_accuracy": 0.015211640211640176,
+      "mean_action_js_divergence": 0.07273739726417633,
+      "trait_prediction_agreement": 0.625
+    }
+  ],
+  "aggregate": {
+    "actor_balanced_accuracy": {
+      "mean": 0.4983774250440917,
+      "sample_std": 0.06291859811165157,
+      "min": 0.4325661375661376,
+      "max": 0.557936507936508
+    },
+    "mass_balanced_accuracy": {
+      "mean": 0.4499294532627866,
+      "sample_std": 0.012363454072142361,
+      "min": 0.4387830687830688,
+      "max": 0.4632275132275132
+    },
+    "mass_minus_actor_balanced_accuracy": {
+      "mean": -0.04844797178130511,
+      "sample_std": 0.056988329256393376,
+      "min": -0.09470899470899474,
+      "max": 0.015211640211640176
+    },
+    "mean_action_js_divergence": {
+      "mean": 0.06793537022974862,
+      "sample_std": 0.012951723657402294,
+      "min": 0.053268446719053515,
+      "max": 0.07780026670601603
+    },
+    "trait_prediction_agreement": {
+      "mean": 0.6791666666666667,
+      "sample_std": 0.04732423621500228,
+      "min": 0.625,
+      "max": 0.7125
+    }
+  }
+}

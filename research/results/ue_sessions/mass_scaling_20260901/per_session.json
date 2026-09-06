@@ -1,0 +1,682 @@
+[
+  {
+    "session": "20260901_024339",
+    "n_agents": 128,
+    "hero_agents": 16,
+    "mass_entities": 112,
+    "architecture": "mass_hybrid",
+    "seed": 0,
+    "duration_s": 299.2,
+    "n_decisions": 507,
+    "n_interaction_complete": 467,
+    "n_move_failed": 0,
+    "fail_rate": 0.0,
+    "intents_per_agent_per_min": 11.42,
+    "infer_us": {
+      "n": 491,
+      "mean": 216.7,
+      "p50": 196.7,
+      "p95": 407.1,
+      "p99": 665.0,
+      "max": 895.2
+    },
+    "frame_ms": {
+      "n": 295,
+      "mean": 24.601,
+      "p95_of_p95": 30.475,
+      "p95_max": 58.292,
+      "p99_max": 64.441
+    },
+    "failure_reasons": {},
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.09783427495291898,
+      "PCSP.Zone.Exercise": 0.05112994350282477,
+      "PCSP.Zone.Eat": 0.011016949152542373,
+      "PCSP.Zone.Study": 0.0722033898305087,
+      "PCSP.Zone.Observe": 0.005084745762711864,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.06483050847457612,
+      "PCSP.Zone.Higiene": 0.0,
+      "PCSP.Zone.Social": 0.07758945386064009
+    },
+    "path_scheduler": {
+      "n": 293,
+      "queue_peak": 2,
+      "wait_ms_mean": 19.058,
+      "wait_ms_p95_mean": 19.621,
+      "submitted": 462
+    },
+    "mass": {
+      "n": 292,
+      "decisions": 6762,
+      "arrivals": 6822,
+      "policy_us_mean": 210.745,
+      "arrivals_per_entity_min": 12.214
+    }
+  },
+  {
+    "session": "20260901_024934",
+    "n_agents": 128,
+    "hero_agents": 16,
+    "mass_entities": 112,
+    "architecture": "mass_hybrid",
+    "seed": 1,
+    "duration_s": 299.5,
+    "n_decisions": 540,
+    "n_interaction_complete": 498,
+    "n_move_failed": 0,
+    "fail_rate": 0.0,
+    "intents_per_agent_per_min": 11.39,
+    "infer_us": {
+      "n": 524,
+      "mean": 211.7,
+      "p50": 194.3,
+      "p95": 389.3,
+      "p99": 512.6,
+      "max": 741.2
+    },
+    "frame_ms": {
+      "n": 296,
+      "mean": 25.227,
+      "p95_of_p95": 30.256,
+      "p95_max": 33.169,
+      "p99_max": 66.351
+    },
+    "failure_reasons": {},
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.09187312312312315,
+      "PCSP.Zone.Exercise": 0.03575450450450452,
+      "PCSP.Zone.Eat": 0.017947635135135136,
+      "PCSP.Zone.Study": 0.06604729729729743,
+      "PCSP.Zone.Observe": 0.004011824324324324,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.0629222972972973,
+      "PCSP.Zone.Higiene": 0.0033783783783783786,
+      "PCSP.Zone.Social": 0.07867867867867848
+    },
+    "path_scheduler": {
+      "n": 293,
+      "queue_peak": 2,
+      "wait_ms_mean": 20.515,
+      "wait_ms_p95_mean": 20.988,
+      "submitted": 493
+    },
+    "mass": {
+      "n": 292,
+      "decisions": 6719,
+      "arrivals": 6781,
+      "policy_us_mean": 200.624,
+      "arrivals_per_entity_min": 12.13
+    }
+  },
+  {
+    "session": "20260901_025455",
+    "n_agents": 128,
+    "hero_agents": 16,
+    "mass_entities": 112,
+    "architecture": "mass_hybrid",
+    "seed": 2,
+    "duration_s": 299.5,
+    "n_decisions": 509,
+    "n_interaction_complete": 471,
+    "n_move_failed": 0,
+    "fail_rate": 0.0,
+    "intents_per_agent_per_min": 11.33,
+    "infer_us": {
+      "n": 493,
+      "mean": 197.3,
+      "p50": 185.5,
+      "p95": 307.4,
+      "p99": 480.9,
+      "max": 659.0
+    },
+    "frame_ms": {
+      "n": 296,
+      "mean": 24.615,
+      "p95_of_p95": 28.968,
+      "p95_max": 31.213,
+      "p99_max": 44.677
+    },
+    "failure_reasons": {},
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.09816066066066062,
+      "PCSP.Zone.Exercise": 0.048141891891891914,
+      "PCSP.Zone.Eat": 0.005489864864864865,
+      "PCSP.Zone.Study": 0.06925675675675684,
+      "PCSP.Zone.Observe": 0.010135135135135136,
+      "PCSP.Zone.Shop": 0.005630630630630632,
+      "PCSP.Zone.Work": 0.06503378378378376,
+      "PCSP.Zone.Higiene": 0.0035895270270270272,
+      "PCSP.Zone.Social": 0.07672672672672651
+    },
+    "path_scheduler": {
+      "n": 293,
+      "queue_peak": 2,
+      "wait_ms_mean": 20.706,
+      "wait_ms_p95_mean": 21.139,
+      "submitted": 470
+    },
+    "mass": {
+      "n": 292,
+      "decisions": 6711,
+      "arrivals": 6770,
+      "policy_us_mean": 198.248,
+      "arrivals_per_entity_min": 12.109
+    }
+  },
+  {
+    "session": "20260901_030014",
+    "n_agents": 256,
+    "hero_agents": 16,
+    "mass_entities": 240,
+    "architecture": "mass_hybrid",
+    "seed": 0,
+    "duration_s": 298.7,
+    "n_decisions": 533,
+    "n_interaction_complete": 492,
+    "n_move_failed": 1,
+    "fail_rate": 0.002,
+    "intents_per_agent_per_min": 12.41,
+    "infer_us": {
+      "n": 517,
+      "mean": 187.3,
+      "p50": 177.3,
+      "p95": 291.7,
+      "p99": 445.6,
+      "max": 942.8
+    },
+    "frame_ms": {
+      "n": 296,
+      "mean": 24.037,
+      "p95_of_p95": 28.07,
+      "p95_max": 29.142,
+      "p99_max": 47.174
+    },
+    "failure_reasons": {
+      "path_follow_idle_short": 1
+    },
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.10191441441441432,
+      "PCSP.Zone.Exercise": 0.044763513513513487,
+      "PCSP.Zone.Eat": 0.015625,
+      "PCSP.Zone.Study": 0.052702702702702754,
+      "PCSP.Zone.Observe": 0.00633445945945946,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.06376689189189184,
+      "PCSP.Zone.Higiene": 0.0,
+      "PCSP.Zone.Social": 0.07897897897897876
+    },
+    "path_scheduler": {
+      "n": 293,
+      "queue_peak": 2,
+      "wait_ms_mean": 19.002,
+      "wait_ms_p95_mean": 19.515,
+      "submitted": 493
+    },
+    "mass": {
+      "n": 292,
+      "decisions": 15192,
+      "arrivals": 15330,
+      "policy_us_mean": 167.964,
+      "arrivals_per_entity_min": 12.829
+    }
+  },
+  {
+    "session": "20260901_030535",
+    "n_agents": 256,
+    "hero_agents": 16,
+    "mass_entities": 240,
+    "architecture": "mass_hybrid",
+    "seed": 1,
+    "duration_s": 299.0,
+    "n_decisions": 538,
+    "n_interaction_complete": 496,
+    "n_move_failed": 0,
+    "fail_rate": 0.0,
+    "intents_per_agent_per_min": 12.36,
+    "infer_us": {
+      "n": 522,
+      "mean": 205.1,
+      "p50": 190.9,
+      "p95": 370.1,
+      "p99": 499.0,
+      "max": 624.1
+    },
+    "frame_ms": {
+      "n": 296,
+      "mean": 24.631,
+      "p95_of_p95": 29.346,
+      "p95_max": 62.474,
+      "p99_max": 68.154
+    },
+    "failure_reasons": {},
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.09374999999999994,
+      "PCSP.Zone.Exercise": 0.037162162162162164,
+      "PCSP.Zone.Eat": 0.005067567567567568,
+      "PCSP.Zone.Study": 0.0719594594594595,
+      "PCSP.Zone.Observe": 0.0044341216216216214,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.06742680180180174,
+      "PCSP.Zone.Higiene": 0.0,
+      "PCSP.Zone.Social": 0.07807807807807787
+    },
+    "path_scheduler": {
+      "n": 293,
+      "queue_peak": 3,
+      "wait_ms_mean": 19.56,
+      "wait_ms_p95_mean": 20.067,
+      "submitted": 493
+    },
+    "mass": {
+      "n": 292,
+      "decisions": 15144,
+      "arrivals": 15277,
+      "policy_us_mean": 173.259,
+      "arrivals_per_entity_min": 12.773
+    }
+  },
+  {
+    "session": "20260901_031058",
+    "n_agents": 256,
+    "hero_agents": 16,
+    "mass_entities": 240,
+    "architecture": "mass_hybrid",
+    "seed": 2,
+    "duration_s": 299.1,
+    "n_decisions": 501,
+    "n_interaction_complete": 463,
+    "n_move_failed": 1,
+    "fail_rate": 0.0022,
+    "intents_per_agent_per_min": 12.32,
+    "infer_us": {
+      "n": 485,
+      "mean": 197.8,
+      "p50": 188.1,
+      "p95": 317.3,
+      "p99": 472.9,
+      "max": 542.4
+    },
+    "frame_ms": {
+      "n": 296,
+      "mean": 24.582,
+      "p95_of_p95": 29.299,
+      "p95_max": 31.247,
+      "p99_max": 51.351
+    },
+    "failure_reasons": {
+      "path_follow_idle_short": 1
+    },
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.10163288288288289,
+      "PCSP.Zone.Exercise": 0.039132882882882906,
+      "PCSP.Zone.Eat": 0.006756756756756757,
+      "PCSP.Zone.Study": 0.0714527027027027,
+      "PCSP.Zone.Observe": 0.009290540540540541,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.06869369369369353,
+      "PCSP.Zone.Higiene": 0.0,
+      "PCSP.Zone.Social": 0.07800300300300281
+    },
+    "path_scheduler": {
+      "n": 293,
+      "queue_peak": 2,
+      "wait_ms_mean": 19.887,
+      "wait_ms_p95_mean": 20.338,
+      "submitted": 469
+    },
+    "mass": {
+      "n": 292,
+      "decisions": 15123,
+      "arrivals": 15258,
+      "policy_us_mean": 172.967,
+      "arrivals_per_entity_min": 12.752
+    }
+  },
+  {
+    "session": "20260901_031619",
+    "n_agents": 512,
+    "hero_agents": 16,
+    "mass_entities": 496,
+    "architecture": "mass_hybrid",
+    "seed": 0,
+    "duration_s": 299.5,
+    "n_decisions": 517,
+    "n_interaction_complete": 464,
+    "n_move_failed": 14,
+    "fail_rate": 0.0293,
+    "intents_per_agent_per_min": 13.19,
+    "infer_us": {
+      "n": 501,
+      "mean": 193.4,
+      "p50": 180.5,
+      "p95": 347.3,
+      "p99": 486.4,
+      "max": 616.5
+    },
+    "frame_ms": {
+      "n": 296,
+      "mean": 24.618,
+      "p95_of_p95": 29.039,
+      "p95_max": 30.413,
+      "p99_max": 43.273
+    },
+    "failure_reasons": {
+      "path_follow_idle_short": 14
+    },
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.10313438438438438,
+      "PCSP.Zone.Exercise": 0.03941441441441438,
+      "PCSP.Zone.Eat": 0.011613175675675675,
+      "PCSP.Zone.Study": 0.07804054054054053,
+      "PCSP.Zone.Observe": 0.009923986486486486,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.06306306306306303,
+      "PCSP.Zone.Higiene": 0.0,
+      "PCSP.Zone.Social": 0.07447447447447426
+    },
+    "path_scheduler": {
+      "n": 293,
+      "queue_peak": 2,
+      "wait_ms_mean": 20.308,
+      "wait_ms_p95_mean": 20.799,
+      "submitted": 505
+    },
+    "mass": {
+      "n": 292,
+      "decisions": 32957,
+      "arrivals": 33246,
+      "policy_us_mean": 133.625,
+      "arrivals_per_entity_min": 13.429
+    }
+  },
+  {
+    "session": "20260901_032139",
+    "n_agents": 512,
+    "hero_agents": 16,
+    "mass_entities": 496,
+    "architecture": "mass_hybrid",
+    "seed": 1,
+    "duration_s": 299.5,
+    "n_decisions": 521,
+    "n_interaction_complete": 478,
+    "n_move_failed": 0,
+    "fail_rate": 0.0,
+    "intents_per_agent_per_min": 13.21,
+    "infer_us": {
+      "n": 505,
+      "mean": 195.4,
+      "p50": 180.8,
+      "p95": 354.0,
+      "p99": 466.6,
+      "max": 1128.7
+    },
+    "frame_ms": {
+      "n": 296,
+      "mean": 24.485,
+      "p95_of_p95": 29.296,
+      "p95_max": 40.869,
+      "p99_max": 95.382
+    },
+    "failure_reasons": {},
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.0934684684684684,
+      "PCSP.Zone.Exercise": 0.04279279279279285,
+      "PCSP.Zone.Eat": 0.01752533783783784,
+      "PCSP.Zone.Study": 0.07043918918918916,
+      "PCSP.Zone.Observe": 0.004011824324324324,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.06939752252252257,
+      "PCSP.Zone.Higiene": 0.0,
+      "PCSP.Zone.Social": 0.07560060060060039
+    },
+    "path_scheduler": {
+      "n": 293,
+      "queue_peak": 2,
+      "wait_ms_mean": 19.929,
+      "wait_ms_p95_mean": 20.429,
+      "submitted": 474
+    },
+    "mass": {
+      "n": 292,
+      "decisions": 32995,
+      "arrivals": 33292,
+      "policy_us_mean": 134.189,
+      "arrivals_per_entity_min": 13.447
+    }
+  },
+  {
+    "session": "20260901_032702",
+    "n_agents": 512,
+    "hero_agents": 16,
+    "mass_entities": 496,
+    "architecture": "mass_hybrid",
+    "seed": 2,
+    "duration_s": 299.4,
+    "n_decisions": 502,
+    "n_interaction_complete": 465,
+    "n_move_failed": 1,
+    "fail_rate": 0.0021,
+    "intents_per_agent_per_min": 13.24,
+    "infer_us": {
+      "n": 486,
+      "mean": 193.7,
+      "p50": 182.2,
+      "p95": 313.1,
+      "p99": 500.7,
+      "max": 605.3
+    },
+    "frame_ms": {
+      "n": 296,
+      "mean": 25.185,
+      "p95_of_p95": 32.177,
+      "p95_max": 59.71,
+      "p99_max": 69.961
+    },
+    "failure_reasons": {
+      "path_follow_idle_short": 1
+    },
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.10144519519519517,
+      "PCSP.Zone.Exercise": 0.032939189189189186,
+      "PCSP.Zone.Eat": 0.005067567567567568,
+      "PCSP.Zone.Study": 0.07398648648648662,
+      "PCSP.Zone.Observe": 0.011613175675675675,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.0668637387387387,
+      "PCSP.Zone.Higiene": 0.0,
+      "PCSP.Zone.Social": 0.0789039039039037
+    },
+    "path_scheduler": {
+      "n": 293,
+      "queue_peak": 2,
+      "wait_ms_mean": 20.716,
+      "wait_ms_p95_mean": 21.225,
+      "submitted": 463
+    },
+    "mass": {
+      "n": 292,
+      "decisions": 33068,
+      "arrivals": 33362,
+      "policy_us_mean": 132.818,
+      "arrivals_per_entity_min": 13.477
+    }
+  },
+  {
+    "session": "20260901_033223",
+    "n_agents": 1024,
+    "hero_agents": 16,
+    "mass_entities": 1008,
+    "architecture": "mass_hybrid",
+    "seed": 0,
+    "duration_s": 299.4,
+    "n_decisions": 518,
+    "n_interaction_complete": 480,
+    "n_move_failed": 0,
+    "fail_rate": 0.0,
+    "intents_per_agent_per_min": 14.12,
+    "infer_us": {
+      "n": 502,
+      "mean": 193.9,
+      "p50": 184.1,
+      "p95": 286.3,
+      "p99": 471.6,
+      "max": 835.2
+    },
+    "frame_ms": {
+      "n": 296,
+      "mean": 25.235,
+      "p95_of_p95": 30.042,
+      "p95_max": 34.932,
+      "p99_max": 47.088
+    },
+    "failure_reasons": {},
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.09337462462462458,
+      "PCSP.Zone.Exercise": 0.0419481981981982,
+      "PCSP.Zone.Eat": 0.018581081081081082,
+      "PCSP.Zone.Study": 0.08006756756756768,
+      "PCSP.Zone.Observe": 0.0029560810810810812,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.06052927927927934,
+      "PCSP.Zone.Higiene": 0.0,
+      "PCSP.Zone.Social": 0.0800300300300298
+    },
+    "path_scheduler": {
+      "n": 293,
+      "queue_peak": 2,
+      "wait_ms_mean": 21.365,
+      "wait_ms_p95_mean": 21.788,
+      "submitted": 475
+    },
+    "mass": {
+      "n": 292,
+      "decisions": 71076,
+      "arrivals": 71690,
+      "policy_us_mean": 103.706,
+      "arrivals_per_entity_min": 14.252
+    }
+  },
+  {
+    "session": "20260901_033744",
+    "n_agents": 1024,
+    "hero_agents": 16,
+    "mass_entities": 1008,
+    "architecture": "mass_hybrid",
+    "seed": 1,
+    "duration_s": 299.5,
+    "n_decisions": 515,
+    "n_interaction_complete": 470,
+    "n_move_failed": 0,
+    "fail_rate": 0.0,
+    "intents_per_agent_per_min": 14.09,
+    "infer_us": {
+      "n": 499,
+      "mean": 187.1,
+      "p50": 178.2,
+      "p95": 284.0,
+      "p99": 452.8,
+      "max": 606.1
+    },
+    "frame_ms": {
+      "n": 296,
+      "mean": 26.134,
+      "p95_of_p95": 30.849,
+      "p95_max": 32.778,
+      "p99_max": 105.144
+    },
+    "failure_reasons": {},
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.1018205705705705,
+      "PCSP.Zone.Exercise": 0.059403153153153074,
+      "PCSP.Zone.Eat": 0.010135135135135136,
+      "PCSP.Zone.Study": 0.057601351351351464,
+      "PCSP.Zone.Observe": 0.0033783783783783786,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.06376689189189186,
+      "PCSP.Zone.Higiene": 0.0,
+      "PCSP.Zone.Social": 0.07710210210210189
+    },
+    "path_scheduler": {
+      "n": 293,
+      "queue_peak": 3,
+      "wait_ms_mean": 20.863,
+      "wait_ms_p95_mean": 21.251,
+      "submitted": 468
+    },
+    "mass": {
+      "n": 292,
+      "decisions": 70932,
+      "arrivals": 71550,
+      "policy_us_mean": 99.006,
+      "arrivals_per_entity_min": 14.22
+    }
+  },
+  {
+    "session": "20260901_034305",
+    "n_agents": 1024,
+    "hero_agents": 16,
+    "mass_entities": 1008,
+    "architecture": "mass_hybrid",
+    "seed": 2,
+    "duration_s": 299.5,
+    "n_decisions": 529,
+    "n_interaction_complete": 491,
+    "n_move_failed": 0,
+    "fail_rate": 0.0,
+    "intents_per_agent_per_min": 14.1,
+    "infer_us": {
+      "n": 513,
+      "mean": 193.7,
+      "p50": 182.4,
+      "p95": 282.7,
+      "p99": 498.9,
+      "max": 1226.3
+    },
+    "frame_ms": {
+      "n": 296,
+      "mean": 25.047,
+      "p95_of_p95": 29.56,
+      "p95_max": 31.644,
+      "p99_max": 54.574
+    },
+    "failure_reasons": {},
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.09740990990990983,
+      "PCSP.Zone.Exercise": 0.037162162162162234,
+      "PCSP.Zone.Eat": 0.009079391891891891,
+      "PCSP.Zone.Study": 0.05405405405405411,
+      "PCSP.Zone.Observe": 0.010135135135135136,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.0692567567567567,
+      "PCSP.Zone.Higiene": 0.0,
+      "PCSP.Zone.Social": 0.08243243243243221
+    },
+    "path_scheduler": {
+      "n": 293,
+      "queue_peak": 2,
+      "wait_ms_mean": 20.321,
+      "wait_ms_p95_mean": 20.727,
+      "submitted": 486
+    },
+    "mass": {
+      "n": 292,
+      "decisions": 70975,
+      "arrivals": 71589,
+      "policy_us_mean": 100.38,
+      "arrivals_per_entity_min": 14.23
+    }
+  }
+]

@@ -86,6 +86,7 @@ pdflatex -interaction=nonstopmode main.tex
 - `scripts/`: training, evaluation, plotting, and qualitative-study runners.
 - `data/personas/`: persona datasets and train/test splits.
 - `results/`: generated checkpoints, metrics, figures, and case-study outputs.
+- `docs/`: scoped design contracts, reproducible evaluation reports, and UE-bridge notes; start at `docs/README.md`.
 - `paper/cog2026_main/`: LaTeX manuscript source.
 
 ## License

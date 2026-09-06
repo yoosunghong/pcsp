@@ -1,0 +1,2 @@
+architecture	total_npcs	hero_agents	mass_entities	seeds	infer_us_mean	infer_us_p95	frame_ms_mean	frame_ms_p95	fail_rate	intents_per_agent_min	path_queue_peak	path_wait_ms_p95	mass_policy_us_mean
+mass_hybrid	1024	4	1020	1	137.0	168.5	54.38	59.42	0.000	7.85	1.0	10.0	106.5

@@ -6,10 +6,10 @@
 #include "PCSPTypes.h"
 #include "PCSPAffordanceSubsystem.h"
 #include "PCSPAffordanceZone.h"
-#include "PCSPInteractionPoint.h"
 #include "PCSPAgentCharacter.h"
 #include "PCSPPolicySubsystem.h"
 #include "PCSPTrajectoryLogComponent.h"
+#include "PCSPPathRequestSchedulerSubsystem.h"
 #include "BehaviorTree/BlackboardData.h"
 
 UBTTask_MoveToAffordance::UBTTask_MoveToAffordance()
@@ -66,6 +66,22 @@ EBTNodeResult::Type UBTTask_MoveToAffordance::TryBeginMove(UBehaviorTreeComponen
 		return EBTNodeResult::Failed;
 	}
 
+	// Do not reserve an interaction point until the navigation system has room
+	// for this request. At 128+ actors, releasing only a bounded number of
+	// MoveTo calls per frame prevents the Recast async query queue from bursting.
+	if (UPCSPPathRequestSchedulerSubsystem* Scheduler =
+		AI->GetWorld()->GetSubsystem<UPCSPPathRequestSchedulerSubsystem>())
+	{
+		const float Urgency = BB->GetValueAsFloat(PCSPBlackboard::UrgencyScore);
+		if (!Scheduler->TryConsumePermit(Agent, Urgency))
+		{
+			Memory->bWaitingForPathPermit = true;
+			Memory->LastFailureReason = TEXT("path_request_scheduled");
+			return EBTNodeResult::InProgress;
+		}
+	}
+	Memory->bWaitingForPathPermit = false;
+
 	const EPCSPActionType Action = static_cast<EPCSPActionType>(BB->GetValueAsEnum(PCSPBlackboard::DesiredActionType));
 	const EPCSPAffordanceCategory Category =
 		(BB->GetKeyID(PCSPBlackboard::DesiredCategory) != FBlackboard::InvalidKey)
@@ -91,31 +107,31 @@ EBTNodeResult::Type UBTTask_MoveToAffordance::TryBeginMove(UBehaviorTreeComponen
 	// Always record the chosen zone tag — useful even if later steps fail.
 	Memory->LastIntendedZoneTag = Zone->ZoneTag;
 
-	APCSPInteractionPoint* Point = Zone->FindFreeInteractionPoint();
-	if (!Point)
+	const int32 SlotIndex = Zone->FindFreeInteractionSlot();
+	if (SlotIndex == INDEX_NONE)
 	{
-		Memory->LastFailureReason = TEXT("zone_no_free_interaction_point");
+		Memory->LastFailureReason = TEXT("zone_no_free_interaction_slot");
 		return EBTNodeResult::Failed;
 	}
-	if (!Point->TryReserve(Agent))
+	if (!Zone->TryReserveInteractionSlot(SlotIndex, Agent))
 	{
-		Memory->LastFailureReason = TEXT("interaction_point_reserve_race_lost");
+		Memory->LastFailureReason = TEXT("interaction_slot_reserve_race_lost");
 		return EBTNodeResult::Failed;
 	}
-
-	Zone->RegisterOccupant(Agent);
 
 	Memory->Zone        = Zone;
-	Memory->Point       = Point;
+	Memory->SlotIndex   = SlotIndex;
 	Memory->bMoveStarted = false;
+	const FVector SlotLocation = Zone->GetInteractionSlotWorldLocation(SlotIndex);
 
 	// Write Blackboard keys so Phase 2 tasks and decorators can read them
-	BB->SetValueAsObject(PCSPBlackboard::TargetActor,    Point);
-	BB->SetValueAsVector(PCSPBlackboard::TargetLocation, Point->GetActorLocation());
+	BB->SetValueAsObject(PCSPBlackboard::TargetActor,    Zone);
+	BB->SetValueAsVector(PCSPBlackboard::TargetLocation, SlotLocation);
 	BB->SetValueAsName  (PCSPBlackboard::CurrentZoneTag, Zone->ZoneTag.GetTagName());
 	BB->SetValueAsBool  (PCSPBlackboard::AffordanceReserved, true);
 
-	FAIMoveRequest MoveReq(Point);
+	FAIMoveRequest MoveReq;
+	MoveReq.SetGoalLocation(SlotLocation);
 	MoveReq.SetAcceptanceRadius(AcceptanceRadius);
 	MoveReq.SetUsePathfinding(true);
 	// Treat AcceptanceRadius as a pure geometric distance, not capsule-inflated.
@@ -128,12 +144,12 @@ EBTNodeResult::Type UBTTask_MoveToAffordance::TryBeginMove(UBehaviorTreeComponen
 	if (MoveResult.Code == EPathFollowingRequestResult::Failed)
 	{
 		Memory->LastFailureReason = TEXT("pathfinding_request_failed");
-		const float Dist = FVector::Dist(Agent->GetActorLocation(), Point->GetActorLocation());
+		const float Dist = FVector::Dist(Agent->GetActorLocation(), SlotLocation);
 		Memory->LastDistanceToTarget = Dist;
 		// Release what we just took so other agents can try.
 		ReleaseReservation(NodeMemory, Agent);
 		Memory->Zone.Reset();
-		Memory->Point.Reset();
+		Memory->SlotIndex = INDEX_NONE;
 		return EBTNodeResult::Failed;
 	}
 
@@ -148,6 +164,17 @@ void UBTTask_MoveToAffordance::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 {
 	auto* Memory = reinterpret_cast<FBTMoveToAffordanceMemory*>(NodeMemory);
 
+	if (Memory->bWaitingForPathPermit)
+	{
+		const EBTNodeResult::Type PermitResult = TryBeginMove(OwnerComp, NodeMemory);
+		if (PermitResult == EBTNodeResult::Failed)
+		{
+			EmitFinalFailure(OwnerComp, NodeMemory);
+			FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
+		}
+		return;
+	}
+
 	// Give the move request one tick to register before we start polling status
 	if (!Memory->bMoveStarted)
 	{
@@ -156,7 +183,7 @@ void UBTTask_MoveToAffordance::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 	}
 
 	AAIController* AI = OwnerComp.GetAIOwner();
-	if (!AI || !Memory->Point.IsValid())
+	if (!AI || !Memory->Zone.IsValid() || Memory->SlotIndex == INDEX_NONE)
 	{
 		Memory->LastFailureReason = TEXT("controller_or_target_lost_midflight");
 		EmitFinalFailure(OwnerComp, NodeMemory);
@@ -168,7 +195,8 @@ void UBTTask_MoveToAffordance::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 	// 2D distance only: Pawn location is at capsule center (z ~88cm) while
 	// InteractionPoint sits on the ground, so a 3D check never satisfies an
 	// 80cm acceptance radius even when the agent has clearly arrived.
-	const float DistSq = FVector::DistSquaredXY(Pawn->GetActorLocation(), Memory->Point->GetActorLocation());
+	const FVector SlotLocation = Memory->Zone->GetInteractionSlotWorldLocation(Memory->SlotIndex);
+	const float DistSq = FVector::DistSquaredXY(Pawn->GetActorLocation(), SlotLocation);
 
 	if (DistSq <= FMath::Square(AcceptanceRadius))
 	{
@@ -190,7 +218,7 @@ void UBTTask_MoveToAffordance::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 		AActor* Agent = AI->GetPawn();
 		ReleaseReservation(NodeMemory, Agent);
 		Memory->Zone.Reset();
-		Memory->Point.Reset();
+		Memory->SlotIndex = INDEX_NONE;
 		Memory->RetryCount++;
 
 		if (Memory->RetryCount <= MaxRetries)
@@ -237,6 +265,11 @@ EBTNodeResult::Type UBTTask_MoveToAffordance::AbortTask(UBehaviorTreeComponent& 
 	AAIController* AI = OwnerComp.GetAIOwner();
 	if (AI)
 	{
+		if (UPCSPPathRequestSchedulerSubsystem* Scheduler =
+			AI->GetWorld()->GetSubsystem<UPCSPPathRequestSchedulerSubsystem>())
+		{
+			Scheduler->CancelRequest(AI->GetPawn());
+		}
 		AI->StopMovement();
 		ReleaseReservation(NodeMemory, AI->GetPawn());
 	}
@@ -254,8 +287,10 @@ EBTNodeResult::Type UBTTask_MoveToAffordance::AbortTask(UBehaviorTreeComponent& 
 void UBTTask_MoveToAffordance::ReleaseReservation(uint8* NodeMemory, AActor* Agent) const
 {
 	auto* Memory = reinterpret_cast<FBTMoveToAffordanceMemory*>(NodeMemory);
-	if (Memory->Point.IsValid()) { Memory->Point->Release(Agent); }
-	if (Memory->Zone.IsValid())  { Memory->Zone->UnregisterOccupant(Agent); }
+	if (Memory->Zone.IsValid())
+	{
+		Memory->Zone->ReleaseInteractionSlot(Memory->SlotIndex, Agent);
+	}
 }
 
 void UBTTask_MoveToAffordance::EmitFinalFailure(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const

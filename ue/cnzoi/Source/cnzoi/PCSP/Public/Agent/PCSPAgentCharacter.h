@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "InputCoreTypes.h"
 #include "PCSPAgentCharacter.generated.h"
 
 class UPCSPNeedsComponent;
@@ -10,6 +11,8 @@ class UPCSPObservationComponent;
 class UPCSPPersonaComponent;
 class UPCSPTrajectoryLogComponent;
 class UPCSPPolicySubsystem;
+class USpringArmComponent;
+class UCameraComponent;
 
 UCLASS()
 class CNZOI_API APCSPAgentCharacter : public ACharacter
@@ -18,6 +21,8 @@ class CNZOI_API APCSPAgentCharacter : public ACharacter
 
 public:
 	APCSPAgentCharacter();
+
+	virtual void NotifyActorOnClicked(FKey ButtonPressed = EKeys::LeftMouseButton) override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="PCSP")
 	TObjectPtr<UPCSPNeedsComponent> Needs;
@@ -34,4 +39,11 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="PCSP")
 	TObjectPtr<UPCSPTrajectoryLogComponent> TrajectoryLog;
+
+	/** Portfolio-only observer camera. It never possesses the AI pawn. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="PCSP|Demo")
+	TObjectPtr<USpringArmComponent> DemoCameraBoom;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="PCSP|Demo")
+	TObjectPtr<UCameraComponent> DemoFollowCamera;
 };

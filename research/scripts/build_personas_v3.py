@@ -1,7 +1,7 @@
 """Generate data/personas/personas_300_v3.json from personas_300.json.
 
 Implements the v1 → v3 preferred_actions mapping table from
-docs/mini_inzoi_v3_design.md §8.1. Deterministic: re-running yields a byte-
+docs/design/mini-inzoi-v3/training-and-validation.md. Deterministic: re-running yields a byte-
 identical file.
 """
 from __future__ import annotations

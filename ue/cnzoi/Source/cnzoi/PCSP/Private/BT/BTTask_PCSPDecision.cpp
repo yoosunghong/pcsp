@@ -98,7 +98,12 @@ EBTNodeResult::Type UBTTask_PCSPDecision::ExecuteTask(UBehaviorTreeComponent& Ow
 	const int32 PersonaId = Agent->Persona ? Agent->Persona->GetPersonaId() : 1;
 	TArray<float> Logits;
 	double InferenceMicros = -1.0;
-	const EPCSPActionType Action = Policy->RunInferenceWithLogits(Obs, PersonaId, Logits, InferenceMicros);
+	// Actor agents keep no decision counter, so the decision time stands in for one.
+	// Quantising to milliseconds keeps two agents deciding on the same frame apart.
+	const int32 DecisionSeed = static_cast<int32>(HashCombineFast(
+		GetTypeHash(PersonaId), GetTypeHash(FMath::RoundToInt(Now * 1000.f))));
+	const EPCSPActionType Action = Policy->RunInferenceWithLogits(
+		Obs, PersonaId, Logits, InferenceMicros, DecisionSeed);
 	if (Action == EPCSPActionType::None)
 	{
 		UE_LOG(LogTemp, Error, TEXT("BTTask_PCSPDecision: ONNX inference failed"));

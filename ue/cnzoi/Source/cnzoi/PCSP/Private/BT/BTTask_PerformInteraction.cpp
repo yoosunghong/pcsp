@@ -4,7 +4,6 @@
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "PCSPAffordanceSubsystem.h"
 #include "PCSPAffordanceZone.h"
-#include "PCSPInteractionPoint.h"
 #include "PCSPAgentCharacter.h"
 #include "PCSPNeedsComponent.h"
 #include "PCSPTrajectoryLogComponent.h"
@@ -27,8 +26,11 @@ EBTNodeResult::Type UBTTask_PerformInteraction::ExecuteTask(UBehaviorTreeCompone
 	UBlackboardComponent* BB = OwnerComp.GetBlackboardComponent();
 	if (!AI || !BB) { return EBTNodeResult::Failed; }
 
-	APCSPInteractionPoint* Point = Cast<APCSPInteractionPoint>(BB->GetValueAsObject(PCSPBlackboard::TargetActor));
-	if (!Point || !Point->IsReserved() || Point->GetReserver() != AI->GetPawn())
+	APCSPAffordanceZone* Zone = Cast<APCSPAffordanceZone>(
+		BB->GetValueAsObject(PCSPBlackboard::TargetActor));
+	const int32 SlotIndex = Zone ? Zone->FindReservedInteractionSlot(AI->GetPawn()) : INDEX_NONE;
+	if (!Zone || SlotIndex == INDEX_NONE
+		|| !Zone->IsInteractionSlotReservedBy(SlotIndex, AI->GetPawn()))
 	{
 		// Reservation was lost or never set (e.g., BT was interrupted and restarted)
 		if (APCSPAgentCharacter* Character = Cast<APCSPAgentCharacter>(AI->GetPawn()))
@@ -44,12 +46,10 @@ EBTNodeResult::Type UBTTask_PerformInteraction::ExecuteTask(UBehaviorTreeCompone
 		return EBTNodeResult::Failed;
 	}
 
-	APCSPAffordanceZone* Zone = FindZoneForPoint(AI->GetWorld(), Point);
-
 	auto* Memory       = reinterpret_cast<FBTPerformInteractionMemory*>(NodeMemory);
-	Memory->Point      = Point;
 	Memory->Zone       = Zone;
-	Memory->TimeRemaining = Point->InteractionDuration;
+	Memory->SlotIndex  = SlotIndex;
+	Memory->TimeRemaining = Zone->GetInteractionSlotDuration(SlotIndex);
 
 	return EBTNodeResult::InProgress;
 }
@@ -62,7 +62,7 @@ void UBTTask_PerformInteraction::TickTask(UBehaviorTreeComponent& OwnerComp, uin
 {
 	auto* Memory = reinterpret_cast<FBTPerformInteractionMemory*>(NodeMemory);
 
-	if (!Memory->Point.IsValid())
+	if (!Memory->Zone.IsValid() || Memory->SlotIndex == INDEX_NONE)
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
 		return;
@@ -72,7 +72,7 @@ void UBTTask_PerformInteraction::TickTask(UBehaviorTreeComponent& OwnerComp, uin
 	AActor* Agent = AI ? AI->GetPawn() : nullptr;
 
 	// Abort early if someone else stole our reservation (edge case: actor destroyed)
-	if (!Memory->Point->IsReserved() || Memory->Point->GetReserver() != Agent)
+	if (!Memory->Zone->IsInteractionSlotReservedBy(Memory->SlotIndex, Agent))
 	{
 		if (Memory->Zone.IsValid() && Agent) { Memory->Zone->UnregisterOccupant(Agent); }
 		UBlackboardComponent* BB = OwnerComp.GetBlackboardComponent();
@@ -139,23 +139,6 @@ EBTNodeResult::Type UBTTask_PerformInteraction::AbortTask(UBehaviorTreeComponent
 // Static helpers
 // ---------------------------------------------------------------------------
 
-APCSPAffordanceZone* UBTTask_PerformInteraction::FindZoneForPoint(UWorld* World, APCSPInteractionPoint* Point)
-{
-	if (!World || !Point) { return nullptr; }
-	UPCSPAffordanceSubsystem* Sub = World->GetSubsystem<UPCSPAffordanceSubsystem>();
-	if (!Sub) { return nullptr; }
-
-	for (const TWeakObjectPtr<APCSPAffordanceZone>& Weak : Sub->GetAllZones())
-	{
-		APCSPAffordanceZone* Zone = Weak.Get();
-		if (Zone && Zone->InteractionPoints.Contains(Point))
-		{
-			return Zone;
-		}
-	}
-	return nullptr;
-}
-
 float UBTTask_PerformInteraction::ApplyNeedsSatisfaction(AActor* Agent, EPCSPAffordanceCategory Category)
 {
 	APCSPAgentCharacter* Character = Cast<APCSPAgentCharacter>(Agent);
@@ -187,7 +170,9 @@ float UBTTask_PerformInteraction::ApplyNeedsSatisfaction(AActor* Agent, EPCSPAff
 void UBTTask_PerformInteraction::CleanupReservation(uint8* NodeMemory, AActor* Agent, UBlackboardComponent* BB)
 {
 	auto* Memory = reinterpret_cast<FBTPerformInteractionMemory*>(NodeMemory);
-	if (Memory->Point.IsValid() && Agent) { Memory->Point->Release(Agent); }
-	if (Memory->Zone.IsValid()  && Agent) { Memory->Zone->UnregisterOccupant(Agent); }
+	if (Memory->Zone.IsValid() && Agent)
+	{
+		Memory->Zone->ReleaseInteractionSlot(Memory->SlotIndex, Agent);
+	}
 	if (BB) { BB->SetValueAsBool(PCSPBlackboard::AffordanceReserved, false); }
 }

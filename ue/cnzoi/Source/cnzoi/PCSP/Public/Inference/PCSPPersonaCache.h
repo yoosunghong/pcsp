@@ -18,7 +18,19 @@ class CNZOI_API UPCSPPersonaCache : public UObject
 public:
 	bool LoadFromFile(const FString& AbsPath);
 
+	/**
+	 * Loads persona_texts.json (exported from research/data/personas). Optional:
+	 * the policy runs on embeddings alone, this is only for HUD presentation.
+	 */
+	bool LoadTextsFromFile(const FString& AbsPath);
+
 	bool IsLoaded() const { return bLoaded; }
+
+	/** Authored description for a 1-based persona ID; empty when unavailable. */
+	const FString& GetPersonaText(int32 PersonaId) const;
+
+	/** "occupation, age" for a 1-based persona ID; empty when unavailable. */
+	const FString& GetPersonaSubtitle(int32 PersonaId) const;
 
 	// Returns the 64-dim projected embedding for a 1-based persona ID.
 	// Returns an empty view if ID is out of range.
@@ -32,6 +44,10 @@ public:
 private:
 	// Flat storage: Embeddings[i] contains PersonaDim floats for persona (i+1).
 	TArray<TArray<float>> Embeddings;
+
+	// Parallel to Embeddings; index i holds the text for persona (i+1).
+	TArray<FString> PersonaTexts;
+	TArray<FString> PersonaSubtitles;
 
 	int32 CachedPersonaDim  = 64;
 	int32 CachedObsDim      = 33;

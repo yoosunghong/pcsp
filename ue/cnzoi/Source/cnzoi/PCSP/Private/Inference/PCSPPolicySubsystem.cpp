@@ -6,6 +6,11 @@
 #include "Misc/Paths.h"
 #include "HAL/PlatformFileManager.h"
 #include "HAL/IConsoleManager.h"
+#include "Math/RandomStream.h"
+#include "Async/Async.h"
+#include "ProfilingDebugging/CpuProfilerTrace.h"
+#include "Sim/PCSPPerfSamplerSubsystem.h"
+#include "Misc/ScopeExit.h"
 
 // `pcsp.PolicyMode` selects the Phase 4 runtime ablation at inference time.
 // 0=HybridPCSP (default), 1=BTOnly, 2=HybridNoPersona.
@@ -14,6 +19,30 @@ static TAutoConsoleVariable<int32> CVarPCSPPolicyMode(
 	TEXT("pcsp.PolicyMode"),
 	0,
 	TEXT("PCSP policy ablation mode: 0=HybridPCSP, 1=BTOnly, 2=HybridNoPersona"),
+	ECVF_Default);
+
+// The policy is trained as a stochastic categorical, and its optimisation target
+// is the sampled distribution, not its mode. Taking argmax at runtime is a
+// silent change of policy: it costs the full checkpoint ~0.51 nats of action
+// entropy versus ~0.26 for the ablations, because the full model is deliberately
+// less certain per decision. Sampling is therefore the faithful default.
+static TAutoConsoleVariable<int32> CVarPCSPPolicySampling(
+	TEXT("pcsp.PolicySampling"),
+	1,
+	TEXT("Action selection from policy logits: 1=draw from the softmax (as trained), 0=argmax."),
+	ECVF_Default);
+
+static TAutoConsoleVariable<float> CVarPCSPPolicyTemperature(
+	TEXT("pcsp.PolicyTemperature"),
+	1.0f,
+	TEXT("Softmax temperature used when pcsp.PolicySampling is 1. "
+	     "Below 1 sharpens toward argmax; above 1 flattens toward uniform."),
+	ECVF_Default);
+
+static TAutoConsoleVariable<int32> CVarPCSPAsyncInference(
+	TEXT("pcsp.AsyncInference"),
+	0,
+	TEXT("Run Mass-tier ONNX inference as a dynamic batch on a worker thread (0=sync, 1=async)."),
 	ECVF_Default);
 
 EPCSPPolicyMode UPCSPPolicySubsystem::GetPolicyMode()
@@ -33,6 +62,57 @@ FString UPCSPPolicySubsystem::PolicyModeName(EPCSPPolicyMode Mode)
 	case EPCSPPolicyMode::HybridPCSP:
 	default:                                return TEXT("HybridPCSP");
 	}
+}
+
+bool UPCSPPolicySubsystem::IsSamplingEnabled()
+{
+	return CVarPCSPPolicySampling.GetValueOnAnyThread() != 0;
+}
+
+FString UPCSPPolicySubsystem::ActionSelectionName()
+{
+	if (!IsSamplingEnabled()) { return TEXT("argmax"); }
+	return FString::Printf(TEXT("softmax_sample@T%.2f"),
+		CVarPCSPPolicyTemperature.GetValueOnAnyThread());
+}
+
+int32 UPCSPPolicySubsystem::SelectActionIndex(const TConstArrayView<float> Logits,
+	const int32 DecisionSeed)
+{
+	if (Logits.IsEmpty()) { return INDEX_NONE; }
+
+	int32 BestIndex = 0;
+	for (int32 Index = 1; Index < Logits.Num(); ++Index)
+	{
+		if (Logits[Index] > Logits[BestIndex]) { BestIndex = Index; }
+	}
+	if (!IsSamplingEnabled()) { return BestIndex; }
+
+	// Shift by the max before exponentiating; raw logits overflow expf otherwise.
+	const float Temperature = FMath::Max(KINDA_SMALL_NUMBER,
+		CVarPCSPPolicyTemperature.GetValueOnAnyThread());
+	const float MaxLogit = Logits[BestIndex];
+	TArray<float, TInlineAllocator<32>> Cumulative;
+	Cumulative.SetNumUninitialized(Logits.Num());
+	float Total = 0.f;
+	for (int32 Index = 0; Index < Logits.Num(); ++Index)
+	{
+		Total += FMath::Exp((Logits[Index] - MaxLogit) / Temperature);
+		Cumulative[Index] = Total;
+	}
+	// A zeroed logit row (BTOnly's placeholder) or a non-finite sum has no
+	// distribution to draw from; fall back rather than returning a bogus index.
+	if (!(Total > 0.f) || !FMath::IsFinite(Total)) { return BestIndex; }
+
+	// A local stream keeps this a pure function of the seed, so the worker thread
+	// and the game thread agree and a run stays reproducible.
+	FRandomStream Stream(DecisionSeed);
+	const float Draw = Stream.FRand() * Total;
+	for (int32 Index = 0; Index < Logits.Num(); ++Index)
+	{
+		if (Draw <= Cumulative[Index]) { return Index; }
+	}
+	return Logits.Num() - 1;
 }
 
 FString UPCSPPolicySubsystem::GetActiveAblationTag()
@@ -77,6 +157,9 @@ void UPCSPPolicySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		return;
 	}
 
+	// Presentation-only; a missing file logs and leaves the HUD showing IDs.
+	PersonaCache->LoadTextsFromFile(DataDir / TEXT("persona_texts.json"));
+
 	if (!FPlatformFileManager::Get().GetPlatformFile().FileExists(*ModelPath))
 	{
 		UE_LOG(LogTemp, Error,
@@ -98,6 +181,15 @@ void UPCSPPolicySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 void UPCSPPolicySubsystem::Deinitialize()
 {
+	bReady = false;
+	if (AsyncBatchFuture.IsValid())
+	{
+		// The worker captures the model instance. Join before releasing NNE state.
+		AsyncBatchFuture.Wait();
+		AsyncBatchFuture.Get();
+		AsyncBatchFuture = TFuture<FPCSPAsyncInferenceBatchResult>();
+	}
+	AsyncModelInstance.Reset();
 	ModelInstance.Reset();
 	Model.Reset();
 	Super::Deinitialize();
@@ -140,6 +232,12 @@ bool UPCSPPolicySubsystem::LoadModel()
 		UE_LOG(LogTemp, Error, TEXT("PCSPPolicySubsystem: CreateModelInstanceCPU failed"));
 		return false;
 	}
+	AsyncModelInstance = Model->CreateModelInstanceCPU();
+	if (!AsyncModelInstance.IsValid())
+	{
+		UE_LOG(LogTemp, Error, TEXT("PCSPPolicySubsystem: async CreateModelInstanceCPU failed"));
+		return false;
+	}
 
 	// Bind static input shapes (batch = 1)
 	TArray<UE::NNE::FTensorShape> InShapes;
@@ -148,6 +246,11 @@ bool UPCSPPolicySubsystem::LoadModel()
 	if (ModelInstance->SetInputTensorShapes(InShapes) != UE::NNE::EResultStatus::Ok)
 	{
 		UE_LOG(LogTemp, Error, TEXT("PCSPPolicySubsystem: SetInputTensorShapes failed"));
+		return false;
+	}
+	if (AsyncModelInstance->SetInputTensorShapes(InShapes) != UE::NNE::EResultStatus::Ok)
+	{
+		UE_LOG(LogTemp, Error, TEXT("PCSPPolicySubsystem: async SetInputTensorShapes failed"));
 		return false;
 	}
 
@@ -159,16 +262,162 @@ bool UPCSPPolicySubsystem::LoadModel()
 	return true;
 }
 
+bool UPCSPPolicySubsystem::IsAsyncInferenceEnabled() const
+{
+	return bReady
+		&& CVarPCSPAsyncInference.GetValueOnGameThread() != 0
+		&& GetPolicyMode() != EPCSPPolicyMode::BTOnly;
+}
+
+bool UPCSPPolicySubsystem::CanDispatchAsyncBatch() const
+{
+	return IsAsyncInferenceEnabled() && !AsyncBatchFuture.IsValid();
+}
+
+bool UPCSPPolicySubsystem::DispatchAsyncBatch(TArray<FPCSPAsyncInferenceRequest>&& Requests)
+{
+	TRACE_CPUPROFILER_EVENT_SCOPE(PCSP_ONNX_AsyncDispatch);
+	check(IsInGameThread());
+	if (!CanDispatchAsyncBatch() || Requests.IsEmpty() || !PersonaCache)
+	{
+		return false;
+	}
+
+	const int32 BatchSize = Requests.Num();
+	for (const auto& Request : Requests) { if (ReplayInputs.Num() < 32) { ReplayInputs.Add(Request); } }
+	EvaluationBatchStart = FPlatformTime::Seconds();
+	EvaluationBatchPersonas.Reset();
+	for (const auto& Request : Requests) { EvaluationBatchPersonas.Add(Request.RequestId, Request.PersonaId); }
+	TArray<float> BatchedObservations;
+	TArray<float> BatchedPersonas;
+	TArray<int32> RequestIds;
+	TArray<int32> RequestSeeds;
+	BatchedObservations.SetNumZeroed(BatchSize * ObsDim);
+	BatchedPersonas.SetNumZeroed(BatchSize * PersonaDim);
+	RequestIds.SetNumUninitialized(BatchSize);
+	RequestSeeds.SetNumUninitialized(BatchSize);
+	const bool bZeroPersona = GetPolicyMode() == EPCSPPolicyMode::HybridNoPersona;
+
+	for (int32 BatchIndex = 0; BatchIndex < BatchSize; ++BatchIndex)
+	{
+		const FPCSPAsyncInferenceRequest& Request = Requests[BatchIndex];
+		RequestIds[BatchIndex] = Request.RequestId;
+		RequestSeeds[BatchIndex] = Request.DecisionSeed;
+		const int32 CopyLen = FMath::Min(Request.Observation.Num(), ObsDim);
+		if (CopyLen > 0)
+		{
+			FMemory::Memcpy(BatchedObservations.GetData() + BatchIndex * ObsDim,
+				Request.Observation.GetData(), CopyLen * sizeof(float));
+		}
+		if (!bZeroPersona)
+		{
+			const TConstArrayView<float> Embedding = PersonaCache->GetEmbedding(Request.PersonaId);
+			if (Embedding.Num() != PersonaDim)
+			{
+				UE_LOG(LogTemp, Error,
+					TEXT("PCSPPolicySubsystem: async invalid persona_id=%d; using zero embedding"),
+					Request.PersonaId);
+				continue;
+			}
+			FMemory::Memcpy(BatchedPersonas.GetData() + BatchIndex * PersonaDim,
+				Embedding.GetData(), PersonaDim * sizeof(float));
+		}
+	}
+
+	const TSharedPtr<UE::NNE::IModelInstanceCPU> WorkerInstance = AsyncModelInstance;
+	AsyncBatchFuture = Async(EAsyncExecution::ThreadPool,
+		[WorkerInstance, BatchSize,
+		 Observations = MoveTemp(BatchedObservations),
+		 Personas = MoveTemp(BatchedPersonas),
+		 Ids = MoveTemp(RequestIds),
+		 Seeds = MoveTemp(RequestSeeds)]() mutable
+	{
+		TRACE_CPUPROFILER_EVENT_SCOPE(PCSP_ONNX_AsyncBatchWorker);
+		FPCSPAsyncInferenceBatchResult BatchResult;
+		BatchResult.Results.SetNum(BatchSize);
+		for (int32 BatchIndex = 0; BatchIndex < BatchSize; ++BatchIndex)
+		{
+			BatchResult.Results[BatchIndex].RequestId = Ids[BatchIndex];
+		}
+		const double StartSec = FPlatformTime::Seconds();
+		if (!WorkerInstance.IsValid())
+		{
+			return BatchResult;
+		}
+
+		TArray<UE::NNE::FTensorShape> InputShapes;
+		InputShapes.Add(UE::NNE::FTensorShape::Make(
+			{static_cast<uint32>(BatchSize), static_cast<uint32>(ObsDim)}));
+		InputShapes.Add(UE::NNE::FTensorShape::Make(
+			{static_cast<uint32>(BatchSize), static_cast<uint32>(PersonaDim)}));
+		if (WorkerInstance->SetInputTensorShapes(InputShapes) != UE::NNE::EResultStatus::Ok)
+		{
+			return BatchResult;
+		}
+
+		TArray<float> Logits;
+		Logits.SetNumZeroed(BatchSize * NActions);
+		TArray<UE::NNE::FTensorBindingCPU> Inputs;
+		TArray<UE::NNE::FTensorBindingCPU> Outputs;
+		Inputs.Add({Observations.GetData(), static_cast<uint64>(Observations.Num() * sizeof(float))});
+		Inputs.Add({Personas.GetData(), static_cast<uint64>(Personas.Num() * sizeof(float))});
+		Outputs.Add({Logits.GetData(), static_cast<uint64>(Logits.Num() * sizeof(float))});
+		if (WorkerInstance->RunSync(Inputs, Outputs) != UE::NNE::EResultStatus::Ok)
+		{
+			return BatchResult;
+		}
+
+		for (int32 BatchIndex = 0; BatchIndex < BatchSize; ++BatchIndex)
+		{
+			const TConstArrayView<float> Row(Logits.GetData() + BatchIndex * NActions, NActions);
+			const int32 SelectedIndex = SelectActionIndex(Row, Seeds[BatchIndex]);
+			FPCSPAsyncInferenceResult& Result = BatchResult.Results[BatchIndex];
+			Result.PolicyActionIndex = SelectedIndex;
+			Result.Action = ActionFromModelIndex(SelectedIndex);
+		}
+		BatchResult.bSuccess = true;
+		BatchResult.WorkerMicros = (FPlatformTime::Seconds() - StartSec) * 1.0e6;
+		return BatchResult;
+	});
+	return true;
+}
+
+bool UPCSPPolicySubsystem::TryConsumeAsyncBatch(FPCSPAsyncInferenceBatchResult& OutResult)
+{
+	TRACE_CPUPROFILER_EVENT_SCOPE(PCSP_ONNX_AsyncConsume);
+	check(IsInGameThread());
+	if (!AsyncBatchFuture.IsValid() || !AsyncBatchFuture.IsReady())
+	{
+		return false;
+	}
+	OutResult = AsyncBatchFuture.Get();
+	if (auto* Perf = GetWorld()->GetSubsystem<UPCSPPerfSamplerSubsystem>())
+	{
+		const double Latency = (FPlatformTime::Seconds() - EvaluationBatchStart) * 1.e6;
+		const double Service = OutResult.WorkerMicros / FMath::Max(1, OutResult.Results.Num());
+		for (const auto& Result : OutResult.Results)
+		{
+			Perf->RecordPolicyDecision(EvaluationBatchPersonas.FindRef(Result.RequestId),
+				OutResult.bSuccess ? Result.Action : EPCSPActionType::None, Service, Latency, true);
+		}
+	}
+	EvaluationBatchPersonas.Reset();
+	AsyncBatchFuture = TFuture<FPCSPAsyncInferenceBatchResult>();
+	return true;
+}
+
 // ---------------------------------------------------------------------------
 // RunInference
 // ---------------------------------------------------------------------------
 
 EPCSPActionType UPCSPPolicySubsystem::RunInferenceWithLogits(const TArray<float>& Observation,
-	int32 PersonaId, TArray<float>& OutLogits, double& OutInferenceMicros)
+	int32 PersonaId, TArray<float>& OutLogits, double& OutInferenceMicros,
+	int32 DecisionSeed, int32* OutActionIndex)
 {
 	const double StartSec = FPlatformTime::Seconds();
-	const EPCSPActionType Action = RunInference(Observation, PersonaId);
+	const EPCSPActionType Action = RunInference(Observation, PersonaId, DecisionSeed);
 	OutInferenceMicros = (FPlatformTime::Seconds() - StartSec) * 1.0e6;
+	if (OutActionIndex) { *OutActionIndex = LastSelectedActionIndex; }
 
 	// In BTOnly the ONNX path is skipped; emit a zeroed logit vector so the
 	// trajectory schema stays uniform and analyzer KL math doesn't NaN out.
@@ -184,12 +433,37 @@ EPCSPActionType UPCSPPolicySubsystem::RunInferenceWithLogits(const TArray<float>
 	return Action;
 }
 
-EPCSPActionType UPCSPPolicySubsystem::RunInference(const TArray<float>& Observation, int32 PersonaId)
+EPCSPActionType UPCSPPolicySubsystem::RunInference(const TArray<float>& Observation, int32 PersonaId,
+	int32 DecisionSeed)
 {
+	TRACE_CPUPROFILER_EVENT_SCOPE(PCSP_ONNX_RunInference_Sync);
+
 	const EPCSPPolicyMode Mode = GetPolicyMode();
+	const double EvaluationStart = FPlatformTime::Seconds();
+	if (ReplayInputs.Num() < 32 && Mode == EPCSPPolicyMode::HybridPCSP)
+	{
+		auto& Input = ReplayInputs.AddDefaulted_GetRef();
+		Input.Observation = Observation;
+		Input.PersonaId = PersonaId;
+		Input.DecisionSeed = DecisionSeed;
+	}
+	ON_SCOPE_EXIT
+	{
+		if (auto* Perf = GetWorld()->GetSubsystem<UPCSPPerfSamplerSubsystem>())
+		{
+			const double Micros = (FPlatformTime::Seconds() - EvaluationStart) * 1.e6;
+			const EPCSPActionType Result = Mode == EPCSPPolicyMode::BTOnly ? NeedsHeuristic(Observation)
+				: LastSelectedActionIndex != INDEX_NONE ? ActionFromModelIndex(LastSelectedActionIndex) : EPCSPActionType::None;
+			Perf->RecordPolicyDecision(PersonaId, Result, Micros, Micros);
+		}
+	};
 
 	// BTOnly bypasses ONNX entirely — uses the static needs heuristic so this
 	// branch works even if pcsp_actor.onnx never loaded.
+	// Every early return below skips the ONNX path, so there is no selected index
+	// to report; clear it rather than let the previous decision's value leak out.
+	LastSelectedActionIndex = INDEX_NONE;
+
 	if (Mode == EPCSPPolicyMode::BTOnly)
 	{
 		return NeedsHeuristic(Observation);
@@ -239,18 +513,13 @@ EPCSPActionType UPCSPPolicySubsystem::RunInference(const TArray<float>& Observat
 		return EPCSPActionType::None;
 	}
 
-	// Argmax over logits
-	int32 BestIdx = 0;
-	float BestVal = LogitsBuffer[0];
-	for (int32 i = 1; i < NActions; ++i)
-	{
-		if (LogitsBuffer[i] > BestVal)
-		{
-			BestVal = LogitsBuffer[i];
-			BestIdx = i;
-		}
-	}
+	LastSelectedActionIndex = SelectActionIndex(
+		TConstArrayView<float>(LogitsBuffer.GetData(), NActions), DecisionSeed);
+	return ActionFromModelIndex(LastSelectedActionIndex);
+}
 
+EPCSPActionType UPCSPPolicySubsystem::ActionFromModelIndex(int32 ActionIndex)
+{
 	// v3 action index → EPCSPActionType
 	// v3 order: focused_work(0), planning_work(1), eat_quick(2), eat_slow(3),
 	//           sleep(4), nap(5), socialize_initiate(6), socialize_respond(7),
@@ -283,12 +552,12 @@ EPCSPActionType UPCSPPolicySubsystem::RunInference(const TArray<float>& Observat
 		EPCSPActionType::ObserveCrowd,        // 19 move_right → observe crowd  (Park)
 	};
 
-	if (BestIdx >= 0 && BestIdx < NActions)
+	if (ActionIndex >= 0 && ActionIndex < NActions)
 	{
-		return V3ToUE[BestIdx];
+		return V3ToUE[ActionIndex];
 	}
 	UE_LOG(LogTemp, Error, TEXT("PCSPPolicySubsystem: argmax out of range (idx=%d, NActions=%d)"),
-		BestIdx, NActions);
+		ActionIndex, NActions);
 	return EPCSPActionType::None;
 }
 

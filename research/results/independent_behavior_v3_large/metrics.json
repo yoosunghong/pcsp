@@ -1,0 +1,338 @@
+{
+  "protocol": {
+    "independence": "evaluator uses frozen environment trajectory statistics only; no PCSP projection, logits, or learned trajectory encoder",
+    "evaluator_train_personas": 320,
+    "evaluator_calibration_personas": 80,
+    "evaluator_test_personas": 100,
+    "policy_variants": [
+      "full",
+      "no_consist"
+    ],
+    "policy_seeds": [
+      42,
+      43,
+      44
+    ],
+    "steps_per_trajectory": 200,
+    "rollout_semantics": "one synchronously observed action per agent per environment cycle",
+    "primary_representation": "action_only"
+  },
+  "feature_counts": {
+    "action_only": 445,
+    "behavior_context": 749
+  },
+  "representations": {
+    "action_only": {
+      "probe": {
+        "E": {
+          "regularization": 10.0,
+          "temperature": 0.25
+        },
+        "N": {
+          "regularization": 0.01,
+          "temperature": 4.0
+        },
+        "A": {
+          "regularization": 0.1,
+          "temperature": 2.0
+        },
+        "C": {
+          "regularization": 0.1,
+          "temperature": 4.0
+        },
+        "O": {
+          "regularization": 100.0,
+          "temperature": 1.0
+        }
+      },
+      "by_variant": {
+        "full": {
+          "mean_balanced_accuracy": 0.48240740740740745,
+          "mean_macro_f1": 0.46112657434977355,
+          "axes": {
+            "E": {
+              "n": 300,
+              "accuracy": 0.8433333333333334,
+              "balanced_accuracy": 0.8694444444444445,
+              "macro_f1": 0.8301096080052149,
+              "ece_equal_frequency_10": 0.11040185132307773
+            },
+            "N": {
+              "n": 300,
+              "accuracy": 0.4266666666666667,
+              "balanced_accuracy": 0.42777777777777776,
+              "macro_f1": 0.42162321184060314,
+              "ece_equal_frequency_10": 0.1754577740474683
+            },
+            "A": {
+              "n": 300,
+              "accuracy": 0.48,
+              "balanced_accuracy": 0.4916666666666667,
+              "macro_f1": 0.4651237396297844,
+              "ece_equal_frequency_10": 0.24393973045403938
+            },
+            "C": {
+              "n": 300,
+              "accuracy": 0.33666666666666667,
+              "balanced_accuracy": 0.2425925925925926,
+              "macro_f1": 0.24698812550054464,
+              "ece_equal_frequency_10": 0.18399265964091963
+            },
+            "O": {
+              "n": 300,
+              "accuracy": 0.35,
+              "balanced_accuracy": 0.38055555555555554,
+              "macro_f1": 0.3417881867727206,
+              "ece_equal_frequency_10": 0.20319129559066046
+            }
+          }
+        },
+        "no_consist": {
+          "mean_balanced_accuracy": 0.5114814814814814,
+          "mean_macro_f1": 0.4876702516150351,
+          "axes": {
+            "E": {
+              "n": 300,
+              "accuracy": 0.9733333333333334,
+              "balanced_accuracy": 0.9777777777777779,
+              "macro_f1": 0.9724405891388814,
+              "ece_equal_frequency_10": 0.0339612282944428
+            },
+            "N": {
+              "n": 300,
+              "accuracy": 0.41,
+              "balanced_accuracy": 0.4138888888888889,
+              "macro_f1": 0.3895955108721066,
+              "ece_equal_frequency_10": 0.11708812104568118
+            },
+            "A": {
+              "n": 300,
+              "accuracy": 0.48333333333333334,
+              "balanced_accuracy": 0.49722222222222223,
+              "macro_f1": 0.4751476419805873,
+              "ece_equal_frequency_10": 0.1855354289228268
+            },
+            "C": {
+              "n": 300,
+              "accuracy": 0.30666666666666664,
+              "balanced_accuracy": 0.2740740740740741,
+              "macro_f1": 0.25345353415909194,
+              "ece_equal_frequency_10": 0.19888754660405145
+            },
+            "O": {
+              "n": 300,
+              "accuracy": 0.39666666666666667,
+              "balanced_accuracy": 0.39444444444444443,
+              "macro_f1": 0.34771398192450825,
+              "ece_equal_frequency_10": 0.2657034993171902
+            }
+          }
+        }
+      },
+      "by_variant_seed": {
+        "full@42": {
+          "mean_balanced_accuracy": 0.5061111111111111,
+          "n": 100
+        },
+        "full@43": {
+          "mean_balanced_accuracy": 0.4683333333333334,
+          "n": 100
+        },
+        "full@44": {
+          "mean_balanced_accuracy": 0.4727777777777778,
+          "n": 100
+        },
+        "no_consist@42": {
+          "mean_balanced_accuracy": 0.5061111111111111,
+          "n": 100
+        },
+        "no_consist@43": {
+          "mean_balanced_accuracy": 0.5255555555555554,
+          "n": 100
+        },
+        "no_consist@44": {
+          "mean_balanced_accuracy": 0.5027777777777778,
+          "n": 100
+        }
+      },
+      "resampling": {
+        "replicates": 1000,
+        "bootstrap_95": {
+          "full": [
+            0.4615532976783322,
+            0.5022073402807329
+          ],
+          "no_consist": [
+            0.48593828274679596,
+            0.5359528104357039
+          ],
+          "full_minus_no_consist": [
+            -0.05604930714488661,
+            -0.0015071832986160837
+          ]
+        },
+        "permutation_delta": {
+          "observed": -0.029074074074073974,
+          "null_mean": 0.0007074074074074079,
+          "p_two_sided": 0.04995004995004995
+        }
+      }
+    },
+    "behavior_context": {
+      "probe": {
+        "E": {
+          "regularization": 100.0,
+          "temperature": 0.25
+        },
+        "N": {
+          "regularization": 1.0,
+          "temperature": 4.0
+        },
+        "A": {
+          "regularization": 100.0,
+          "temperature": 1.0
+        },
+        "C": {
+          "regularization": 100.0,
+          "temperature": 0.5
+        },
+        "O": {
+          "regularization": 1000.0,
+          "temperature": 0.5
+        }
+      },
+      "by_variant": {
+        "full": {
+          "mean_balanced_accuracy": 0.5559259259259258,
+          "mean_macro_f1": 0.533964943735366,
+          "axes": {
+            "E": {
+              "n": 300,
+              "accuracy": 0.85,
+              "balanced_accuracy": 0.875,
+              "macro_f1": 0.8385966193275163,
+              "ece_equal_frequency_10": 0.10580875740679808
+            },
+            "N": {
+              "n": 300,
+              "accuracy": 0.33,
+              "balanced_accuracy": 0.36944444444444446,
+              "macro_f1": 0.3296405769746345,
+              "ece_equal_frequency_10": 0.2159476851556542
+            },
+            "A": {
+              "n": 300,
+              "accuracy": 0.49,
+              "balanced_accuracy": 0.513888888888889,
+              "macro_f1": 0.46584490960320973,
+              "ece_equal_frequency_10": 0.18307217776021287
+            },
+            "C": {
+              "n": 300,
+              "accuracy": 0.7833333333333333,
+              "balanced_accuracy": 0.7129629629629629,
+              "macro_f1": 0.7331223269502657,
+              "ece_equal_frequency_10": 0.12721327567935362
+            },
+            "O": {
+              "n": 300,
+              "accuracy": 0.31666666666666665,
+              "balanced_accuracy": 0.30833333333333335,
+              "macro_f1": 0.3026202858212038,
+              "ece_equal_frequency_10": 0.1814705367764289
+            }
+          }
+        },
+        "no_consist": {
+          "mean_balanced_accuracy": 0.5583333333333333,
+          "mean_macro_f1": 0.5556350959117224,
+          "axes": {
+            "E": {
+              "n": 300,
+              "accuracy": 0.97,
+              "balanced_accuracy": 0.975,
+              "macro_f1": 0.9684061979222068,
+              "ece_equal_frequency_10": 0.038610751315291895
+            },
+            "N": {
+              "n": 300,
+              "accuracy": 0.2733333333333333,
+              "balanced_accuracy": 0.2972222222222222,
+              "macro_f1": 0.27736796109804507,
+              "ece_equal_frequency_10": 0.27033554055619946
+            },
+            "A": {
+              "n": 300,
+              "accuracy": 0.48,
+              "balanced_accuracy": 0.49444444444444446,
+              "macro_f1": 0.4716496948939563,
+              "ece_equal_frequency_10": 0.1344106433374377
+            },
+            "C": {
+              "n": 300,
+              "accuracy": 0.8566666666666667,
+              "balanced_accuracy": 0.7722222222222221,
+              "macro_f1": 0.8022190682931282,
+              "ece_equal_frequency_10": 0.14366137565038725
+            },
+            "O": {
+              "n": 300,
+              "accuracy": 0.2833333333333333,
+              "balanced_accuracy": 0.25277777777777777,
+              "macro_f1": 0.2585325573512761,
+              "ece_equal_frequency_10": 0.21427996813030353
+            }
+          }
+        }
+      },
+      "by_variant_seed": {
+        "full@42": {
+          "mean_balanced_accuracy": 0.49833333333333335,
+          "n": 100
+        },
+        "full@43": {
+          "mean_balanced_accuracy": 0.5766666666666668,
+          "n": 100
+        },
+        "full@44": {
+          "mean_balanced_accuracy": 0.5927777777777778,
+          "n": 100
+        },
+        "no_consist@42": {
+          "mean_balanced_accuracy": 0.4888888888888888,
+          "n": 100
+        },
+        "no_consist@43": {
+          "mean_balanced_accuracy": 0.595,
+          "n": 100
+        },
+        "no_consist@44": {
+          "mean_balanced_accuracy": 0.5911111111111111,
+          "n": 100
+        }
+      },
+      "resampling": {
+        "replicates": 1000,
+        "bootstrap_95": {
+          "full": [
+            0.5315528676781869,
+            0.5823417476495011
+          ],
+          "no_consist": [
+            0.532798054097055,
+            0.581741409913035
+          ],
+          "full_minus_no_consist": [
+            -0.03283012632611225,
+            0.030185246960504092
+          ]
+        },
+        "permutation_delta": {
+          "observed": -0.0024074074074075247,
+          "null_mean": -0.0004170370370370349,
+          "p_two_sided": 0.8751248751248751
+        }
+      }
+    }
+  }
+}

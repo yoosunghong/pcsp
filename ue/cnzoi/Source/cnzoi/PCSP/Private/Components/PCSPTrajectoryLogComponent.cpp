@@ -13,6 +13,7 @@
 
 namespace
 {
+	FString SessionDirectory;
 	const TCHAR* EventName(EPCSPTrajectoryEvent E)
 	{
 		switch (E)
@@ -52,7 +53,7 @@ UPCSPTrajectoryLogComponent::UPCSPTrajectoryLogComponent()
 
 FString UPCSPTrajectoryLogComponent::GetSessionDir()
 {
-	static FString Dir;
+	FString& Dir = SessionDirectory;
 	if (Dir.IsEmpty())
 	{
 		const FString Stamp = FDateTime::Now().ToString(TEXT("%Y%m%d_%H%M%S"));
@@ -61,6 +62,12 @@ FString UPCSPTrajectoryLogComponent::GetSessionDir()
 		UE_LOG(LogTemp, Log, TEXT("PCSPTrajectoryLog: session dir = %s"), *Dir);
 	}
 	return Dir;
+}
+
+void UPCSPTrajectoryLogComponent::SetEvaluationSessionDir(const FString& Directory)
+{
+	SessionDirectory = Directory;
+	IFileManager::Get().MakeDirectory(*SessionDirectory, true);
 }
 
 void UPCSPTrajectoryLogComponent::BeginPlay()
@@ -189,7 +196,7 @@ void UPCSPTrajectoryLogComponent::EmitEvent(EPCSPTrajectoryEvent Event,
 	const int32 Cap = FMath::Max(8, MaxRecentEntries);
 	if (Entries.Num() > Cap)
 	{
-		Entries.RemoveAt(0, Entries.Num() - Cap, /*bAllowShrinking=*/false);
+		Entries.RemoveAt(0, Entries.Num() - Cap, EAllowShrinking::No);
 	}
 }
 
@@ -216,9 +223,15 @@ void UPCSPTrajectoryLogComponent::RecordDecisionWithLogits(EPCSPActionType Actio
 	float UrgencyScore, TArrayView<const float> Logits, double InferenceMicros)
 {
 	FString Extra;
-	if (Logits.Num() > 0)
+	if (Logits.Num() > 0 && UPCSPPolicySubsystem::GetPolicyMode() != EPCSPPolicyMode::BTOnly)
 	{
-		Extra = TEXT("\"logits\":[");
+		int32 PolicyActionIndex = 0;
+		for (int32 i = 1; i < Logits.Num(); ++i)
+		{
+			if (Logits[i] > Logits[PolicyActionIndex]) { PolicyActionIndex = i; }
+		}
+		Extra = FString::Printf(TEXT("\"policy_action_index\":%d,\"logits\":["),
+			PolicyActionIndex);
 		for (int32 i = 0; i < Logits.Num(); ++i)
 		{
 			Extra += FString::Printf(TEXT("%s%.4f"), i == 0 ? TEXT("") : TEXT(","), Logits[i]);

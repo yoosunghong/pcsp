@@ -1,0 +1,229 @@
+{
+  "protocol": {
+    "embedding_cosine_threshold": 0.95,
+    "threshold_source": "results/ood_leakage_audit/summary.json predeclared alert",
+    "operation": "exclude flagged test personas from the existing per-persona accuracy mean",
+    "not_recomputed": [
+      "candidate-set predictions",
+      "trajectory embeddings",
+      "coherence ratio",
+      "training"
+    ],
+    "split_level_flag_count": 8,
+    "unique_test_id_count": 7,
+    "unique_train_test_pair_count": 7
+  },
+  "flagged_pairs": [
+    {
+      "split": "v3_standard",
+      "test_id": 295,
+      "train_id": 10,
+      "cosine": 0.9725842437324852
+    },
+    {
+      "split": "v3_large",
+      "test_id": 408,
+      "train_id": 248,
+      "cosine": 0.9706964088167299
+    },
+    {
+      "split": "v3_large",
+      "test_id": 428,
+      "train_id": 108,
+      "cosine": 0.9531581649869971
+    },
+    {
+      "split": "v3_large",
+      "test_id": 430,
+      "train_id": 150,
+      "cosine": 0.9696300449737545
+    },
+    {
+      "split": "v3_large",
+      "test_id": 446,
+      "train_id": 106,
+      "cosine": 0.952363439626585
+    },
+    {
+      "split": "v3_large",
+      "test_id": 456,
+      "train_id": 56,
+      "cosine": 0.9619980021113326
+    },
+    {
+      "split": "unseen_occupation_v3",
+      "test_id": 295,
+      "train_id": 10,
+      "cosine": 0.9725842437324852
+    },
+    {
+      "split": "unseen_combo_v3",
+      "test_id": 213,
+      "train_id": 18,
+      "cosine": 0.9747210309542291
+    }
+  ],
+  "aggregate_by_split_mode": [
+    {
+      "split": "unseen_combo_v3",
+      "mode": "concat",
+      "n_runs": 1,
+      "original_mean": 0.16999999999999998,
+      "filtered_mean": 0.17288135593220338,
+      "delta_mean": 0.0028813559322034,
+      "delta_max_abs": 0.0028813559322034,
+      "delta_sample_std": 0.0
+    },
+    {
+      "split": "unseen_combo_v3",
+      "mode": "full",
+      "n_runs": 1,
+      "original_mean": 0.2033333333333333,
+      "filtered_mean": 0.20677966101694914,
+      "delta_mean": 0.0034463276836158296,
+      "delta_max_abs": 0.0034463276836158296,
+      "delta_sample_std": 0.0
+    },
+    {
+      "split": "unseen_combo_v3",
+      "mode": "no_consist",
+      "n_runs": 1,
+      "original_mean": 0.016666666666666666,
+      "filtered_mean": 0.01694915254237288,
+      "delta_mean": 0.00028248587570621486,
+      "delta_max_abs": 0.00028248587570621486,
+      "delta_sample_std": 0.0
+    },
+    {
+      "split": "unseen_combo_v3",
+      "mode": "no_diverse",
+      "n_runs": 1,
+      "original_mean": 0.19333333333333333,
+      "filtered_mean": 0.18983050847457625,
+      "delta_mean": -0.003502824858757081,
+      "delta_max_abs": 0.003502824858757081,
+      "delta_sample_std": 0.0
+    },
+    {
+      "split": "unseen_occupation_v3",
+      "mode": "concat",
+      "n_runs": 1,
+      "original_mean": 0.2833333333333333,
+      "filtered_mean": 0.2745762711864407,
+      "delta_mean": -0.008757062146892647,
+      "delta_max_abs": 0.008757062146892647,
+      "delta_sample_std": 0.0
+    },
+    {
+      "split": "unseen_occupation_v3",
+      "mode": "full",
+      "n_runs": 1,
+      "original_mean": 0.17,
+      "filtered_mean": 0.1694915254237288,
+      "delta_mean": -0.0005084745762712062,
+      "delta_max_abs": 0.0005084745762712062,
+      "delta_sample_std": 0.0
+    },
+    {
+      "split": "unseen_occupation_v3",
+      "mode": "no_consist",
+      "n_runs": 1,
+      "original_mean": 0.016666666666666666,
+      "filtered_mean": 0.01694915254237288,
+      "delta_mean": 0.00028248587570621486,
+      "delta_max_abs": 0.00028248587570621486,
+      "delta_sample_std": 0.0
+    },
+    {
+      "split": "unseen_occupation_v3",
+      "mode": "no_diverse",
+      "n_runs": 1,
+      "original_mean": 0.16,
+      "filtered_mean": 0.14576271186440679,
+      "delta_mean": -0.014237288135593218,
+      "delta_max_abs": 0.014237288135593218,
+      "delta_sample_std": 0.0
+    },
+    {
+      "split": "v3_large",
+      "mode": "concat",
+      "n_runs": 3,
+      "original_mean": 0.058,
+      "filtered_mean": 0.04421052631578947,
+      "delta_mean": -0.013789473684210532,
+      "delta_max_abs": 0.021894736842105265,
+      "delta_sample_std": 0.010922542701137482
+    },
+    {
+      "split": "v3_large",
+      "mode": "full",
+      "n_runs": 3,
+      "original_mean": 0.04,
+      "filtered_mean": 0.03508771929824562,
+      "delta_mean": -0.004912280701754381,
+      "delta_max_abs": 0.008631578947368417,
+      "delta_sample_std": 0.00572822465604
+    },
+    {
+      "split": "v3_large",
+      "mode": "no_consist",
+      "n_runs": 3,
+      "original_mean": 0.013333333333333334,
+      "filtered_mean": 0.013333333333333334,
+      "delta_mean": 0.0,
+      "delta_max_abs": 0.0010526315789473675,
+      "delta_sample_std": 0.0009176629354822462
+    },
+    {
+      "split": "v3_large",
+      "mode": "no_diverse",
+      "n_runs": 3,
+      "original_mean": 0.05399999999999999,
+      "filtered_mean": 0.05333333333333334,
+      "delta_mean": -0.0006666666666666626,
+      "delta_max_abs": 0.0018947368421052685,
+      "delta_sample_std": 0.0016918685545601652
+    },
+    {
+      "split": "v3_standard",
+      "mode": "concat",
+      "n_runs": 1,
+      "original_mean": 0.11666666666666667,
+      "filtered_mean": 0.11864406779661017,
+      "delta_mean": 0.001977401129943504,
+      "delta_max_abs": 0.001977401129943504,
+      "delta_sample_std": 0.0
+    },
+    {
+      "split": "v3_standard",
+      "mode": "full",
+      "n_runs": 1,
+      "original_mean": 0.29000000000000004,
+      "filtered_mean": 0.29491525423728815,
+      "delta_mean": 0.004915254237288114,
+      "delta_max_abs": 0.004915254237288114,
+      "delta_sample_std": 0.0
+    },
+    {
+      "split": "v3_standard",
+      "mode": "no_consist",
+      "n_runs": 1,
+      "original_mean": 0.016666666666666666,
+      "filtered_mean": 0.01694915254237288,
+      "delta_mean": 0.00028248587570621486,
+      "delta_max_abs": 0.00028248587570621486,
+      "delta_sample_std": 0.0
+    },
+    {
+      "split": "v3_standard",
+      "mode": "no_diverse",
+      "n_runs": 1,
+      "original_mean": 0.26,
+      "filtered_mean": 0.26101694915254237,
+      "delta_mean": 0.0010169491525423568,
+      "delta_max_abs": 0.0010169491525423568,
+      "delta_sample_std": 0.0
+    }
+  ],
+  "max_absolute_accuracy_delta": 0.021894736842105265
+}

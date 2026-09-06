@@ -1,0 +1,58 @@
+[
+  {
+    "session": "20260831_035601",
+    "n_agents": 4,
+    "hero_agents": 4,
+    "mass_entities": 0,
+    "architecture": "actor_bt",
+    "seed": 0,
+    "duration_s": 12.8,
+    "n_decisions": 4,
+    "n_interaction_complete": 3,
+    "n_move_failed": 0,
+    "fail_rate": 0.0,
+    "intents_per_agent_per_min": 3.51,
+    "infer_us": {
+      "n": 0,
+      "mean": null,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    "frame_ms": {
+      "n": 11,
+      "mean": 157.041,
+      "p95_of_p95": 168.017,
+      "p95_max": 168.017,
+      "p99_max": 168.017
+    },
+    "failure_reasons": {},
+    "zone_utilization": {
+      "PCSP.Zone.Leisure": 0.0,
+      "PCSP.Zone.Rest": 0.027777777777777787,
+      "PCSP.Zone.Exercise": 0.0,
+      "PCSP.Zone.Eat": 0.0,
+      "PCSP.Zone.Study": 0.0409090909090909,
+      "PCSP.Zone.Observe": 0.0,
+      "PCSP.Zone.Shop": 0.0,
+      "PCSP.Zone.Work": 0.0,
+      "PCSP.Zone.Higiene": 0.0,
+      "PCSP.Zone.Social": 0.028282828282828285
+    },
+    "path_scheduler": {
+      "n": 10,
+      "queue_peak": 0,
+      "wait_ms_mean": 0.0,
+      "wait_ms_p95_mean": 0.0,
+      "submitted": 0
+    },
+    "mass": {
+      "n": 0,
+      "decisions": 0,
+      "arrivals": 0,
+      "policy_us_mean": null,
+      "arrivals_per_entity_min": 0.0
+    }
+  }
+]

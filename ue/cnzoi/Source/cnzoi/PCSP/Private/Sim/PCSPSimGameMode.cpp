@@ -1,9 +1,9 @@
 #include "PCSPSimGameMode.h"
 #include "PCSPAgentCharacter.h"
-#include "PCSPAIController.h"
+#include "Agent/PCSPDemoPlayerController.h"
 
 APCSPSimGameMode::APCSPSimGameMode()
 {
 	DefaultPawnClass = APCSPAgentCharacter::StaticClass();
-	PlayerControllerClass = APCSPAIController::StaticClass();
+	PlayerControllerClass = APCSPDemoPlayerController::StaticClass();
 }
