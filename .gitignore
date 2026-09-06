@@ -91,5 +91,16 @@ Thumbs.db
 # Assets
 ue/cnzoi/Content/SkyTown/
 
+# Portfolio-only presentation materials and generated evidence
+# These are local showcase artifacts, not research/runtime source inputs.
+/PORTFOLIO.md
+/ue/cnzoi/docs/portfolio/
+/ue/cnzoi/tools/capture_portfolio_cover.py
+/ue/cnzoi/tools/generate_portfolio_visuals.py
+/ue/cnzoi/tools/generate_optimization_deepdives.py
+/ue/cnzoi/tools/generate_persona_training_assets.py
+/ue/cnzoi/tools/set_dieselpunk_texture_resolution.py
+/research/results/ue_sessions/*_portfolio_*/
+
 # mcp
 /ue/cnzoi/.narshamcp

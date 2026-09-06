@@ -26,13 +26,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PCSP|Spawn")
 	TSubclassOf<APCSPAIController> AIControllerClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PCSP|Spawn", meta=(ClampMin="1", ClampMax="128"))
-	int32 AgentCount = 16;
+	/** Actor/BT debug agents. Must be zero whenever MassEntityCount is non-zero. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PCSP|Spawn", meta=(ClampMin="0", ClampMax="128"))
+	int32 AgentCount = 0;
 
-	/** Lightweight Mass background tier. Use 1008 with 16 hero actors for a
-	 *  1024-NPC portfolio run. Zero disables the Mass tier. */
+	/** Mass simulation population. Any non-zero value selects all-Mass mode;
+	 *  configured Actor agents are folded into this count to prevent mixed tiers. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PCSP|Spawn", meta=(ClampMin="0", ClampMax="65536"))
-	int32 MassEntityCount = 0;
+	int32 MassEntityCount = 1024;
 
 	/** Per-run RNG seed for reproducible spawn placement (T1.3 sweep).
 	 *  -1 = non-deterministic (use ambient global stream).

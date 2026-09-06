@@ -95,6 +95,7 @@ public:
 
 	/** Session directory shared by all agents in this PIE process. */
 	static FString GetSessionDir();
+	static void SetEvaluationSessionDir(const FString& Directory);
 
 	UPROPERTY(EditAnywhere, Category="PCSP|Trajectory", meta=(ClampMin="1.0"))
 	float PeriodicFlushSeconds = 5.f;

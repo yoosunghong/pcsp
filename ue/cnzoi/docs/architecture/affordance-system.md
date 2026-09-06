@@ -110,19 +110,19 @@ preferred one is at capacity.
    ├── resolves: EPCSPActionType::EatQuick → EPCSPAffordanceCategory::Eat
    ├── calls:    UPCSPAffordanceSubsystem::FindBestZone(Category=Eat, bRequireCapacity=true)
    └── writes BB: TargetActor = <nearest free APCSPAffordanceZone>
-                  TargetLocation = <interaction point location>
+                  TargetLocation = <Zone-owned interaction slot location>
                   bAffordanceReserved = false
 
 3. UBTTask_MoveToAffordance (Phase 2)
    ├── MoveTo TargetLocation via NavMesh
-   └── on arrival: APCSPInteractionPoint::TryReserve(Agent)
+   └── before move: APCSPAffordanceZone::TryReserveInteractionSlot(Agent)
                    writes BB: bAffordanceReserved = true
 
 4. UBTTask_PerformInteraction (Phase 2)
    ├── wait InteractionDuration seconds
    ├── apply need restoration (NeedsComponent::AdjustNeed)
    ├── record: TrajectoryLogComponent::RecordEntry(Action, Tag, Reward)
-   └── APCSPInteractionPoint::Release(Agent)
+   └── APCSPAffordanceZone::ReleaseInteractionSlot(Agent)
 ```
 
 ---
@@ -155,4 +155,4 @@ Having 20 tags (one per action) was considered and rejected for three reasons:
 | `EPCSPAffordanceCategory` | **11 enum / 9 active** | Zone routing bucket | `PCSPTypes.h` |
 | `DT_PCSPAffordanceTags` rows | **9 active minimum** | GameplayTag registration | `Content/PCSP/Data/` |
 | `APCSPAffordanceZone` actors | **10–30+** | Physical locations in level | Map actors |
-| `APCSPInteractionPoint` actors | **40–80** | Specific seats / stations | Children of zones |
+| `FPCSPInteractionSlot` entries | **per-zone capacity** | Specific seats / stations | Serialized inside zones |

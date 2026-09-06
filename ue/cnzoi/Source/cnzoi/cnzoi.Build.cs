@@ -23,13 +23,15 @@ public class cnzoi : ModuleRules
 			"GameplayStateTreeModule",
 			"UMG",
 			"Slate",
+			"SlateCore",
 			"NNE",
 			"Json",
 			"JsonUtilities",
 			"MassEntity",
 			"MassCommon",
 			"MassSpawner",
-			"MassSimulation"
+			"MassSimulation",
+			"AnimToTexture"
 		});
 
 		// UE 5.8 split the foundational Mass reflected types out of MassEntity.
@@ -51,6 +53,7 @@ public class cnzoi : ModuleRules
 			Path.Combine(ModuleDirectory, "PCSP/Public/BT"),
 			Path.Combine(ModuleDirectory, "PCSP/Public/Inference"),
 			Path.Combine(ModuleDirectory, "PCSP/Public/Mass"),
+			Path.Combine(ModuleDirectory, "PCSP/Public/UI"),
 			"cnzoi/Variant_Platforming",
 			"cnzoi/Variant_Platforming/Animation",
 			"cnzoi/Variant_Combat",
@@ -74,7 +77,8 @@ public class cnzoi : ModuleRules
 			Path.Combine(ModuleDirectory, "PCSP/Private/Sim"),
 			Path.Combine(ModuleDirectory, "PCSP/Private/BT"),
 			Path.Combine(ModuleDirectory, "PCSP/Private/Inference"),
-			Path.Combine(ModuleDirectory, "PCSP/Private/Mass")
+			Path.Combine(ModuleDirectory, "PCSP/Private/Mass"),
+			Path.Combine(ModuleDirectory, "PCSP/Private/UI")
 		});
 
 		// Uncomment if you are using Slate UI

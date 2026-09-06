@@ -59,7 +59,27 @@ training and Python eval still see the original movement labels.
 
 ## Observation schema (33-d v3 base)
 
-The order is fixed — `UPCSPObservationComponent::BuildObservation` must match.
+The order is fixed. Two builders must match it: `UPCSPObservationComponent::
+BuildObservation` (Actor tier) and `BuildMassObservation` in
+`PCSPMassSimulationProcessor.cpp` (Mass tier, the default population).
+
+Slots 19–23 are the easy ones to get wrong, because their names read as world
+state but three of the five are about the **querying agent itself**
+(`mini_inzoi_v3.py::_make_obs`):
+
+- `19` `len(nearby) / n_agents` — nearby is Chebyshev distance ≤ 1 on the 6×6
+  grid, so training only ever produces `{0, .25, .5, .75}`. The Mass tier
+  reproduces the ratio by dividing a local cell-block count by live population.
+- `20` `last_action ∈ {6, 7, 14}` and `21` `last_action == 7` — **binary flags
+  over the agent's own previous action**, not affinity or recency.
+- `22`, `23` `repeat_count / 6` and `novelty_steps / 20` — both non-negative,
+  and both reset together whenever the action changes.
+
+⚠️ The Actor tier does not currently conform: it writes `MeanAffinity` into 20,
+`RecentInteractionRecency` into 21, and a sin/cos pair into 22–23 (sin is
+negative half the time, which the training distribution never contains). That
+path is dormant while the portfolio map runs all-Mass; fix it before any Actor
+NPCs are reintroduced.
 
 | Slice | Dim | Content |
 |---|---:|---|

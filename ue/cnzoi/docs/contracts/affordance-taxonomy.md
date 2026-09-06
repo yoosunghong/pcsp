@@ -9,7 +9,7 @@ the capacity targets validated in Phase 4.
 ## Canonical zone roster (`Map_PCSPDistrict_M`)
 
 10 categories. Each one needs at least one `BP_AffordanceZone` actor with the
-listed tag and capacity, plus `BP_InteractionPoint` children equal to capacity.
+listed tag and integrated interaction slots equal to capacity.
 
 | Category | Root tag | Sub-tag actually placed | Capacity | Interaction points | Sized for |
 |---|---|---:|---:|---:|---|
@@ -55,20 +55,22 @@ new bottleneck zones.
 
 Carried over from Phase 4 and pinned here so future map edits don't regress:
 
-1. **World Partition** — every `BP_AffordanceZone`, `BP_InteractionPoint`, and
+1. **World Partition** — every `BP_AffordanceZone` and
    `BP_PCSPAgentSpawner` must have `Is Spatially Loaded = false`. With no
    `WorldPartitionStreamingSource` present (AI-only pawns), spatially loaded
    actors outside the editor camera's startup radius never spawn, so the
    subsystem registers fewer zones than the map contains. See the 2026-05-17
    streaming fix in `PLAN.md`.
-2. **NavMesh** — every interaction point must lie on a navigable area.
+2. **NavMesh** — every Zone-owned interaction slot must lie on a navigable area.
    `BTTask_MoveToAffordance::TryBeginMove` calls
    `SetReachTestIncludesAgentRadius(false)` so a 3 m `AcceptanceRadius` means
    3 m to the goal, not 3 m + agent capsule. Don't increase the acceptance
    radius to "fix" arrival failures — fix the navmesh hole.
-3. **Reservation** — lives on `APCSPInteractionPoint`, not on the zone. That's
-   why capacity ≈ interaction-point count, not zone count. Capacity-without-points
-   produces `zone_no_free_interaction_point` failures (seen 2026-05-17 Run 2).
+3. **Reservation** — lives in `APCSPAffordanceZone::InteractionSlots`. Capacity
+   is derived from slot count, and the Zone bounds expand automatically to contain
+   all slots plus padding. Each slot renders a circular floor marker in its
+   Zone's stable unique color; targeting NPCs reuse exactly that color.
+   `APCSPInteractionPoint` exists only as legacy migration input.
 
 ## What changes if you extend the taxonomy
 
@@ -79,7 +81,7 @@ order:
 2. `UPCSPPolicySubsystem::ActionToCategory` — add the action→category mapping.
 3. `DT_PCSPAffordanceTags` — register `PCSP.Zone.Cook` (and any sub-tags).
 4. Map — place at least one `BP_AffordanceZone` with the new tag, set
-   `Is Spatially Loaded = false`, and add interaction points.
+   `Is Spatially Loaded = false`, and configure its integrated slot count.
 
 Then re-export `pcsp_actor.onnx` only if the new category needs new
 `EPCSPActionType` entries — i.e. if the action vocabulary changes. Adding a

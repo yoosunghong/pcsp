@@ -17,6 +17,13 @@
 
 ## Active Direction
 
+- [x] Separate UE portfolio evaluation into persona effects, whole execution
+      stacks, and inference scheduling / fixed-input replay (2026-09-05).
+      `ue/cnzoi/docs/portfolio/evaluation-axes.md` specifies the new UE protocol.
+      Mass needs rules are not per-NPC BT. Entropy is descriptive, not fidelity;
+      whole-process FPS is not isolated inference or BT overhead. Existing
+      research observations, actions, exports and COG results are unchanged.
+
 - [x] Keep the PCSP research project self-contained under `research/` while reserving top-level `ue/` for Unreal Engine integration. *(2026-05-13)*
 - [ ] Keep the paper centered on PCSP: frozen LLM persona encoder, lightweight shared RL policy, and trajectory-level persona consistency.
 - [ ] Do not treat `full-proposal.md` as the active direction.

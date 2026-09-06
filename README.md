@@ -1,5 +1,10 @@
 # PCSP — Persona-Conditioned Shared Policies for Scalable NPCs
 
+> **[한국어 기술 포트폴리오 — NPC 1,024명, 정책은 하나](PORTFOLIO.md)**
+> 최신 All-Mass 측정(0 Actor NPC + 1,024 Mass, 평균 28.42 ms), 공유 강화학습,
+> 엔진 통합, 병목 분석과 최적화 의사결정을 정리했습니다. 아래의 혼합 계층
+> 설명·수치는 이전 구현 이력이며, 현재 결과와 적용 범위는 포트폴리오를 참조하세요.
+
 PCSP gives many life-simulation NPCs distinct, designer-authored personalities
 without maintaining one policy or Behavior Tree per character. A natural-language
 persona is encoded once, then a single shared reinforcement-learning policy uses

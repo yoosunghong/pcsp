@@ -22,7 +22,7 @@ issue.
 | `DesiredActionType` | Enum `EPCSPActionType` (uint8) | `BTTask_PCSPDecision` | `BTTask_MoveToAffordance`, `BTTask_PerformInteraction`, Emergency Decorator | Set per decision; persists until next decision |
 | `DesiredAffordanceTag` | `FGameplayTag` | `BTTask_MoveToAffordance` (optional preference) | `UPCSPAffordanceSubsystem::FindBestZone` | Optional; if Invalid, FindBestZone picks by category alone |
 | `TargetActor` | `AActor*` | `BTTask_MoveToAffordance` | `BTTask_PerformInteraction` | Selected zone actor; cleared on completion |
-| `TargetLocation` | `FVector` | `BTTask_MoveToAffordance` | UE `MoveTo` | Interaction-point world location |
+| `TargetLocation` | `FVector` | `BTTask_MoveToAffordance` | UE `MoveTo` | Zone-owned interaction-slot world location |
 | `InteractionStyle` | uint8 | `BTTask_PCSPDecision` (Phase 2+) | `BTTask_PerformInteraction` | Distinguishes EatQuick vs EatSlow inside a single zone category |
 | `UrgencyScore` | float `[0, 1]` | `BTTask_PCSPDecision` | Emergency BB Decorator | `1 − GetNeed(MostUrgent)` |
 | `RecentFailureCount` | int32 | `BTTask_MoveToAffordance` (++ on failure, reset on success) | `BTTask_PCSPDecision` (throttle backoff) | Drives the decision-throttle's exponential backoff |
@@ -126,8 +126,8 @@ with `FPCSPZoneSelectionDebug` to capture the rejection reason on failure.
 **Writes on success:** BB `TargetActor`, `TargetLocation`, `bAffordanceReserved = true`.
 
 **Writes on failure:** BB `RecentFailureCount += 1`. Logs `move_failed` with
-`failure_reason ∈ {FindBestZone:<reason>, zone_no_free_interaction_point,
-interaction_point_reserve_race_lost, pathfinding_request_failed,
+`failure_reason ∈ {FindBestZone:<reason>, zone_no_free_interaction_slot,
+interaction_slot_reserve_race_lost, pathfinding_request_failed,
 path_follow_idle_short:dist=<cm>}`, `intended_zone`, `distance_to_target`.
 
 ### `BTTask_PerformInteraction`

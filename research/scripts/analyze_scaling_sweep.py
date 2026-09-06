@@ -109,9 +109,12 @@ def _summarize_session(session_dir: Path) -> dict:
     frame_p95 = []
     frame_p99 = []
     frame_mean = []
+    frame_last_t = 0.0
     if frame_path.exists():
         for rec in _iter_jsonl(frame_path):
-            if float(rec.get("t", 0.0)) < WARMUP_SECONDS:
+            t = float(rec.get("t", 0.0))
+            frame_last_t = max(frame_last_t, t)
+            if t < WARMUP_SECONDS:
                 continue
             frame_mean.append(float(rec["mean_ms"]))
             frame_p95.append(float(rec["p95_ms"]))
@@ -141,11 +144,19 @@ def _summarize_session(session_dir: Path) -> dict:
     # --- Mass background-tier telemetry ---
     mass_path = session_dir / "mass_stats.jsonl"
     mass_rows = []
+    mass_last_t = 0.0
     if mass_path.exists():
-        mass_rows = [
-            rec for rec in _iter_jsonl(mass_path)
-            if float(rec.get("t", 0.0)) >= WARMUP_SECONDS
-        ]
+        for rec in _iter_jsonl(mass_path):
+            t = float(rec.get("t", 0.0))
+            mass_last_t = max(mass_last_t, t)
+            if t >= WARMUP_SECONDS:
+                mass_rows.append(rec)
+
+    # All-Mass sessions intentionally have no per-Actor trajectory files. Use
+    # the sampled telemetry timeline so their duration and per-NPC throughput
+    # do not collapse to zero in the aggregate table.
+    if duration_s <= 0.0:
+        duration_s = max(0.0, max(frame_last_t, mass_last_t) - WARMUP_SECONDS)
     mass_decisions = sum(int(rec.get("decisions", 0)) for rec in mass_rows)
     mass_arrivals = sum(int(rec.get("arrivals", 0)) for rec in mass_rows)
     mass_policy_samples = [
@@ -169,7 +180,11 @@ def _summarize_session(session_dir: Path) -> dict:
         "n_agents": n_agents,
         "hero_agents": hero_agents,
         "mass_entities": mass_entities,
-        "architecture": "mass_hybrid" if mass_entities > 0 else "actor_bt",
+        "architecture": (
+            "all_mass" if mass_entities > 0 and hero_agents == 0
+            else "mass_hybrid" if mass_entities > 0
+            else "actor_bt"
+        ),
         "seed": seed,
         "duration_s": round(duration_s, 1),
         "n_decisions": n_decisions,
@@ -306,7 +321,8 @@ def _emit_plot(agg: list[dict], path: Path) -> None:
     fig, ax1 = plt.subplots(figsize=(7, 4))
     colors = {"actor_bt": "C0", "mass_hybrid": "C2"}
     markers = {"actor_bt": "o", "mass_hybrid": "s"}
-    for architecture in sorted({r["architecture"] for r in agg}):
+    architectures = sorted({r["architecture"] for r in agg})
+    for architecture in architectures:
         rows = [r for r in agg if r["architecture"] == architecture]
         xs = [r["n_agents"] for r in rows]
         frame_p95 = [r["frame_ms_p95"]["mean"] or 0 for r in rows]
@@ -317,7 +333,11 @@ def _emit_plot(agg: list[dict], path: Path) -> None:
     ax1.grid(True, alpha=0.3)
     ax1.legend(loc="upper left")
 
-    plt.title("PCSP Actor/BT vs Mass-hybrid scaling")
+    plt.title(
+        "PCSP All-Mass Portfolio Scaling"
+        if architectures == ["all_mass"]
+        else "PCSP Actor/BT debug baseline vs all-Mass scaling"
+    )
     fig.tight_layout()
     fig.savefig(path, dpi=150)
     plt.close(fig)

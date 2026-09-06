@@ -47,6 +47,60 @@ enum class EPCSPAffordanceCategory : uint8
 	None UMETA(Hidden)
 };
 
+/** Shared visualization palette for NPC goal markers and affordance slots. */
+namespace PCSPVisualization
+{
+	/** Deterministic high-contrast palette entry shared by a Zone and its targeting NPCs. */
+	inline FLinearColor ZoneColor(const int32 VisualizationIndex)
+	{
+		if (VisualizationIndex < 0)
+		{
+			return FLinearColor(0.55f, 0.55f, 0.55f);
+		}
+		FLinearColor Base;
+		switch (VisualizationIndex % 12)
+		{
+		case 0:  Base = FLinearColor(1.00f, 0.08f, 0.45f); break;
+		case 1:  Base = FLinearColor(0.05f, 0.85f, 1.00f); break;
+		case 2:  Base = FLinearColor(1.00f, 0.55f, 0.04f); break;
+		case 3:  Base = FLinearColor(0.32f, 1.00f, 0.10f); break;
+		case 4:  Base = FLinearColor(0.55f, 0.18f, 1.00f); break;
+		case 5:  Base = FLinearColor(1.00f, 0.92f, 0.08f); break;
+		case 6:  Base = FLinearColor(0.05f, 1.00f, 0.58f); break;
+		case 7:  Base = FLinearColor(1.00f, 0.16f, 0.12f); break;
+		case 8:  Base = FLinearColor(0.18f, 0.35f, 1.00f); break;
+		case 9:  Base = FLinearColor(1.00f, 0.25f, 0.88f); break;
+		case 10: Base = FLinearColor(0.08f, 0.75f, 0.62f); break;
+		default: Base = FLinearColor(0.72f, 0.38f, 0.06f); break;
+		}
+		const float Brightness = 0.65f + 0.05f * ((VisualizationIndex / 12) % 8);
+		Base.R *= Brightness;
+		Base.G *= Brightness;
+		Base.B *= Brightness;
+		Base.A = 1.f;
+		return Base;
+	}
+
+	inline FLinearColor CategoryColor(const EPCSPAffordanceCategory Category)
+	{
+		switch (Category)
+		{
+		case EPCSPAffordanceCategory::Eat:      return FLinearColor(1.00f, 0.35f, 0.08f);
+		case EPCSPAffordanceCategory::Rest:     return FLinearColor(0.28f, 0.45f, 1.00f);
+		case EPCSPAffordanceCategory::Work:     return FLinearColor(1.00f, 0.78f, 0.12f);
+		case EPCSPAffordanceCategory::Study:    return FLinearColor(0.62f, 0.32f, 1.00f);
+		case EPCSPAffordanceCategory::Exercise: return FLinearColor(1.00f, 0.12f, 0.22f);
+		case EPCSPAffordanceCategory::Hygiene:  return FLinearColor(0.10f, 0.85f, 1.00f);
+		case EPCSPAffordanceCategory::Social:   return FLinearColor(1.00f, 0.18f, 0.68f);
+		case EPCSPAffordanceCategory::Leisure:  return FLinearColor(0.25f, 1.00f, 0.50f);
+		case EPCSPAffordanceCategory::Shop:     return FLinearColor(0.72f, 0.42f, 0.16f);
+		case EPCSPAffordanceCategory::Observe:  return FLinearColor(0.12f, 0.92f, 0.38f);
+		case EPCSPAffordanceCategory::Idle:     return FLinearColor(0.55f, 0.55f, 0.55f);
+		default:                                return FLinearColor::White;
+		}
+	}
+}
+
 /**
  * Phase 4 ablation modes — selected at runtime via the `pcsp.PolicyMode` CVar.
  * Logged in the trajectory `session_start` row so analysis tooling can label runs.

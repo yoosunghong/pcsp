@@ -12,5 +12,6 @@ void UPCSPMassAgentTrait::BuildTemplate(FMassEntityTemplateBuildContext& BuildCo
 	BuildContext.AddFragment<FPCSPMassNeedsFragment>();
 	BuildContext.AddFragment<FPCSPMassIntentFragment>();
 	BuildContext.AddFragment<FPCSPMassMoveTargetFragment>();
+	BuildContext.AddFragment<FPCSPMassHistoryFragment>();
 	BuildContext.AddTag<FPCSPMassAgentTag>();
 }

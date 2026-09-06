@@ -12,6 +12,8 @@ public class cnzoiEditor : ModuleRules
 			"Engine",
 			"UnrealEd",
 			"AssetRegistry",
+			"AssetTools",
+			"MaterialEditor",
 			"GameplayTags",
 			"cnzoi"
 		});

@@ -8,6 +8,7 @@
 
 class APCSPAgentCharacter;
 class APCSPAffordanceZone;
+class APCSPMassSpawner;
 
 /**
  * Read-only adapter between an observed `APCSPAgentCharacter` and UMG widgets.
@@ -23,6 +24,10 @@ struct FPCSPHudAgentSnapshot
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadOnly) int32 PersonaId = 0;
+	UPROPERTY(BlueprintReadOnly) bool bMassEntity = false;
+	UPROPERTY(BlueprintReadOnly) int32 StableIndex = INDEX_NONE;
+	UPROPERTY(BlueprintReadOnly) bool bMoving = false;
+	UPROPERTY(BlueprintReadOnly) bool bInteracting = false;
 	UPROPERTY(BlueprintReadOnly) FString PersonaText;
 	UPROPERTY(BlueprintReadOnly) bool bEmbeddingActive = false;
 	UPROPERTY(BlueprintReadOnly) EPCSPPolicyMode PolicyMode = EPCSPPolicyMode::HybridPCSP;
@@ -34,6 +39,8 @@ struct FPCSPHudAgentSnapshot
 	UPROPERTY(BlueprintReadOnly) FGameplayTag DesiredAffordance;
 	UPROPERTY(BlueprintReadOnly) AActor* TargetActor = nullptr;
 	UPROPERTY(BlueprintReadOnly) FVector TargetLocation = FVector::ZeroVector;
+	/** Where the inspected agent is standing; the HUD projects it for the marker. */
+	UPROPERTY(BlueprintReadOnly) FVector AgentLocation = FVector::ZeroVector;
 	UPROPERTY(BlueprintReadOnly) float UrgencyScore = 0.f;
 	UPROPERTY(BlueprintReadOnly) int32 RecentFailureCount = 0;
 	UPROPERTY(BlueprintReadOnly) bool bAffordanceReserved = false;
@@ -45,6 +52,11 @@ struct FPCSPHudAgentSnapshot
 	UPROPERTY(BlueprintReadOnly) int32 NearbyCount = 0;
 	UPROPERTY(BlueprintReadOnly) float MeanAffinity = 0.f;
 	UPROPERTY(BlueprintReadOnly) AActor* SocialTarget = nullptr;
+	/** Crowd neighbours doing the same thing. Mass agents keep no affinity ledger,
+	    so shared activity is the neighbourhood signal that is actually simulated. */
+	UPROPERTY(BlueprintReadOnly) int32 NearbySameActivityCount = 0;
+	UPROPERTY(BlueprintReadOnly) float NearbyRadius = 0.f;
+	UPROPERTY(BlueprintReadOnly) bool bNearbyAffinityTracked = false;
 
 	// Zone occupancy panel (computed from the resolved target zone, if any)
 	UPROPERTY(BlueprintReadOnly) FGameplayTag CurrentZoneTag;
@@ -52,6 +64,8 @@ struct FPCSPHudAgentSnapshot
 	UPROPERTY(BlueprintReadOnly) int32 ZoneOccupancy = 0;
 	UPROPERTY(BlueprintReadOnly) int32 ZoneCapacity = 0;
 	UPROPERTY(BlueprintReadOnly) float DistanceToTarget = -1.f;
+	/** Target is a free-roam stroll point, so no zone slot is claimed. */
+	UPROPERTY(BlueprintReadOnly) bool bWanderingTarget = false;
 
 	// Trajectory strip (last N events from the in-memory ring buffer)
 	UPROPERTY(BlueprintReadOnly) TArray<FPCSPTrajectoryEntry> RecentEvents;
@@ -65,6 +79,9 @@ class CNZOI_API UPCSPAgentDebugViewModel : public UObject
 public:
 	UFUNCTION(BlueprintCallable, Category="PCSP|HUD")
 	void SetAgent(APCSPAgentCharacter* InAgent);
+
+	UFUNCTION(BlueprintCallable, Category="PCSP|HUD")
+	void SetMassAgent(APCSPMassSpawner* InSpawner, int32 InStableIndex);
 
 	UFUNCTION(BlueprintCallable, Category="PCSP|HUD")
 	APCSPAgentCharacter* GetAgent() const { return Agent.Get(); }
@@ -88,4 +105,9 @@ protected:
 
 	UPROPERTY()
 	TWeakObjectPtr<APCSPAgentCharacter> Agent;
+
+	UPROPERTY()
+	TWeakObjectPtr<APCSPMassSpawner> MassSpawner;
+
+	int32 MassStableIndex = INDEX_NONE;
 };

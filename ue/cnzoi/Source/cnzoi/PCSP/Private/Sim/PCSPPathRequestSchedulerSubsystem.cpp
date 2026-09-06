@@ -6,6 +6,7 @@
 #include "HAL/FileManager.h"
 #include "Misc/FileHelper.h"
 #include "Stats/Stats.h"
+#include "ProfilingDebugging/CpuProfilerTrace.h"
 
 static TAutoConsoleVariable<int32> CVarPCSPPathSchedulingEnabled(
 	TEXT("pcsp.PathSchedulingEnabled"), 1,
@@ -92,6 +93,8 @@ void UPCSPPathRequestSchedulerSubsystem::CancelRequest(AActor* Agent)
 
 void UPCSPPathRequestSchedulerSubsystem::Tick(float DeltaTime)
 {
+	TRACE_CPUPROFILER_EVENT_SCOPE(PCSP_PathScheduler_Tick);
+
 	for (auto It = Requests.CreateIterator(); It; ++It)
 	{
 		if (!It.Key().IsValid()) { It.RemoveCurrent(); }
@@ -110,6 +113,8 @@ void UPCSPPathRequestSchedulerSubsystem::Tick(float DeltaTime)
 
 void UPCSPPathRequestSchedulerSubsystem::GrantFrameBudget()
 {
+	TRACE_CPUPROFILER_EVENT_SCOPE(PCSP_PathScheduler_GrantFrameBudget);
+
 	if (CVarPCSPPathSchedulingEnabled.GetValueOnGameThread() == 0 || Requests.IsEmpty())
 	{
 		return;

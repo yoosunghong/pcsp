@@ -32,6 +32,165 @@ Movement is an execution detail, not a policy action. The policy should output s
 
 ## Current Portfolio Focus
 
+### Separate evaluation questions (2026-09-05)
+
+- [x] Separate Persona effect, Execution architecture, and Inference
+      optimization in the Performance HUD; rename the Mass rules baseline to
+      Needs heuristic and remove the uncontrolled FPS-vs-BT percentage.
+- [x] Add fresh-map variants, shared series/count/seed/camera, population-gated
+      warmup, fixed recording windows, per-run CSV/JSON and isolated trajectories.
+- [x] Record decision throughput, per-persona action distributions, inference
+      service/latency and failures alongside wall-clock FPS/p95/process CPU.
+- [x] Add identical captured-input sync/worker replay with logit agreement and
+      a fresh-process repeated-seed driver; keep these separate from live FPS.
+- [x] Validate build, native regression tests, Actor/Mass travel and rendered HUD.
+- [ ] Collect performance evidence with the editor closed; matching intent and
+      placement replay remains necessary for isolated BT-overhead claims.
+
+See `docs/portfolio/evaluation-axes.md`. Architecture is a whole-stack comparison;
+its existing movement, observation and representation differences remain explicit.
+
+### Population distribution and mode performance comparison (2026-09-05)
+
+- [x] Restore an always-visible compact population action bar chart and an
+      expanded all-action chart in Details.
+- [x] Add PCSP / BT Only / No Persona recording buttons, per-mode summary
+      table, and overlaid CPU/FPS time-series in the Performance window.
+- [x] Sample Windows process CPU normalized to logical cores and wall-clock
+      frames; isolate mode changes with five-second warm-up and distinct runs.
+      Keep latest runs for comparison and write every raw sample to unique CSV.
+- [x] Verify metric arithmetic, live three-mode recording, and rendered layout.
+
+This is live whole-process performance observation, not an isolated inference
+benchmark. In the Mass implementation BT Only means needs rules with ONNX off.
+
+### Portfolio readability and package data (2026-09-05)
+
+- [x] Replace the default diagnostics wall with readable, pixel-scaled persona
+      evidence cards, a frozen comparison pin, and explicit details controls.
+- [x] Group consecutive repeated decisions with their time range and sample
+      count; distinguish recorded decisions from completed interactions.
+- [x] Cap 24 large Dieselpunk textures at 2048 through official Unreal MCP,
+      preserve animation data textures, budget streaming, and disable the
+      optional animated selection hull by default.
+- [x] Stage ONNX and persona JSON data, cook the Visual map and dynamically
+      loaded PCSP materials. Preserve the user's Visual startup-map selection.
+- [x] Rendered 1280x720 comparison/details and 1920x1080 comparison checks;
+      1,024-agent policy/HUD/pin smoke passed. Final captures have no VRAM warning.
+- [ ] Visible target-GPU performance acceptance and packaged Shipping execution
+      remain separate release gates.
+
+See `DONE.md` and `docs/portfolio/portfolio-presentation.md` for evidence and
+limitations. Policy, observation, and research evaluation contracts are unchanged.
+
+### Mass NavMesh movement repair (2026-09-04)
+
+- [x] Triple Mass body/selection scale and use matching 105 cm separation radii.
+- [x] Scale translation with body size, but drive AnimToTexture cadence from
+      body-relative speed. At 3x scale, normal movement remains 780 uu/s with
+      1.2x playback; 450 uu/s strolls use about 0.69x instead of multiplying
+      playback by scale a second time.
+- [x] Scale the click fallback, HUD selection-arrow height, and Mass third-person
+      framing from the selected NPC's visual scale. At 3x the marker is 615 cm
+      above the feet and the camera uses 1,140/630/360 cm distance/height/look-at.
+- [x] Replace shared city grid waypoints with per-entity cached Recast paths,
+      bounded path queries, and NavMesh-constrained movement. Mass-to-Mass
+      separation/contact is disabled by default (`pcsp.MassAgentCollision=0`)
+      so NPCs can pass through each other; selection retains Visibility queries.
+- [x] Build/wait for navigation before spawning. In the Visual map, project
+      affordance-slot anchors onto reachable NavMesh, fill sparse districts, and
+      round-robin the first 1,024 starts across a 4x4 city partition. Initial
+      starts still avoid exact overlap; runtime crowd collision stays off.
+- [x] Add a 300 m Mass representation cull distance and suppress ray-tracing
+      effects without invalidating all mesh DDC. Record texture/geometry pressure
+      and the next visible-GPU A/B gates in the rendering optimization guide.
+- [x] Normal Editor build and four Mass automation tests passed. Final functional
+      session `20260904_044331` spawned exactly 64 NPCs in every 4x4 district,
+      with 1,400 valid anchors and collision reported off. NullRHI validates the
+      function and telemetry, not animation appearance or rendered frame rate.
+
+The legacy city flow fields are disabled by default. Mass movement now requires
+a built NavMesh covering the spawner, roads, and interaction slots. Research
+observation/action/export contracts remain unchanged.
+
+### Dieselpunk Visual district (2026-09-03)
+
+- [x] Author an eastern four-block district in
+      `Map_PCSPDistrict_Portfolio_Visual` through the official Unreal MCP:
+      cobblestone roads, sidewalks, civic court, five buildings, and street furniture.
+- [x] Correct the floating observatory and separate landmark footprints from roads;
+      keep the original PCSP demonstration floor and gameplay actors intact.
+- [x] Save World Partition external actors and inspect building overlap and ground
+      collision. Authoring script: `tools/build_dieselpunk_city.py`.
+- [x] Relocate the Visual map's 118 affordance zones / 1,704 slots to its 16 city
+      blocks, retaining identity and capacity. Move the 1,024-Mass start area to
+      the hotel courtyard. Verify all slots after save/reload, 354 ground samples,
+      and a short PIE run with 118 registered zones and 587 reservations.
+- [x] Add shared per-zone Mass routes through city roads and bridges, excluding
+      tagged buildings, furniture, and parapets. Full build and route regression
+      test passed. Final 1,024-NPC / 300-second functional run: 2,157 arrivals,
+      441 canal crossings, all three bridges used, zero route failures or sampled
+      obstacle/ground violations. Real rendered PIE also reached 151 destinations.
+      This is a navigation acceptance result; rendering performance and crowd
+      separation remain separate gates.
+- [x] Expand the visual city to 576 x 572 m (4x area), 16 blocks, 40 buildings,
+      a canal, three road bridges with KitBash covered walkways, and 104 props.
+- [x] Add `PCG_DieselpunkCityBlock` and six editable PCG volumes producing 29
+      buildings. Expose class, area, spacing, fill ratio, seed, facing, jitter,
+      scale, label, and streaming parameters. Validate regeneration and spacing.
+- [ ] Optimize the expanded visual district for the current 4 GB VRAM adapter:
+      final viewport showed about 0.8-1.3 GB over budget. Profile geometry and
+      evaluate Nanite/LOD/proxies and streaming before claiming smooth editing.
+
+Current PCG editing guide: [dieselpunk-city-pcg.md](docs/portfolio/dieselpunk-city-pcg.md).
+NPC destination editing guide: [dieselpunk-city-affordances.md](docs/portfolio/dieselpunk-city-affordances.md).
+Road and bridge routing guide: [dieselpunk-city-navigation.md](docs/portfolio/dieselpunk-city-navigation.md).
+Rendering optimization audit: [dieselpunk-city-rendering-optimization.md](docs/portfolio/dieselpunk-city-rendering-optimization.md).
+Initial layout record: [dieselpunk-city-authoring.md](docs/portfolio/dieselpunk-city-authoring.md).
+
+### Mass-first demo repair (2026-09-03)
+
+Mass entities are now the default presentation and simulation population;
+Actor/BT agents remain an explicitly requested debug baseline. The current
+repair connects the Mass fragments to HUD selection, population aggregation,
+slot occupancy, and a non-possessing camera proxy. It also replaces the static
+reference-pose/head-beacon representation with AnimToTexture idle/walk ISM
+groups tinted by the same category palette as the affordance floor markers.
+
+- [x] Implement capacity-aware Mass slot claims and weighted alternative-zone
+      selection; release claims after short, authored-duration-scaled interactions.
+- [x] Implement Mass snapshots, bounded decision history, click/Tab selection,
+      and third-person camera support without converting entities into Actors.
+- [x] Bind the legacy WBP-local ViewModel before Blueprint Construct and clear
+      all widget timers during teardown.
+- [x] Implement seeded category mixing (`-RelayoutCompact -LayoutSeed=17`) that
+      retains every authored zone/capacity and repairs same-category neighbors.
+- [x] Suffix-9475 Editor build, three automation tests (including fair admission
+      rotation), and 1,024-Mass offscreen smoke passed. HUD selection/needs/history/
+      population/follow-camera checks passed; startup through shutdown logged zero
+      ViewModel Accessed None warnings. Two captures confirmed animated poses and
+      category body tint with no head beacons.
+- [x] With the editor closed, hash-verify a 126-file map backup and apply the
+      mixed Portfolio layout. A fresh load audited 96 zones / 592 slots,
+      zero same-category neighbors and overlaps, and 420 cm slot clearance.
+      Normal (unsuffixed) Editor build and two real PIE start/stop cycles passed:
+      default 1,024 Mass, needs/history, UMG camera-button callback and legacy
+      ViewModel binding; zero Accessed None errors through teardown. NullRHI PIE
+      verifies behavior, not rendered hit testing or final presentation.
+- [x] Inspect actual 1920x1080 rendered output and repair HUD text overflow,
+      narrow needs bars, and the unassigned diagram placeholder without changing
+      widget assets. Final render verified animated category-tinted bodies and
+      readable Mass snapshots/camera state.
+- [ ] Run a fresh visible GPU-memory/performance benchmark and physical mouse
+      selection check. VRAM-budget warnings also occurred in isolated offscreen
+      runs with no Editor open; functionality tests are not performance evidence.
+      Lower-resolution HUD layout still needs an interactive presentation check.
+
+The 33-float observation, persona projection, policy actions, training export,
+and research evaluation contracts are unchanged. New performance claims require
+a fresh visible benchmark: the old static-Manny numbers do not describe the
+GPU-skinned representation.
+
 Near-term UE5 agent work is portfolio-focused. Prioritize engine-facing
 extensions before demo presentation:
 
@@ -41,8 +200,8 @@ extensions before demo presentation:
    when synchronous inference becomes visible in capture.
 4. Extend observability so live HUD panels can reuse the same event stream as
    JSONL logs.
-5. Build the nearest-agent camera focus and HUD after the runtime behavior is
-   strong enough to showcase.
+5. Iterate on the implemented click-to-inspect HUD and non-possessing
+   third-person follow camera as presentation feedback arrives.
 
 Detailed portfolio docs live under [docs/portfolio/](docs/portfolio/).
 
@@ -125,6 +284,19 @@ Detailed portfolio docs live under [docs/portfolio/](docs/portfolio/).
       and 8-need snapshot. Buffered + auto-flushed every 5s and on EndPlay.
 
 ### Phase 4: Scaling And Experiments
+
+- [x] All-Mass 1,024-NPC runtime and visible goal distribution (2026-09-02):
+      Mass mode now enforces `0 Actor + N Mass` by folding any configured Actor
+      count into `MassEntityCount`; the sweep defaults to `HeroAgentCount=0`.
+      Each Mass NPC renders a small beacon colored by its exact destination
+      Zone's stable visualization ID. UE 5.8 Editor/Game targets build cleanly;
+      an offscreen 1,024 run logged `0 Actor + 1024 Mass` and rendered the markers.
+- [x] Integrated affordance slots (2026-09-02): `APCSPAffordanceZone` now owns
+      interaction slot definitions, reservation state, auto-generated grids,
+      auto-expanded bounds, and Zone-unique circular floor markers. Actor
+      BT and Mass target selection consume the Zone slots directly. The editor
+      commandlet migrated `Map_PCSPDistrict_M` to 10 Zones/210 slots and the
+      portfolio map to 96 Zones/592 slots; both now contain zero legacy Point actors.
 
 - [x] Decision throttle + failure backoff (2026-05-17): `BTTask_PCSPDecision`
       now caches the last action and only re-runs ONNX every
@@ -224,7 +396,12 @@ Detailed portfolio docs live under [docs/portfolio/](docs/portfolio/).
       Controller, BT, collision body, and Recast request per entity.
       Decisions are distributed over 32 cohorts and capped with
       `pcsp.MassMaxDecisionsPerFrame`; HISM rendering updates at low
-      frequency. `run_scaling_sweep.ps1 -MassHybrid` now drives
+      frequency. The original cylinder proxy was replaced on 2026-09-02 by
+      a reference-pose Manny static mesh baked from the same mesh/materials
+      as `BP_PCAPAgent`; the Mass HISM forces a 5%-triangle LOD1. The legacy
+      cylinder remains available only through
+      `pcsp.MassCharacterRepresentation=0` for reproducible A/B profiling.
+      `run_scaling_sweep.ps1 -MassHybrid` now drives
       128/256/512/1024 totals, and `analyze_scaling_sweep.py` aggregates
       Actor/Mass counts, path queue/wait, and Mass policy/arrival metrics.
       Compatibility smoke `20260831_035336` ran 4 hero + 1,020 Mass entities
@@ -232,11 +409,24 @@ Detailed portfolio docs live under [docs/portfolio/](docs/portfolio/).
       failures. The offscreen run was throttled, so its frame time is not a
       publishable performance result. Design and acceptance criteria:
       [docs/portfolio/mass-1024-scaling.md](docs/portfolio/mass-1024-scaling.md).
+      Same-build/seed 107 profiling measured `111.82 -> 114.54 ms` telemetry
+      frame mean (`+2.4%`) and `115.36 -> 118.06 ms` Insights Frame timer
+      (`+2.3%`) for cylinder -> Manny LOD1; report:
+      [docs/portfolio/benchmarks/mass-character-representation-20260902.md](docs/portfolio/benchmarks/mass-character-representation-20260902.md).
 - [x] Run the final visible Mass-hybrid benchmark at 128/256/512/1024 total
       NPCs × 3 seeds. All 12 visible standalone runs completed on 2026-09-01;
       at 1,024 NPCs frame mean is `25.47 ± 0.47 ms`, frame p95 is
       `30.15 ± 0.53 ms`, and hero movement failure is `0.0%`. Report:
       [docs/portfolio/benchmarks/visible-mass-20260901.md](docs/portfolio/benchmarks/visible-mass-20260901.md).
+      This is retained as historical mixed-tier evidence.
+- [x] Rebuild `Map_PCSPDistrict_Portfolio` as a wide non-overlapping 12×8
+      layout and rerun the current all-Mass scaling benchmark. The saved map
+      spans `67,690 × 40,680 cm`, contains 96 Zones / 592 integrated slots,
+      and reload-audits at 0 Zone overlaps / 0 slot overlaps / 420 cm minimum
+      slot spacing. The stable 128/256/512/1024 × 3-seed visible sweep completed
+      on 2026-09-02 with 0 Actor NPCs. At 1,024 Mass entities, frame mean is
+      `28.42 ± 0.17 ms` and p95 is `34.14 ± 0.11 ms`. Report:
+      [docs/portfolio/benchmarks/all-mass-portfolio-20260902.md](docs/portfolio/benchmarks/all-mass-portfolio-20260902.md).
 - [ ] Attach Unreal Insights captures and report game/navigation/Mass/render
       breakdown plus memory per NPC. Persona-distinctness by simulation tier is
       now covered by the [full-PCSP three-seed independent-evaluator audit](../../research/docs/integration/ue-simulation-tier-behavior.md).
@@ -351,6 +541,15 @@ Detailed portfolio docs live under [docs/portfolio/](docs/portfolio/).
 
 ### Phase 5: Paper And Portfolio Artifacts
 
+- [x] Write the main Korean portfolio document (2026-09-03):
+      [../../PORTFOLIO.md](../../PORTFOLIO.md). The narrative covers shared RL,
+      independent evaluation, the engine contract, Actor bottlenecks, All-Mass
+      scaling, accepted/rejected optimization pilots, and observability. Use
+      the 2026-09-02 all-Mass 12-run table as the performance baseline; label
+      the animated 2026-09-03 capture as functional evidence only. Document
+      window-p95 aggregation, Mass arrivals rather than Actor completions,
+      repeated persona IDs, and missing run-specific model/hardware manifests.
+
 - [x] Prepare implementation diagrams
       ([docs/portfolio/diagrams.md](docs/portfolio/diagrams.md) — 5 Mermaid figures:
       system overview, per-decision sequence, BT subtree, three-layer
@@ -405,13 +604,13 @@ systems have at least a first pass. All portfolio planning docs live under
 | Order | Item | Status | Planning doc | UE5 update target |
 | --- | --- | --- | --- | --- |
 | 1 | Hybrid policy/BT contract cleanup | Implemented 2026-05-23 | [docs/portfolio/hybrid-stack.md](docs/portfolio/hybrid-stack.md) | centralized action-to-category mapping, routed `Leisure` to Observe, logged active ablation |
-| 2 | 1,024-NPC Mass hybrid + path admission | Visible 12-run benchmark complete 2026-09-01; Insights capture pending | [docs/portfolio/mass-1024-scaling.md](docs/portfolio/mass-1024-scaling.md) | `UPCSPPathRequestSchedulerSubsystem`, `APCSPMassSpawner`, Mass fragments/processor, sweep/analyzer telemetry |
+| 2 | 1,024-NPC Mass hybrid + path admission | Visible 12-run benchmark complete 2026-09-01; scoped Insights capture and headless export complete 2026-09-02 | [docs/portfolio/mass-1024-scaling.md](docs/portfolio/mass-1024-scaling.md) | `UPCSPPathRequestSchedulerSubsystem`, `APCSPMassSpawner`, Mass fragments/processor, sweep/analyzer telemetry |
 | 3 | 1,024-NPC zone expansion + EQS asset | Completed and MCP-verified 2026-09-02: native World Partition serialization contains 96 zones / 592 uniquely owned points, all metadata is normalized and non-spatially-loaded, and `EQS_PCSP_SelectAffordanceZone` is present without modification. The 16-Hero Simulate PIE smoke also passed. | [docs/portfolio/zone-expansion-eqs-editor-guide.md](docs/portfolio/zone-expansion-eqs-editor-guide.md) | 96 zone instances / 592 interaction points in `Map_PCSPDistrict_Portfolio`; `EQS_PCSP_SelectAffordanceZone` |
 | 4 | Weighted/EQS affordance congestion handling | First weighted scorer implemented; build and expanded-zone/EQS baseline pending | [docs/portfolio/eqs-congestion.md](docs/portfolio/eqs-congestion.md) | `UPCSPAffordanceSubsystem`, `UBTTask_MoveToAffordance`, EQS query/tests |
-| 5 | ZoneGraph/MassCrowd + shared routes + density admission | Queued after expanded-zone congestion baseline | [docs/portfolio/mass-1024-scaling.md](docs/portfolio/mass-1024-scaling.md) | Mass route fragments/processors, shared route cache, predicted-arrival admission telemetry |
-| 6 | Async/batched ONNX inference | Cohort staggering live; true dynamic batch deferred pending post-navigation profile | [docs/portfolio/async-inference.md](docs/portfolio/async-inference.md) | `UPCSPPolicySubsystem`, Mass cohort buffers, dynamic `[B,*]` ONNX export |
+| 5 | ZoneGraph/MassCrowd + shared routes + density admission | Async flow-field pilot measured 2026-09-02 and rejected for the current flat/single-goal map; obstacle-rich route benchmark still queued | [docs/portfolio/mass-1024-scaling.md](docs/portfolio/mass-1024-scaling.md) | `UPCSPFlowFieldSubsystem`, future Mass route fragments/processors, shared route cache, predicted-arrival admission telemetry |
+| 6 | Async spatial queries + batched ONNX inference | Opt-in implementations and 3-seed Insights pilot complete 2026-09-02; 300-second behavior regression required before default-on | [docs/portfolio/async-inference.md](docs/portfolio/async-inference.md) | `UPCSPSpatialQuerySubsystem`, `UPCSPPolicySubsystem`, next-frame Mass result commit, dynamic `[B,*]` ORT batch |
 | 7 | Trajectory observability pipeline extensions | Scaling-aware; sampled Actor/Mass independent-eval bridge live 2026-09-01 | [docs/portfolio/observability.md](docs/portfolio/observability.md) | canonical Actor action index, sampled `mass_trajectories.jsonl`, frozen evaluator adapter, existing scheduler/Mass stats/HUD ring buffer |
-| 8 | Agent-camera focus + demo HUD | C++ scaffold and UMG assets present; capture validation pending | [docs/portfolio/demo/README.md](docs/portfolio/demo/README.md) | `APCSPDemoPlayerController`, `UPCSPAgentDebugViewModel`, HUD widgets, portfolio map |
+| 8 | Agent-camera focus + demo HUD | Native click selection, independent third-person follow, 10 Hz HUD aggregation, global/selected action distributions, trajectory rows, and MCP-authored WBP hierarchy implemented and compiled 2026-09-02; PIE capture validation remains | [docs/portfolio/demo/README.md](docs/portfolio/demo/README.md) | `APCSPDemoPlayerController`, `UPCSPDemoHUDWidgetBase`, `UPCSPAgentDebugViewModel`, HUD widgets, portfolio map |
 | 9 | Diagram polish | Refreshed 2026-05-23 | [docs/portfolio/diagrams.md](docs/portfolio/diagrams.md) | diagrams 2, 3, 4, 5 updated for hybrid-stack cleanup |
 | 10 | Static visual evidence pack | Implemented 2026-08-31 | [docs/portfolio/visual-evidence.md](docs/portfolio/visual-evidence.md) | reproducible ablation, Actor-scaling, and Mass-runtime PNG/SVG figures |
 
@@ -446,7 +645,7 @@ One file per spawned agent. Each line is a JSON object. Use these to answer Phas
 | Are Park (Observe) + Gym (Exercise) reached? | `jq -r 'select(.event=="interaction_complete") \| .category' \| sort \| uniq -c` — both `Observe` and `Exercise` must appear. |
 | Reward accumulation per persona | `jq -s 'map(select(.event=="interaction_complete") \| .reward) \| add' agent_p001_*.jsonl` |
 | Path-failure rate | `grep -c '"event":"move_failed"' agent_p*.jsonl` vs decision count. |
-| Failure-cause breakdown | `jq -r 'select(.event=="move_failed") \| .failure_reason' agent_p*.jsonl \| cut -d: -f1 \| sort \| uniq -c`. Top-level reasons: `FindBestZone`, `path_follow_idle_short`, `pathfinding_request_failed`, `zone_no_free_interaction_point`, `interaction_point_reserve_race_lost`. A `FindBestZone:AllCategoryMismatch` spike means a zone class did not register — usually World Partition streaming. A `path_follow_idle_short:dist=<cm>` cluster well above `AcceptanceRadius` means the `SetReachTestIncludesAgentRadius(false)` call regressed or the InteractionPoint collision is inflating the stop distance. |
+| Failure-cause breakdown | `jq -r 'select(.event=="move_failed") \| .failure_reason' agent_p*.jsonl \| cut -d: -f1 \| sort \| uniq -c`. Top-level reasons: `FindBestZone`, `path_follow_idle_short`, `pathfinding_request_failed`, `zone_no_free_interaction_slot`, `interaction_slot_reserve_race_lost`. A `FindBestZone:AllCategoryMismatch` spike means a zone class did not register — usually World Partition streaming. A `path_follow_idle_short:dist=<cm>` cluster well above `AcceptanceRadius` means the `SetReachTestIncludesAgentRadius(false)` call regressed or a slot lies outside NavMesh coverage. |
 | Intended-zone audit | `jq -r 'select(.event=="move_failed") \| [.action, .intended_zone] \| @tsv' agent_p*.jsonl \| sort \| uniq -c`. If an action consistently has `intended_zone:""`, the chosen category has no registered zone (streaming/config issue). |
 | Reservation contention | `grep -c '"event":"interaction_failed"' agent_p*.jsonl` (look for `reservation_stolen_mid_interaction`). |
 | Emergency-branch firing | `jq 'select(.event=="decision" and .urgency > 0.85)' agent_p*.jsonl` |

@@ -21,14 +21,13 @@
   Array of agent counts to sweep. Default: 8,16,32,64,96,128.
 
 .PARAMETER MassHybrid
-  Run the two-tier architecture instead: HeroAgentCount full Actor/BT agents
-  plus enough Mass background entities to reach each TotalNpcCounts value.
+	Run the all-Mass architecture at each TotalNpcCounts value.
 
 .PARAMETER TotalNpcCounts
   Total NPC counts for -MassHybrid. Default: 128,256,512,1024.
 
 .PARAMETER HeroAgentCount
-  Full Actor/BT/NavMesh agents retained in a Mass-hybrid run. Default: 16.
+	Compatibility parameter. Must be 0 in Mass mode.
 
 .PARAMETER Seeds
   Array of RNG seeds per agent-count. Default: 0,1,2.
@@ -40,8 +39,26 @@
   Window size as "WxH". Default: "800x450". Keep rendering on so frame_ms
   reflects the realtime budget the paper claims.
 
+.PARAMETER MapPath
+  Optional long package path to benchmark instead of the configured default map.
+
+.PARAMETER RenderOffscreen
+  Render without a desktop window. Use this for unattended, reproducible runs.
+
 .PARAMETER DryRun
   Print the planned command lines without launching anything.
+
+.PARAMETER Trace
+  Capture an Unreal Insights .utrace file for every run under TraceDirectory.
+
+.PARAMETER TraceDirectory
+  Output directory for -Trace captures. Defaults to Saved/Profiling/PCSP.
+
+.PARAMETER TraceMemory
+  Include the memory channel. This can grow a 30-second trace above 500 MB.
+
+.PARAMETER ExtraConsoleCommands
+  Optional comma-separated CVars appended to -ExecCmds for A/B experiments.
 
 .EXAMPLE
   # Default 18-run sweep, 10 min each (~3.5 h with engine startups).
@@ -53,7 +70,7 @@
   # Just print what would run.
   .\run_scaling_sweep.ps1 -DryRun
 
-  # 16 hero actors + Mass background tier at 128/256/512/1024 total NPCs.
+  # All-Mass runs at 128/256/512/1024 total NPCs.
   .\run_scaling_sweep.ps1 -MassHybrid -DurationSeconds 300 -Seeds 0,1,2
 #>
 [CmdletBinding()]
@@ -63,11 +80,19 @@ param(
     [int[]]    $AgentCounts     = @(8, 16, 32, 64, 96, 128),
     [switch]   $MassHybrid,
     [int[]]    $TotalNpcCounts  = @(128, 256, 512, 1024),
-    [int]      $HeroAgentCount  = 16,
+    [int]      $HeroAgentCount  = 0,
     [int[]]    $Seeds           = @(0, 1, 2),
     [int]      $DurationSeconds = 600,
     [string]   $WindowedRes     = "800x450",
+	[string]   $MapPath         = "",
+	[switch]   $RenderOffscreen,
     [int]      $StartIndex      = 1,
+	[switch]   $Trace,
+	[switch]   $TraceMemory,
+	[string]   $TraceDirectory  = $null,
+	[string]   $ExtraConsoleCommands = "",
+	[ValidateSet(-1, 0, 1)]
+	[int]      $MassCharacterRepresentation = -1,
     [switch]   $DryRun
 )
 
@@ -114,8 +139,8 @@ $ResY = [int]$Matches[2]
 # --- Build run matrix ---
 $runConfigs = @()
 if ($MassHybrid) {
-    if ($HeroAgentCount -lt 1 -or $HeroAgentCount -gt 128) {
-        throw "HeroAgentCount must be in [1,128], got $HeroAgentCount"
+    if ($HeroAgentCount -ne 0) {
+		throw "Mass mode is all-Mass; HeroAgentCount must be 0, got $HeroAgentCount"
     }
     foreach ($total in $TotalNpcCounts) {
         if ($total -lt $HeroAgentCount) {
@@ -133,6 +158,19 @@ if ($MassHybrid) {
     }
 }
 
+if ($Trace -and -not $TraceDirectory) {
+	$TraceDirectory = Join-Path (Split-Path -Parent $ProjectPath) "Saved\Profiling\PCSP"
+}
+if ($Trace -and -not (Test-Path $TraceDirectory)) {
+	New-Item -ItemType Directory -Path $TraceDirectory -Force | Out-Null
+}
+if ($Trace) {
+	# Unreal resolves relative -tracefile paths beneath Saved/Profiling, which can
+	# silently duplicate a caller-supplied relative directory. Always pass an
+	# absolute path so captures land exactly where the sweep reports them.
+	$TraceDirectory = (Resolve-Path -LiteralPath $TraceDirectory).Path
+}
+
 # --- Banner ---
 $totalRuns = $runConfigs.Count * $Seeds.Count
 $estMins = [math]::Round(($DurationSeconds + 45) * $totalRuns / 60.0, 1)
@@ -140,13 +178,15 @@ Write-Host "====================================================================
 Write-Host " PCSP T1.3 scaling sweep"
 Write-Host "   Engine:   $Exe"
 Write-Host "   Project:  $ProjectPath"
-Write-Host "   Mode:     $(if ($MassHybrid) { 'Mass hybrid' } else { 'Actor baseline' })"
+	Write-Host "   Mode:     $(if ($MassHybrid) { 'All Mass' } else { 'Actor debug baseline' })"
 Write-Host "   Totals:   $($runConfigs.Total -join ', ')"
-if ($MassHybrid) { Write-Host "   Heroes:   $HeroAgentCount Actor/BT agents per run" }
+if ($MassHybrid) { Write-Host "   Mass:     all NPCs are Mass entities" }
 Write-Host "   Seeds:    $($Seeds -join ', ')"
 Write-Host "   Duration: $DurationSeconds s per run"
 Write-Host "   Total:    $totalRuns runs  (est. ~$estMins min wall-clock incl. ~45s startup each)"
 Write-Host "   Window:   ${ResX}x${ResY}"
+Write-Host "   Map:      $(if ($MapPath) { $MapPath } else { '<project default>' })"
+Write-Host "   Display:  $(if ($RenderOffscreen) { 'render offscreen' } else { 'visible window' })"
 Write-Host "===================================================================="
 
 $runIdx = 0
@@ -164,7 +204,23 @@ foreach ($cfg in $runConfigs) {
         # populated before any BeginPlay, so FParse::Value reads always win.
         # We keep -ExecCmds too as a belt-and-suspenders for late readers.
         $execCmds = "pcsp.AgentCount $($cfg.Hero), pcsp.MassEntityCount $($cfg.Mass), pcsp.SpawnSeed $seed, pcsp.RunDurationSeconds $DurationSeconds"
-        $argString = "`"$ProjectPath`" -game -WINDOWED -ResX=$ResX -ResY=$ResY -Unattended -NoSplash -NoSound -PCSP_AgentCount=$($cfg.Hero) -PCSP_MassEntityCount=$($cfg.Mass) -PCSP_SpawnSeed=$seed -PCSP_RunDurationSeconds=$DurationSeconds -ExecCmds=`"$execCmds`""
+		if ($ExtraConsoleCommands) {
+			$execCmds = "$execCmds, $ExtraConsoleCommands"
+		}
+		$mapArgument = if ($MapPath) { " `"$MapPath`"" } else { "" }
+        $argString = "`"$ProjectPath`"$mapArgument -game -WINDOWED -ResX=$ResX -ResY=$ResY -Unattended -NoSplash -NoSound -PCSP_AgentCount=$($cfg.Hero) -PCSP_MassEntityCount=$($cfg.Mass) -PCSP_SpawnSeed=$seed -PCSP_RunDurationSeconds=$DurationSeconds -ExecCmds=`"$execCmds`""
+		if ($RenderOffscreen) {
+			$argString = "$argString -RenderOffscreen"
+		}
+		if ($MassCharacterRepresentation -ge 0) {
+			$argString = "$argString -PCSP_MassCharacterRepresentation=$MassCharacterRepresentation"
+		}
+		if ($Trace) {
+			$traceStamp = Get-Date -Format "yyyyMMdd_HHmmss"
+			$tracePath = Join-Path $TraceDirectory ("pcsp_total{0}_hero{1}_mass{2}_seed{3}_{4}.utrace" -f $cfg.Total, $cfg.Hero, $cfg.Mass, $seed, $traceStamp)
+			$traceChannels = if ($TraceMemory) { "cpu,gpu,frame,bookmark,memory" } else { "cpu,gpu,frame,bookmark" }
+			$argString = "$argString -trace=$traceChannels -tracefile=`"$tracePath`" -StatNamedEvents"
+		}
 
         Write-Host ""
         Write-Host "[$runIdx/$totalRuns] $stamp  total=$($cfg.Total) hero=$($cfg.Hero) mass=$($cfg.Mass) seed=$seed"
@@ -173,7 +229,15 @@ foreach ($cfg in $runConfigs) {
         if ($DryRun) { continue }
 
         $start = Get-Date
-        $proc = Start-Process -FilePath $Exe -ArgumentList $argString -PassThru
+		$processArgs = @{
+			FilePath = $Exe
+			ArgumentList = $argString
+			PassThru = $true
+		}
+		if ($RenderOffscreen) {
+			$processArgs.WindowStyle = "Hidden"
+		}
+        $proc = Start-Process @processArgs
         # Watchdog: in-engine auto-quit should fire at DurationSeconds. Give it
         # +90s of grace for engine shutdown, then force-kill so one stuck run
         # can't hang the whole sweep overnight.

@@ -13,6 +13,7 @@
 
 namespace
 {
+	FString SessionDirectory;
 	const TCHAR* EventName(EPCSPTrajectoryEvent E)
 	{
 		switch (E)
@@ -52,7 +53,7 @@ UPCSPTrajectoryLogComponent::UPCSPTrajectoryLogComponent()
 
 FString UPCSPTrajectoryLogComponent::GetSessionDir()
 {
-	static FString Dir;
+	FString& Dir = SessionDirectory;
 	if (Dir.IsEmpty())
 	{
 		const FString Stamp = FDateTime::Now().ToString(TEXT("%Y%m%d_%H%M%S"));
@@ -61,6 +62,12 @@ FString UPCSPTrajectoryLogComponent::GetSessionDir()
 		UE_LOG(LogTemp, Log, TEXT("PCSPTrajectoryLog: session dir = %s"), *Dir);
 	}
 	return Dir;
+}
+
+void UPCSPTrajectoryLogComponent::SetEvaluationSessionDir(const FString& Directory)
+{
+	SessionDirectory = Directory;
+	IFileManager::Get().MakeDirectory(*SessionDirectory, true);
 }
 
 void UPCSPTrajectoryLogComponent::BeginPlay()

@@ -9,10 +9,67 @@ Prerequisites:
 - C++ build is current (the scaffold from `DONE.md §"2026-05-23 - Diagram
   Polish + HUD/Camera C++ Scaffold"` is compiled).
 - The portfolio map exists: `Content/PCSP/Maps/Map_PCSPDistrict_Portfolio`
-  with World Settings `PlayerControllerClass = APCSPDemoPlayerController`.
-- An agent BP (`BP_PCSPAgent`) has a camera mount (D2).
+  with `BP_SimGameMode.PlayerControllerClass = BP_PCSPDemoPlayerController`.
+- `BP_PCSPAgent` inherits `APCSPAgentCharacter`; the native class owns the
+  spectator spring arm and follow camera.
 
-Asset paths in this guide assume `Content/PCSP/UI/`. Adjust as needed.
+The implemented assets live in `Content/PCSP/Blueprints/Widgets/`.
+
+## Implemented automatic path
+
+The HUD no longer requires a Blueprint Tick, property bindings, or an Event
+Graph fan-out. `WBP_PCSPDemoHUD` is parented to `UPCSPDemoHUDWidgetBase`; the
+base binds controller delegates and refreshes at 10 Hz. The player controller
+creates the assigned `DemoHudClass` during `BeginPlay`.
+
+Mass is the default population (1,024 entities, zero Actor NPCs). Selection,
+needs, action distributions, eight recent decisions, slot occupancy, and the
+follow button read Mass fragments through the same ViewModel. The camera uses
+a lightweight camera proxy; it does not convert entities to Characters.
+The affordance panel resolves the goal zone as soon as the decision is made,
+not only once a slot is reserved. The social panel reports the crowd
+neighbourhood within 800 cm: Actor agents show mean affinity from their
+per-pair ledger, crowd entities show how many neighbours chose the same
+affordance category, because the crowd keeps no affinity ledger. The run badge
+shows failure counts as `n/a` because the crowd history does not track
+failures. Its history is a bounded decision ring, not a complete JSONL event
+mirror. The HUD never labels an NPC as a Mass entity - the backend is not
+something a viewer can act on.
+
+The native view sizes authored text to 14 pt (12 pt for narrow flow values) and
+generated rows to 13 pt, makes needs bars fill their row, and auto-sizes the
+persona card's rows so a wrapped description cannot paint over the zone row
+beneath it. Blueprint assets retain
+their authored layout. The legacy WBP-local `ViewModel` is initialized before
+Construct, and all widget timers are cleared on Destruct to avoid PIE teardown
+errors. Historical Actor-oriented setup examples below are not additional
+steps required for Mass mode.
+
+The following names are the only required Designer contract. The official
+Unreal MCP created these widgets and marked the interactive containers as
+variables:
+
+| Widget | Required child name | Native behavior |
+| --- | --- | --- |
+| `WBP_PCSPSmallRunBadge` | `T_RunSummary`, `T_CameraMode`, `T_SelectionHint` | live scale/failure summary and controls |
+| `WBP_PCSPZoneLegend` | `VB_GlobalDistribution` | population action-distribution bars |
+| `WBP_PCSPAgnetCard` | `VB_SelectedDistribution`, `Btn_ToggleCamera`, `T_CameraButtonLabel` | selected NPC distribution and follow toggle |
+| `WBP_PCSPTrajectoryStrip` | `VB_TrajectoryRows` | newest-last decision/event rows |
+| other existing panels | existing snapshot field names plus `T_AffordanceSummary`, `T_Occupancy`, `T_Distance`, `T_SocialSummary` | persona, needs, decision, affordance, and social state |
+
+Editor assignments after restarting for the new native class:
+
+1. `BP_PCSPDemoPlayerController` → Class Defaults → `Demo Hud Class` =
+   `WBP_PCSPDemoHUD` (already serialized by MCP; verify only).
+2. `BP_SimGameMode` → Class Defaults → `Player Controller Class` =
+   `BP_PCSPDemoPlayerController`. The native GameMode fallback is also the demo
+   controller, but this BP currently stores its own override.
+3. Leave `WBP_PCSPDemoHUD` Event Graph empty unless presentation animations are
+   desired. Override `ReceiveHudDataUpdated` only for cosmetic transitions.
+
+Controls: click an NPC to inspect it, use the HUD button or `F` to toggle its
+third-person camera, `Tab`/`Shift+Tab` to cycle, `H` to hide/show the HUD, and
+`Z` for zone overlays.
 
 ---
 
@@ -20,16 +77,16 @@ Asset paths in this guide assume `Content/PCSP/UI/`. Adjust as needed.
 
 ### D4.0 Data contract
 
-The HUD reads exactly one struct, populated by C++:
+The selected-agent panels read `FPCSPHudAgentSnapshot`; the native base also
+builds `FPCSPHudRunSnapshot` for population-level visualizations:
 
 - `FPCSPHudAgentSnapshot` — declared in
   [PCSPAgentDebugViewModel.h](../../Source/cnzoi/PCSP/Public/Components/PCSPAgentDebugViewModel.h).
 - Built by `UPCSPAgentDebugViewModel::BuildSnapshot(RecentEventsToShow)`.
 - Owned by `APCSPDemoPlayerController` (via `GetViewModel()`).
 
-The snapshot is a **pure read** — calling `BuildSnapshot` 60 times/s is safe.
-For 64-agent capture, prefer a 5–10 Hz timer over Tick to keep HUD draw cost
-out of the frame-time chart.
+The snapshot is a **pure read**. The implemented base uses a 10 Hz timer rather
+than Tick to keep HUD draw cost out of the frame-time chart.
 
 Three multicast delegates broadcast from the controller — BP can bind to all
 three via "Assign on Event Dispatcher" once `Get Player Controller` is cast
@@ -62,17 +119,16 @@ Use one **Canvas Panel** at the root for absolute positioning, then a
 **Horizontal/Vertical Box** inside each sub-widget for content. Set
 **Render Opacity 0.85** on background images so the agent stays visible.
 
-### D4.2 Parent widget — `WBP_PCSPDemoHUD`
+### D4.2 Parent widget — `WBP_PCSPDemoHUD` (implemented)
 
 **Designer:**
 
-1. Create `Content/PCSP/UI/WBP_PCSPDemoHUD.WBP_PCSPDemoHUD`.
-2. Parent class: `UserWidget` (or `CommonActivatableWidget` if you use
-   CommonUI — adds `DeactivateWidget` for the `H` toggle).
-3. Canvas Panel at root; drag each sub-widget in and anchor per the layout
-   sketch.
+1. Open `Content/PCSP/Blueprints/Widgets/WBP_PCSPDemoHUD`.
+2. Confirm parent class `PCSPDemoHUDWidgetBase`.
+3. Keep its Canvas Panel and eight subwidgets; MCP has already applied the
+   responsive top/bottom anchors and dark translucent panel styling.
 
-**Graph (Event Graph):**
+**Graph (optional customization only):**
 
 - Variables:
   - `Snapshot : FPCSPHudAgentSnapshot` (default).
@@ -125,18 +181,9 @@ Use one **Canvas Panel** at the root for absolute positioning, then a
   in-level event dispatcher (`OnPCSPOverlayToggle`) that zone-overlay
   actors are bound to. See D5.
 
-**Adding the HUD to PIE:**
-
-In `APCSPDemoPlayerController::BeginPlay` (already in C++), you can choose
-between two patterns. Default to the **BP-driven** path for portfolio work:
-
-- **BP-driven (recommended):** Create `BP_PCSPDemoPlayerController : APCSPDemoPlayerController`,
-  add an `On Begin Play` node, call `Create Widget (WBP_PCSPDemoHUD)` →
-  `Add to Viewport (ZOrder=10)`. Set this BP as the World Settings
-  `PlayerControllerClass`.
-- **C++ alternative:** Add `TSubclassOf<UUserWidget>` property to the
-  controller and instantiate in `BeginPlay`. Cleaner but couples C++ to a
-  specific UMG asset.
+**Adding the HUD to PIE:** handled by
+`APCSPDemoPlayerController::BeginPlay`; do not add a duplicate Blueprint
+`Create Widget` path.
 
 ### D4.3 `WBP_PCSPSmallRunBadge`
 
@@ -473,3 +520,44 @@ In PIE with the overlay live:
   — delegate signatures + key bindings.
 - [observability.md](../portfolio/observability.md) — JSONL schema; HUD trajectory
   chips mirror the same `EventType` enum that JSONL rows carry.
+
+## Selection outline material
+
+Clicking an NPC draws a bright green outline around it. The outline is an
+inflated second copy of the crowd mesh drawn with
+`/Game/PCSP/Materials/MI_PCSPSelectionOutline`: unlit, masked, two-sided, with
+the opacity mask discarding every front face. Only the sliver of the hull that
+pokes past the body silhouette survives, so the NPC keeps its own material
+instead of being repainted by the highlight.
+
+The material is duplicated from AnimToTexture's `M_Body_BoneAnimation` so the
+hull inherits the same GPU vertex animation and holds the agent's pose.
+
+That source material is authored against the single **Material Attributes**
+pin, so its individual `EmissiveColor` / `OpacityMask` / `WorldPositionOffset`
+inputs are dead: writing to them produces a material that still renders as the
+body. The outline's shading is therefore injected into the attribute stream
+with `SetMaterialAttributes`, and the hull is widened by reading the animation's
+own offset back out with `GetMaterialAttributes` and adding
+`VertexNormalWS * OutlineThickness` to it. Inflating the *instance transform*
+does nothing here — the pose is written by the material, so the animated
+vertices land in the same place at any scale.
+
+Run `-run=PCSPSelectionOutlineMaterial -Probe` to print how the source material
+is wired and what the built outline ended up with; it is the fastest way to
+check this assumption after an engine or plugin upgrade.
+
+It is authored by an editor commandlet, not by hand:
+
+```
+UnrealEditor-Cmd cnzoi.uproject -run=PCSPSelectionOutlineMaterial
+```
+
+Add `-Force` to rebuild it. Source:
+`Source/cnzoiEditor/Private/PCSPSelectionOutlineMaterialCommandlet.cpp`.
+
+Without the asset — or on the legacy cylinder representation, whose mesh the
+material was not derived from — `APCSPMassSpawner` logs a warning and falls
+back to drawing the selected agent *only* through the highlight component,
+tinted solid. Drawing both copies is what produced the mottled overlay the
+outline replaced.

@@ -7,12 +7,11 @@
 #include "BTTask_MoveToAffordance.generated.h"
 
 class APCSPAffordanceZone;
-class APCSPInteractionPoint;
 
 struct FBTMoveToAffordanceMemory
 {
 	TWeakObjectPtr<APCSPAffordanceZone>    Zone;
-	TWeakObjectPtr<APCSPInteractionPoint>  Point;
+	int32                                  SlotIndex = INDEX_NONE;
 	FGameplayTag                           LastIntendedZoneTag;
 	FString                                LastFailureReason;
 	float                                  LastDistanceToTarget = -1.f;
@@ -23,7 +22,7 @@ struct FBTMoveToAffordanceMemory
 
 /**
  * Queries the AffordanceSubsystem for the best zone matching the current
- * DesiredActionType, reserves an InteractionPoint, and moves the agent there.
+ * DesiredActionType, reserves a Zone-owned interaction slot, and moves there.
  * On arrival writes TargetActor / TargetLocation / bAffordanceReserved to BB.
  * Retries up to MaxRetries times before failing to the Idle branch.
  */

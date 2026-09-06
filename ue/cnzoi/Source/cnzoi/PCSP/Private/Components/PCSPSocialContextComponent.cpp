@@ -1,7 +1,9 @@
 #include "PCSPSocialContextComponent.h"
+#include "PCSPSpatialQuerySubsystem.h"
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
 #include "EngineUtils.h"
+#include "ProfilingDebugging/CpuProfilerTrace.h"
 
 UPCSPSocialContextComponent::UPCSPSocialContextComponent()
 {
@@ -29,6 +31,39 @@ void UPCSPSocialContextComponent::RefreshSummary()
 	const AActor* Owner = GetOwner();
 	UWorld* World = GetWorld();
 	if (!Owner || !World) { return; }
+
+	if (UPCSPSpatialQuerySubsystem::IsAsyncEnabled())
+	{
+		if (const UPCSPSpatialQuerySubsystem* Spatial =
+			World->GetSubsystem<UPCSPSpatialQuerySubsystem>())
+		{
+			TArray<AActor*> Nearby;
+			TArray<AActor*> Nearest;
+			if (Spatial->GetQueryResult(Owner, Nearby, Nearest))
+			{
+				TRACE_CPUPROFILER_EVENT_SCOPE(PCSP_Spatial_SocialRefresh_AsyncApply);
+				float SumAff = 0.f;
+				float MaxComp = -TNumericLimits<float>::Max();
+				float MinComp = TNumericLimits<float>::Max();
+				for (AActor* Actor : Nearby)
+				{
+					const float Aff = Affinity.FindRef(Actor);
+					SumAff += Aff;
+					MaxComp = FMath::Max(MaxComp, Aff);
+					MinComp = FMath::Min(MinComp, Aff);
+				}
+				const int32 Count = Nearby.Num();
+				Summary.NearbyCount = Count;
+				Summary.MeanAffinity = Count > 0 ? SumAff / Count : 0.f;
+				Summary.MaxCompatibility = Count > 0 ? MaxComp : 0.f;
+				Summary.MinCompatibility = Count > 0 ? MinComp : 0.f;
+				Summary.RecentInteractionRecency = FMath::Exp(-TimeSinceLastInteraction / 60.f);
+				return;
+			}
+		}
+	}
+
+	TRACE_CPUPROFILER_EVENT_SCOPE(PCSP_Spatial_SocialRefresh_Legacy);
 
 	const FVector OwnerLoc = Owner->GetActorLocation();
 	const float R2 = PerceptionRadius * PerceptionRadius;
