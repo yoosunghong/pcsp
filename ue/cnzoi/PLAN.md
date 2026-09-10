@@ -32,6 +32,28 @@ Movement is an execution detail, not a policy action. The policy should output s
 
 ## Current Portfolio Focus
 
+### Packaged Shipping presentation repair (2026-09-06)
+
+- [x] Route packaged world clicks explicitly through a transparent lowest-Z HUD
+      surface to the controller's shared Actor/Mass cursor picker. Keep HUD
+      controls above it and retain the legacy controller binding as fallback;
+      self-hit-test-invisible roots alone did not fix Shipping `GameAndUI` routing.
+- [x] Diagnose and remove the startup crash caused by cooking the Blueprint
+      controller against an editor-locked, stale native parent layout. Keep the
+      new camera tuning in non-serialized C++ constants so the cooked Blueprint
+      and Shipping executable share the same reflected layout.
+- [x] Diagnose the apparent Shipping simulation freeze: packaged headless telemetry
+      confirms policy decisions, Recast route movement, and arrivals continue.
+- [x] Move the Mass ISM representation tick to PostPhysics and force it enabled at
+      BeginPlay so fragment reads do not repeatedly collide with PrePhysics Mass
+      processing; this is the shared position, category-tint, and animation path.
+- [x] Tune the free-fly pawn to 8,000 uu/s with responsive acceleration for the
+      576 m portfolio district instead of inheriting the small template-map speed.
+- [x] Correct the Shipping default GameMode cook path to the actual
+      `/Game/PCSP/Blueprints/Core/BP_SimGameMode` asset.
+- [x] Rebuild and stage the Windows Shipping package successfully.
+- [ ] Visually confirm moving category-tinted NPCs in the rebuilt package.
+
 ### Separate evaluation questions (2026-09-05)
 
 - [x] Separate Persona effect, Execution architecture, and Inference
@@ -70,9 +92,9 @@ benchmark. In the Mass implementation BT Only means needs rules with ONNX off.
       evidence cards, a frozen comparison pin, and explicit details controls.
 - [x] Group consecutive repeated decisions with their time range and sample
       count; distinguish recorded decisions from completed interactions.
-- [x] Cap 24 large Dieselpunk textures at 2048 through official Unreal MCP,
-      preserve animation data textures, budget streaming, and disable the
-      optional animated selection hull by default.
+- [x] Set 24 large Dieselpunk textures to a 4096 maximum (raised from the
+      earlier 2048 VRAM cap), preserve animation data textures, budget
+      streaming, and disable the optional animated selection hull by default.
 - [x] Stage ONNX and persona JSON data, cook the Visual map and dynamically
       loaded PCSP materials. Preserve the user's Visual startup-map selection.
 - [x] Rendered 1280x720 comparison/details and 1920x1080 comparison checks;

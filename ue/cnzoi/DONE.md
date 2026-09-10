@@ -2,6 +2,134 @@
 
 Use this file to record completed UE5 work, important implementation decisions, generated artifact paths, failed attempts, and follow-up requirements.
 
+## 2026-09-06 - Runtime inspection, live comparison, and validation pages
+
+- Added five editable portfolio pages and fixed 1600×1000 renders:
+  `npc-persona-inspection`, `live-performance-comparison`,
+  `why-this-action`, `city-scale-simulation`, and
+  `validation-reproducibility`. They share
+  `docs/portfolio/assets/portfolio-case-pages.css` and use only actual runtime
+  captures or previously checked-in evidence figures.
+- Ran a fresh standalone persona-axis sequence at 1,024 Mass NPCs, seed 17,
+  1920×1080, VSync off, FPS cap 0, five-second excluded warm-up, and 30-second
+  measured windows. All three variants completed and emitted CSV, JSON, PNG,
+  and trajectory evidence under
+  `Saved/PCSP/Evaluation/EDC694244639003FCDDB748C5334A936/`.
+- Completed results were PCSP/Persona `30.06 s / 13.97 FPS / 171.66 ms p95`,
+  Needs heuristic `30.02 s / 16.26 FPS / 137.10 ms p95`, and No Persona
+  `30.02 s / 5.96 FPS / 197.47 ms p95`, all with zero inference failures.
+  These are a one-seed live-HUD capture, not a benchmark conclusion: the first
+  run immediately followed the first-launch PSO/DDC rebuild and showed runtime
+  priming behavior, while the third screenshot displayed a
+  413 MB video-memory-over-budget warning after repeated map travel.
+- Selected the clean run-2 screenshot for
+  `docs/portfolio/assets/live-performance-source.png`; it retains both
+  completed 30-second results on screen. The run-3 screenshot and raw results
+  are preserved but not used as clean presentation evidence. A repeated clean
+  multi-seed capture is still required for policy-mode performance claims.
+- Initial unattended launches failed because the host DDC and default shader
+  working directory were not writable. The successful launch used
+  `-DDC-ForceMemoryCache` and
+  `-ShaderWorkingDir=D:/Github/pcsp/ue/cnzoi/Saved/ShaderWorkingDir`.
+  This forced a one-time in-memory rebuild of shaders, 619+ static meshes,
+  textures, and distance fields before measurement. The requested human-readable
+  series name was also rejected by the existing GUID-only parser, so the
+  generated GUID path above is the source of truth.
+
+## 2026-09-06 - Rendering and multithreading portfolio deep dives
+
+- Added `rendering-optimization-comparison.{png,svg}` and a fixed 1600×1000
+  `rendering-optimization.png` page. The figure separates the historical
+  representation design screen and controlled cylinder/Manny LOD1 A/B from
+  the current AnimToTexture ordinary-ISM architecture, so old static-HISM
+  timings are not reused as a current VAT performance claim.
+- Added `multithreading-optimization-comparison.{png,svg}` and a fixed 1600×1000
+  `multithreading-optimization.png` page. It presents scoped Game Thread
+  reductions for POD/grid spatial queries and dynamic-batch ONNX, plus the
+  observed decision/arrival throughput deltas; it does not present the
+  renderer-contaminated aggregate frame values as an FPS result.
+- Editable pages are `docs/portfolio/rendering-optimization.html` and
+  `docs/portfolio/multithreading-optimization.html`. Reproducible chart source
+  is `tools/generate_optimization_deepdives.py`; provenance is recorded in
+  `docs/portfolio/assets/portfolio-assets.md`.
+- Corrected the environment-optimization page's stale HISM wording to the
+  current AnimToTexture ordinary-ISM path. Async spatial and inference remain
+  opt-in pending the documented 300-second x 3-seed behavior regression gate.
+
+## 2026-09-06 - Matched Actor+PCSP versus Mass+PCSP scaling comparison
+
+- Ran a new matched 24-session matrix on the current build: Actor+PCSP and
+  Mass+PCSP at 128/256/512/1,024 NPCs, seeds 0/1/2, Portfolio map, visible
+  800×450 standalone, 60-second wall-clock runs, five-second telemetry warm-up,
+  and identical VSync/FPS-cap/throttling settings. All 24 runs exited normally.
+- Actor/Mass mean frame costs were `27.015/15.380`, `53.665/21.362`,
+  `139.970/32.808`, and `309.445/62.343 ms`; Mass reduced mean cost by
+  `1.76x`, `2.51x`, `4.27x`, and `4.96x` respectively.
+- Actor window-p95 was `53.199`, `276.788`, `400+`, and `400+ ms`; the last two
+  reached the telemetry cap. Mass p95 was `16.983`, `23.341`, `36.206`, and
+  `67.751 ms`.
+- Regenerated `environment-optimization-summary.{png,svg}` with only matched
+  frame-cost evidence: mean, p95, and mean-cost ratio. Movement failures and
+  render attribution are absent. Updated the portfolio page and provenance.
+
+## 2026-09-06 - Dieselpunk Texture Resolution Raised To 4096
+
+- Raised `MaxTextureSize` from 2048 to 4096 for the same 24 large textures
+  under `/Game/dieselpunk/Textures`; AnimToTexture data textures remain
+  untouched. The live UE 5.8 editor saved all 24 assets successfully and a
+  final readback reported 4096 plus a 4096x4096 effective resource size for
+  every target.
+- Created a 24-file pre-change backup at
+  `Saved/PCSP/Backups/texture_2048_before_4096_20260906_0415/`; all 24 current
+  package hashes differ from their backup copies. The backup is local/ignored
+  and can restore the previous 2048-capped packages if needed.
+- Added `tools/set_dieselpunk_texture_resolution.py` for repeatable live-editor
+  inspection and updates. Current-state manifest:
+  `docs/portfolio/texture-cap-20260906.json`.
+- The higher cap can increase the top-mip footprint by up to 4x relative to
+  2048. The existing 512 MB streaming pool remains unchanged; visible 4 GB GPU
+  performance and VRAM acceptance must be rechecked separately.
+
+## 2026-09-06 - Portfolio NPC scaling and rendering-attribution visuals
+
+- Replaced the dark theme in both portfolio graph generators with a coordinated
+  white print/slide theme and regenerated six root figures plus six
+  persona-training figures. The raw UE5 top-view image was not modified; only
+  the overlay veil and information surfaces were lightened.
+- Revalidated all source-derived values after regeneration: the paired Insights
+  delta remains `Frame +2.691`, `RenderViewFamily +2.683`, `InitViews +2.681`,
+  `BasePass +2.617`, and `PCSP_Mass_Execute +0.119 ms`; trajectory decision-row
+  counts remain `36/46/31`, and all training arrays retain their original
+  hashes. No experiment, evaluation, or research-plan change was made.
+- Reframed `docs/portfolio/reward-vs-persona.html` from a paper-like ablation
+  sheet into a portfolio design-decision page. The new page explains the reward
+  as need recovery + preferred activity + social compatibility, then separates
+  persona evidence into traceability, behavioral distinguishability,
+  state-conditional consistency, and human readability. Experiment IDs,
+  dataset counts, confidence intervals, and p-values were removed from the
+  visible page while the source evidence remains documented elsewhere.
+- Regenerated `assets/reward-vs-persona.png` at 1600 × 1000 and visually checked
+  the fixed page for clipping and section overlap.
+- Added reproducible `npc-scaling-non-model-evidence.{png,svg}` from the
+  confirmed All-Mass 128/256/512/1,024 three-seed aggregate. It shows frame
+  mean/p95, policy-service time per decision, and per-NPC arrival throughput as
+  separate claims; it does not assume total model workload is constant.
+- Added `npc-rendering-bottleneck-evidence.{png,svg}`. The controlled panel is
+  read directly from the paired cylinder/Manny LOD1 Unreal Insights timer CSVs:
+  frame `+2.69 ms`, render-view and init-view `+2.68 ms`, BasePass `+2.62 ms`,
+  and `PCSP_Mass_Execute +0.12 ms`. Inclusive scopes are labeled as overlapping.
+- The representation-design panel recomputes sample-count-weighted frame means
+  from the raw skeletal, Leader Pose, LOD0 HISM, and adopted LOD1 HISM session
+  telemetry. Those bars are explicitly labeled diagnostic smokes, not matched
+  publication A/B evidence.
+- Updated the root portfolio, visual-evidence index, representation report,
+  README, and asset provenance. The generator remains
+  `tools/generate_portfolio_visuals.py` and emits PNG plus SVG.
+- Native desktop-app control was unavailable in the authoring environment, so
+  the actual Unreal Insights UI screenshot and a new memory-enabled trace remain
+  capture work. The existing matched traces are preserved under
+  `Saved/Profiling/PCSP/mass_rep_ab_{cylinder,manny}_final/`.
+
 ## 2026-09-05 - Action distribution restoration and performance comparison
 
 - Restored bottom-right live population action bars (top five + Other, absolute
@@ -1657,3 +1785,172 @@ Final 9509 runtime render verification: `Saved/PCSP/evaluation_inference_final.l
 and `Saved/PCSP/Evaluation/4314003E419ED554FA8EF3A97B5EEF39/` passed both
 variants with matching context and verified nonzero worker requests only in
 the batch variant. Final 1280x720 screenshot inspected; no table/footer overlap.
+
+## 2026-09-05 - Detailed portfolio learning/runtime documentation
+
+- Authored `../../output/portfolio-continuation/PCSP_포트폴리오_상세설명.md` with
+  source-checked learning definitions, UE action mapping, HUD interpretation,
+  historical benchmark conditions and optimization evidence boundaries.
+- Direct builder comparison records unresolved semantic differences: Mass
+  affordance slots encode Intent categories in UE enum order rather than Python
+  nearest-facility order; slots 24–32 remain zero; remapped actions can change
+  social-history flag meaning. Actor observations also differ from Python.
+  Matching 33/64/20 dimensions is not full observation/behavior equivalence.
+- Follow-up is observation/action semantic alignment or an explicitly evaluated
+  UE-specific contract, with retraining implications reviewed before changes.
+  Documentation only: no runtime code, assets, model, research contract or
+  evaluation protocol changed. Existing measurements were not rerun.
+
+## 2026-09-05 - PPT-ready persona trajectory and training visuals
+
+- Captured a clean top-down source image of
+  `/Game/PCSP/Maps/Map_PCSPDistrict_Portfolio_Visual` through the official
+  Unreal MCP. Existing map content was sufficient, so no UE level or asset was
+  created or modified.
+- Added `tools/generate_persona_training_assets.py` and generated three
+  persona-specific colored decision-position traces (sociable persona 3,
+  independent persona 7, active/exploratory persona 16), plus a shared
+  comparison image under `docs/portfolio/assets/persona-training/`.
+- Generated English PNG/SVG curves for behavior diversity and trajectory-
+  persona consistency from the actual PCSP v3-large seed 42/43/44 logs. Curves
+  use a 15-iteration moving average and show the three-seed mean and spread;
+  the consistency chart keeps the raw loss direction and labels lower as
+  better instead of inventing a normalized score.
+- Recorded exact source paths, camera transform, persona colors, derived path
+  lengths, action counts, and curve processing in
+  `docs/portfolio/assets/persona-training/provenance.json`. Trajectory lines
+  connect logged decision positions and are not high-frequency NavMesh route
+  samples. Research results, contracts, and evaluation protocols are unchanged.
+# 2026-09-06 — Reward-versus-persona portfolio page
+
+- Added `docs/portfolio/reward-vs-persona.html` and the fixed render
+  `docs/portfolio/assets/reward-vs-persona.png`.
+- Reframed InfoNCE in portfolio language as the training rule that links an
+  NPC's action record to its persona description, while preserving the precise
+  boundary that the learned retrieval metric is not an independent behavior
+  evaluator.
+- Recomputed late-training reward summaries from the final 50 iterations of
+  the v3 unseen-occupation Full and no-consistency logs: `106.3 +/- 5.5` and
+  `107.8 +/- 7.4`. The page separately identifies the paper's `104.1` and
+  `118.4` values as final-iteration training rollouts.
+- Combined the 60-way learned retrieval result, the v3-large three-seed
+  independent behavior audit, and the 30-participant coarse 2AFC pilot into
+  four explicitly separated evidence axes: task score, learned trace,
+  independent behavior, and human reading.
+- Updated the root `PORTFOLIO.md`, portfolio asset provenance, and portfolio
+  index to reference the new page.
+
+## 2026-09-06 - 4K portfolio cover capture
+
+- Raised the 24 Dieselpunk portfolio textures' maximum imported resolution to
+  4096 and verified every affected texture saved with a 4096 effective resource
+  size. The pre-change 2048 assets remain recoverable under
+  `Saved/PCSP/Backups/texture_2048_before_4096_20260906_0415/`.
+- Added `tools/capture_portfolio_cover.py` and captured a direct 3840 x 2160
+  SceneCapture2D render from
+  `/Game/PCSP/Maps/Map_PCSPDistrict_Portfolio_Visual`. The final boulevard view
+  uses TSR, 200% history resolution, 0.7 sharpening, forced high-detail LOD and
+  streaming, 72-degree horizontal FOV, and +2 EV exposure.
+- The presentation capture hides `City_Affordance_*` components only on the
+  transient capture camera, so colored development markers and editor UI are
+  absent while the map asset remains unchanged.
+- Final cover: `docs/portfolio/assets/pcsp-portfolio-cover-4k.png` (3840 x 2160,
+  SHA-256 `90F7B947C685E0A3883997DA5FD25207F336DC30945A8D70FB5E189772446FBC`).
+  A 1:1 pixel crop was inspected to confirm facade, brick, pipe, and window
+  detail rather than relying on an upscaled viewport screenshot.
+
+## 2026-09-06 - Training-result portfolio page
+
+- Added `docs/portfolio/training-result.html` and the fixed 1600 x 1000 render
+  `docs/portfolio/assets/training-result.png`.
+- Extended `tools/generate_persona_training_assets.py` with the compact
+  `training-result-curves.{png,svg}` summary. It uses the existing v3-large
+  seed 42/43/44 metrics, a centered 15-iteration moving average, the three-seed
+  mean, and a +/- one-standard-deviation band. The displayed terminal values
+  are the recomputed means: diversity objective `0.015948` and consistency
+  loss `2.564416 -> 1.604794`.
+- The page compares the recorded decision-position traces for persona IDs 3,
+  7, and 16 on the same UE5 top view and tabulates their actual recorded
+  duration, path-length estimate, decision count, and top action frequencies.
+  It explicitly identifies these as one approximately 131-second record and
+  not continuous NavMesh samples or a population-wide generalization.
+- Research metrics, training runs, UE runtime code, and evaluation contracts
+  were not changed; this work only adds a reproducible portfolio presentation.
+
+## 2026-09-06 - Environment-optimization portfolio page
+
+- Added `docs/portfolio/environment-optimization.html` and its fixed 1600 x
+  1000 render at `docs/portfolio/assets/environment-optimization.png`.
+- Extended `tools/generate_portfolio_visuals.py` with the compact
+  `environment-optimization-summary.{png,svg}` figure. It reads the existing
+  Actor/BT scaling JSON, visible All-Mass scaling JSON, and matched Unreal
+  Insights cylinder/Manny timer exports directly.
+- The page presents the evidence as a three-stage engineering loop: locate the
+  128-Actor movement-failure cliff, rebuild the background tier around Mass
+  chunks/cohort scheduling/HISM representation, then attribute the remaining
+  representation delta to rendering (`Frame +2.69 ms`, `BasePass +2.62 ms`,
+  `PCSP_Mass_Execute +0.12 ms`). Inclusive scopes are not added together.
+- The 128-to-1,024 All-Mass result is reported as bounded incremental cost
+  (`+2.21 ms` frame mean, `+4.98 ms` p95) and explicitly not as a 60-FPS
+  result. Panels with different protocols are not presented as an absolute
+  before/after comparison. Research data, runtime code, and benchmarks were
+  not modified.
+# 2026-09-06 — Shipping camera and Mass presentation diagnosis
+
+- Reproduced the staged Shipping executable in an unattended evaluation run.
+  `Saved/PCSP/Logs/20260906_222849/mass_stats.jsonl` recorded continuous entity
+  updates, route movement, decisions, and arrivals, proving the policy and Mass
+  simulation were running despite the reported frozen presentation.
+- Scheduled `APCSPMassSpawner` in `TG_PostPhysics` and force-enabled its actor tick
+  at BeginPlay. Its ISM representation pass intentionally avoids fragment reads
+  while Mass is processing; the old default tick group could therefore leave
+  positions, category materials, and animation frozen at their spawn state in a
+  packaged run while HUD intent counts continued to change.
+- Tuned non-agent free-camera pawns from the demo controller to 8,000 uu/s max
+  speed, 24,000 uu/s2 acceleration, and 32,000 uu/s2 deceleration. The agent follow
+  camera remains unchanged.
+- Corrected `GlobalDefaultGameMode` from the nonexistent `/Game/Game/...` path to
+  `/Game/PCSP/Blueprints/Core/BP_SimGameMode`, removing the corresponding cook
+  warning and making packaged startup independent of the map override.
+- `cnzoi Win64 Shipping` compiled and linked successfully. A full Windows
+  BuildCookRun then cooked 1,653 packages and rebuilt the staged IoStore package
+  under `Saved/StagedBuilds/Windows`; the stale GameMode cook warning did not
+  recur. Rendered acceptance remains required.
+
+## 2026-09-07 - Shipping Blueprint serialization crash repair
+
+- The packaged executable crashed at startup with `ObjectSerializationError` and
+  `Bad export index 67108863/11` while loading
+  `BP_PCSPDemoPlayerController.Default__BP_PCSPDemoPlayerController_C`.
+- Root cause: the running editor locked `UnrealEditor-cnzoi.dll`, so the editor
+  target could not relink after three reflected camera-tuning properties were
+  added to the native controller. Cook then serialized the Blueprint child using
+  the old parent layout while the Shipping executable loaded it with the new one.
+- Removed those tuning values from reflection and retained them as non-serialized
+  C++ constants. This restores the previous Blueprint property layout without
+  requiring the user's editor process to be terminated.
+- Rebuilt the Shipping target and restaged the Windows IoStore package. The new
+  `Saved/StagedBuilds/Windows/cnzoi.exe` completed an unattended packaged launch
+  on 2026-09-07 in 12.7 seconds with exit code 0; no new crash report was
+  generated. The newest crash directory therefore remains the pre-fix 01:07:31
+  report. On-screen movement and category-tint acceptance still require a normal
+  rendered launch.
+
+## 2026-09-07 - Packaged Mass NPC click routing repair
+
+- The initial `SelfHitTestInvisible` change on the viewport-sized
+  `WBP_PCSPDemoHUD` and root canvas was insufficient in the packaged build: the
+  user's retest confirmed that the controller's legacy LeftMouse binding still
+  did not receive world clicks reliably under `GameAndUI` routing.
+- Added a transparent full-viewport `WorldClickSurface` button at the lowest HUD
+  Z-order. Slate now deliberately handles empty HUD-space clicks and forwards
+  them to the controller's shared Actor/Mass cursor-picking implementation.
+  Existing cards and controls remain above the surface and keep their normal
+  interactions. The legacy controller binding remains as a non-UMG fallback.
+- Renamed the shared native entry point to `SelectAgentUnderCursor` and exposed it
+  to the HUD without adding serialized fields. `cnzoiEditor Win64 Development`
+  and `cnzoi Win64 Shipping` compiled and linked successfully.
+- Performed a non-incremental cook of all 1,653 packages and rebuilt the Windows
+  IoStore stage. The resulting package completed a 12.9-second unattended launch
+  with exit code 0. A physical rendered click remains the final manual acceptance
+  because NullRHI cannot exercise OS-to-Slate pointer routing.

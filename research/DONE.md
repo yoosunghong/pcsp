@@ -4,6 +4,19 @@ This file holds completed work details, decisions, result paths, and experiment 
 
 ---
 
+## 2026-09-06 - Matched UE Actor/Mass PCSP frame-cost matrix
+
+- Added `results/ue_sessions/actor_pcsp_portfolio_20260906/` and
+  `results/ue_sessions/mass_pcsp_portfolio_20260906/`, each containing 12
+  current-build runs aggregated over 128/256/512/1,024 NPCs and seeds 0/1/2.
+- Protocol: Portfolio map, visible 800×450 standalone, 60-second wall-clock
+  run, five-second telemetry warm-up, and VSync/FPS cap/window throttling off.
+- Mean Actor/Mass frame costs were `27.015/15.380`, `53.665/21.362`,
+  `139.970/32.808`, and `309.445/62.343 ms`. Actor p95 reached the 400 ms
+  telemetry cap at 512 and 1,024, so those values are lower bounds.
+- This adds UE portfolio runtime evidence only. It does not change the research
+  observation/action contract, model, training data, or COG paper results.
+
 ## 2026-09-02 - Documentation Information Architecture
 
 - Split the v3 environment monolith into scoped ontology/observation and
@@ -802,3 +815,18 @@ Interpretation: the case study produces both positive and negative qualitative e
   outputs under `results/ood_leakage_sensitivity/`.
 - This is explicitly a metric-denominator sensitivity check; it does not
   retrain, alter the classification candidate set, or recompute coherence.
+
+## 2026-09-05 - Detailed portfolio learning explanation
+
+- Authored `../output/portfolio-continuation/PCSP_포트폴리오_상세설명.md`, extending
+  slides 04–10 with the current v3 observation indices, all 20 actions, need
+  dynamics, exact reward terms, worked example, conditioning and training losses.
+  This supports PLAN Phase C's observation/action contract and the active
+  observable-persona-behavior framing.
+- Distinguished recovered implementation from older summary prose: need reward
+  uses post-restoration remaining capacity, includes critical-need penalties,
+  and EatQuick/EatSlow restore 0.05/0.08. Documented structured persona reward
+  supervision and InfoNCE's indirect Actor connection.
+- Recorded Python/UE observation and action-semantic differences as follow-up
+  validation needs, not completed repairs. No code, reward contract, checkpoint,
+  experiment or manuscript changed; no retraining or benchmark was run.
