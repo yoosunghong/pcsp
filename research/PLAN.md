@@ -23,6 +23,10 @@
       Mass needs rules are not per-NPC BT. Entropy is descriptive, not fidelity;
       whole-process FPS is not isolated inference or BT overhead. Existing
       research observations, actions, exports and COG results are unchanged.
+- [x] Run a matched current-build UE whole-stack frame-cost comparison for
+      Actor+PCSP versus Mass+PCSP at 128/256/512/1,024 NPCs with three seeds,
+      one map/render protocol, and explicit p95 telemetry-cap handling
+      (2026-09-06). This is portfolio runtime evidence, not a paper/model result.
 
 - [x] Keep the PCSP research project self-contained under `research/` while reserving top-level `ue/` for Unreal Engine integration. *(2026-05-13)*
 - [ ] Keep the paper centered on PCSP: frozen LLM persona encoder, lightweight shared RL policy, and trajectory-level persona consistency.
